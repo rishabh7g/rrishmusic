@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { useSectionContent } from '@/hooks/useContent';
+import { useSectionContent, useStats } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
 
 export function Contact() {
   const { data: contact, loading, error } = useSectionContent('contact');
+  const { socialProof } = useStats();
 
   if (loading) {
     return (
@@ -297,15 +298,15 @@ export function Contact() {
             >
               <div className="flex items-center justify-center space-x-6 mb-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-yellow-accent">100+</div>
+                  <div className="text-2xl font-bold text-brand-yellow-accent">{socialProof.studentsCount}</div>
                   <div className="text-xs text-white/70">Happy Students</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-yellow-accent">5+</div>
+                  <div className="text-2xl font-bold text-brand-yellow-accent">{socialProof.yearsTeaching}</div>
                   <div className="text-xs text-white/70">Years Teaching</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-brand-yellow-accent">⭐⭐⭐⭐⭐</div>
+                  <div className="text-2xl font-bold text-brand-yellow-accent">{'⭐'.repeat(socialProof.averageRating)}</div>
                   <div className="text-xs text-white/70">Student Reviews</div>
                 </div>
               </div>

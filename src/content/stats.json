@@ -1,0 +1,19 @@
+{
+  "experience": {
+    "playingYears": 5,
+    "teachingYears": 1
+  },
+  "students": {
+    "total": 2,
+    "active": 2
+  },
+  "quality": {
+    "averageRating": 5.0,
+    "successStories": 1,
+    "testimonials": 1
+  },
+  "reach": {
+    "countries": 1,
+    "city": "Melbourne"
+  }
+}

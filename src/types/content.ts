@@ -44,18 +44,12 @@ export interface Achievement {
   link?: string;
 }
 
-export interface Stat {
-  number: string;
-  label: string;
-}
-
 export interface AboutContent {
   title: string;
   subtitle?: string;
   content: string[];
   skills: Skill[];
   achievements?: Achievement[];
-  stats?: Stat[];
   personalQuote?: string;
   profileImage?: string;
   resumeUrl?: string;
