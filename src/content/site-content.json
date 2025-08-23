@@ -1,0 +1,86 @@
+{
+  "hero": {
+    "title": "Hi, I'm Rrish.",
+    "subtitle": "I'm a musician who improvises on blues and different music genres. I help people learn music at every level and improve their improvisation skills.",
+    "ctaText": "Find me on Instagram:",
+    "instagramHandle": "@rrishmusic",
+    "instagramUrl": "https://instagram.com/rrishmusic"
+  },
+  "about": {
+    "title": "About Me",
+    "content": [
+      "I'm a passionate musician specializing in blues improvisation and teaching. With years of experience performing and teaching, I help students develop their unique musical voice.",
+      "My approach focuses on understanding music theory while maintaining the creative freedom that makes improvisation so exciting. Whether you're a complete beginner or looking to refine your skills, I'll meet you where you are."
+    ],
+    "skills": [
+      "Blues Improvisation",
+      "Music Theory",
+      "Guitar & Piano",
+      "Performance Coaching",
+      "Songwriting",
+      "Live Performance"
+    ]
+  },
+  "approach": {
+    "title": "My Teaching Approach",
+    "subtitle": "Learn music the way that works for you",
+    "principles": [
+      {
+        "title": "Individual Focus",
+        "description": "Every student learns differently. I tailor lessons to your learning style, goals, and musical interests.",
+        "icon": "user"
+      },
+      {
+        "title": "Theory + Practice",
+        "description": "Balance understanding the 'why' behind music with hands-on playing and improvisation.",
+        "icon": "book"
+      },
+      {
+        "title": "Creative Freedom",
+        "description": "Music is about expression. I help you develop technical skills while maintaining your creative voice.",
+        "icon": "music"
+      }
+    ]
+  },
+  "community": {
+    "title": "Join the Community",
+    "description": "Connect with fellow musicians, share your progress, and get inspired.",
+    "features": [
+      "Weekly jam sessions",
+      "Student showcases", 
+      "Practice group meetups",
+      "Online community forum"
+    ],
+    "instagramFeed": {
+      "title": "Follow @rrishmusic",
+      "description": "Latest updates, tips, and behind-the-scenes content"
+    }
+  },
+  "contact": {
+    "title": "Get Started Today",
+    "subtitle": "Ready to take your musical journey to the next level?",
+    "methods": [
+      {
+        "type": "email",
+        "label": "Email",
+        "value": "hello@rrishmusic.com",
+        "href": "mailto:hello@rrishmusic.com",
+        "primary": true
+      },
+      {
+        "type": "instagram", 
+        "label": "Instagram",
+        "value": "@rrishmusic",
+        "href": "https://instagram.com/rrishmusic",
+        "primary": false
+      }
+    ],
+    "location": "Melbourne, Victoria, Australia"
+  },
+  "seo": {
+    "defaultTitle": "Rrish Music - Blues Improvisation & Music Lessons | Melbourne",
+    "defaultDescription": "Learn blues improvisation and music theory with Rrish in Melbourne. Professional music lessons for all levels. Develop your unique musical voice.",
+    "defaultKeywords": "blues improvisation, music lessons Melbourne, guitar lessons, piano lessons, music theory, improvisation coaching",
+    "ogImage": "/images/rrish-og-image.jpg"
+  }
+}

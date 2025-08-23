@@ -1,3 +1,6 @@
+// Re-export content types for convenience
+export * from './content';
+
 // Component Props
 export interface SectionProps {
   id: string;
@@ -10,7 +13,7 @@ export interface NavigationItem {
   href: string;
 }
 
-// Business Logic Types
+// Business Logic Types (keeping existing for compatibility)
 export interface LessonPackage {
   id: string;
   name: string;
@@ -18,6 +21,8 @@ export interface LessonPackage {
   price: number;
   discount?: number;
   features: string[];
+  popular?: boolean;
+  description?: string;
 }
 
 export interface ContactFormData {
@@ -67,4 +72,18 @@ export interface AnimationProps {
   animate?: object;
   transition?: object;
   delay?: number;
+}
+
+// Content Management Types
+export interface ContentError {
+  section?: string;
+  field?: string;
+  message: string;
+  severity: 'error' | 'warning' | 'info';
+}
+
+export interface ContentValidationResult {
+  valid: boolean;
+  errors: ContentError[];
+  warnings: ContentError[];
 }
