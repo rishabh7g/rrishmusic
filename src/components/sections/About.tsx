@@ -144,11 +144,7 @@ export function About() {
           className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8"
           variants={fadeInUp}
         >
-          {[
-            { number: "5+", label: "Years Teaching" },
-            { number: "100+", label: "Happy Students" },
-            { number: "∞", label: "Musical Moments" }
-          ].map((stat, index) => (
+          {about.stats?.map((stat, index) => (
             <motion.div
               key={stat.label}
               className="text-center"
