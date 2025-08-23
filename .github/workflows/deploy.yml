@@ -64,8 +64,9 @@ jobs:
         run: npm ci
 
       - name: Build for production
-        run: npm run build
-        env:
+        run: |
+          npm run build
+          echo "rrishmusic.com" > ./dist/CNAME
           GENERATE_SOURCEMAP: false
 
       - name: Upload build artifacts
