@@ -37,7 +37,7 @@ name: Deploy RrishMusic to GitHub Pages
           run: npm run lint
 
         - name: Run unit tests
-          run: npm run test -- --watchAll=false
+          run: npm run test -- --run
 
         - name: Build project
           run: npm run build
