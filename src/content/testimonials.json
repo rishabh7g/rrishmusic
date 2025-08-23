@@ -2,46 +2,105 @@
   {
     "id": "sarah-m",
     "name": "Sarah M.",
-    "text": "Rrish helped me understand blues improvisation in a way that finally clicked. His teaching style is patient and encouraging, and I went from barely knowing scales to confidently jamming within months.",
+    "text": "Rrish's 'Guided Independence' approach completely changed how I think about learning music. I went from being intimidated by improvisation to actually enjoying it and feeling confident to express myself. His patience and structured teaching style made all the difference.",
     "rating": 5,
-    "instrument": "Guitar",
+    "date": "2024-11-15",
+    "instrument": "guitar",
     "level": "beginner",
-    "featured": true
+    "location": "Melbourne, VIC",
+    "featured": true,
+    "verified": true,
+    "achievements": [
+      "First successful improvisation solo",
+      "Performs at local open mic nights",
+      "Developed personal blues style"
+    ]
   },
   {
-    "id": "james-t", 
-    "name": "James T.",
-    "text": "I've been playing for years but was stuck in a rut. Rrish's approach to music theory and improvisation opened up new possibilities I never knew existed. Highly recommend!",
+    "id": "james-r",
+    "name": "James R.",
+    "text": "As someone who's always been analytical, I appreciated how Rrish breaks down improvisation into understandable concepts without losing the creative magic. After 18 months of lessons, I'm now jamming with friends and even writing my own music.",
     "rating": 5,
-    "instrument": "Piano",
+    "date": "2024-10-22",
+    "instrument": "guitar",
     "level": "intermediate",
-    "featured": true
+    "location": "Melbourne, VIC",
+    "featured": true,
+    "verified": true,
+    "achievements": [
+      "Regular jam session participant",
+      "Composed first original song",
+      "Improved technical proficiency"
+    ]
   },
   {
-    "id": "maria-l",
-    "name": "Maria L.",
-    "text": "The online lessons work perfectly. Great sound quality and Rrish makes it feel like we're in the same room. My playing has improved dramatically.",
+    "id": "maria-c",
+    "name": "Maria C.",
+    "text": "Learning online with Rrish has been incredible. Despite the distance, he provides such clear guidance and feedback. His teaching style really resonates with how I learn best. I've made more progress in 6 months than I did in years of trying to learn on my own.",
     "rating": 5,
-    "instrument": "Guitar",
-    "level": "intermediate",
-    "featured": false
+    "date": "2024-09-10",
+    "instrument": "guitar",
+    "level": "beginner",
+    "location": "Geelong, VIC",
+    "featured": true,
+    "verified": true,
+    "achievements": [
+      "Structured practice routine established",
+      "Significant technical improvement",
+      "Confident online learning experience"
+    ]
   },
   {
     "id": "david-k",
     "name": "David K.",
-    "text": "As someone who started learning music later in life, I was nervous about lessons. Rrish creates such a supportive environment - I actually look forward to practice now!",
+    "text": "At 62, I thought it might be too late to learn guitar seriously. Rrish proved me completely wrong. His patient, systematic approach helped me develop skills I never thought possible. Now I'm playing blues that moves people - including myself!",
     "rating": 5,
-    "instrument": "Piano",
+    "date": "2024-08-05",
+    "instrument": "guitar",
     "level": "beginner",
-    "featured": true
+    "age": 62,
+    "location": "Melbourne, VIC",
+    "featured": false,
+    "verified": true,
+    "achievements": [
+      "Adult learner success story",
+      "Regular jam session participant",
+      "Overcame age-related learning concerns"
+    ]
   },
   {
-    "id": "emma-r",
-    "name": "Emma R.",
-    "text": "The community aspect is amazing. Meeting other students and participating in jam sessions has been incredible for my confidence and growth as a musician.",
+    "id": "lucy-t",
+    "name": "Lucy T.",
+    "text": "Music is my escape from a stressful job, and Rrish understood that from day one. He's helped me not just learn techniques but discover what kind of player I want to be. The emotional connection I've developed with my playing has been life-changing.",
     "rating": 5,
-    "instrument": "Harmonica",
-    "level": "beginner",
-    "featured": false
+    "date": "2024-07-18",
+    "instrument": "guitar",
+    "level": "intermediate",
+    "location": "Melbourne, VIC",
+    "featured": false,
+    "verified": true,
+    "achievements": [
+      "Developed personal musical style",
+      "Stress relief through music",
+      "Emotional expression through playing"
+    ]
+  },
+  {
+    "id": "alex-p",
+    "name": "Alex P.",
+    "text": "Rrish is an amazing teacher who really gets how young people learn. He's helped me develop my own style while building solid technical foundations. Plus, his flexibility with scheduling worked perfectly with my uni timetable.",
+    "rating": 5,
+    "date": "2024-06-12",
+    "instrument": "guitar",
+    "level": "intermediate",
+    "age": 20,
+    "location": "Melbourne, VIC",
+    "featured": false,
+    "verified": true,
+    "achievements": [
+      "Balanced university and music learning",
+      "Developed personal playing style",
+      "Strong technical foundation"
+    ]
   }
 ]

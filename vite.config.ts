@@ -1,9 +1,20 @@
-import { defineConfig } from "vitest/config";
-import react from "@vitejs/plugin-react";
+import { defineConfig } from 'vite';
+import react from '@vitejs/plugin-react';
+import path from 'path';
 
 export default defineConfig({
   plugins: [react()],
   base: "/",
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+      "@/components": path.resolve(__dirname, "./src/components"),
+      "@/hooks": path.resolve(__dirname, "./src/hooks"),
+      "@/utils": path.resolve(__dirname, "./src/utils"),
+      "@/types": path.resolve(__dirname, "./src/types"),
+      "@/content": path.resolve(__dirname, "./src/content")
+    }
+  },
   build: {
     outDir: "dist",
     assetsDir: "assets",
@@ -12,6 +23,7 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    setupFiles: "./src/test/setup.ts",
+    // Remove the setupFiles reference since the file doesn't exist
+    // setupFiles: "./src/test/setup.ts",
   },
 });
