@@ -86,8 +86,8 @@ export function Lessons() {
   return (
     <div className="section bg-white relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-0 left-1/4 w-72 h-72 bg-brand-yellow-accent/5 rounded-full -translate-y-36"></div>
-      <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-brand-blue-primary/5 rounded-full translate-y-40"></div>
+      <div className="absolute top-0 left-1/4 w-32 h-32 sm:w-48 sm:h-48 lg:w-72 lg:h-72 bg-brand-yellow-accent/5 rounded-full -translate-y-16 sm:-translate-y-24 lg:-translate-y-36 hidden sm:block"></div>
+      <div className="absolute bottom-0 right-1/4 w-32 h-32 sm:w-48 sm:h-48 lg:w-80 lg:h-80 bg-brand-blue-primary/5 rounded-full translate-y-16 sm:translate-y-24 lg:translate-y-40 hidden sm:block"></div>
       
       <motion.div 
         className="container-custom relative z-10"

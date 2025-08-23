@@ -10,6 +10,7 @@ import type {
   Testimonial,
   ContentLoadingState 
 } from '@/types/content';
+import { pluralizeWithCount } from '@/utils/string';
 
 // Import JSON files directly - Vite handles this at build time
 import lessonsData from '@/content/lessons.json';
@@ -599,11 +600,11 @@ export const useStats = () => {
     aboutStats: [
       {
         number: stats.experience.teachingYears.toString(),
-        label: "Years Teaching"
+        label: `${pluralizeWithCount(stats.experience.teachingYears, 'Year')} Teaching`
       },
       {
         number: stats.students.total.toString(),
-        label: "Happy Students"
+        label: `Happy ${pluralizeWithCount(stats.students.total, 'Student')}`
       },
       {
         number: "∞",

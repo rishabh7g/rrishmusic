@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { useSectionContent, useStats } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
+import { pluralize } from '@/utils/string';
 
 export function Contact() {
   const { data: contact, loading, error } = useSectionContent('contact');
@@ -99,8 +100,8 @@ export function Contact() {
     >
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[url('/images/contact-pattern.svg')] bg-repeat opacity-10"></div>
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-white/5 rounded-full translate-x-48"></div>
-      <div className="absolute bottom-1/4 left-0 w-80 h-80 bg-brand-yellow-accent/10 rounded-full -translate-x-40"></div>
+      <div className="absolute top-1/4 right-0 w-32 h-32 sm:w-64 sm:h-64 lg:w-96 lg:h-96 bg-white/5 rounded-full translate-x-16 sm:translate-x-32 lg:translate-x-48 hidden sm:block"></div>
+      <div className="absolute bottom-1/4 left-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-80 lg:h-80 bg-brand-yellow-accent/10 rounded-full -translate-x-12 sm:-translate-x-24 lg:-translate-x-40 hidden sm:block"></div>
       
       <motion.div 
         className="container-custom relative z-10"
@@ -299,11 +300,11 @@ export function Contact() {
               <div className="flex items-center justify-center space-x-6 mb-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-yellow-accent">{socialProof.studentsCount}</div>
-                  <div className="text-xs text-white/70">Happy Students</div>
+                  <div className="text-xs text-white/70">Happy {pluralize(socialProof.studentsCount, 'Student')}</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-yellow-accent">{socialProof.yearsTeaching}</div>
-                  <div className="text-xs text-white/70">Years Teaching</div>
+                  <div className="text-xs text-white/70">{pluralize(socialProof.yearsTeaching, 'Year')} Teaching</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-yellow-accent">{'⭐'.repeat(socialProof.averageRating)}</div>
