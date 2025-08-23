@@ -15,8 +15,24 @@ dist-ssr
 # Test coverage
 coverage
 
+# Test results and reports  
+test-results/
+lighthouse-reports/
+*.junit.xml
+*.coverage
+*.lcov
+
+# Performance and testing artifacts
+.nyc_output/
+playwright-report/
+test-results/
+coverage/
+
 # Vite build cache
 .vite
+
+# Backup directories
+backups/
 
 # Editor directories and files
 .vscode/*
