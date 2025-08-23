@@ -67,6 +67,7 @@ jobs:
         run: |
           npm run build
           echo "rrishmusic.com" > ./dist/CNAME
+        env:
           GENERATE_SOURCEMAP: false
 
       - name: Upload build artifacts
