@@ -72,6 +72,20 @@
         "category": "performance"
       }
     ],
+    "stats": [
+      {
+        "number": "4",
+        "label": "Years Teaching"
+      },
+      {
+        "number": "2",
+        "label": "Happy Students"
+      },
+      {
+        "number": "∞",
+        "label": "Musical Moments"
+      }
+    ],
     "personalQuote": "Music is a language that everyone can speak. My role is to guide you toward finding your authentic musical expression."
   },
   "approach": {
