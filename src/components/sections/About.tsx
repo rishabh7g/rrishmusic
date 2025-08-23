@@ -147,7 +147,7 @@ export function About() {
           {[
             { number: "4", label: "Years Teaching" },
             { number: "2", label: "Happy Students" },
-            { number: "5★", label: "Student Review" }
+            { number: "∞", label: "Musical Moments" }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
