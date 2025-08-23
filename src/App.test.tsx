@@ -13,6 +13,6 @@ describe("App Component", () => {
     render(<App />);
     // Test for any text that should be in your App component
     // Update this based on what's currently in your App.tsx
-    expect(screen.getByText(/test/i)).toBeInTheDocument();
+    expect(screen.getByText(/Hi, I'm Rrish./i)).toBeInTheDocument();
   });
 });
