@@ -1,10 +1,22 @@
-name: Test Suite
+name: Legacy Test Suite (Deprecated)
+
+# This workflow is deprecated in favor of the new comprehensive test system.
+# It's kept for backward compatibility during the transition period.
+# Please use the new workflows:
+# - tests.yml (main comprehensive workflow)
+# - test-unit.yml, test-integration.yml, test-e2e.yml, test-performance.yml, test-a11y.yml (category-specific)
+# - test-orchestrator.yml (scheduled and manual comprehensive testing)
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  # Disabled to prevent conflicts with new test system
+  # Re-enable only if needed for debugging or emergency
+  workflow_dispatch:
+    inputs:
+      legacy_mode:
+        description: 'Run legacy test (for debugging only)'
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -12,9 +24,38 @@ permissions:
   checks: write
 
 jobs:
-  test:
+  legacy-test-warning:
     runs-on: ubuntu-latest
-    name: Run Tests
+    if: inputs.legacy_mode == true
+    steps:
+      - name: Deprecation Warning
+        run: |
+          echo "⚠️ WARNING: You are using the deprecated legacy test workflow."
+          echo ""
+          echo "Please use the new comprehensive test system instead:"
+          echo "• Main workflow: tests.yml"
+          echo "• Unit tests: test-unit.yml"  
+          echo "• Integration tests: test-integration.yml"
+          echo "• E2E tests: test-e2e.yml"
+          echo "• Performance tests: test-performance.yml"
+          echo "• Accessibility tests: test-a11y.yml"
+          echo "• Orchestrator: test-orchestrator.yml"
+          echo ""
+          echo "The new system provides:"
+          echo "✅ Smart test execution based on changed files"
+          echo "✅ Parallel execution for faster feedback"
+          echo "✅ Comprehensive reporting and PR comments"
+          echo "✅ Performance tracking and budgets"
+          echo "✅ Accessibility compliance validation"
+          echo "✅ Artifact management and retention"
+          echo ""
+          echo "Migration guide: See CLAUDE.md for workflow documentation"
+
+  legacy-test:
+    runs-on: ubuntu-latest
+    needs: legacy-test-warning
+    if: inputs.legacy_mode == true
+    name: Legacy Test Run
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -44,5 +85,64 @@ jobs:
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: test-results
+          name: legacy-test-results
           path: coverage/
+          retention-days: 7
+
+      - name: Comment PR with migration notice
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const comment = `
+            ## ⚠️ Legacy Test Workflow Used
+            
+            This PR used the deprecated legacy test workflow. Please migrate to the new comprehensive test system:
+            
+            ### New Test Workflows Available:
+            - **tests.yml** - Main comprehensive test workflow with smart execution
+            - **test-unit.yml** - Unit tests with coverage reporting
+            - **test-integration.yml** - Integration tests with environment setup
+            - **test-e2e.yml** - End-to-end tests across multiple browsers
+            - **test-performance.yml** - Performance testing with Lighthouse
+            - **test-a11y.yml** - Accessibility compliance validation
+            - **test-orchestrator.yml** - Scheduled and comprehensive testing
+            
+            ### Benefits of New System:
+            ✅ Smart test execution based on file changes
+            ✅ Parallel execution for faster feedback  
+            ✅ Comprehensive reporting and PR comments
+            ✅ Performance budgets and tracking
+            ✅ WCAG accessibility compliance
+            ✅ Artifact management and retention
+            
+            ### Migration:
+            The new test system is already set up and ready to use. Simply trigger the \`tests.yml\` workflow or let it run automatically on future PRs.
+            `;
+            
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body: comment
+            });
+
+  suggest-migration:
+    runs-on: ubuntu-latest
+    if: inputs.legacy_mode != true
+    steps:
+      - name: Migration Suggestion
+        run: |
+          echo "🎉 Great! The legacy test workflow is disabled."
+          echo ""
+          echo "The new comprehensive test system is active and provides:"
+          echo "• Smart test execution"
+          echo "• Parallel processing"
+          echo "• Comprehensive reporting"  
+          echo "• Performance monitoring"
+          echo "• Accessibility validation"
+          echo ""
+          echo "To run tests, use:"
+          echo "• 'tests.yml' workflow (automatic on PRs)"
+          echo "• 'test-orchestrator.yml' for scheduled/manual runs"
+          echo "• Individual category workflows as needed"

@@ -1,0 +1,190 @@
+name: All Tests
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+  schedule:
+    # Run full test suite daily at 1 AM UTC
+    - cron: '0 1 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+    outputs:
+      matrix: ${{ steps.set-matrix.outputs.matrix }}
+    steps:
+      - name: Set test matrix
+        id: set-matrix
+        run: |
+          if [[ "${{ github.event_name }}" == "pull_request" ]]; then
+            # Fast matrix for PRs
+            echo 'matrix={"include":[{"test":"unit","priority":"high"},{"test":"integration","priority":"high"},{"test":"e2e","priority":"medium"}]}' >> $GITHUB_OUTPUT
+          else
+            # Full matrix for main branch and scheduled runs
+            echo 'matrix={"include":[{"test":"unit","priority":"high"},{"test":"integration","priority":"high"},{"test":"e2e","priority":"medium"},{"test":"performance","priority":"low"},{"test":"accessibility","priority":"medium"}]}' >> $GITHUB_OUTPUT
+          fi
+
+  unit-tests:
+    uses: ./.github/workflows/test-unit.yml
+    if: contains(needs.test-matrix.outputs.matrix, 'unit')
+    needs: test-matrix
+
+  integration-tests:
+    uses: ./.github/workflows/test-integration.yml
+    if: contains(needs.test-matrix.outputs.matrix, 'integration')
+    needs: test-matrix
+
+  e2e-tests:
+    uses: ./.github/workflows/test-e2e.yml
+    if: contains(needs.test-matrix.outputs.matrix, 'e2e')
+    needs: test-matrix
+
+  performance-tests:
+    uses: ./.github/workflows/test-performance.yml
+    if: contains(needs.test-matrix.outputs.matrix, 'performance') && github.event_name != 'pull_request'
+    needs: test-matrix
+
+  accessibility-tests:
+    uses: ./.github/workflows/test-accessibility.yml
+    if: contains(needs.test-matrix.outputs.matrix, 'accessibility') && github.event_name != 'pull_request'
+    needs: test-matrix
+
+  test-results-summary:
+    runs-on: ubuntu-latest
+    needs: [test-matrix, unit-tests, integration-tests, e2e-tests, performance-tests, accessibility-tests]
+    if: always()
+    
+    steps:
+      - name: Generate comprehensive test summary
+        run: |
+          echo "# 🧪 Complete Test Suite Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Triggered by**: ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Branch**: ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Commit**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Timestamp**: $(date -u)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Test Results Table
+          echo "## 📊 Test Results Overview" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Category | Status | Priority | Duration |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------------|--------|----------|----------|" >> $GITHUB_STEP_SUMMARY
+          
+          # Unit Tests
+          UNIT_STATUS="${{ needs.unit-tests.result || 'skipped' }}"
+          UNIT_ICON="⚪"
+          if [ "$UNIT_STATUS" = "success" ]; then UNIT_ICON="✅"; fi
+          if [ "$UNIT_STATUS" = "failure" ]; then UNIT_ICON="❌"; fi
+          if [ "$UNIT_STATUS" = "cancelled" ]; then UNIT_ICON="⭕"; fi
+          echo "| Unit Tests | $UNIT_ICON $UNIT_STATUS | High | ~2-3 min |" >> $GITHUB_STEP_SUMMARY
+          
+          # Integration Tests
+          INT_STATUS="${{ needs.integration-tests.result || 'skipped' }}"
+          INT_ICON="⚪"
+          if [ "$INT_STATUS" = "success" ]; then INT_ICON="✅"; fi
+          if [ "$INT_STATUS" = "failure" ]; then INT_ICON="❌"; fi
+          if [ "$INT_STATUS" = "cancelled" ]; then INT_ICON="⭕"; fi
+          echo "| Integration Tests | $INT_ICON $INT_STATUS | High | ~3-5 min |" >> $GITHUB_STEP_SUMMARY
+          
+          # E2E Tests
+          E2E_STATUS="${{ needs.e2e-tests.result || 'skipped' }}"
+          E2E_ICON="⚪"
+          if [ "$E2E_STATUS" = "success" ]; then E2E_ICON="✅"; fi
+          if [ "$E2E_STATUS" = "failure" ]; then E2E_ICON="❌"; fi
+          if [ "$E2E_STATUS" = "cancelled" ]; then E2E_ICON="⭕"; fi
+          echo "| E2E Tests | $E2E_ICON $E2E_STATUS | Medium | ~5-10 min |" >> $GITHUB_STEP_SUMMARY
+          
+          # Performance Tests
+          PERF_STATUS="${{ needs.performance-tests.result || 'skipped' }}"
+          PERF_ICON="⚪"
+          if [ "$PERF_STATUS" = "success" ]; then PERF_ICON="✅"; fi
+          if [ "$PERF_STATUS" = "failure" ]; then PERF_ICON="❌"; fi
+          if [ "$PERF_STATUS" = "cancelled" ]; then PERF_ICON="⭕"; fi
+          echo "| Performance Tests | $PERF_ICON $PERF_STATUS | Low | ~10-15 min |" >> $GITHUB_STEP_SUMMARY
+          
+          # Accessibility Tests
+          A11Y_STATUS="${{ needs.accessibility-tests.result || 'skipped' }}"
+          A11Y_ICON="⚪"
+          if [ "$A11Y_STATUS" = "success" ]; then A11Y_ICON="✅"; fi
+          if [ "$A11Y_STATUS" = "failure" ]; then A11Y_ICON="❌"; fi
+          if [ "$A11Y_STATUS" = "cancelled" ]; then A11Y_ICON="⭕"; fi
+          echo "| Accessibility Tests | $A11Y_ICON $A11Y_STATUS | Medium | ~8-12 min |" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # Overall Status
+          FAILED_COUNT=0
+          if [ "$UNIT_STATUS" = "failure" ]; then FAILED_COUNT=$((FAILED_COUNT + 1)); fi
+          if [ "$INT_STATUS" = "failure" ]; then FAILED_COUNT=$((FAILED_COUNT + 1)); fi
+          if [ "$E2E_STATUS" = "failure" ]; then FAILED_COUNT=$((FAILED_COUNT + 1)); fi
+          if [ "$PERF_STATUS" = "failure" ]; then FAILED_COUNT=$((FAILED_COUNT + 1)); fi
+          if [ "$A11Y_STATUS" = "failure" ]; then FAILED_COUNT=$((FAILED_COUNT + 1)); fi
+          
+          if [ $FAILED_COUNT -eq 0 ]; then
+            echo "## 🎉 Overall Status: SUCCESS" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "All test categories passed successfully! 🚀" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "## ⚠️ Overall Status: FAILURE" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "**$FAILED_COUNT** test categories failed. Please review the individual test reports." >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 📁 Available Reports" >> $GITHUB_STEP_SUMMARY
+          echo "- **Test Artifacts**: Check the Actions artifacts for detailed reports" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage Reports**: Available for Unit and Integration tests" >> $GITHUB_STEP_SUMMARY
+          echo "- **Performance Metrics**: Lighthouse reports and bundle analysis" >> $GITHUB_STEP_SUMMARY
+          echo "- **Accessibility Audit**: WCAG compliance reports" >> $GITHUB_STEP_SUMMARY
+          echo "- **Screenshots**: E2E test failure screenshots (if any)" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "## 🔧 Quick Commands" >> $GITHUB_STEP_SUMMARY
+          echo '```bash' >> $GITHUB_STEP_SUMMARY
+          echo "# Run specific test categories locally:" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:unit           # Unit tests" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:integration    # Integration tests" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:e2e           # E2E tests" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:performance   # Performance tests" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:a11y          # Accessibility tests" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "# Run all tests:" >> $GITHUB_STEP_SUMMARY
+          echo "npm run test:all           # Complete test suite" >> $GITHUB_STEP_SUMMARY
+          echo '```' >> $GITHUB_STEP_SUMMARY
+
+      - name: Set workflow status
+        run: |
+          # Fail the workflow if any critical tests failed
+          UNIT_STATUS="${{ needs.unit-tests.result || 'skipped' }}"
+          INT_STATUS="${{ needs.integration-tests.result || 'skipped' }}"
+          E2E_STATUS="${{ needs.e2e-tests.result || 'skipped' }}"
+          
+          # Critical failures (should fail the build)
+          if [ "$UNIT_STATUS" = "failure" ] || [ "$INT_STATUS" = "failure" ]; then
+            echo "❌ Critical tests failed - Unit: $UNIT_STATUS, Integration: $INT_STATUS"
+            exit 1
+          fi
+          
+          # E2E failures are concerning but not critical for PRs
+          if [ "$E2E_STATUS" = "failure" ] && [ "${{ github.event_name }}" != "pull_request" ]; then
+            echo "❌ E2E tests failed on main branch"
+            exit 1
+          fi
+          
+          # Performance and accessibility failures are warnings
+          PERF_STATUS="${{ needs.performance-tests.result || 'skipped' }}"
+          A11Y_STATUS="${{ needs.accessibility-tests.result || 'skipped' }}"
+          
+          if [ "$PERF_STATUS" = "failure" ] || [ "$A11Y_STATUS" = "failure" ]; then
+            echo "⚠️ Performance or accessibility tests failed - consider investigating"
+          fi
+          
+          echo "✅ Test suite completed successfully"

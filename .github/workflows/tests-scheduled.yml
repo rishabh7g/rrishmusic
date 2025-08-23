@@ -1,0 +1,540 @@
+name: Scheduled Comprehensive Tests
+
+on:
+  schedule:
+    # Run full test suite daily at 2 AM UTC
+    - cron: '0 2 * * *'
+    # Run quick regression tests every 6 hours
+    - cron: '0 */6 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Type of scheduled test to run'
+        required: true
+        default: 'full'
+        type: choice
+        options:
+          - 'full'           # Complete test suite
+          - 'regression'     # Quick regression tests
+          - 'performance'    # Performance monitoring
+          - 'health-check'   # System health check
+
+env:
+  NODE_VERSION: '20'
+  TEST_TYPE: ${{ inputs.test_type || (github.event.schedule == '0 2 * * *' && 'full' || 'regression') }}
+
+permissions:
+  contents: read
+  issues: write
+  actions: read
+
+jobs:
+  # Determine test strategy based on schedule
+  determine-strategy:
+    runs-on: ubuntu-latest
+    outputs:
+      run-fast: ${{ steps.strategy.outputs.run-fast }}
+      run-e2e: ${{ steps.strategy.outputs.run-e2e }}
+      run-performance: ${{ steps.strategy.outputs.run-performance }}
+      run-accessibility: ${{ steps.strategy.outputs.run-accessibility }}
+      run-visual: ${{ steps.strategy.outputs.run-visual }}
+      browser-matrix: ${{ steps.strategy.outputs.browser-matrix }}
+      create-issue: ${{ steps.strategy.outputs.create-issue }}
+      test-description: ${{ steps.strategy.outputs.test-description }}
+      
+    steps:
+      - name: Determine test strategy
+        id: strategy
+        run: |
+          echo "Determining strategy for: ${{ env.TEST_TYPE }}"
+          
+          # Default values
+          RUN_FAST=false
+          RUN_E2E=false
+          RUN_PERFORMANCE=false
+          RUN_ACCESSIBILITY=false
+          RUN_VISUAL=false
+          CREATE_ISSUE=false
+          BROWSER_MATRIX='["chromium"]'
+          
+          case "${{ env.TEST_TYPE }}" in
+            "full")
+              RUN_FAST=true
+              RUN_E2E=true
+              RUN_PERFORMANCE=true
+              RUN_ACCESSIBILITY=true
+              RUN_VISUAL=true
+              CREATE_ISSUE=true
+              BROWSER_MATRIX='["chromium", "firefox", "webkit"]'
+              DESCRIPTION="Daily comprehensive test suite"
+              ;;
+            "regression")
+              RUN_FAST=true
+              RUN_E2E=true
+              RUN_PERFORMANCE=true
+              BROWSER_MATRIX='["chromium"]'
+              DESCRIPTION="6-hour regression check"
+              ;;
+            "performance")
+              RUN_PERFORMANCE=true
+              DESCRIPTION="Performance monitoring"
+              ;;
+            "health-check")
+              RUN_FAST=true
+              RUN_E2E=true
+              BROWSER_MATRIX='["chromium"]'
+              DESCRIPTION="System health check"
+              ;;
+          esac
+          
+          echo "run-fast=$RUN_FAST" >> $GITHUB_OUTPUT
+          echo "run-e2e=$RUN_E2E" >> $GITHUB_OUTPUT
+          echo "run-performance=$RUN_PERFORMANCE" >> $GITHUB_OUTPUT
+          echo "run-accessibility=$RUN_ACCESSIBILITY" >> $GITHUB_OUTPUT
+          echo "run-visual=$RUN_VISUAL" >> $GITHUB_OUTPUT
+          echo "browser-matrix=$BROWSER_MATRIX" >> $GITHUB_OUTPUT
+          echo "create-issue=$CREATE_ISSUE" >> $GITHUB_OUTPUT
+          echo "test-description=$DESCRIPTION" >> $GITHUB_OUTPUT
+          
+          echo "Strategy: $DESCRIPTION"
+          echo "- Fast: $RUN_FAST"
+          echo "- E2E: $RUN_E2E"
+          echo "- Performance: $RUN_PERFORMANCE"
+          echo "- Accessibility: $RUN_ACCESSIBILITY"
+          echo "- Visual: $RUN_VISUAL"
+          echo "- Browsers: $BROWSER_MATRIX"
+
+  # Fast Tests
+  fast-tests:
+    needs: determine-strategy
+    if: needs.determine-strategy.outputs.run-fast == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          npx playwright install chromium --with-deps
+
+      - name: Run fast test suite
+        run: npm run test:ci
+        timeout-minutes: 8
+        env:
+          CI: true
+          NODE_ENV: test
+
+      - name: Upload fast test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-fast-results
+          path: |
+            test-results/
+            coverage/
+          retention-days: 7
+
+  # E2E Tests
+  e2e-tests:
+    needs: determine-strategy
+    if: needs.determine-strategy.outputs.run-e2e == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: ${{ fromJSON(needs.determine-strategy.outputs.browser-matrix) }}
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          npx playwright install ${{ matrix.browser }} --with-deps
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm run preview &
+        
+      - name: Wait for server
+        run: |
+          timeout 60 bash -c 'until curl -s http://localhost:4173 > /dev/null; do sleep 1; done'
+
+      - name: Run E2E tests
+        run: npx playwright test --config ./configs/playwright.config.ts --project=${{ matrix.browser }}
+        env:
+          CI: true
+          BASE_URL: http://localhost:4173
+
+      - name: Upload E2E results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-e2e-${{ matrix.browser }}
+          path: |
+            test-results/
+            playwright-report/
+          retention-days: 14
+
+  # Performance Tests with Trend Analysis
+  performance-tests:
+    needs: determine-strategy
+    if: needs.determine-strategy.outputs.run-performance == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          npx playwright install chromium --with-deps
+
+      - name: Build application
+        run: npm run build
+
+      - name: Run performance tests
+        run: npm run test:performance
+        timeout-minutes: 20
+        env:
+          CI: true
+          SCHEDULED: true
+
+      - name: Run Lighthouse with CI mode
+        run: |
+          npm run preview &
+          sleep 10
+          timeout 300 npm run lighthouse:ci
+
+      - name: Analyze performance trends
+        run: |
+          # Create performance trend analysis
+          echo "## Performance Trends" > performance-summary.md
+          echo "**Date**: $(date -u)" >> performance-summary.md
+          echo "**Test Type**: ${{ env.TEST_TYPE }}" >> performance-summary.md
+          echo "" >> performance-summary.md
+          
+          # Extract key metrics from lighthouse report if available
+          if [ -f "test-results/reports/lighthouse-ci.json" ]; then
+            echo "### Lighthouse Scores" >> performance-summary.md
+            # Add lighthouse score extraction logic here
+            echo "Lighthouse report available in artifacts" >> performance-summary.md
+          fi
+
+      - name: Upload performance reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-performance-${{ github.run_number }}
+          path: |
+            test-results/reports/
+            lighthouse-reports/
+            performance-summary.md
+          retention-days: 30
+
+  # Accessibility Tests
+  accessibility-tests:
+    needs: determine-strategy
+    if: needs.determine-strategy.outputs.run-accessibility == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          npx playwright install chromium --with-deps
+
+      - name: Build application
+        run: npm run build
+
+      - name: Run accessibility audit
+        run: npm run test:a11y:audit
+        timeout-minutes: 15
+        env:
+          CI: true
+          SCHEDULED: true
+
+      - name: Upload accessibility reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-accessibility
+          path: |
+            test-results/
+            coverage/
+          retention-days: 14
+
+  # Visual Regression Tests
+  visual-tests:
+    needs: determine-strategy
+    if: needs.determine-strategy.outputs.run-visual == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: |
+          npm ci --prefer-offline --no-audit
+          npx playwright install chromium --with-deps
+
+      - name: Build application
+        run: npm run build
+
+      - name: Start application
+        run: npm run preview &
+        
+      - name: Wait for server
+        run: |
+          timeout 60 bash -c 'until curl -s http://localhost:4173 > /dev/null; do sleep 1; done'
+
+      - name: Run visual regression tests
+        run: npm run test:visual:chromium
+        env:
+          CI: true
+          BASE_URL: http://localhost:4173
+
+      - name: Upload visual test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-visual
+          path: |
+            test-results/
+            visual-tests/
+          retention-days: 21
+
+  # Comprehensive Test Summary and Issue Creation
+  test-summary:
+    runs-on: ubuntu-latest
+    needs: [determine-strategy, fast-tests, e2e-tests, performance-tests, accessibility-tests, visual-tests]
+    if: always()
+    
+    steps:
+      - name: Checkout code (for issue creation)
+        if: needs.determine-strategy.outputs.create-issue == 'true'
+        uses: actions/checkout@v4
+
+      - name: Generate comprehensive summary
+        id: summary
+        run: |
+          echo "## Scheduled Test Results" > test-summary.md
+          echo "**Date**: $(date -u)" >> test-summary.md
+          echo "**Test Type**: ${{ env.TEST_TYPE }}" >> test-summary.md  
+          echo "**Description**: ${{ needs.determine-strategy.outputs.test-description }}" >> test-summary.md
+          echo "**Workflow**: ${{ github.workflow }}" >> test-summary.md
+          echo "" >> test-summary.md
+          
+          # Collect all test results
+          FAST_STATUS="${{ needs.fast-tests.result }}"
+          E2E_STATUS="${{ needs.e2e-tests.result }}"
+          PERF_STATUS="${{ needs.performance-tests.result }}"
+          A11Y_STATUS="${{ needs.accessibility-tests.result }}"
+          VISUAL_STATUS="${{ needs.visual-tests.result }}"
+          
+          FAILED_TESTS=""
+          PASSED_TESTS=""
+          
+          echo "### Test Results" >> test-summary.md
+          
+          # Check each test category
+          if [ "$FAST_STATUS" != "skipped" ]; then
+            if [ "$FAST_STATUS" = "success" ]; then
+              echo "- ⚡ **Fast Tests**: ✅ Passed" >> test-summary.md
+              PASSED_TESTS="$PASSED_TESTS Fast,"
+            else
+              echo "- ⚡ **Fast Tests**: ❌ Failed" >> test-summary.md
+              FAILED_TESTS="$FAILED_TESTS Fast,"
+            fi
+          fi
+          
+          if [ "$E2E_STATUS" != "skipped" ]; then
+            if [ "$E2E_STATUS" = "success" ]; then
+              echo "- 🌐 **E2E Tests**: ✅ Passed" >> test-summary.md
+              PASSED_TESTS="$PASSED_TESTS E2E,"
+            else
+              echo "- 🌐 **E2E Tests**: ❌ Failed" >> test-summary.md
+              FAILED_TESTS="$FAILED_TESTS E2E,"
+            fi
+          fi
+          
+          if [ "$PERF_STATUS" != "skipped" ]; then
+            if [ "$PERF_STATUS" = "success" ]; then
+              echo "- ⚡ **Performance**: ✅ Passed" >> test-summary.md
+              PASSED_TESTS="$PASSED_TESTS Performance,"
+            else
+              echo "- ⚡ **Performance**: ❌ Failed" >> test-summary.md
+              FAILED_TESTS="$FAILED_TESTS Performance,"
+            fi
+          fi
+          
+          if [ "$A11Y_STATUS" != "skipped" ]; then
+            if [ "$A11Y_STATUS" = "success" ]; then
+              echo "- ♿ **Accessibility**: ✅ Passed" >> test-summary.md
+              PASSED_TESTS="$PASSED_TESTS Accessibility,"
+            else
+              echo "- ♿ **Accessibility**: ❌ Failed" >> test-summary.md
+              FAILED_TESTS="$FAILED_TESTS Accessibility,"
+            fi
+          fi
+          
+          if [ "$VISUAL_STATUS" != "skipped" ]; then
+            if [ "$VISUAL_STATUS" = "success" ]; then
+              echo "- 👁️ **Visual Regression**: ✅ Passed" >> test-summary.md
+              PASSED_TESTS="$PASSED_TESTS Visual,"
+            else
+              echo "- 👁️ **Visual Regression**: ❌ Failed" >> test-summary.md
+              FAILED_TESTS="$FAILED_TESTS Visual,"
+            fi
+          fi
+          
+          echo "" >> test-summary.md
+          
+          # Determine overall status
+          if [ -n "$FAILED_TESTS" ]; then
+            echo "### 🚨 Action Required" >> test-summary.md
+            echo "The following test categories failed: ${FAILED_TESTS%,}" >> test-summary.md
+            echo "" >> test-summary.md
+            echo "**Recommended Actions:**" >> test-summary.md
+            echo "1. Review test failure details in workflow artifacts" >> test-summary.md
+            echo "2. Run tests locally to reproduce issues" >> test-summary.md
+            echo "3. Consider running manual tests with: \`gh workflow run tests-optional.yml\`" >> test-summary.md
+            
+            echo "has-failures=true" >> $GITHUB_OUTPUT
+          else
+            echo "### ✅ All Tests Passed" >> test-summary.md
+            echo "All scheduled tests completed successfully!" >> test-summary.md
+            
+            echo "has-failures=false" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "" >> test-summary.md
+          echo "---" >> test-summary.md
+          echo "📊 **Artifacts**: Detailed reports available in workflow artifacts" >> test-summary.md
+          echo "🔄 **Next Run**: $(date -u -d '+6 hours' '+%Y-%m-%d %H:%M UTC') (regression)" >> test-summary.md
+          echo "🔄 **Next Full Run**: $(date -u -d '+1 day' '+%Y-%m-%d %H:%M UTC') (comprehensive)" >> test-summary.md
+
+      - name: Create or update issue for failures
+        if: steps.summary.outputs.has-failures == 'true' && needs.determine-strategy.outputs.create-issue == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('test-summary.md', 'utf8');
+            
+            // Look for existing scheduled test failure issue
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['scheduled-tests', 'test-failure'],
+              state: 'open'
+            });
+            
+            const issueTitle = `🚨 Scheduled Test Failures - ${new Date().toISOString().split('T')[0]}`;
+            const issueBody = summary + '\n\n---\n\n' +
+              '**Auto-generated**: This issue was automatically created by scheduled tests.\n' +
+              '**Resolution**: This issue will be automatically closed when all tests pass.\n' +
+              `**Workflow**: ${context.workflow} #${context.runNumber}`;
+            
+            if (issues.length === 0) {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: issueBody,
+                labels: ['scheduled-tests', 'test-failure', 'automation']
+              });
+            } else {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues[0].number,
+                title: issueTitle,
+                body: issueBody
+              });
+            }
+
+      - name: Close issues if all tests passed
+        if: steps.summary.outputs.has-failures == 'false' && needs.determine-strategy.outputs.create-issue == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Close any open test failure issues
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: ['scheduled-tests', 'test-failure'],
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ **Resolved**: All scheduled tests are now passing.\n\nAuto-closed by successful test run.'
+              });
+            }
+
+      - name: Upload test summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: scheduled-test-summary
+          path: test-summary.md
+          retention-days: 14

@@ -1,0 +1,288 @@
+name: Accessibility Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+  schedule:
+    # Run accessibility tests weekly on Saturdays at 4 AM UTC
+    - cron: '0 4 * * 6'
+
+jobs:
+  a11y-unit-tests:
+    runs-on: ubuntu-latest
+    
+    name: Accessibility Unit Tests
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Run accessibility tests
+        run: npm run test:a11y:coverage
+        env:
+          NODE_ENV: test
+          VITEST_A11Y: true
+          
+      - name: Upload accessibility test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-unit-results
+          path: |
+            test-results/junit/accessibility-results.xml
+            test-results/json/accessibility-results.json
+            test-results/html/accessibility-report.html
+            test-results/coverage/accessibility/
+          retention-days: 30
+          
+      - name: Publish accessibility test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Accessibility Unit Test Results
+          path: test-results/junit/accessibility-results.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  a11y-e2e-tests:
+    runs-on: ubuntu-latest
+    
+    name: Accessibility E2E Tests
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Run E2E accessibility tests
+        run: |
+          cat > playwright-a11y.config.ts << 'EOF'
+          import { defineConfig, devices } from '@playwright/test';
+          import { configureAxe } from 'axe-core';
+
+          export default defineConfig({
+            testDir: './tests/accessibility',
+            fullyParallel: true,
+            forbidOnly: !!process.env.CI,
+            retries: process.env.CI ? 2 : 0,
+            workers: process.env.CI ? 1 : undefined,
+            
+            reporter: [
+              ['html', { outputFolder: './test-results/a11y-e2e-report' }],
+              ['json', { outputFile: './test-results/json/a11y-e2e-results.json' }],
+              ['junit', { outputFile: './test-results/junit/a11y-e2e-results.xml' }],
+            ],
+            
+            use: {
+              baseURL: 'http://localhost:4173',
+              trace: 'on-first-retry',
+              screenshot: 'only-on-failure',
+            },
+            
+            projects: [
+              {
+                name: 'a11y-chromium',
+                use: { ...devices['Desktop Chrome'] },
+              },
+            ],
+            
+            webServer: {
+              command: 'npm run preview',
+              url: 'http://localhost:4173',
+              reuseExistingServer: !process.env.CI,
+            },
+          });
+          EOF
+
+          # Create basic accessibility E2E test
+          mkdir -p tests/accessibility
+          cat > tests/accessibility/wcag-compliance.spec.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          import AxeBuilder from '@axe-core/playwright';
+
+          test.describe('WCAG Compliance Tests', () => {
+            test('should not have accessibility violations on homepage', async ({ page }) => {
+              await page.goto('/');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+                .analyze();
+              
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+            
+            test('should have proper heading hierarchy', async ({ page }) => {
+              await page.goto('/');
+              
+              const headings = await page.locator('h1, h2, h3, h4, h5, h6').all();
+              expect(headings.length).toBeGreaterThan(0);
+              
+              // Check that h1 exists
+              const h1 = page.locator('h1');
+              await expect(h1).toBeVisible();
+            });
+            
+            test('should have keyboard navigation support', async ({ page }) => {
+              await page.goto('/');
+              
+              // Test tab navigation
+              await page.keyboard.press('Tab');
+              const focusedElement = await page.locator(':focus');
+              expect(await focusedElement.count()).toBeGreaterThan(0);
+            });
+            
+            test('should have proper alt text for images', async ({ page }) => {
+              await page.goto('/');
+              
+              const images = await page.locator('img').all();
+              for (const image of images) {
+                const alt = await image.getAttribute('alt');
+                const role = await image.getAttribute('role');
+                
+                // Images should have alt text or role="presentation"
+                expect(alt !== null || role === 'presentation').toBe(true);
+              }
+            });
+            
+            test('should have proper color contrast', async ({ page }) => {
+              await page.goto('/');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withTags(['wcag2aa'])
+                .disableRules(['color-contrast']) // We'll check this specifically
+                .analyze();
+              
+              // Check for color contrast violations
+              const contrastResults = await new AxeBuilder({ page })
+                .include('body')
+                .withRules(['color-contrast'])
+                .analyze();
+              
+              expect(contrastResults.violations).toEqual([]);
+            });
+          });
+          EOF
+          
+          # Run the accessibility E2E tests
+          npx playwright test --config=playwright-a11y.config.ts
+          
+      - name: Upload A11y E2E test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-e2e-results
+          path: |
+            test-results/a11y-e2e-report/
+            test-results/json/a11y-e2e-results.json
+            test-results/junit/a11y-e2e-results.xml
+          retention-days: 30
+
+  lighthouse-a11y:
+    runs-on: ubuntu-latest
+    
+    name: Lighthouse Accessibility Audit
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Run Lighthouse Accessibility Audit
+        run: |
+          # Create Lighthouse CI config for accessibility
+          cat > .lighthouserc.yml << 'EOF'
+          ci:
+            collect:
+              numberOfRuns: 3
+              startServerCommand: 'npm run preview'
+              url:
+                - 'http://localhost:4173'
+            assert:
+              assertions:
+                'categories:accessibility': ['error', {minScore: 0.9}]
+                'categories:best-practices': ['warn', {minScore: 0.9}]
+            upload:
+              target: 'filesystem'
+              outputDir: './lighthouse-reports'
+          EOF
+          
+          lhci autorun
+          
+      - name: Upload Lighthouse A11y results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-a11y-results
+          path: lighthouse-reports/
+          retention-days: 30
+
+  accessibility-summary:
+    runs-on: ubuntu-latest
+    needs: [a11y-unit-tests, a11y-e2e-tests, lighthouse-a11y]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          
+      - name: Accessibility Tests Summary
+        run: |
+          echo "### ♿ Accessibility Tests Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Unit Tests | ${{ needs.a11y-unit-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| E2E Tests | ${{ needs.a11y-e2e-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lighthouse Audit | ${{ needs.lighthouse-a11y.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "♿ **Standards**: WCAG 2.1 AA compliance" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 **Coverage**: Component accessibility, keyboard navigation, screen reader support" >> $GITHUB_STEP_SUMMARY
+          echo "📊 **Reports**: Available in artifacts" >> $GITHUB_STEP_SUMMARY
+          
+          # Add failure information
+          if [[ "${{ needs.a11y-unit-tests.result }}" == "failure" ]] || [[ "${{ needs.a11y-e2e-tests.result }}" == "failure" ]] || [[ "${{ needs.lighthouse-a11y.result }}" == "failure" ]]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Some accessibility tests failed**. Review the artifacts for detailed WCAG compliance issues." >> $GITHUB_STEP_SUMMARY
+          fi

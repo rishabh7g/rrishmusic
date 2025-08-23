@@ -1,0 +1,567 @@
+name: End-to-End Tests
+
+on:
+  workflow_call:
+    inputs:
+      browser:
+        description: 'Browser to test with (chromium/firefox/webkit/all)'
+        required: false
+        default: 'chromium'
+        type: string
+      environment:
+        description: 'Test environment URL'
+        required: false
+        default: 'http://localhost:4173'
+        type: string
+      headed:
+        description: 'Run tests in headed mode'
+        required: false
+        default: false
+        type: boolean
+    outputs:
+      test-status:
+        description: 'E2E test execution status'
+        value: ${{ jobs.e2e-tests.outputs.status }}
+      test-report-url:
+        description: 'URL to the test report'
+        value: ${{ jobs.e2e-tests.outputs.report-url }}
+  workflow_dispatch:
+    inputs:
+      browser:
+        description: 'Browser to test with'
+        required: false
+        default: 'chromium'
+        type: choice
+        options:
+          - 'chromium'
+          - 'firefox'
+          - 'webkit'
+          - 'all'
+      environment:
+        description: 'Test environment URL'
+        required: false
+        default: 'http://localhost:4173'
+        type: string
+      headed:
+        description: 'Run tests in headed mode'
+        required: false
+        default: false
+        type: boolean
+      test-pattern:
+        description: 'Test pattern to run'
+        required: false
+        default: ''
+        type: string
+      debug:
+        description: 'Enable debug mode'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  BROWSER: ${{ inputs.browser || 'chromium' }}
+  TEST_ENV_URL: ${{ inputs.environment || 'http://localhost:4173' }}
+  CACHE_VERSION: v1
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  pages: write
+  id-token: write
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      status: ${{ steps.test-execution.outputs.status }}
+      report-url: ${{ steps.deploy-report.outputs.page_url }}
+    timeout-minutes: 30
+    strategy:
+      matrix:
+        browser: ${{ fromJSON(inputs.browser == 'all' && '["chromium", "firefox", "webkit"]' || format('["{0}"]', inputs.browser || 'chromium')) }}
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ env.CACHE_VERSION }}-node-modules-20-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-node-modules-20-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/playwright
+          key: ${{ env.CACHE_VERSION }}-playwright-${{ hashFiles('package-lock.json') }}-${{ matrix.browser }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-playwright-${{ hashFiles('package-lock.json') }}-
+            ${{ env.CACHE_VERSION }}-playwright-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Install Playwright browsers
+        run: |
+          if [ "${{ matrix.browser }}" = "all" ]; then
+            npx playwright install --with-deps
+          else
+            npx playwright install --with-deps ${{ matrix.browser }}
+          fi
+
+      - name: Create E2E test structure
+        run: |
+          mkdir -p tests/e2e/pages
+          mkdir -p tests/e2e/components
+          mkdir -p tests/e2e/user-flows
+          mkdir -p tests/e2e/performance
+          
+          # Create basic page object model structure
+          if [ ! -f "tests/e2e/pages/HomePage.ts" ]; then
+            cat > tests/e2e/pages/HomePage.ts << 'EOF'
+          import { Page, Locator } from '@playwright/test';
+          
+          export class HomePage {
+            private page: Page;
+            
+            constructor(page: Page) {
+              this.page = page;
+            }
+            
+            async goto() {
+              await this.page.goto('/');
+            }
+            
+            async getTitle() {
+              return await this.page.title();
+            }
+            
+            // Add more page-specific methods here
+          }
+          EOF
+          fi
+          
+          # Create basic E2E test if none exist
+          if [ ! -f "tests/e2e/basic.spec.ts" ]; then
+            cat > tests/e2e/basic.spec.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          import { HomePage } from './pages/HomePage';
+          
+          test.describe('Basic E2E Tests', () => {
+            test('should load homepage successfully', async ({ page }) => {
+              const homePage = new HomePage(page);
+              await homePage.goto();
+              
+              const title = await homePage.getTitle();
+              expect(title).toBeTruthy();
+              expect(title).toContain('Rrish');
+            });
+            
+            test('should have proper meta tags', async ({ page }) => {
+              await page.goto('/');
+              
+              // Check for essential meta tags
+              const viewport = page.locator('meta[name="viewport"]');
+              await expect(viewport).toHaveAttribute('content', /width=device-width/);
+            });
+            
+            test('should be responsive', async ({ page }) => {
+              await page.goto('/');
+              
+              // Test mobile viewport
+              await page.setViewportSize({ width: 375, height: 667 });
+              await expect(page).toHaveScreenshot({ fullPage: true, threshold: 0.2 });
+              
+              // Test desktop viewport
+              await page.setViewportSize({ width: 1280, height: 720 });
+              await expect(page).toHaveScreenshot({ fullPage: true, threshold: 0.2 });
+            });
+          });
+          EOF
+          fi
+
+      - name: Build project
+        run: |
+          npm run build
+          
+          # Verify build
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+            echo "❌ Build failed or produced empty dist directory"
+            exit 1
+          fi
+          
+          echo "✅ Build completed successfully"
+          ls -la dist/
+
+      - name: Start test server
+        run: |
+          # Start preview server in background
+          npm run preview &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          
+          echo "Starting server with PID: $SERVER_PID"
+          
+          # Wait for server to be ready with better error handling
+          echo "Waiting for server to be ready at ${{ env.TEST_ENV_URL }}..."
+          
+          for i in {1..30}; do
+            if curl -f "${{ env.TEST_ENV_URL }}" >/dev/null 2>&1; then
+              echo "✅ Server is ready"
+              break
+            elif [ $i -eq 30 ]; then
+              echo "❌ Server failed to start within 30 seconds"
+              if kill -0 $SERVER_PID 2>/dev/null; then
+                echo "Server process is still running, but not responding"
+                kill $SERVER_PID
+              fi
+              exit 1
+            else
+              echo "Attempt $i: Server not ready, waiting..."
+              sleep 1
+            fi
+          done
+
+      - name: Run E2E tests - ${{ matrix.browser }}
+        id: test-execution
+        run: |
+          echo "Running E2E tests with ${{ matrix.browser }}"
+          
+          # Configure test options
+          TEST_OPTIONS=""
+          if [ "${{ inputs.headed }}" = "true" ]; then
+            TEST_OPTIONS="$TEST_OPTIONS --headed"
+          fi
+          
+          if [ "${{ inputs.debug }}" = "true" ]; then
+            TEST_OPTIONS="$TEST_OPTIONS --debug"
+          fi
+          
+          if [ -n "${{ inputs.test-pattern }}" ]; then
+            TEST_OPTIONS="$TEST_OPTIONS --grep '${{ inputs.test-pattern }}'"
+          fi
+          
+          # Run tests with proper error handling
+          set +e
+          timeout 25m npx playwright test \
+            --project=${{ matrix.browser }} \
+            --reporter=html,json \
+            --output-dir=test-results-${{ matrix.browser }} \
+            $TEST_OPTIONS
+          TEST_EXIT_CODE=$?
+          set -e
+          
+          # Generate test report
+          if [ $TEST_EXIT_CODE -eq 0 ]; then
+            echo "status=passed" >> $GITHUB_OUTPUT
+            echo "✅ E2E tests passed for ${{ matrix.browser }}"
+          else
+            echo "status=failed" >> $GITHUB_OUTPUT
+            echo "❌ E2E tests failed for ${{ matrix.browser }} (exit code: $TEST_EXIT_CODE)"
+          fi
+          
+          # Always generate the HTML report even if tests failed
+          if [ -f "playwright-report/index.html" ]; then
+            echo "✅ HTML report generated"
+          else
+            echo "⚠️ HTML report not found"
+          fi
+          
+          exit $TEST_EXIT_CODE
+
+      - name: Stop test server
+        if: always()
+        run: |
+          if [ ! -z "${SERVER_PID:-}" ] && kill -0 $SERVER_PID 2>/dev/null; then
+            echo "Stopping server with PID: $SERVER_PID"
+            kill $SERVER_PID
+            wait $SERVER_PID 2>/dev/null || true
+          fi
+
+      - name: Process test results
+        if: always()
+        run: |
+          mkdir -p e2e-artifacts/${{ matrix.browser }}
+          
+          # Copy test results
+          if [ -d "test-results-${{ matrix.browser }}" ]; then
+            cp -r test-results-${{ matrix.browser }}/* e2e-artifacts/${{ matrix.browser }}/ 2>/dev/null || true
+          fi
+          
+          # Copy HTML report
+          if [ -d "playwright-report" ]; then
+            cp -r playwright-report e2e-artifacts/${{ matrix.browser }}/html-report/
+          fi
+          
+          # Create test summary
+          cat > e2e-artifacts/${{ matrix.browser }}/summary.md << EOF
+          # E2E Test Summary - ${{ matrix.browser }}
+          
+          **Browser**: ${{ matrix.browser }}
+          **Status**: ${{ steps.test-execution.outputs.status }}
+          **Environment**: ${{ env.TEST_ENV_URL }}
+          **Timestamp**: $(date -u)
+          
+          ## Test Configuration
+          - Headed Mode: ${{ inputs.headed }}
+          - Debug Mode: ${{ inputs.debug }}
+          - Test Pattern: ${{ inputs.test-pattern || 'All tests' }}
+          - Timeout: 25 minutes
+          
+          ## Test Results
+          EOF
+          
+          # Add test statistics if available
+          if [ -f "results.json" ]; then
+            TOTAL_TESTS=$(jq '.suites[].specs | length' results.json 2>/dev/null | paste -sd+ - | bc 2>/dev/null || echo "Unknown")
+            PASSED_TESTS=$(jq '.suites[].specs[].tests[] | select(.status == "passed") | 1' results.json 2>/dev/null | wc -l || echo "Unknown")
+            FAILED_TESTS=$(jq '.suites[].specs[].tests[] | select(.status == "failed") | 1' results.json 2>/dev/null | wc -l || echo "Unknown")
+            
+            cat >> e2e-artifacts/${{ matrix.browser }}/summary.md << EOF
+          - Total Tests: $TOTAL_TESTS
+          - Passed: $PASSED_TESTS
+          - Failed: $FAILED_TESTS
+          EOF
+          fi
+          
+          # Add failure details if tests failed
+          if [ "${{ steps.test-execution.outputs.status }}" = "failed" ]; then
+            echo "" >> e2e-artifacts/${{ matrix.browser }}/summary.md
+            echo "## Failure Analysis" >> e2e-artifacts/${{ matrix.browser }}/summary.md
+            echo "Tests failed for ${{ matrix.browser }}. Check the HTML report for detailed failure information." >> e2e-artifacts/${{ matrix.browser }}/summary.md
+          fi
+
+      - name: Upload E2E test results - ${{ matrix.browser }}
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: e2e-test-results-${{ matrix.browser }}
+          path: e2e-artifacts/${{ matrix.browser }}/
+          retention-days: 14
+
+  # Deploy test report to GitHub Pages
+  deploy-test-report:
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    if: always() && github.event_name == 'pull_request'
+    environment:
+      name: e2e-reports
+      url: ${{ steps.deploy-report.outputs.page_url }}
+    steps:
+      - name: Download all E2E test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-test-results-*
+          path: all-e2e-results
+          merge-multiple: true
+
+      - name: Prepare report for deployment
+        id: prepare-report
+        run: |
+          mkdir -p report-site
+          
+          # Create index page with links to all browser reports
+          cat > report-site/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <title>E2E Test Reports</title>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; margin: 40px; }
+              .browser-report { margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+              .status-passed { border-left: 4px solid #28a745; }
+              .status-failed { border-left: 4px solid #dc3545; }
+              a { color: #0366d6; text-decoration: none; }
+              a:hover { text-decoration: underline; }
+            </style>
+          </head>
+          <body>
+            <h1>E2E Test Reports</h1>
+            <p><strong>Generated:</strong> $(date -u)</p>
+          EOF
+          
+          # Process each browser's results
+          for browser_dir in all-e2e-results/*/; do
+            if [ -d "$browser_dir" ]; then
+              BROWSER=$(basename "$browser_dir")
+              echo "Processing $BROWSER results"
+              
+              # Copy browser report to site
+              if [ -d "$browser_dir/html-report" ]; then
+                cp -r "$browser_dir/html-report" "report-site/$BROWSER-report"
+              fi
+              
+              # Read summary and add to index
+              STATUS="unknown"
+              if [ -f "$browser_dir/summary.md" ]; then
+                STATUS=$(grep "Status:" "$browser_dir/summary.md" | cut -d: -f2 | xargs || echo "unknown")
+                
+                cat >> report-site/index.html << EOF
+                <div class="browser-report status-$STATUS">
+                  <h2>$BROWSER</h2>
+                  <p><strong>Status:</strong> $STATUS</p>
+                  <a href="$BROWSER-report/index.html">View detailed report →</a>
+                </div>
+          EOF
+              fi
+            fi
+          done
+          
+          # Close HTML
+          cat >> report-site/index.html << 'EOF'
+          </body>
+          </html>
+          EOF
+          
+          echo "Report site prepared successfully"
+          ls -la report-site/
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload to GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: report-site/
+
+      - name: Deploy to GitHub Pages
+        id: deploy-report
+        uses: actions/deploy-pages@v4
+
+  # Consolidate E2E test results
+  consolidate-e2e-results:
+    runs-on: ubuntu-latest
+    needs: e2e-tests
+    if: always()
+    steps:
+      - name: Download all E2E test artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: e2e-test-results-*
+          path: all-e2e-results
+          merge-multiple: true
+
+      - name: Generate consolidated E2E report
+        run: |
+          echo "# E2E Tests Consolidated Report" > e2e-consolidated-report.md
+          echo "" >> e2e-consolidated-report.md
+          echo "**Environment**: ${{ env.TEST_ENV_URL }}" >> e2e-consolidated-report.md
+          echo "**Timestamp**: $(date -u)" >> e2e-consolidated-report.md
+          echo "" >> e2e-consolidated-report.md
+          
+          FAILED_BROWSERS=0
+          TOTAL_BROWSERS=0
+          
+          echo "## Browser Test Results" >> e2e-consolidated-report.md
+          echo "" >> e2e-consolidated-report.md
+          
+          for browser_dir in all-e2e-results/*/; do
+            if [ -d "$browser_dir" ]; then
+              BROWSER=$(basename "$browser_dir")
+              TOTAL_BROWSERS=$((TOTAL_BROWSERS + 1))
+              
+              if [ -f "$browser_dir/summary.md" ]; then
+                STATUS=$(grep "Status:" "$browser_dir/summary.md" | cut -d: -f2 | xargs || echo "unknown")
+                
+                if [ "$STATUS" = "failed" ]; then
+                  FAILED_BROWSERS=$((FAILED_BROWSERS + 1))
+                  echo "- ❌ **$BROWSER**: $STATUS" >> e2e-consolidated-report.md
+                else
+                  echo "- ✅ **$BROWSER**: $STATUS" >> e2e-consolidated-report.md
+                fi
+              else
+                echo "- ⚠️ **$BROWSER**: No summary available" >> e2e-consolidated-report.md
+              fi
+            fi
+          done
+          
+          echo "" >> e2e-consolidated-report.md
+          echo "## Summary" >> e2e-consolidated-report.md
+          echo "- **Total Browsers**: $TOTAL_BROWSERS" >> e2e-consolidated-report.md
+          echo "- **Failed Browsers**: $FAILED_BROWSERS" >> e2e-consolidated-report.md
+          
+          if [ $FAILED_BROWSERS -gt 0 ]; then
+            echo "- **Overall Status**: ❌ FAILED" >> e2e-consolidated-report.md
+            echo "E2E_TESTS_FAILED=true" >> $GITHUB_ENV
+          else
+            echo "- **Overall Status**: ✅ PASSED" >> e2e-consolidated-report.md
+          fi
+
+      - name: Upload consolidated E2E results
+        uses: actions/upload-artifact@v4
+        with:
+          name: e2e-tests-consolidated
+          path: |
+            e2e-consolidated-report.md
+            all-e2e-results/
+          retention-days: 14
+
+      - name: Comment PR with E2E test results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## 🎭 E2E Test Results\n\n';
+            
+            if (fs.existsSync('e2e-consolidated-report.md')) {
+              const report = fs.readFileSync('e2e-consolidated-report.md', 'utf8');
+              comment += report;
+              
+              // Add link to deployed report if available
+              const deployJobUrl = `${{ needs.deploy-test-report.outputs.page_url || '' }}`;
+              if (deployJobUrl) {
+                comment += `\n\n📊 [View Detailed Test Report](${deployJobUrl})\n`;
+              }
+            } else {
+              comment += '❌ E2E test report not available\n';
+            }
+            
+            // Find existing comment to update or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.body.includes('🎭 E2E Test Results')
+            );
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+      - name: Fail if E2E tests failed
+        if: env.E2E_TESTS_FAILED == 'true'
+        run: |
+          echo "❌ One or more E2E test browsers failed"
+          exit 1

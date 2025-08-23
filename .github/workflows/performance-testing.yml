@@ -1,0 +1,435 @@
+name: 🚀 Performance Testing
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  schedule:
+    # Run performance tests daily at 2 AM UTC
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_suite:
+        description: 'Specific test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - hooks
+          - components
+          - bundle
+          - memory
+          - vitals
+          - lighthouse
+
+env:
+  NODE_VERSION: '20'
+  PERFORMANCE_BUDGET_FAIL: true
+
+jobs:
+  performance-test:
+    name: 🧪 Performance Tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    
+    strategy:
+      matrix:
+        test-suite:
+          - content-hooks
+          - component-rendering
+          - bundle-analysis
+          - memory-usage
+          - web-vitals
+      fail-fast: false
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2 # Need previous commit for trend analysis
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 📚 Install Dependencies
+        run: |
+          npm ci
+          # Install additional performance testing dependencies
+          npm install --no-save lighthouse @testing-library/react-hooks
+      
+      - name: 🔨 Build Application
+        run: npm run build
+        env:
+          NODE_ENV: production
+      
+      - name: 🧪 Run Performance Tests - ${{ matrix.test-suite }}
+        run: npm run test:performance:${{ matrix.test-suite }}
+        env:
+          CI: true
+          NODE_OPTIONS: --expose-gc --max-old-space-size=4096
+      
+      - name: 📊 Upload Test Results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-results-${{ matrix.test-suite }}
+          path: |
+            performance-reports/
+            coverage/
+          retention-days: 30
+
+  lighthouse-audit:
+    name: 🏆 Lighthouse Performance Audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    needs: performance-test
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 📚 Install Dependencies
+        run: |
+          npm ci
+          npm install --no-save lighthouse
+      
+      - name: 🔨 Build Application
+        run: npm run build
+      
+      - name: 🚀 Start Development Server
+        run: |
+          npm run preview &
+          sleep 10 # Wait for server to start
+          curl -f http://localhost:4173 || exit 1
+        env:
+          PORT: 4173
+      
+      - name: 🏆 Run Lighthouse Audit
+        run: |
+          npx lighthouse http://localhost:4173 \
+            --output=json \
+            --output=html \
+            --output-path=lighthouse-report \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --quiet
+      
+      - name: 📊 Parse Lighthouse Results
+        id: lighthouse
+        run: |
+          # Extract scores from Lighthouse report
+          PERFORMANCE=$(node -pe "JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.categories.performance.score * 100")
+          ACCESSIBILITY=$(node -pe "JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.categories.accessibility.score * 100")
+          BEST_PRACTICES=$(node -pe "JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.categories['best-practices'].score * 100")
+          SEO=$(node -pe "JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.categories.seo.score * 100")
+          
+          echo "performance=$PERFORMANCE" >> $GITHUB_OUTPUT
+          echo "accessibility=$ACCESSIBILITY" >> $GITHUB_OUTPUT
+          echo "best-practices=$BEST_PRACTICES" >> $GITHUB_OUTPUT
+          echo "seo=$SEO" >> $GITHUB_OUTPUT
+          
+          # Extract Core Web Vitals
+          LCP=$(node -pe "Math.round(JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.audits['largest-contentful-paint'].numericValue)")
+          FID=$(node -pe "Math.round(JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.audits['max-potential-fid'].numericValue)")
+          CLS=$(node -pe "JSON.parse(require('fs').readFileSync('lighthouse-report.json')).lhr.audits['cumulative-layout-shift'].numericValue.toFixed(3)")
+          
+          echo "lcp=$LCP" >> $GITHUB_OUTPUT
+          echo "fid=$FID" >> $GITHUB_OUTPUT
+          echo "cls=$CLS" >> $GITHUB_OUTPUT
+      
+      - name: ✅ Check Performance Budgets
+        run: |
+          # Performance budget checks
+          if (( $(echo "${{ steps.lighthouse.outputs.performance }} < 90" | bc -l) )); then
+            echo "❌ Performance score (${{ steps.lighthouse.outputs.performance }}) below budget (90)"
+            exit 1
+          fi
+          
+          if (( $(echo "${{ steps.lighthouse.outputs.accessibility }} < 95" | bc -l) )); then
+            echo "❌ Accessibility score (${{ steps.lighthouse.outputs.accessibility }}) below budget (95)"
+            exit 1
+          fi
+          
+          if (( $(echo "${{ steps.lighthouse.outputs.lcp }} > 2500" | bc -l) )); then
+            echo "❌ LCP (${{ steps.lighthouse.outputs.lcp }}ms) exceeds budget (2500ms)"
+            exit 1
+          fi
+          
+          if (( $(echo "${{ steps.lighthouse.outputs.cls }} > 0.1" | bc -l) )); then
+            echo "❌ CLS (${{ steps.lighthouse.outputs.cls }}) exceeds budget (0.1)"
+            exit 1
+          fi
+          
+          echo "✅ All performance budgets met!"
+      
+      - name: 📊 Upload Lighthouse Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-reports
+          path: |
+            lighthouse-report.html
+            lighthouse-report.json
+          retention-days: 30
+      
+      - name: 💬 Comment PR with Results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const performance = ${{ steps.lighthouse.outputs.performance }};
+            const accessibility = ${{ steps.lighthouse.outputs.accessibility }};
+            const bestPractices = ${{ steps.lighthouse.outputs.best-practices }};
+            const seo = ${{ steps.lighthouse.outputs.seo }};
+            const lcp = ${{ steps.lighthouse.outputs.lcp }};
+            const fid = ${{ steps.lighthouse.outputs.fid }};
+            const cls = ${{ steps.lighthouse.outputs.cls }};
+            
+            const getScoreEmoji = (score) => score >= 90 ? '🟢' : score >= 50 ? '🟡' : '🔴';
+            const getWebVitalEmoji = (metric, value, good, poor) => 
+              value <= good ? '🟢' : value <= poor ? '🟡' : '🔴';
+            
+            const comment = `## 🚀 Performance Test Results
+            
+            ### Lighthouse Scores
+            | Category | Score | Status |
+            |----------|-------|--------|
+            | Performance | ${performance}/100 | ${getScoreEmoji(performance)} |
+            | Accessibility | ${accessibility}/100 | ${getScoreEmoji(accessibility)} |
+            | Best Practices | ${bestPractices}/100 | ${getScoreEmoji(bestPractices)} |
+            | SEO | ${seo}/100 | ${getScoreEmoji(seo)} |
+            
+            ### Core Web Vitals
+            | Metric | Value | Status |
+            |--------|-------|--------|
+            | Largest Contentful Paint | ${lcp}ms | ${getWebVitalEmoji('lcp', lcp, 2500, 4000)} |
+            | First Input Delay | ${fid}ms | ${getWebVitalEmoji('fid', fid, 100, 300)} |
+            | Cumulative Layout Shift | ${cls} | ${getWebVitalEmoji('cls', cls, 0.1, 0.25)} |
+            
+            **Legend**: 🟢 Good | 🟡 Needs Improvement | 🔴 Poor
+            
+            [View detailed Lighthouse report in the artifacts](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  comprehensive-benchmark:
+    name: 📊 Comprehensive Performance Benchmark
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 10 # More history for trend analysis
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 📚 Install Dependencies
+        run: |
+          npm ci
+          npm install --no-save lighthouse @testing-library/react-hooks
+      
+      - name: 🔨 Build Application
+        run: npm run build
+      
+      - name: 🚀 Start Development Server
+        run: |
+          npm run preview &
+          sleep 10
+        env:
+          PORT: 4173
+      
+      - name: 📊 Run Comprehensive Benchmark
+        run: node scripts/performance-benchmark.js --ci
+        env:
+          CI: true
+          NODE_OPTIONS: --expose-gc --max-old-space-size=4096
+      
+      - name: 📈 Performance Trend Analysis
+        id: trends
+        run: |
+          # Simple trend analysis (in production, you'd use a proper analytics service)
+          if [ -f "performance-reports/performance-*.json" ]; then
+            LATEST_SCORE=$(find performance-reports -name "performance-*.json" -exec jq '.summary.overallScore' {} \; | tail -1)
+            echo "latest-score=$LATEST_SCORE" >> $GITHUB_OUTPUT
+            
+            if (( $(echo "$LATEST_SCORE < 85" | bc -l) )); then
+              echo "performance-alert=true" >> $GITHUB_OUTPUT
+            else
+              echo "performance-alert=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+      
+      - name: 🚨 Performance Alert
+        if: steps.trends.outputs.performance-alert == 'true'
+        run: |
+          echo "::warning::Performance score (${{ steps.trends.outputs.latest-score }}) is below acceptable threshold (85)"
+          # In production, you might send alerts to Slack, email, etc.
+      
+      - name: 📊 Upload Comprehensive Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: comprehensive-performance-reports
+          path: |
+            performance-reports/
+            lighthouse-reports/
+          retention-days: 90 # Keep longer for trend analysis
+      
+      - name: 📈 Update Performance Badge
+        if: github.ref == 'refs/heads/main'
+        run: |
+          # Create a simple badge for README (in production, use shields.io API)
+          SCORE=${{ steps.trends.outputs.latest-score || '0' }}
+          COLOR=$([ $SCORE -gt 90 ] && echo "brightgreen" || [ $SCORE -gt 80 ] && echo "yellow" || echo "red")
+          
+          echo "Performance Score: $SCORE - Color: $COLOR"
+          # You could update a badge or status here
+
+  bundle-analysis:
+    name: 📦 Bundle Size Analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 📦 Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+      
+      - name: 📚 Install Dependencies
+        run: npm ci
+      
+      - name: 🔨 Build Application
+        run: npm run build
+      
+      - name: 📊 Analyze Bundle Size
+        run: |
+          # Get bundle sizes
+          TOTAL_SIZE=$(du -sb dist/ | cut -f1)
+          JS_SIZE=$(find dist -name "*.js" -exec du -cb {} + | tail -1 | cut -f1)
+          CSS_SIZE=$(find dist -name "*.css" -exec du -cb {} + | tail -1 | cut -f1)
+          
+          echo "Total bundle size: $(($TOTAL_SIZE / 1024))KB"
+          echo "JavaScript size: $(($JS_SIZE / 1024))KB" 
+          echo "CSS size: $(($CSS_SIZE / 1024))KB"
+          
+          # Check bundle size budget (500KB = 512000 bytes)
+          if [ $TOTAL_SIZE -gt 512000 ]; then
+            echo "❌ Bundle size exceeds budget: $(($TOTAL_SIZE / 1024))KB > 500KB"
+            exit 1
+          fi
+          
+          echo "✅ Bundle size within budget"
+      
+      - name: 📊 Bundle Size Comment
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const path = require('path');
+            
+            // Get bundle stats
+            const getDirectorySize = (dir) => {
+              const { execSync } = require('child_process');
+              const size = execSync(\`du -sb \${dir}\`).toString().split('\\t')[0];
+              return parseInt(size);
+            };
+            
+            const totalSize = getDirectorySize('dist');
+            const totalSizeKB = Math.round(totalSize / 1024);
+            
+            const files = fs.readdirSync('dist', { recursive: true });
+            const assets = files
+              .filter(file => file.endsWith('.js') || file.endsWith('.css'))
+              .map(file => {
+                const filePath = path.join('dist', file);
+                const size = fs.statSync(filePath).size;
+                return { name: file, size: Math.round(size / 1024) };
+              })
+              .sort((a, b) => b.size - a.size)
+              .slice(0, 5);
+            
+            const comment = \`## 📦 Bundle Size Analysis
+            
+            **Total Bundle Size**: \${totalSizeKB}KB
+            **Budget**: 500KB
+            **Status**: \${totalSizeKB <= 500 ? '✅ Within budget' : '❌ Exceeds budget'}
+            
+            ### Largest Assets
+            \${assets.map(asset => \`- \${asset.name}: \${asset.size}KB\`).join('\\n')}
+            
+            ### Bundle Breakdown
+            | Type | Size | Status |
+            |------|------|--------|
+            | Total | \${totalSizeKB}KB | \${totalSizeKB <= 500 ? '✅' : '❌'} |
+            | Budget | 500KB | Target |
+            \`;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Clean up old artifacts to save storage
+  cleanup:
+    name: 🗑️ Cleanup Old Artifacts
+    runs-on: ubuntu-latest
+    if: github.event_name == 'schedule'
+    
+    steps:
+      - name: 🗑️ Delete Old Artifacts
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - 30); // Keep last 30 days
+            
+            const artifacts = await github.rest.actions.listArtifactsForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              per_page: 100
+            });
+            
+            for (const artifact of artifacts.data.artifacts) {
+              const createdDate = new Date(artifact.created_at);
+              
+              if (createdDate < cutoffDate && artifact.name.includes('performance')) {
+                console.log(\`Deleting old artifact: \${artifact.name} from \${createdDate}\`);
+                
+                await github.rest.actions.deleteArtifact({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  artifact_id: artifact.id
+                });
+              }
+            }

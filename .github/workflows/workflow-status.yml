@@ -1,0 +1,417 @@
+name: Workflow Status Dashboard
+
+on:
+  schedule:
+    # Run every hour to keep status updated
+    - cron: '0 * * * *'
+  workflow_dispatch:
+    inputs:
+      generate_report:
+        description: 'Generate comprehensive status report'
+        required: false
+        default: true
+        type: boolean
+      check_history:
+        description: 'Check workflow history (days)'
+        required: false
+        default: 7
+        type: number
+
+permissions:
+  contents: read
+  actions: read
+  checks: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  workflow-status:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Get workflow status
+        id: status
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const checkDays = ${{ inputs.check_history || 7 }};
+            const since = new Date();
+            since.setDate(since.getDate() - checkDays);
+            
+            // Define our workflows
+            const workflows = [
+              { name: 'tests.yml', title: 'Comprehensive Tests', critical: true },
+              { name: 'test-unit.yml', title: 'Unit Tests', critical: true },
+              { name: 'test-integration.yml', title: 'Integration Tests', critical: true },
+              { name: 'test-e2e.yml', title: 'E2E Tests', critical: true },
+              { name: 'test-performance.yml', title: 'Performance Tests', critical: false },
+              { name: 'test-a11y.yml', title: 'Accessibility Tests', critical: false },
+              { name: 'test-orchestrator.yml', title: 'Test Orchestrator', critical: false },
+              { name: 'deploy.yml', title: 'Deployment', critical: true },
+              { name: 'workflow-status.yml', title: 'Status Dashboard', critical: false }
+            ];
+            
+            let statusReport = '# 📊 Workflow Status Dashboard\n\n';
+            statusReport += `**Generated:** ${new Date().toISOString()}\n`;
+            statusReport += `**Period:** Last ${checkDays} days\n\n`;
+            
+            let healthyWorkflows = 0;
+            let totalWorkflows = 0;
+            let criticalIssues = 0;
+            
+            statusReport += '## 🔍 Workflow Health Status\n\n';
+            statusReport += '| Workflow | Status | Last Run | Success Rate | Issues |\n';
+            statusReport += '|----------|--------|----------|--------------|--------|\n';
+            
+            for (const workflow of workflows) {
+              totalWorkflows++;
+              
+              try {
+                // Get workflow by filename
+                const { data: workflowData } = await github.rest.actions.getWorkflowByFilename({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_filename: workflow.name
+                }).catch(() => ({ data: null }));
+                
+                if (!workflowData) {
+                  statusReport += `| ${workflow.title} | ❓ Not Found | - | - | Missing workflow file |\n`;
+                  if (workflow.critical) criticalIssues++;
+                  continue;
+                }
+                
+                // Get recent runs
+                const { data: runs } = await github.rest.actions.listWorkflowRuns({
+                  owner: context.repo.owner,
+                  repo: context.repo.repo,
+                  workflow_id: workflowData.id,
+                  per_page: 20,
+                  created: `>=${since.toISOString()}`
+                });
+                
+                if (runs.workflow_runs.length === 0) {
+                  statusReport += `| ${workflow.title} | ⚪ No Runs | - | - | No recent activity |\n`;
+                  continue;
+                }
+                
+                // Calculate success rate
+                const successfulRuns = runs.workflow_runs.filter(run => run.conclusion === 'success').length;
+                const successRate = Math.round((successfulRuns / runs.workflow_runs.length) * 100);
+                
+                const lastRun = runs.workflow_runs[0];
+                const lastRunTime = new Date(lastRun.created_at).toLocaleDateString();
+                
+                let status = '';
+                let issues = '';
+                
+                if (lastRun.conclusion === 'success') {
+                  status = '✅ Healthy';
+                  healthyWorkflows++;
+                } else if (lastRun.conclusion === 'failure') {
+                  status = '❌ Failed';
+                  issues = `Last run failed: ${lastRun.display_title}`;
+                  if (workflow.critical) criticalIssues++;
+                } else if (lastRun.status === 'in_progress') {
+                  status = '🔄 Running';
+                } else {
+                  status = '⚠️ Unknown';
+                  issues = `Status: ${lastRun.conclusion || lastRun.status}`;
+                }
+                
+                if (successRate < 80 && workflow.critical) {
+                  issues += issues ? '; ' : '';
+                  issues += `Low success rate (${successRate}%)`;
+                  if (workflow.critical && successRate < 50) criticalIssues++;
+                }
+                
+                statusReport += `| ${workflow.title} | ${status} | ${lastRunTime} | ${successRate}% | ${issues || '-'} |\n`;
+                
+              } catch (error) {
+                statusReport += `| ${workflow.title} | ❌ Error | - | - | API Error: ${error.message} |\n`;
+                if (workflow.critical) criticalIssues++;
+              }
+            }
+            
+            // Overall health summary
+            const healthPercentage = Math.round((healthyWorkflows / totalWorkflows) * 100);
+            statusReport += '\n## 📈 Overall System Health\n\n';
+            
+            let healthStatus = '';
+            if (healthPercentage >= 90) {
+              healthStatus = '🟢 Excellent';
+            } else if (healthPercentage >= 75) {
+              healthStatus = '🟡 Good';
+            } else if (healthPercentage >= 60) {
+              healthStatus = '🟠 Fair';
+            } else {
+              healthStatus = '🔴 Poor';
+            }
+            
+            statusReport += `**System Health:** ${healthStatus} (${healthPercentage}%)\n`;
+            statusReport += `**Healthy Workflows:** ${healthyWorkflows}/${totalWorkflows}\n`;
+            statusReport += `**Critical Issues:** ${criticalIssues}\n\n`;
+            
+            // Performance metrics
+            statusReport += '## ⚡ Performance Insights\n\n';
+            
+            // Get performance test results if available
+            try {
+              const { data: performanceArtifacts } = await github.rest.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'performance-tests-consolidated',
+                per_page: 5
+              });
+              
+              if (performanceArtifacts.artifacts.length > 0) {
+                statusReport += `**Latest Performance Test:** ${new Date(performanceArtifacts.artifacts[0].created_at).toLocaleDateString()}\n`;
+                statusReport += `**Performance Artifacts:** ${performanceArtifacts.total_count} available\n`;
+              } else {
+                statusReport += '**Performance Tests:** No recent results available\n';
+              }
+            } catch (error) {
+              statusReport += '**Performance Tests:** Status unavailable\n';
+            }
+            
+            // Test coverage insights
+            try {
+              const { data: coverageArtifacts } = await github.rest.actions.listArtifactsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: 'unit-test-consolidated-results',
+                per_page: 5
+              });
+              
+              if (coverageArtifacts.artifacts.length > 0) {
+                statusReport += `**Latest Coverage Report:** ${new Date(coverageArtifacts.artifacts[0].created_at).toLocaleDateString()}\n`;
+              } else {
+                statusReport += '**Coverage Reports:** No recent results available\n';
+              }
+            } catch (error) {
+              statusReport += '**Coverage Reports:** Status unavailable\n';
+            }
+            
+            // Recent activity
+            statusReport += '\n## 📋 Recent Activity\n\n';
+            
+            try {
+              const { data: recentRuns } = await github.rest.actions.listWorkflowRunsForRepo({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                per_page: 10,
+                created: `>=${since.toISOString()}`
+              });
+              
+              statusReport += '| Date | Workflow | Trigger | Status |\n';
+              statusReport += '|------|----------|---------|--------|\n';
+              
+              for (const run of recentRuns.workflow_runs.slice(0, 10)) {
+                const date = new Date(run.created_at).toLocaleDateString();
+                const workflow = run.name;
+                const trigger = run.event;
+                let status = '';
+                
+                switch (run.conclusion) {
+                  case 'success':
+                    status = '✅ Success';
+                    break;
+                  case 'failure':
+                    status = '❌ Failed';
+                    break;
+                  case 'cancelled':
+                    status = '⚠️ Cancelled';
+                    break;
+                  default:
+                    status = run.status === 'in_progress' ? '🔄 Running' : `❓ ${run.conclusion || run.status}`;
+                }
+                
+                statusReport += `| ${date} | ${workflow} | ${trigger} | ${status} |\n`;
+              }
+            } catch (error) {
+              statusReport += 'Unable to fetch recent activity\n';
+            }
+            
+            // Recommendations
+            statusReport += '\n## 💡 Recommendations\n\n';
+            
+            if (criticalIssues > 0) {
+              statusReport += '⚠️ **Critical Issues Detected:**\n';
+              statusReport += '- Review failed critical workflows immediately\n';
+              statusReport += '- Check logs for root cause analysis\n';
+              statusReport += '- Consider emergency fixes if deployment is affected\n\n';
+            }
+            
+            if (healthPercentage < 80) {
+              statusReport += '📈 **System Health Improvements:**\n';
+              statusReport += '- Review workflow configurations for reliability\n';
+              statusReport += '- Consider adding retry logic for flaky tests\n';
+              statusReport += '- Optimize test execution times\n\n';
+            }
+            
+            statusReport += '🔄 **Regular Maintenance:**\n';
+            statusReport += '- Monitor test execution times and optimize slow tests\n';
+            statusReport += '- Update dependencies regularly\n';
+            statusReport += '- Review and update performance budgets\n';
+            statusReport += '- Ensure accessibility standards are maintained\n\n';
+            
+            statusReport += '---\n';
+            statusReport += `*Dashboard generated at ${new Date().toISOString()} by Workflow Status Monitor*\n`;
+            
+            // Set outputs
+            core.setOutput('status-report', statusReport);
+            core.setOutput('health-percentage', healthPercentage);
+            core.setOutput('critical-issues', criticalIssues);
+            core.setOutput('healthy-workflows', healthyWorkflows);
+            core.setOutput('total-workflows', totalWorkflows);
+            
+            return { healthPercentage, criticalIssues };
+
+      - name: Save status report
+        if: inputs.generate_report != false
+        run: |
+          mkdir -p .github/status-reports
+          echo '${{ steps.status.outputs.status-report }}' > .github/status-reports/latest.md
+          echo '${{ steps.status.outputs.status-report }}' > .github/status-reports/$(date +%Y-%m-%d).md
+
+      - name: Upload status report
+        if: inputs.generate_report != false
+        uses: actions/upload-artifact@v4
+        with:
+          name: workflow-status-report
+          path: .github/status-reports/
+          retention-days: 90
+
+      - name: Create or update status issue
+        if: steps.status.outputs.critical-issues > 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const statusReport = `${{ steps.status.outputs.status-report }}`;
+            const criticalIssues = ${{ steps.status.outputs.critical-issues }};
+            
+            // Look for existing status issue
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'workflow-status',
+              state: 'open'
+            });
+            
+            const issueTitle = `🚨 Workflow Health Alert - ${criticalIssues} Critical Issues`;
+            const issueBody = statusReport + '\n\n---\n\n' +
+              '**Automatic Monitoring:** This issue is automatically updated by the Workflow Status Dashboard.\n' +
+              '**Resolution:** Issues will be automatically closed when all critical problems are resolved.\n';
+            
+            if (issues.length === 0) {
+              // Create new issue
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: issueTitle,
+                body: issueBody,
+                labels: ['workflow-status', 'critical', 'automated']
+              });
+            } else {
+              // Update existing issue
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issues[0].number,
+                title: issueTitle,
+                body: issueBody
+              });
+            }
+
+      - name: Close resolved status issues
+        if: steps.status.outputs.critical-issues == 0
+        uses: actions/github-script@v7
+        with:
+          script: |
+            // Look for open status issues
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: 'workflow-status',
+              state: 'open'
+            });
+            
+            for (const issue of issues) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+              
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body: '✅ **Resolved:** All critical workflow issues have been resolved. This issue is now closed.\n\n' +
+                      `System health is now at ${{ steps.status.outputs.health-percentage }}% with ${{ steps.status.outputs.healthy-workflows }}/${{ steps.status.outputs.total-workflows }} workflows healthy.`
+              });
+            }
+
+      - name: Post status to team channel (placeholder)
+        if: steps.status.outputs.health-percentage < 80
+        run: |
+          echo "Would post status to team communication channel"
+          echo "Health: ${{ steps.status.outputs.health-percentage }}%"
+          echo "Critical Issues: ${{ steps.status.outputs.critical-issues }}"
+          
+          # Example webhook integration (requires TEAM_WEBHOOK_URL secret):
+          # curl -X POST -H 'Content-type: application/json' \
+          #   --data "{\"text\":\"⚠️ Workflow Health Alert: ${{ steps.status.outputs.health-percentage }}% system health with ${{ steps.status.outputs.critical-issues }} critical issues\"}" \
+          #   ${{ secrets.TEAM_WEBHOOK_URL }}
+
+      - name: Generate workflow health badge
+        run: |
+          # Create a simple badge-like status
+          HEALTH=${{ steps.status.outputs.health-percentage }}
+          
+          if [ $HEALTH -ge 90 ]; then
+            COLOR="brightgreen"
+            LABEL="excellent"
+          elif [ $HEALTH -ge 75 ]; then
+            COLOR="green"
+            LABEL="good"
+          elif [ $HEALTH -ge 60 ]; then
+            COLOR="yellow"
+            LABEL="fair"
+          else
+            COLOR="red"
+            LABEL="poor"
+          fi
+          
+          echo "Workflow health: $HEALTH% ($LABEL)"
+          echo "WORKFLOW_HEALTH_COLOR=$COLOR" >> $GITHUB_ENV
+          echo "WORKFLOW_HEALTH_LABEL=$LABEL" >> $GITHUB_ENV
+          echo "WORKFLOW_HEALTH_PERCENTAGE=$HEALTH" >> $GITHUB_ENV
+
+      - name: Summary
+        run: |
+          echo "## 📊 Workflow Status Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**System Health:** ${{ env.WORKFLOW_HEALTH_PERCENTAGE }}% (${{ env.WORKFLOW_HEALTH_LABEL }})" >> $GITHUB_STEP_SUMMARY
+          echo "**Healthy Workflows:** ${{ steps.status.outputs.healthy-workflows }}/${{ steps.status.outputs.total-workflows }}" >> $GITHUB_STEP_SUMMARY
+          echo "**Critical Issues:** ${{ steps.status.outputs.critical-issues }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          if [ "${{ steps.status.outputs.critical-issues }}" -gt 0 ]; then
+            echo "⚠️ **Action Required:** Critical workflow issues detected" >> $GITHUB_STEP_SUMMARY
+            echo "- Review failed workflows in the Actions tab" >> $GITHUB_STEP_SUMMARY
+            echo "- Check for infrastructure or dependency issues" >> $GITHUB_STEP_SUMMARY
+            echo "- Monitor the automatically created issue for tracking" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "✅ **All Systems Operational:** No critical issues detected" >> $GITHUB_STEP_SUMMARY
+          fi
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "[View Detailed Report](../artifacts/workflow-status-report/latest.md)" >> $GITHUB_STEP_SUMMARY

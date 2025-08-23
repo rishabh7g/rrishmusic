@@ -1,0 +1,163 @@
+name: Performance Tests
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+  schedule:
+    # Run performance tests weekly on Sundays at 3 AM UTC
+    - cron: '0 3 * * 0'
+
+jobs:
+  performance-tests:
+    runs-on: ubuntu-latest
+    
+    name: Performance Tests
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Run performance tests
+        run: npm run test:performance
+        env:
+          NODE_ENV: test
+          VITEST_PERFORMANCE: true
+          
+      - name: Upload performance test results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-test-results
+          path: |
+            test-results/junit/performance-results.xml
+            test-results/json/performance-results.json
+            test-results/html/performance-report.html
+          retention-days: 30
+          
+      - name: Publish performance test results
+        uses: dorny/test-reporter@v1
+        if: always()
+        with:
+          name: Performance Test Results
+          path: test-results/junit/performance-results.xml
+          reporter: java-junit
+          fail-on-error: false
+
+  lighthouse-tests:
+    runs-on: ubuntu-latest
+    
+    name: Lighthouse Performance Audit
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.12.x
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Run Lighthouse CI
+        run: |
+          npm run preview &
+          sleep 5
+          npm run lighthouse:ci
+          
+      - name: Upload Lighthouse results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighthouse-results
+          path: |
+            lighthouse-reports/
+            test-results/reports/
+          retention-days: 30
+
+  bundle-analysis:
+    runs-on: ubuntu-latest
+    
+    name: Bundle Analysis
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build application
+        run: npm run build
+        
+      - name: Analyze bundle size
+        run: |
+          npm run bundle:size > bundle-size.txt
+          cat bundle-size.txt
+          
+      - name: Run bundle analysis tests
+        run: npm run test:performance:bundle
+        
+      - name: Upload bundle analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: bundle-analysis
+          path: |
+            bundle-size.txt
+            dist/
+          retention-days: 14
+
+  performance-summary:
+    runs-on: ubuntu-latest
+    needs: [performance-tests, lighthouse-tests, bundle-analysis]
+    if: always()
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts/
+          
+      - name: Performance Tests Summary
+        run: |
+          echo "### ⚡ Performance Tests Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Suite | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|------------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Performance Tests | ${{ needs.performance-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lighthouse Audit | ${{ needs.lighthouse-tests.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Bundle Analysis | ${{ needs.bundle-analysis.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "⚡ **Focus**: Component render times, memory usage, bundle optimization" >> $GITHUB_STEP_SUMMARY
+          echo "🎯 **Metrics**: Core Web Vitals, bundle size, performance benchmarks" >> $GITHUB_STEP_SUMMARY
+          echo "📊 **Reports**: Available in artifacts" >> $GITHUB_STEP_SUMMARY

@@ -1,0 +1,213 @@
+{
+  "version": "1.0.0",
+  "description": "Configuration for RrishMusic comprehensive test system",
+  "thresholds": {
+    "coverage": {
+      "unit": 80,
+      "integration": 70,
+      "overall": 85
+    },
+    "performance": {
+      "lighthouse": {
+        "performance": 85,
+        "accessibility": 90,
+        "bestPractices": 80,
+        "seo": 85
+      },
+      "webVitals": {
+        "fcp": 2000,
+        "lcp": 2500,
+        "cls": 0.1,
+        "fid": 100
+      },
+      "bundle": {
+        "javascript": 500,
+        "css": 100,
+        "total": 1000
+      }
+    },
+    "accessibility": {
+      "wcagLevel": "AA",
+      "minScore": 90
+    }
+  },
+  "environments": {
+    "local": {
+      "url": "http://localhost:4173",
+      "timeout": 30000
+    },
+    "staging": {
+      "url": "https://staging.rrishmusic.com",
+      "timeout": 60000
+    },
+    "production": {
+      "url": "https://www.rrishmusic.com",
+      "timeout": 60000
+    }
+  },
+  "browsers": {
+    "default": ["chromium"],
+    "comprehensive": ["chromium", "firefox", "webkit"],
+    "regression": ["chromium", "firefox"]
+  },
+  "testSuites": {
+    "quick": {
+      "description": "Fast feedback for development",
+      "tests": ["unit"],
+      "browsers": "default",
+      "environment": "local",
+      "timeout": 300000
+    },
+    "essential": {
+      "description": "Core functionality validation",
+      "tests": ["unit", "integration", "e2e"],
+      "browsers": "default",
+      "environment": "local",
+      "timeout": 900000
+    },
+    "comprehensive": {
+      "description": "Full test coverage across all browsers",
+      "tests": ["unit", "integration", "e2e", "performance", "a11y"],
+      "browsers": "comprehensive",
+      "environment": "production",
+      "timeout": 1800000
+    },
+    "performance": {
+      "description": "Performance and optimization validation",
+      "tests": ["performance"],
+      "browsers": "default",
+      "environment": "production",
+      "timeout": 600000
+    },
+    "accessibility": {
+      "description": "WCAG compliance validation",
+      "tests": ["a11y"],
+      "browsers": "default",
+      "environment": "production",
+      "timeout": 600000
+    },
+    "regression": {
+      "description": "Release validation testing",
+      "tests": ["e2e", "performance"],
+      "browsers": "regression",
+      "environment": "production",
+      "timeout": 1200000
+    }
+  },
+  "scheduling": {
+    "daily": {
+      "cron": "0 2 * * *",
+      "suite": "comprehensive",
+      "environment": "production"
+    },
+    "frequent": {
+      "cron": "0 */6 * * *",
+      "suite": "essential",
+      "environment": "production"
+    }
+  },
+  "notifications": {
+    "github": {
+      "createIssues": true,
+      "updatePRs": true,
+      "labels": {
+        "failure": ["automated-test-failure", "bug", "priority-high"],
+        "performance": ["performance", "optimization"],
+        "accessibility": ["accessibility", "a11y"]
+      }
+    },
+    "slack": {
+      "enabled": false,
+      "channels": {
+        "general": "#development",
+        "critical": "#alerts"
+      }
+    }
+  },
+  "artifacts": {
+    "retention": {
+      "coverage": 14,
+      "reports": 30,
+      "screenshots": 7,
+      "performance": 90
+    },
+    "cleanup": {
+      "enabled": true,
+      "schedule": "0 3 * * 0",
+      "keepDays": 30
+    }
+  },
+  "reporting": {
+    "formats": ["html", "json", "markdown"],
+    "includeScreenshots": true,
+    "includeCoverage": true,
+    "includePerformanceMetrics": true,
+    "generateTrends": true
+  },
+  "filePatterns": {
+    "unit": [
+      "src/**/*.{ts,tsx,js,jsx}",
+      "tests/unit/**/*.test.{ts,tsx,js,jsx}"
+    ],
+    "integration": [
+      "src/components/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "src/utils/**/*.{ts,tsx}",
+      "tests/integration/**/*.test.{ts,tsx}"
+    ],
+    "e2e": [
+      "src/pages/**/*.{ts,tsx}",
+      "src/components/**/*.{ts,tsx}",
+      "index.html",
+      "vite.config.ts",
+      "tests/e2e/**/*.spec.{ts,tsx}"
+    ],
+    "performance": [
+      "src/components/**/*.{ts,tsx}",
+      "src/hooks/**/*.{ts,tsx}",
+      "vite.config.ts",
+      "package.json",
+      "tests/performance/**/*.test.{ts,tsx}"
+    ],
+    "a11y": [
+      "src/components/**/*.{ts,tsx}",
+      "src/pages/**/*.{ts,tsx}",
+      "tests/a11y/**/*.test.{ts,tsx}"
+    ],
+    "docs": [
+      "**/*.md",
+      "**/*.txt",
+      "docs/**/*"
+    ]
+  },
+  "parallel": {
+    "maxWorkers": 4,
+    "strategy": "category-based",
+    "timeout": 1800000
+  },
+  "cache": {
+    "enabled": true,
+    "keys": {
+      "nodeModules": "node-modules-{node-version}-{package-lock-hash}",
+      "playwright": "playwright-{package-lock-hash}",
+      "buildCache": "build-cache-{source-hash}"
+    },
+    "ttl": {
+      "nodeModules": 604800,
+      "playwright": 604800,
+      "buildCache": 86400
+    }
+  },
+  "security": {
+    "dependencyCheck": true,
+    "vulnerabilityScanning": true,
+    "secretScanning": true
+  },
+  "metadata": {
+    "createdAt": "2025-01-23",
+    "version": "1.0.0",
+    "compatibilityVersion": ">=1.0.0",
+    "author": "Claude Code Assistant",
+    "lastUpdated": "2025-01-23"
+  }
+}

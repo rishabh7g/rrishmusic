@@ -1,90 +1,164 @@
-# Content Management Guide
+# RrishMusic Content Management Guide
 
-This guide explains how to manage content for the RrishMusic website using the file-based content management system.
+## Overview
 
-## 📋 Overview
+The RrishMusic website uses a **TypeScript + JSON-based content management system** that provides type-safe, hot-reloadable content updates. This system is designed for easy maintenance by both developers and non-technical users.
 
-The website uses a **file-based content management system** where all content is stored in JSON files with full TypeScript type safety. This approach provides:
-
-- ✅ **Version control** - All content changes are tracked in Git
-- ✅ **Type safety** - Full TypeScript validation  
-- ✅ **Zero cost** - No external services required
-- ✅ **Performance** - Content bundled at build time
-- ✅ **Developer friendly** - Easy to update via code editor
-
-## 📁 Content Structure
+### System Architecture
 
 ```
-src/
-├── content/
-│   ├── site-content.json    # Main site content (hero, about, etc.)
-│   ├── lessons.json         # Lesson packages and pricing
-│   └── testimonials.json    # Student testimonials
-├── types/
-│   └── content.ts          # TypeScript type definitions
-├── hooks/
-│   └── useContent.ts       # Content access hooks
-└── utils/
-    └── contentManager.ts   # Content utilities
+src/content/
+├── site-content.json      # Main website content
+├── lessons.json          # Lesson packages and pricing
+└── testimonials.json     # Student testimonials
+
+src/types/content.ts       # TypeScript type definitions
+src/hooks/useContent.ts    # React hooks for accessing content
+src/utils/contentManager.ts # Validation and utility functions
 ```
 
-## 🛠️ Quick Start
+### Key Benefits
 
-### 1. Update Site Content
+- **Type Safety**: TypeScript ensures content structure integrity
+- **Hot Reloading**: Changes appear instantly during development
+- **Version Control**: All content changes are tracked in Git
+- **Validation**: Automatic content validation prevents errors
+- **Developer Friendly**: JSON format with full IDE support
 
-Edit `/src/content/site-content.json`:
+---
 
+## Content Structure Reference
+
+### 1. Site Content (`src/content/site-content.json`)
+
+The main website content is organized into logical sections:
+
+#### Hero Section
 ```json
 {
   "hero": {
     "title": "Hi, I'm Rrish.",
-    "subtitle": "Your updated subtitle here...",
+    "subtitle": "Description of what you do",
+    "ctaText": "Call to action text",
+    "instagramHandle": "@rrishmusic",
     "instagramUrl": "https://instagram.com/rrishmusic"
-  },
+  }
+}
+```
+
+#### About Section
+```json
+{
   "about": {
-    "title": "About Me", 
+    "title": "About Me",
     "content": [
-      "First paragraph of about section...",
-      "Second paragraph..."
+      "First paragraph about yourself",
+      "Second paragraph with more details"
+    ],
+    "skills": [
+      "Blues Improvisation",
+      "Music Theory",
+      "Guitar & Piano"
     ]
   }
 }
 ```
 
-### 2. Update Lesson Prices
+#### Teaching Approach
+```json
+{
+  "approach": {
+    "title": "My Teaching Approach",
+    "subtitle": "Brief description",
+    "principles": [
+      {
+        "title": "Principle Name",
+        "description": "Explanation of this principle",
+        "icon": "icon-name"
+      }
+    ]
+  }
+}
+```
 
-**Option A: Direct Edit**
-Edit `/src/content/lessons.json`:
+#### Contact Information
+```json
+{
+  "contact": {
+    "title": "Get Started Today",
+    "subtitle": "Call to action",
+    "methods": [
+      {
+        "type": "email",
+        "label": "Email",
+        "value": "hello@rrishmusic.com",
+        "href": "mailto:hello@rrishmusic.com",
+        "primary": true
+      }
+    ],
+    "location": "Melbourne, Victoria, Australia"
+  }
+}
+```
 
+#### SEO Settings
+```json
+{
+  "seo": {
+    "defaultTitle": "Page Title | Site Name",
+    "defaultDescription": "Site description for search engines",
+    "defaultKeywords": "relevant, keywords, separated, by, commas",
+    "ogImage": "/images/og-image.jpg"
+  }
+}
+```
+
+### 2. Lesson Content (`src/content/lessons.json`)
+
+#### Lesson Packages
 ```json
 {
   "packages": [
     {
-      "id": "single",
-      "name": "Single Lesson",
-      "price": 60,
-      "sessions": 1
+      "id": "unique-id",
+      "name": "Package Name",
+      "sessions": 4,
+      "price": 190,
+      "discount": 5,
+      "popular": false,
+      "features": [
+        "Feature 1",
+        "Feature 2"
+      ],
+      "description": "Package description"
     }
   ]
 }
 ```
 
-**Option B: Using Script**
-```bash
-node scripts/update-content.cjs prices
+#### Additional Information
+```json
+{
+  "additionalInfo": {
+    "sessionLength": "60 minutes per individual lesson",
+    "cancellationPolicy": "24-hour notice required",
+    "reschedulePolicy": "Free rescheduling with 4-hour notice",
+    "location": "Melbourne CBD studio or online",
+    "instruments": ["Guitar", "Piano", "Music Theory"],
+    "levels": "All levels welcome",
+    "ageRange": "Lessons available for ages 12 and up"
+  }
+}
 ```
 
-### 3. Add Testimonials
-
-**Option A: Direct Edit**
-Edit `/src/content/testimonials.json`:
+### 3. Testimonials (`src/content/testimonials.json`)
 
 ```json
 [
   {
-    "id": "new-student",
-    "name": "New Student Name",
-    "text": "Great lesson experience...",
+    "id": "unique-id",
+    "name": "Student Name",
+    "text": "Testimonial content",
     "rating": 5,
     "instrument": "Guitar",
     "level": "beginner",
@@ -93,227 +167,466 @@ Edit `/src/content/testimonials.json`:
 ]
 ```
 
-**Option B: Using Script**
-```bash
-node scripts/update-content.cjs testimonial
-```
+---
 
-## 🎯 Content Management Scripts
+## Content Update Procedures
 
-We provide several Node.js scripts for easier content management:
+### Prerequisites
 
-### Validate Content
-```bash
-node scripts/update-content.cjs validate
-```
-Checks all JSON files for structural validity and required fields.
+Before making content updates:
 
-### Backup Content  
-```bash
-node scripts/update-content.cjs backup
-```
-Creates timestamped backup of all content files in `/backups/content/`.
+1. **Development Environment**: Ensure you have the development server running
+   ```bash
+   npm run dev
+   ```
 
-### Update Prices Interactively
-```bash 
-node scripts/update-content.cjs prices
-```
-Guided process to update lesson package prices with automatic discount calculation.
+2. **Text Editor**: Use VS Code or similar editor with JSON validation
+3. **Backup**: Commit any existing changes before making updates
 
-### Add Testimonial
-```bash
-node scripts/update-content.cjs testimonial  
-```
-Interactive form to add new student testimonials.
+### Step-by-Step Update Process
 
-## 📝 Content Types Reference
+#### 1. Updating Basic Site Content
 
-### Site Content (`site-content.json`)
+**To update hero section text:**
 
-```typescript
-interface SiteContent {
-  hero: {
-    title: string;
-    subtitle: string;
-    ctaText: string;
-    instagramHandle: string;
-    instagramUrl: string;
-  };
-  about: {
-    title: string;
-    content: string[];
-    skills: string[];
-  };
-  // ... other sections
-}
-```
+1. Open `/Users/rrish/Documents/code/rrishmusic/src/content/site-content.json`
+2. Locate the `"hero"` section
+3. Modify the desired fields:
+   ```json
+   {
+     "hero": {
+       "title": "Hi, I'm Rrish.",  ← Edit this
+       "subtitle": "Your new subtitle here"  ← Edit this
+     }
+   }
+   ```
+4. Save the file
+5. Check your browser - changes should appear immediately
 
-### Lesson Content (`lessons.json`)
+**To update about section:**
 
-```typescript
-interface LessonPackage {
-  id: string;
-  name: string;
-  sessions: number;
-  price: number;
-  discount?: number;
-  features: string[];
-  popular?: boolean;
-  description?: string;
-}
-```
+1. Find the `"about"` section in the same file
+2. Update content array (each item is a paragraph):
+   ```json
+   {
+     "about": {
+       "content": [
+         "New first paragraph",
+         "New second paragraph",
+         "You can add more paragraphs here"
+       ],
+       "skills": [
+         "Update your skills list",
+         "Add new skills",
+         "Remove old ones"
+       ]
+     }
+   }
+   ```
 
-### Testimonials (`testimonials.json`)
+#### 2. Updating Contact Information
 
-```typescript
-interface Testimonial {
-  id: string;
-  name: string;
-  text: string;
-  rating: number; // 1-5
-  instrument?: string;
-  level?: 'beginner' | 'intermediate' | 'advanced';
-  featured?: boolean;
-}
-```
+**To add or modify contact methods:**
 
-## 🔧 Usage in Components  
+1. Open `site-content.json`
+2. Navigate to `"contact"` → `"methods"`
+3. Add new contact method:
+   ```json
+   {
+     "contact": {
+       "methods": [
+         {
+           "type": "phone",
+           "label": "Phone",
+           "value": "+61 xxx xxx xxx",
+           "href": "tel:+61xxxxxxxxx",
+           "primary": false
+         }
+       ]
+     }
+   }
+   ```
 
-### Using Content Hooks
+**Available contact types:** `"email"`, `"instagram"`, `"phone"`
 
-```typescript
-import { useContent, useSectionContent } from '@/hooks/useContent';
+#### 3. Updating Lesson Pricing
 
-function HeroSection() {
-  const { data: heroContent } = useSectionContent('hero');
-  
-  return (
-    <h1>{heroContent.title}</h1>
-  );
-}
+**To modify lesson prices:**
 
-function LessonsSection() {
-  const { packages } = useLessonPackages({ popular: true });
-  
-  return (
-    <div>
-      {packages.map(pkg => (
-        <div key={pkg.id}>
-          <h3>{pkg.name}</h3>
-          <p>${pkg.price}</p>
-        </div>
-      ))}
-    </div>
-  );
-}
-```
+1. Open `/Users/rrish/Documents/code/rrishmusic/src/content/lessons.json`
+2. Find the package to update:
+   ```json
+   {
+     "id": "package-4",
+     "name": "4-Lesson Package",
+     "sessions": 4,
+     "price": 190,  ← Update price here
+     "discount": 5  ← Update discount percentage
+   }
+   ```
 
-### Direct Content Access
+**To add a new lesson package:**
 
-```typescript
-import { rawContent } from '@/hooks/useContent';
+1. Add new object to the `"packages"` array:
+   ```json
+   {
+     "id": "package-12",
+     "name": "12-Lesson Package",
+     "sessions": 12,
+     "price": 480,
+     "discount": 20,
+     "popular": false,
+     "features": [
+       "12 individual lessons (1 hour each)",
+       "Comprehensive skill development",
+       "Priority booking",
+       "20% savings"
+     ],
+     "description": "Extended package for serious students"
+   }
+   ```
 
-// Access content directly (useful in constants, configs)
-const siteTitle = rawContent.site.seo.defaultTitle;
-const instagramUrl = rawContent.site.hero.instagramUrl;
-```
+**To mark a package as popular:**
+- Set `"popular": true` for the package you want to highlight
+- Only one package should have `"popular": true`
 
-## 🚀 Deployment Workflow
+#### 4. Managing Testimonials
 
-1. **Edit Content**: Modify JSON files locally
-2. **Validate**: Run `node scripts/update-content.cjs validate`
-3. **Test Locally**: Run `npm run dev` to test changes
-4. **Commit Changes**: Git commit with descriptive message
-5. **Push**: Push to GitHub - auto-deploys via GitHub Pages
+**To add a new testimonial:**
 
-### Example Workflow
-```bash
-# Edit content files
-vim src/content/site-content.json
+1. Open `/Users/rrish/Documents/code/rrishmusic/src/content/testimonials.json`
+2. Add new testimonial to the array:
+   ```json
+   {
+     "id": "new-student-id",
+     "name": "Student Name",
+     "text": "Their testimonial text here",
+     "rating": 5,
+     "instrument": "Guitar",
+     "level": "intermediate",
+     "featured": true
+   }
+   ```
 
-# Validate changes
-node scripts/update-content.cjs validate
+**Testimonial Guidelines:**
+- `id`: Must be unique (use format: `firstname-lastname-initial`)
+- `rating`: Number from 1-5
+- `level`: `"beginner"`, `"intermediate"`, or `"advanced"`
+- `featured`: Set to `true` for testimonials to appear on the homepage
+- `instrument`: Match instruments listed in lessons.json
 
-# Test locally
-npm run dev
+**To feature/unfeature testimonials:**
+- Set `"featured": true` for testimonials to show on homepage
+- Set `"featured": false` to hide from homepage but keep in database
 
-# Commit and push
-git add src/content/
-git commit -m "Update hero section copy and pricing"
-git push origin main
-```
+#### 5. Updating SEO Settings
 
-## 🔍 Content Validation
+**To improve search engine optimization:**
 
-### Automatic Validation
-- **Build Time**: TypeScript validates all content structure
-- **Runtime**: Hooks provide type-safe access
-- **Scripts**: Validation script checks JSON structure
+1. Open `site-content.json`
+2. Update the `"seo"` section:
+   ```json
+   {
+     "seo": {
+       "defaultTitle": "Rrish Music - Blues Lessons | Melbourne",
+       "defaultDescription": "Professional blues improvisation and music theory lessons in Melbourne. All skill levels welcome.",
+       "defaultKeywords": "blues guitar, piano lessons melbourne, improvisation, music theory",
+       "ogImage": "/images/social-share-image.jpg"
+     }
+   }
+   ```
 
-### Common Issues & Fixes
-
-**JSON Syntax Errors**
-```bash
-# Check for syntax issues
-node scripts/update-content.cjs validate
-```
-
-**Missing Required Fields**
-- Check TypeScript errors in IDE
-- Use validation script to identify missing fields
-
-**Image Paths**
-- All images should be in `/public/images/`
-- Use absolute paths starting with `/images/`
-
-## 🌟 Best Practices
-
-### Content Updates
-1. **Always backup** before major changes
-2. **Test locally** before pushing to production
-3. **Use descriptive commit messages** for content changes
-4. **Validate** content after editing
-
-### File Organization  
-1. **Keep JSON files clean** - use proper formatting
-2. **Use meaningful IDs** - helps with maintenance
-3. **Group related content** - don't spread across multiple files unnecessarily
-
-### SEO Considerations
-1. **Update meta descriptions** when changing page content
-2. **Keep URLs consistent** - avoid changing section IDs
-3. **Optimize images** before adding to content
-
-## 🛟 Troubleshooting
-
-### Build Errors
-```bash
-# Check TypeScript errors
-npm run type-check
-
-# Validate content structure  
-node scripts/update-content.cjs validate
-```
-
-### Content Not Updating
-1. Clear browser cache (Ctrl+F5)
-2. Check if changes were committed and pushed
-3. Verify GitHub Pages deployment status
-4. Check for console errors in browser
-
-### Performance Issues
-- **Image optimization**: Compress images before adding
-- **Content size**: Keep individual JSON files under 100KB
-- **Caching**: Content is cached at build time for performance
-
-## 📞 Support
-
-If you encounter issues with content management:
-1. Check this guide first
-2. Validate content using scripts
-3. Check GitHub Issues for similar problems
-4. Create new issue with validation output
+**SEO Best Practices:**
+- **Title**: Keep under 60 characters, include main keywords
+- **Description**: 150-160 characters, compelling and informative
+- **Keywords**: Use relevant terms, separated by commas
+- **ogImage**: Social media image (1200x630px recommended)
 
 ---
 
-**Next**: [Component Development Guide](COMPONENTS.md) | [Deployment Guide](DEPLOYMENT.md)
+## Development Integration
+
+### Git Workflow for Content Changes
+
+**For all content updates, follow this process:**
+
+1. **Create a branch for your changes:**
+   ```bash
+   git checkout -b content/update-lesson-pricing
+   ```
+
+2. **Make your content changes** following the procedures above
+
+3. **Test your changes:**
+   - Check the development server (`npm run dev`)
+   - Verify all content displays correctly
+   - Test on mobile devices
+
+4. **Commit your changes:**
+   ```bash
+   git add src/content/
+   git commit -m "content: update lesson pricing for 2025
+   
+   - Increased package prices by 5%
+   - Added new 12-lesson package option
+   - Updated package descriptions
+   
+   🤖 Generated with Claude Code
+   
+   Co-Authored-By: Claude <noreply@anthropic.com>"
+   ```
+
+5. **Create Pull Request:**
+   - Push branch to GitHub
+   - Create PR with detailed description
+   - Link to any relevant issues
+
+### Content Validation
+
+The system includes automatic validation to prevent errors:
+
+**Validation Checks:**
+- ✅ Required fields are present
+- ✅ Data types are correct
+- ✅ URLs are properly formatted
+- ✅ Email addresses are valid
+- ✅ Rating numbers are between 1-5
+- ✅ Contact method types are valid
+
+**If validation fails:**
+1. Check the browser console for error messages
+2. Review the error details
+3. Fix the JSON syntax or data issues
+4. Save and check again
+
+### Hot Reloading
+
+When the development server is running:
+- **JSON changes** appear immediately
+- **No browser refresh** required
+- **Type errors** are caught instantly
+- **Validation errors** show in console
+
+---
+
+## Advanced Content Management
+
+### Content Hooks Usage
+
+The system provides React hooks for accessing content in components:
+
+```typescript
+// Access all site content
+const { content, lessons, loading, error } = useContent();
+
+// Access specific sections
+const { data: heroData } = useSectionContent('hero');
+
+// Access filtered lesson packages
+const { packages } = useLessonPackages({ popular: true });
+
+// Access SEO data
+const { getSEOData } = useSEO();
+```
+
+### Content Utilities
+
+Use the built-in utilities for common operations:
+
+```typescript
+import { contentUtils } from '@/utils/contentManager';
+
+// Format prices
+contentUtils.formatPrice(190); // "$190"
+
+// Calculate package savings
+contentUtils.calculateSavings(190, 4, 50); // 5% savings
+
+// Filter testimonials
+contentUtils.filterTestimonials(testimonials, { featured: true });
+```
+
+### Adding New Content Types
+
+**To add a new content section:**
+
+1. **Define TypeScript types** in `src/types/content.ts`:
+   ```typescript
+   export interface NewSection {
+     title: string;
+     items: string[];
+   }
+
+   // Add to SiteContent interface
+   export interface SiteContent {
+     // ... existing sections
+     newSection: NewSection;
+   }
+   ```
+
+2. **Add to JSON file** with matching structure:
+   ```json
+   {
+     "newSection": {
+       "title": "New Section Title",
+       "items": ["Item 1", "Item 2"]
+     }
+   }
+   ```
+
+3. **Update validation** in `contentManager.ts`:
+   ```typescript
+   const requiredSections = [
+     'hero', 'about', 'approach', 'community', 'contact', 'seo', 'newSection'
+   ];
+   ```
+
+### Performance Considerations
+
+**Content Optimization:**
+- Keep JSON files under 50KB each
+- Optimize images referenced in content
+- Use descriptive but concise text
+- Minimize nested object depth
+
+**Caching:**
+- Content is cached at build time
+- Changes require development server restart in production
+- Consider CDN caching for JSON files
+
+---
+
+## Best Practices
+
+### Content Writing Guidelines
+
+**General Principles:**
+- Write for your audience (music students)
+- Use active voice and clear language
+- Keep paragraphs short and scannable
+- Include specific benefits and outcomes
+- Use consistent tone throughout
+
+**SEO Writing Tips:**
+- Include relevant keywords naturally
+- Write compelling meta descriptions
+- Use descriptive headings and titles
+- Optimize for local search (Melbourne)
+
+### JSON Maintenance
+
+**Formatting Standards:**
+- Use 2-space indentation
+- Keep consistent property order
+- Use double quotes for strings
+- Add trailing commas where allowed
+
+**Data Consistency:**
+- Use consistent naming conventions
+- Maintain uniform date formats
+- Keep price formatting consistent
+- Use standard abbreviations
+
+**Error Prevention:**
+- Validate JSON syntax before committing
+- Test content changes locally first
+- Keep backup copies of working versions
+- Use meaningful commit messages
+
+### Accessibility Considerations
+
+**Content Guidelines:**
+- Write clear, descriptive link text
+- Provide alt text for any images referenced
+- Use heading hierarchy properly
+- Ensure color contrast meets standards
+- Write in plain language
+
+**Technical Accessibility:**
+- Test with screen readers
+- Verify keyboard navigation
+- Check mobile responsiveness
+- Validate HTML output
+
+---
+
+## Backup and Recovery
+
+### Content Backup Strategy
+
+**Automatic Backups:**
+- Git version control tracks all changes
+- GitHub stores complete history
+- Easy to revert to previous versions
+
+**Manual Backups:**
+```bash
+# Create backup of current content
+cp -r src/content src/content-backup-$(date +%Y%m%d)
+
+# Or backup specific files
+cp src/content/site-content.json site-content-backup.json
+```
+
+### Recovery Procedures
+
+**To revert recent changes:**
+```bash
+# See recent commits
+git log --oneline src/content/
+
+# Revert to specific commit
+git checkout [commit-hash] -- src/content/
+```
+
+**To restore from backup:**
+```bash
+# Restore from local backup
+cp src/content-backup-20250823/site-content.json src/content/
+
+# Or restore from Git history
+git show HEAD~1:src/content/site-content.json > src/content/site-content.json
+```
+
+---
+
+## Support and Troubleshooting
+
+### Common Issues
+
+**Problem: Changes don't appear on website**
+- ✅ Check development server is running
+- ✅ Verify JSON syntax is valid
+- ✅ Clear browser cache
+- ✅ Check console for errors
+
+**Problem: Validation errors**
+- ✅ Review error message in console
+- ✅ Check required fields are present
+- ✅ Verify data types match TypeScript definitions
+- ✅ Ensure unique IDs for testimonials/packages
+
+**Problem: Build failures**
+- ✅ Validate all JSON files
+- ✅ Check TypeScript compilation
+- ✅ Verify all imports are working
+- ✅ Review recent changes
+
+### Getting Help
+
+**Documentation Resources:**
+- This content management guide
+- TypeScript documentation
+- React hooks documentation
+- JSON validation tools
+
+**Development Support:**
+- Check browser developer console
+- Review Git commit history
+- Use TypeScript error messages
+- Test in development environment
+
+---
+
+*Last Updated: August 2025*  
+*For technical questions about the content system, refer to the developer documentation or contact the development team.*

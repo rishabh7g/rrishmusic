@@ -1,0 +1,735 @@
+name: Accessibility Tests
+
+on:
+  workflow_call:
+    inputs:
+      compliance-level:
+        description: 'WCAG compliance level (AA/AAA)'
+        required: false
+        default: 'AA'
+        type: string
+      test-environment:
+        description: 'Environment to test against'
+        required: false
+        default: 'local'
+        type: string
+    outputs:
+      a11y-score:
+        description: 'Accessibility score from Lighthouse'
+        value: ${{ jobs.accessibility-tests.outputs.a11y-score }}
+      compliance-status:
+        description: 'WCAG compliance status'
+        value: ${{ jobs.accessibility-tests.outputs.compliance-status }}
+  workflow_dispatch:
+    inputs:
+      compliance-level:
+        description: 'WCAG compliance level'
+        required: false
+        default: 'AA'
+        type: choice
+        options:
+          - 'AA'
+          - 'AAA'
+      test-environment:
+        description: 'Environment to test against'
+        required: false
+        default: 'local'
+        type: choice
+        options:
+          - 'local'
+          - 'staging'
+          - 'production'
+      test-suite:
+        description: 'Test suite to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - 'all'
+          - 'axe-only'
+          - 'lighthouse-only'
+          - 'keyboard-only'
+          - 'screen-reader-only'
+
+env:
+  COMPLIANCE_LEVEL: ${{ inputs.compliance-level || 'AA' }}
+  TEST_ENVIRONMENT: ${{ inputs.test-environment || 'local' }}
+  CACHE_VERSION: v1
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+jobs:
+  accessibility-tests:
+    runs-on: ubuntu-latest
+    outputs:
+      a11y-score: ${{ steps.lighthouse-a11y.outputs.a11y-score }}
+      compliance-status: ${{ steps.consolidate-a11y.outputs.compliance-status }}
+    timeout-minutes: 20
+    strategy:
+      matrix:
+        test-category: [axe-core, lighthouse-a11y, keyboard-navigation, screen-reader]
+      fail-fast: false
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Restore node_modules cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ env.CACHE_VERSION }}-node-modules-20-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-node-modules-20-
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/ms-playwright
+            ~/.cache/playwright
+          key: ${{ env.CACHE_VERSION }}-playwright-${{ hashFiles('package-lock.json') }}
+          restore-keys: |
+            ${{ env.CACHE_VERSION }}-playwright-
+
+      - name: Install dependencies
+        run: npm ci --prefer-offline
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: Setup Chrome for Lighthouse
+        if: matrix.test-category == 'lighthouse-a11y'
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable
+
+      - name: Build project
+        run: |
+          npm run build
+          
+          if [ ! -d "dist" ] || [ -z "$(ls -A dist)" ]; then
+            echo "❌ Build failed or produced empty dist directory"
+            exit 1
+          fi
+          
+          echo "✅ Build completed successfully"
+
+      - name: Start test server
+        if: env.TEST_ENVIRONMENT == 'local'
+        run: |
+          npm run preview &
+          SERVER_PID=$!
+          echo "SERVER_PID=$SERVER_PID" >> $GITHUB_ENV
+          
+          # Wait for server to be ready
+          for i in {1..30}; do
+            if curl -f "http://localhost:4173" >/dev/null 2>&1; then
+              echo "✅ Server is ready"
+              break
+            elif [ $i -eq 30 ]; then
+              echo "❌ Server failed to start"
+              exit 1
+            else
+              sleep 1
+            fi
+          done
+
+      - name: Set test URL
+        run: |
+          case "${{ env.TEST_ENVIRONMENT }}" in
+            "local")
+              echo "TEST_URL=http://localhost:4173" >> $GITHUB_ENV
+              ;;
+            "staging")
+              echo "TEST_URL=https://staging.rrishmusic.com" >> $GITHUB_ENV
+              ;;
+            "production")
+              echo "TEST_URL=https://www.rrishmusic.com" >> $GITHUB_ENV
+              ;;
+            *)
+              echo "TEST_URL=http://localhost:4173" >> $GITHUB_ENV
+              ;;
+          esac
+          echo "Testing accessibility at: $TEST_URL"
+
+      - name: Create accessibility test structure
+        run: |
+          mkdir -p tests/a11y/axe-tests
+          mkdir -p tests/a11y/keyboard-tests
+          mkdir -p tests/a11y/screen-reader-tests
+          mkdir -p a11y-results/${{ matrix.test-category }}
+
+      - name: Run Axe-core accessibility tests
+        if: matrix.test-category == 'axe-core'
+        run: |
+          # Create axe test if it doesn't exist
+          if [ ! -f "tests/a11y/axe-tests/axe-core.test.ts" ]; then
+            cat > tests/a11y/axe-tests/axe-core.test.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          import AxeBuilder from '@axe-core/playwright';
+          
+          test.describe('Axe Accessibility Tests', () => {
+            test('should not have any automatically detectable accessibility issues', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withTags(['wcag2a', 'wcag2aa', 'wcag21aa'])
+                .analyze();
+              
+              console.log('Accessibility scan results:', {
+                violations: accessibilityScanResults.violations.length,
+                passes: accessibilityScanResults.passes.length,
+                incomplete: accessibilityScanResults.incomplete.length
+              });
+              
+              // Log violations for debugging
+              if (accessibilityScanResults.violations.length > 0) {
+                console.log('Violations found:');
+                accessibilityScanResults.violations.forEach((violation, index) => {
+                  console.log(`${index + 1}. ${violation.id}: ${violation.description}`);
+                  console.log(`   Impact: ${violation.impact}`);
+                  console.log(`   Help: ${violation.helpUrl}`);
+                });
+              }
+              
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+            
+            test('should have proper heading structure', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withRules(['heading-order'])
+                .analyze();
+              
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+            
+            test('should have proper color contrast', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withRules(['color-contrast'])
+                .analyze();
+              
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+            
+            test('should have proper form labels', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              const accessibilityScanResults = await new AxeBuilder({ page })
+                .withRules(['label'])
+                .analyze();
+              
+              expect(accessibilityScanResults.violations).toEqual([]);
+            });
+          });
+          EOF
+          fi
+          
+          # Install axe-core playwright if not already installed
+          if ! npm list @axe-core/playwright >/dev/null 2>&1; then
+            npm install --save-dev @axe-core/playwright
+          fi
+          
+          # Run axe tests
+          npm run test -- --run tests/a11y/axe-tests/ --reporter=json --outputFile=a11y-results/axe-core/results.json || AXE_EXIT_CODE=$?
+          
+          if [ ${AXE_EXIT_CODE:-0} -eq 0 ]; then
+            echo "✅ Axe accessibility tests passed"
+            echo "axe-status=passed" >> a11y-results/axe-core/status.txt
+          else
+            echo "❌ Axe accessibility tests failed"
+            echo "axe-status=failed" >> a11y-results/axe-core/status.txt
+          fi
+          
+          # Create axe summary
+          cat > a11y-results/axe-core/summary.md << EOF
+          # Axe-Core Accessibility Report
+          
+          **WCAG Level**: ${{ env.COMPLIANCE_LEVEL }}
+          **Status**: $(cat a11y-results/axe-core/status.txt | cut -d= -f2)
+          **Environment**: ${{ env.TEST_ENVIRONMENT }}
+          **Timestamp**: $(date -u)
+          
+          Axe-core tests check for automatically detectable accessibility issues using the industry-standard axe accessibility engine.
+          
+          ## Tests Performed
+          - General WCAG 2.1 AA compliance
+          - Heading structure validation
+          - Color contrast verification
+          - Form label associations
+          EOF
+
+      - name: Run Lighthouse accessibility audit
+        if: matrix.test-category == 'lighthouse-a11y'
+        id: lighthouse-a11y
+        run: |
+          # Run Lighthouse accessibility audit
+          npx lighthouse "$TEST_URL" \
+            --only-categories=accessibility \
+            --output=html,json \
+            --output-path=a11y-results/lighthouse-a11y/lighthouse-a11y-report \
+            --chrome-flags="--headless --no-sandbox --disable-dev-shm-usage" \
+            --quiet || LH_EXIT_CODE=$?
+          
+          if [ -f "a11y-results/lighthouse-a11y/lighthouse-a11y-report.json" ]; then
+            A11Y_SCORE=$(jq '.categories.accessibility.score * 100' a11y-results/lighthouse-a11y/lighthouse-a11y-report.json | cut -d. -f1)
+            echo "a11y-score=$A11Y_SCORE" >> $GITHUB_OUTPUT
+            echo "Accessibility Score: $A11Y_SCORE"
+            
+            # Extract failing audits
+            FAILING_AUDITS=$(jq -r '.categories.accessibility.auditRefs[] | select(.weight > 0) | .id' a11y-results/lighthouse-a11y/lighthouse-a11y-report.json | while read audit_id; do
+              SCORE=$(jq -r ".audits[\"$audit_id\"].score" a11y-results/lighthouse-a11y/lighthouse-a11y-report.json)
+              if [ "$SCORE" != "1" ] && [ "$SCORE" != "null" ]; then
+                TITLE=$(jq -r ".audits[\"$audit_id\"].title" a11y-results/lighthouse-a11y/lighthouse-a11y-report.json)
+                echo "- $TITLE (ID: $audit_id, Score: $SCORE)"
+              fi
+            done)
+            
+            # Check against threshold (90 for AA compliance)
+            A11Y_THRESHOLD=90
+            if [ "$A11Y_SCORE" -ge "$A11Y_THRESHOLD" ]; then
+              echo "✅ Lighthouse accessibility score meets threshold"
+              echo "lighthouse-a11y-status=passed" >> a11y-results/lighthouse-a11y/status.txt
+            else
+              echo "❌ Lighthouse accessibility score below threshold"
+              echo "lighthouse-a11y-status=failed" >> a11y-results/lighthouse-a11y/status.txt
+            fi
+            
+            # Create lighthouse a11y summary
+            cat > a11y-results/lighthouse-a11y/summary.md << EOF
+          # Lighthouse Accessibility Report
+          
+          **Score**: $A11Y_SCORE/100
+          **Threshold**: $A11Y_THRESHOLD/100
+          **Status**: $(cat a11y-results/lighthouse-a11y/status.txt | cut -d= -f2)
+          **Environment**: ${{ env.TEST_ENVIRONMENT }}
+          **Timestamp**: $(date -u)
+          
+          ## Failing Audits
+          $FAILING_AUDITS
+          EOF
+          else
+            echo "❌ Lighthouse accessibility report not found"
+            echo "a11y-score=0" >> $GITHUB_OUTPUT
+            echo "lighthouse-a11y-status=failed" >> a11y-results/lighthouse-a11y/status.txt
+          fi
+
+      - name: Run keyboard navigation tests
+        if: matrix.test-category == 'keyboard-navigation'
+        run: |
+          # Create keyboard navigation test if it doesn't exist
+          if [ ! -f "tests/a11y/keyboard-tests/keyboard-navigation.test.ts" ]; then
+            cat > tests/a11y/keyboard-tests/keyboard-navigation.test.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          
+          test.describe('Keyboard Navigation Tests', () => {
+            test('should be fully navigable with keyboard only', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Start with focus on body
+              await page.focus('body');
+              
+              // Tab through all focusable elements
+              const focusableElements = await page.locator('a, button, input, select, textarea, [tabindex]:not([tabindex="-1"])').count();
+              console.log(`Found ${focusableElements} focusable elements`);
+              
+              // Navigate through elements with Tab
+              for (let i = 0; i < focusableElements && i < 20; i++) {
+                await page.keyboard.press('Tab');
+                
+                // Verify that focus is visible
+                const focusedElement = await page.locator(':focus').first();
+                const isVisible = await focusedElement.isVisible();
+                
+                if (isVisible) {
+                  const tagName = await focusedElement.evaluate(el => el.tagName.toLowerCase());
+                  console.log(`Tab ${i + 1}: Focused on ${tagName}`);
+                }
+              }
+              
+              // Test that Tab works (at least some elements should be focusable)
+              expect(focusableElements).toBeGreaterThan(0);
+            });
+            
+            test('should support skip links for screen readers', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Check for skip link (common accessibility pattern)
+              const skipLink = page.locator('a[href^="#"]').first();
+              if (await skipLink.count() > 0) {
+                const skipLinkText = await skipLink.textContent();
+                console.log('Skip link found:', skipLinkText);
+                
+                // Verify skip link is functional
+                await skipLink.click();
+                // Skip link should work without throwing errors
+              } else {
+                console.log('No skip link found - this is okay for simple sites');
+              }
+            });
+            
+            test('should handle Enter and Space key events on interactive elements', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Find buttons and check they respond to keyboard
+              const buttons = page.locator('button, [role="button"]');
+              const buttonCount = await buttons.count();
+              
+              for (let i = 0; i < Math.min(buttonCount, 5); i++) {
+                const button = buttons.nth(i);
+                if (await button.isVisible()) {
+                  await button.focus();
+                  
+                  // Test Enter key
+                  await page.keyboard.press('Enter');
+                  
+                  // Test Space key
+                  await page.keyboard.press('Space');
+                  
+                  // If we get here without errors, keyboard interaction works
+                  console.log(`Button ${i + 1} responds to keyboard`);
+                }
+              }
+            });
+          });
+          EOF
+          fi
+          
+          # Run keyboard navigation tests
+          npm run test -- --run tests/a11y/keyboard-tests/ --reporter=json --outputFile=a11y-results/keyboard-navigation/results.json || KB_EXIT_CODE=$?
+          
+          if [ ${KB_EXIT_CODE:-0} -eq 0 ]; then
+            echo "✅ Keyboard navigation tests passed"
+            echo "keyboard-status=passed" >> a11y-results/keyboard-navigation/status.txt
+          else
+            echo "❌ Keyboard navigation tests failed"
+            echo "keyboard-status=failed" >> a11y-results/keyboard-navigation/status.txt
+          fi
+          
+          # Create keyboard navigation summary
+          cat > a11y-results/keyboard-navigation/summary.md << EOF
+          # Keyboard Navigation Report
+          
+          **Status**: $(cat a11y-results/keyboard-navigation/status.txt | cut -d= -f2)
+          **Environment**: ${{ env.TEST_ENVIRONMENT }}
+          **Timestamp**: $(date -u)
+          
+          Keyboard navigation tests ensure that all interactive elements are accessible via keyboard-only navigation.
+          
+          ## Tests Performed
+          - Tab navigation through focusable elements
+          - Skip link functionality
+          - Enter/Space key handling on interactive elements
+          EOF
+
+      - name: Run screen reader compatibility tests
+        if: matrix.test-category == 'screen-reader'
+        run: |
+          # Create screen reader test if it doesn't exist
+          if [ ! -f "tests/a11y/screen-reader-tests/screen-reader.test.ts" ]; then
+            cat > tests/a11y/screen-reader-tests/screen-reader.test.ts << 'EOF'
+          import { test, expect } from '@playwright/test';
+          
+          test.describe('Screen Reader Compatibility Tests', () => {
+            test('should have proper semantic markup', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Check for proper heading hierarchy
+              const headings = await page.locator('h1, h2, h3, h4, h5, h6').all();
+              console.log(`Found ${headings.length} headings`);
+              
+              // Should have at least one h1
+              const h1Count = await page.locator('h1').count();
+              expect(h1Count).toBeGreaterThanOrEqual(1);
+              
+              // Check for landmarks
+              const landmarks = await page.locator('[role="main"], [role="navigation"], [role="banner"], [role="contentinfo"], main, nav, header, footer').count();
+              console.log(`Found ${landmarks} landmark elements`);
+              expect(landmarks).toBeGreaterThan(0);
+            });
+            
+            test('should have proper alt text for images', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Check all images have alt attributes
+              const images = await page.locator('img').all();
+              console.log(`Found ${images.length} images`);
+              
+              for (const img of images) {
+                const alt = await img.getAttribute('alt');
+                const src = await img.getAttribute('src');
+                
+                // Alt attribute should exist (can be empty for decorative images)
+                expect(alt).not.toBeNull();
+                console.log(`Image ${src}: alt="${alt}"`);
+              }
+            });
+            
+            test('should have proper ARIA labels and descriptions', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              // Check for ARIA labels on interactive elements without visible text
+              const unlabeledInteractive = await page.locator('button:not([aria-label]):not([aria-labelledby]):empty, a:not([aria-label]):not([aria-labelledby]):empty').count();
+              
+              if (unlabeledInteractive > 0) {
+                console.log(`Warning: Found ${unlabeledInteractive} unlabeled interactive elements`);
+              }
+              
+              // This is a warning rather than a failure for now
+              expect(unlabeledInteractive).toBeLessThan(10); // Reasonable threshold
+            });
+            
+            test('should have proper page title', async ({ page }) => {
+              await page.goto('/');
+              await page.waitForLoadState('networkidle');
+              
+              const title = await page.title();
+              console.log('Page title:', title);
+              
+              // Title should exist and be meaningful
+              expect(title).toBeTruthy();
+              expect(title.length).toBeGreaterThan(3);
+              expect(title).toContain('Rrish'); // Should contain site name
+            });
+          });
+          EOF
+          fi
+          
+          # Run screen reader tests
+          npm run test -- --run tests/a11y/screen-reader-tests/ --reporter=json --outputFile=a11y-results/screen-reader/results.json || SR_EXIT_CODE=$?
+          
+          if [ ${SR_EXIT_CODE:-0} -eq 0 ]; then
+            echo "✅ Screen reader compatibility tests passed"
+            echo "screen-reader-status=passed" >> a11y-results/screen-reader/status.txt
+          else
+            echo "❌ Screen reader compatibility tests failed"
+            echo "screen-reader-status=failed" >> a11y-results/screen-reader/status.txt
+          fi
+          
+          # Create screen reader summary
+          cat > a11y-results/screen-reader/summary.md << EOF
+          # Screen Reader Compatibility Report
+          
+          **Status**: $(cat a11y-results/screen-reader/status.txt | cut -d= -f2)
+          **Environment**: ${{ env.TEST_ENVIRONMENT }}
+          **Timestamp**: $(date -u)
+          
+          Screen reader compatibility tests ensure that the site provides proper semantic markup and ARIA labels for assistive technologies.
+          
+          ## Tests Performed
+          - Semantic markup validation
+          - Image alt text verification
+          - ARIA label and description checks
+          - Page title validation
+          EOF
+
+      - name: Stop test server
+        if: always() && env.TEST_ENVIRONMENT == 'local'
+        run: |
+          if [ ! -z "${SERVER_PID:-}" ] && kill -0 $SERVER_PID 2>/dev/null; then
+            echo "Stopping server with PID: $SERVER_PID"
+            kill $SERVER_PID
+            wait $SERVER_PID 2>/dev/null || true
+          fi
+
+      - name: Upload accessibility results - ${{ matrix.test-category }}
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: a11y-results-${{ matrix.test-category }}
+          path: a11y-results/${{ matrix.test-category }}/
+          retention-days: 14
+
+  # Consolidate accessibility test results
+  consolidate-a11y-results:
+    runs-on: ubuntu-latest
+    needs: accessibility-tests
+    if: always()
+    outputs:
+      compliance-status: ${{ steps.consolidate-a11y.outputs.compliance-status }}
+    steps:
+      - name: Download all accessibility artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: a11y-results-*
+          path: all-a11y-results
+          merge-multiple: true
+
+      - name: Consolidate accessibility results
+        id: consolidate-a11y
+        run: |
+          echo "# Accessibility Test Consolidated Report" > a11y-consolidated-report.md
+          echo "" >> a11y-consolidated-report.md
+          echo "**WCAG Compliance Level**: ${{ env.COMPLIANCE_LEVEL }}" >> a11y-consolidated-report.md
+          echo "**Environment**: ${{ env.TEST_ENVIRONMENT }}" >> a11y-consolidated-report.md
+          echo "**Timestamp**: $(date -u)" >> a11y-consolidated-report.md
+          echo "" >> a11y-consolidated-report.md
+          
+          FAILED_TESTS=0
+          TOTAL_TESTS=0
+          
+          # Process Axe-core results
+          if [ -d "all-a11y-results/axe-core" ] && [ -f "all-a11y-results/axe-core/status.txt" ]; then
+            TOTAL_TESTS=$((TOTAL_TESTS + 1))
+            AXE_STATUS=$(cat all-a11y-results/axe-core/status.txt | cut -d= -f2)
+            
+            echo "## 🔍 Axe-Core Analysis" >> a11y-consolidated-report.md
+            echo "- **Status**: $AXE_STATUS" >> a11y-consolidated-report.md
+            echo "- **Tests**: WCAG 2.1 AA compliance, heading structure, color contrast, form labels" >> a11y-consolidated-report.md
+            echo "" >> a11y-consolidated-report.md
+            
+            if [ "$AXE_STATUS" = "failed" ]; then
+              FAILED_TESTS=$((FAILED_TESTS + 1))
+            fi
+          fi
+          
+          # Process Lighthouse a11y results
+          if [ -d "all-a11y-results/lighthouse-a11y" ] && [ -f "all-a11y-results/lighthouse-a11y/status.txt" ]; then
+            TOTAL_TESTS=$((TOTAL_TESTS + 1))
+            LH_STATUS=$(cat all-a11y-results/lighthouse-a11y/status.txt | cut -d= -f2)
+            
+            # Extract score if available
+            A11Y_SCORE="N/A"
+            if [ -f "all-a11y-results/lighthouse-a11y/summary.md" ]; then
+              A11Y_SCORE=$(grep "Score:" all-a11y-results/lighthouse-a11y/summary.md | grep -oE '[0-9]+' | head -1 || echo "N/A")
+            fi
+            
+            echo "## 🚀 Lighthouse Accessibility" >> a11y-consolidated-report.md
+            echo "- **Score**: $A11Y_SCORE/100" >> a11y-consolidated-report.md
+            echo "- **Status**: $LH_STATUS" >> a11y-consolidated-report.md
+            echo "" >> a11y-consolidated-report.md
+            
+            if [ "$LH_STATUS" = "failed" ]; then
+              FAILED_TESTS=$((FAILED_TESTS + 1))
+            fi
+          fi
+          
+          # Process keyboard navigation results
+          if [ -d "all-a11y-results/keyboard-navigation" ] && [ -f "all-a11y-results/keyboard-navigation/status.txt" ]; then
+            TOTAL_TESTS=$((TOTAL_TESTS + 1))
+            KB_STATUS=$(cat all-a11y-results/keyboard-navigation/status.txt | cut -d= -f2)
+            
+            echo "## ⌨️ Keyboard Navigation" >> a11y-consolidated-report.md
+            echo "- **Status**: $KB_STATUS" >> a11y-consolidated-report.md
+            echo "- **Tests**: Tab navigation, skip links, keyboard event handling" >> a11y-consolidated-report.md
+            echo "" >> a11y-consolidated-report.md
+            
+            if [ "$KB_STATUS" = "failed" ]; then
+              FAILED_TESTS=$((FAILED_TESTS + 1))
+            fi
+          fi
+          
+          # Process screen reader results
+          if [ -d "all-a11y-results/screen-reader" ] && [ -f "all-a11y-results/screen-reader/status.txt" ]; then
+            TOTAL_TESTS=$((TOTAL_TESTS + 1))
+            SR_STATUS=$(cat all-a11y-results/screen-reader/status.txt | cut -d= -f2)
+            
+            echo "## 🔊 Screen Reader Compatibility" >> a11y-consolidated-report.md
+            echo "- **Status**: $SR_STATUS" >> a11y-consolidated-report.md
+            echo "- **Tests**: Semantic markup, alt text, ARIA labels, page titles" >> a11y-consolidated-report.md
+            echo "" >> a11y-consolidated-report.md
+            
+            if [ "$SR_STATUS" = "failed" ]; then
+              FAILED_TESTS=$((FAILED_TESTS + 1))
+            fi
+          fi
+          
+          # Summary
+          echo "## Summary" >> a11y-consolidated-report.md
+          echo "- **Total Test Categories**: $TOTAL_TESTS" >> a11y-consolidated-report.md
+          echo "- **Failed Categories**: $FAILED_TESTS" >> a11y-consolidated-report.md
+          
+          if [ $FAILED_TESTS -gt 0 ]; then
+            echo "- **WCAG ${{ env.COMPLIANCE_LEVEL }} Compliance**: ❌ NON-COMPLIANT" >> a11y-consolidated-report.md
+            echo "compliance-status=non-compliant" >> $GITHUB_OUTPUT
+            echo "A11Y_TESTS_FAILED=true" >> $GITHUB_ENV
+          else
+            echo "- **WCAG ${{ env.COMPLIANCE_LEVEL }} Compliance**: ✅ COMPLIANT" >> a11y-consolidated-report.md
+            echo "compliance-status=compliant" >> $GITHUB_OUTPUT
+          fi
+          
+          echo "" >> a11y-consolidated-report.md
+          echo "---" >> a11y-consolidated-report.md
+          echo "*This report validates compliance with WCAG ${{ env.COMPLIANCE_LEVEL }} standards using multiple accessibility testing tools and techniques.*" >> a11y-consolidated-report.md
+
+      - name: Upload consolidated accessibility results
+        uses: actions/upload-artifact@v4
+        with:
+          name: a11y-tests-consolidated
+          path: |
+            a11y-consolidated-report.md
+            all-a11y-results/
+          retention-days: 30
+
+      - name: Comment PR with accessibility results
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            
+            let comment = '## ♿ Accessibility Test Results\n\n';
+            
+            if (fs.existsSync('a11y-consolidated-report.md')) {
+              const report = fs.readFileSync('a11y-consolidated-report.md', 'utf8');
+              comment += report;
+            } else {
+              comment += '❌ Accessibility test report not available\n';
+            }
+            
+            // Find existing comment to update or create new one
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+            
+            const existingComment = comments.find(comment => 
+              comment.body.includes('♿ Accessibility Test Results')
+            );
+            
+            if (existingComment) {
+              await github.rest.issues.updateComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existingComment.id,
+                body: comment
+              });
+            } else {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: context.issue.number,
+                body: comment
+              });
+            }
+
+      - name: Fail if accessibility tests failed
+        if: env.A11Y_TESTS_FAILED == 'true'
+        run: |
+          echo "❌ One or more accessibility test categories failed"
+          echo "The site does not meet WCAG ${{ env.COMPLIANCE_LEVEL }} compliance standards"
+          exit 1
