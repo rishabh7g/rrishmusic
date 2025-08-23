@@ -1,1 +1,0 @@
-// Main JavaScript - Phase 2 will add functionality here
