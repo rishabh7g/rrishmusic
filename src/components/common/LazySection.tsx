@@ -3,7 +3,7 @@
  * Implements intersection observer for efficient section loading
  */
 
-import React, { Suspense, lazy, ComponentType } from 'react';
+import React, { Suspense } from 'react';
 import { motion } from 'framer-motion';
 
 interface LazySectionProps {
@@ -107,43 +107,6 @@ export const LazySection: React.FC<LazySectionProps> = ({
 };
 
 /**
- * Higher-order component for lazy loading sections
- */
-export function withLazyLoading<T extends Record<string, unknown>>(
-  Component: ComponentType<T>,
-  options: {
-    fallback?: React.ReactNode;
-    displayName?: string;
-  } = {}
-) {
-  const LazyComponent = React.forwardRef<any, T>((props, ref) => (
-    <LazySection fallback={options.fallback}>
-      <Component {...props} ref={ref} />
-    </LazySection>
-  ));
-
-  LazyComponent.displayName = options.displayName || `LazyLoaded(${Component.displayName || Component.name})`;
-
-  return LazyComponent;
-}
-
-/**
- * Create lazy-loaded components dynamically
- */
-export function createLazyComponent<T extends Record<string, unknown>>(
-  importFn: () => Promise<{ default: ComponentType<T> }>,
-  fallback?: React.ReactNode
-) {
-  const LazyComponent = lazy(importFn);
-  
-  return React.forwardRef<any, T>((props, ref) => (
-    <LazySection fallback={fallback}>
-      <LazyComponent {...props} ref={ref} />
-    </LazySection>
-  ));
-}
-
-/**
  * Image lazy loading component
  */
 interface LazyImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -210,62 +173,5 @@ export const LazyImage: React.FC<LazyImageProps> = ({
     </div>
   );
 };
-
-/**
- * Utility hook for preloading images
- */
-export function useImagePreloader(imageUrls: string[]): boolean {
-  const [allLoaded, setAllLoaded] = React.useState(false);
-
-  React.useEffect(() => {
-    if (!imageUrls.length) {
-      setAllLoaded(true);
-      return;
-    }
-
-    let loadedCount = 0;
-    const totalImages = imageUrls.length;
-
-    const handleImageLoad = () => {
-      loadedCount++;
-      if (loadedCount === totalImages) {
-        setAllLoaded(true);
-      }
-    };
-
-    imageUrls.forEach((url) => {
-      const img = new Image();
-      img.onload = handleImageLoad;
-      img.onerror = handleImageLoad; // Count errors as "loaded" to prevent hanging
-      img.src = url;
-    });
-
-  }, [imageUrls]);
-
-  return allLoaded;
-}
-
-/**
- * Performance monitoring hook
- */
-export function usePerformanceMonitor(componentName: string): void {
-  React.useEffect(() => {
-    const startTime = performance.now();
-
-    return () => {
-      const endTime = performance.now();
-      const renderTime = endTime - startTime;
-
-      if (process.env.NODE_ENV === 'development') {
-        console.log(`${componentName} render time: ${renderTime.toFixed(2)}ms`);
-      }
-
-      // In production, you might want to send this to analytics
-      if (process.env.NODE_ENV === 'production' && renderTime > 16) {
-        console.warn(`Slow component render detected: ${componentName} took ${renderTime.toFixed(2)}ms`);
-      }
-    };
-  });
-}
 
 export default LazySection;

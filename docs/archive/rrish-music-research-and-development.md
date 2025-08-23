@@ -11,7 +11,7 @@ _Last Updated: August 23, 2025_
 
 ### Core Philosophy: "Guided Independence Method" - VALIDATED ✓
 
-*Complete validation research available in: `/docs/teaching-philosophy-validation-research.md`*
+*Complete validation research available in: `../research/user-research/teaching-philosophy-validation-research.md`*
 
 #### Research-Validated Foundational Principles
 
@@ -102,7 +102,7 @@ _Last Updated: August 23, 2025_
 
 ## Melbourne Music Education Market
 
-*Complete analysis available in: `/docs/melbourne-music-education-market-analysis.md`*
+*Complete analysis available in: `../research/market-analysis/melbourne-music-education-market-analysis.md`*
 
 ### Market Overview Summary
 
@@ -228,7 +228,7 @@ _Last Updated: August 23, 2025_
 
 ## Global Online Music Education Market
 
-*Complete analysis available in: `/docs/global-online-music-education-analysis.md`*
+*Complete analysis available in: `../research/market-analysis/global-online-music-education-analysis.md`*
 
 ### Global Market Overview Summary
 
@@ -385,7 +385,7 @@ Based on comprehensive market research and color psychology analysis:
 
 ### Teaching Philosophy Insights - COMPREHENSIVE VALIDATION COMPLETED ✓
 
-*Complete validation research available in: `/docs/teaching-philosophy-validation-research.md`*
+*Complete validation research available in: `../research/user-research/teaching-philosophy-validation-research.md`*
 
 #### Academic Validation Results
 -   **Scaffolding Theory Alignment:** 95% alignment with proven instructional scaffolding principles

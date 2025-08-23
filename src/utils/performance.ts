@@ -17,6 +17,24 @@ export interface PerformanceMetrics {
 }
 
 /**
+ * Extended Performance interface with memory information
+ */
+interface PerformanceMemory {
+  usedJSMemorySize: number;
+  totalJSMemorySize: number;
+  jsMemoryLimit: number;
+}
+
+interface ExtendedPerformance extends Performance {
+  memory?: PerformanceMemory;
+}
+
+/**
+ * Generic function type for debounce, throttle, and rafThrottle utilities
+ */
+type GenericFunction = (...args: unknown[]) => unknown;
+
+/**
  * Web Vitals observer for performance monitoring
  */
 export class WebVitalsMonitor {
@@ -174,7 +192,7 @@ export function useWebVitals(enabled = process.env.NODE_ENV === 'development'): 
 /**
  * Debounce function for performance optimization
  */
-export function debounce<T extends (...args: any[]) => any>(
+export function debounce<T extends GenericFunction>(
   func: T,
   wait: number,
   immediate = false
@@ -199,7 +217,7 @@ export function debounce<T extends (...args: any[]) => any>(
 /**
  * Throttle function for performance optimization
  */
-export function throttle<T extends (...args: any[]) => any>(
+export function throttle<T extends GenericFunction>(
   func: T,
   limit: number
 ): (...args: Parameters<T>) => void {
@@ -217,7 +235,7 @@ export function throttle<T extends (...args: any[]) => any>(
 /**
  * Request animation frame throttle for smooth animations
  */
-export function rafThrottle<T extends (...args: any[]) => any>(
+export function rafThrottle<T extends GenericFunction>(
   func: T
 ): (...args: Parameters<T>) => void {
   let rafId: number | null = null;
@@ -363,8 +381,10 @@ export function getMemoryUsage(): {
   totalJSMemorySize?: number;
   jsMemoryLimit?: number;
 } {
-  if ('memory' in performance) {
-    const memory = (performance as any).memory;
+  const extendedPerformance = performance as ExtendedPerformance;
+  
+  if (extendedPerformance.memory) {
+    const memory = extendedPerformance.memory;
     return {
       usedJSMemorySize: memory.usedJSMemorySize,
       totalJSMemorySize: memory.totalJSMemorySize,

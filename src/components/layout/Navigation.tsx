@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { NAVIGATION_ITEMS } from "@/utils/constants";
-import { scrollToSection } from "@/utils/helpers";
 import { useSmoothScroll } from "@/hooks/useScrollSpy";
 
 interface NavigationProps {
