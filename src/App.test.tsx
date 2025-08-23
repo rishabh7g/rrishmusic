@@ -2,26 +2,53 @@ import { describe, it, expect, vi } from 'vitest'
 import { render } from '@testing-library/react'
 import App from './App'
 
+// Mock browser APIs
+Object.defineProperty(window, 'IntersectionObserver', {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  })),
+})
+
+Object.defineProperty(window, 'PerformanceObserver', {
+  writable: true,
+  value: vi.fn().mockImplementation(() => ({
+    observe: vi.fn(),
+    disconnect: vi.fn(),
+  })),
+})
+
 // Mock all the complex dependencies
-vi.mock('framer-motion', () => ({
-  motion: {
-    div: 'div',
-    section: 'section',
-    nav: 'nav',
-    ul: 'ul',
-    li: 'li', 
-    a: 'a',
-    button: 'button',
-    h1: 'h1',
-    h2: 'h2',
-    h3: 'h3',
-    p: 'p',
-  },
-  AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
-}))
+vi.mock('framer-motion', () => {
+  const createMockElement = (tag: string) => ({ children, ...props }: any) => {
+    const { whileHover, whileTap, whileInView, variants, custom, initial, animate, exit, transition, ...restProps } = props
+    const Element = tag as any
+    return <Element {...restProps}>{children}</Element>
+  }
+
+  return {
+    motion: {
+      div: createMockElement('div'),
+      section: createMockElement('section'),
+      nav: createMockElement('nav'),
+      ul: createMockElement('ul'),
+      li: createMockElement('li'),
+      a: createMockElement('a'),
+      button: createMockElement('button'),
+      h1: createMockElement('h1'),
+      h2: createMockElement('h2'),
+      h3: createMockElement('h3'),
+      p: createMockElement('p'),
+    },
+    AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
+  }
+})
 
 vi.mock('./hooks/useScrollSpy', () => ({
-  useScrollSpy: () => 'hero'
+  useScrollSpy: () => 'hero',
+  useSmoothScroll: () => vi.fn()
 }))
 
 vi.mock('./hooks/useContent', () => ({
@@ -40,6 +67,16 @@ vi.mock('./hooks/useContent', () => ({
     packageInfo: {},
     loading: false,
     error: null
+  }),
+  useSEO: () => ({
+    data: {
+      title: 'Test Title',
+      description: 'Test Description',
+      keywords: 'test, keywords',
+      ogImage: 'test-image.jpg',
+      canonicalUrl: 'https://test.com'
+    },
+    generatePageTitle: (title: string) => `${title} | RrishMusic`
   })
 }))
 
@@ -55,8 +92,9 @@ describe('App Component', () => {
     expect(container).toBeTruthy()
   })
 
-  it('contains main app structure', () => {
+  it('contains app container element', () => {
     const { container } = render(<App />)
-    expect(container.querySelector('.app-container')).toBeTruthy()
+    const appContainer = container.querySelector('.app-container')
+    expect(appContainer).toBeTruthy()
   })
 })
