@@ -205,16 +205,6 @@
         "icon": "instagram",
         "description": "Follow for daily musical inspiration and updates",
         "availability": "Daily posts and stories"
-      },
-      {
-        "type": "phone",
-        "label": "Phone",
-        "value": "+61 423 xxx xxx",
-        "href": "tel:+61423xxxxxx",
-        "primary": false,
-        "icon": "phone",
-        "description": "Available for initial consultations",
-        "availability": "By appointment only"
       }
     ],
     "location": "Melbourne, Victoria, Australia",

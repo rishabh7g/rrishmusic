@@ -48,9 +48,17 @@ export function Lessons() {
     );
   }
 
-  const formatPrice = (price: number, discount?: number) => {
-    const discountedPrice = discount ? price * (1 - discount / 100) : price;
-    return `$${discountedPrice.toFixed(0)}`;
+  // Get the single lesson price to calculate other prices from
+  const singleLessonPackage = packages.find(pkg => pkg.sessions === 1);
+  const singleLessonPrice = singleLessonPackage?.price || 50; // fallback to 50
+
+  const calculatePrice = (sessions: number, discount?: number) => {
+    const basePrice = singleLessonPrice * sessions;
+    return discount ? basePrice * (1 - discount / 100) : basePrice;
+  };
+
+  const formatPrice = (price: number) => {
+    return `$${price.toFixed(0)}`;
   };
 
   const getPackageIcon = (sessions: number) => {
@@ -166,21 +174,21 @@ export function Lessons() {
                     <div className="space-y-1">
                       <div className={`text-lg line-through opacity-60 
                         ${pkg.popular ? 'text-white/70' : 'text-neutral-charcoal/50'}`}>
-                        ${pkg.price}
+                        ${calculatePrice(pkg.sessions).toFixed(0)}
                       </div>
                       <div className="text-4xl font-heading font-bold">
-                        {formatPrice(pkg.price, pkg.discount)}
+                        {formatPrice(calculatePrice(pkg.sessions, pkg.discount))}
                       </div>
                     </div>
                   ) : (
                     <div className="text-4xl font-heading font-bold">
-                      {formatPrice(pkg.price)}
+                      {formatPrice(calculatePrice(pkg.sessions, pkg.discount))}
                     </div>
                   )}
                   {pkg.sessions > 0 && (
                     <div className={`text-sm mt-1 
                       ${pkg.popular ? 'text-white/80' : 'text-neutral-charcoal/60'}`}>
-                      ${(pkg.price / pkg.sessions).toFixed(0)} per session
+                      ${singleLessonPrice.toFixed(0)} per session
                     </div>
                   )}
                 </div>

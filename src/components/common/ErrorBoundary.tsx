@@ -3,7 +3,7 @@
  * Provides production-ready error handling with fallback UI
  */
 
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import { Component, ErrorInfo, ReactNode } from 'react';
 
 interface Props {
   children: ReactNode;
@@ -141,29 +141,6 @@ class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-/**
- * Hook-based error boundary for functional components
- * Note: This doesn't catch errors in event handlers or async code
- */
-export function useErrorHandler(): (error: Error) => void {
-  return (error: Error) => {
-    console.error('Error caught by useErrorHandler:', error);
-    
-    // In a real app, you might want to dispatch to a global error state
-    // or show a toast notification
-    if (process.env.NODE_ENV === 'production') {
-      // Log to error monitoring service
-      console.warn('Production error from hook:', {
-        message: error.message,
-        stack: error.stack,
-        timestamp: new Date().toISOString(),
-      });
-    } else {
-      // Re-throw in development for debugging
-      throw error;
-    }
-  };
-}
 
 /**
  * Simple error boundary wrapper for smaller components
@@ -176,7 +153,7 @@ interface SimpleErrorBoundaryProps {
 export function SimpleErrorBoundary({ 
   children, 
   fallback = 'Something went wrong' 
-}: SimpleErrorBoundaryProps): JSX.Element {
+}: SimpleErrorBoundaryProps) {
   return (
     <ErrorBoundary
       fallback={

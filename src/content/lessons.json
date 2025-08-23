@@ -7,7 +7,7 @@
       "id": "single-lesson",
       "name": "Single Lesson",
       "description": "Perfect for trying out my teaching style or addressing specific musical challenges.",
-      "price": 80,
+      "price": 50,
       "sessions": 1,
       "duration": 60,
       "features": [
@@ -32,9 +32,7 @@
       "id": "foundation-package",
       "name": "Foundation Package", 
       "description": "Build solid foundations with consistent weekly lessons. Ideal for establishing good practice habits and seeing meaningful progress.",
-      "price": 300,
-      "originalPrice": 320,
-      "discount": 20,
+      "discount": 5,
       "sessions": 4,
       "duration": 60,
       "features": [
@@ -61,9 +59,7 @@
       "id": "transformation-intensive",
       "name": "Transformation Intensive",
       "description": "The most comprehensive package for serious students. Experience significant improvement in technique, theory, and expressive improvisation.",
-      "price": 560,
-      "originalPrice": 640,
-      "discount": 80,
+      "discount": 10,
       "sessions": 8,
       "duration": 60,
       "features": [
