@@ -7,10 +7,7 @@ export function Contact() {
 
   if (loading) {
     return (
-      <section 
-        id="contact" 
-        className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
-      >
+      <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
         <div className="container-custom">
           <div className="animate-pulse">
             <div className="text-center mb-12">
@@ -32,16 +29,13 @@ export function Contact() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !contact) {
     return (
-      <section 
-        id="contact" 
-        className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
-      >
+      <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
         <div className="container-custom text-center">
           <h2 className="text-4xl font-heading font-bold">Contact</h2>
           <p className="text-lg mt-4">
@@ -63,7 +57,7 @@ export function Contact() {
             </a>
           </p>
         </div>
-      </section>
+      </div>
     );
   }
 
@@ -100,9 +94,7 @@ export function Contact() {
   const secondaryMethods = contact.methods.filter(method => !method.primary);
 
   return (
-    <section 
-      id="contact" 
-      className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden"
+    <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden"
     >
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[url('/images/contact-pattern.svg')] bg-repeat opacity-10"></div>
@@ -321,6 +313,6 @@ export function Contact() {
           </motion.div>
         </div>
       </motion.div>
-    </section>
+    </div>
   );
 }

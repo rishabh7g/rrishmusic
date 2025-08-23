@@ -7,7 +7,7 @@ export function Lessons() {
 
   if (loading) {
     return (
-      <section id="lessons" className="section bg-white">
+      <div className="section bg-white">
         <div className="container-custom">
           <div className="animate-pulse">
             <div className="text-center mb-16">
@@ -29,13 +29,13 @@ export function Lessons() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !packages.length) {
     return (
-      <section id="lessons" className="section bg-white">
+      <div className="section bg-white">
         <div className="container-custom text-center">
           <h2 className="text-4xl font-heading font-bold text-neutral-charcoal">
             Lesson Packages
@@ -44,7 +44,7 @@ export function Lessons() {
             Content temporarily unavailable. Please try again later.
           </p>
         </div>
-      </section>
+      </div>
     );
   }
 
@@ -84,7 +84,7 @@ export function Lessons() {
   };
 
   return (
-    <section id="lessons" className="section bg-white relative overflow-hidden">
+    <div className="section bg-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-1/4 w-72 h-72 bg-brand-yellow-accent/5 rounded-full -translate-y-36"></div>
       <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-brand-blue-primary/5 rounded-full translate-y-40"></div>
@@ -322,6 +322,6 @@ export function Lessons() {
           </a>
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 }

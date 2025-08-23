@@ -7,10 +7,7 @@ export function Hero() {
 
   if (loading) {
     return (
-      <section
-        id="hero"
-        className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
-      >
+      <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
         <div className="container-custom text-center">
           <div className="animate-pulse">
             <div className="h-16 bg-white/20 rounded mb-6 mx-auto max-w-md"></div>
@@ -19,16 +16,13 @@ export function Hero() {
             <div className="h-6 bg-white/20 rounded mx-auto max-w-xs"></div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !hero) {
     return (
-      <section
-        id="hero"
-        className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
-      >
+      <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
         <div className="container-custom text-center">
           <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6">
             Hi, I'm Rrish.
@@ -50,15 +44,12 @@ export function Hero() {
             </a>
           </p>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section
-      id="hero"
-      className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden"
-    >
+    <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute inset-0 bg-[url('/images/hero-pattern.svg')] bg-repeat opacity-10"></div>
       
@@ -119,6 +110,6 @@ export function Hero() {
           </a>
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 }

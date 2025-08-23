@@ -7,7 +7,7 @@ export function Approach() {
 
   if (loading) {
     return (
-      <section id="approach" className="section bg-neutral-gray-light">
+      <div className="section bg-neutral-gray-light">
         <div className="container-custom">
           <div className="animate-pulse">
             <div className="text-center mb-16">
@@ -26,13 +26,13 @@ export function Approach() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !approach) {
     return (
-      <section id="approach" className="section bg-neutral-gray-light">
+      <div className="section bg-neutral-gray-light">
         <div className="container-custom text-center">
           <h2 className="text-4xl font-heading font-bold text-neutral-charcoal">
             My Teaching Approach
@@ -41,7 +41,7 @@ export function Approach() {
             Content temporarily unavailable. Please try again later.
           </p>
         </div>
-      </section>
+      </div>
     );
   }
 
@@ -107,7 +107,7 @@ export function Approach() {
   };
 
   return (
-    <section id="approach" className="section bg-neutral-gray-light relative overflow-hidden">
+    <div className="section bg-neutral-gray-light relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-1/4 left-0 w-96 h-96 bg-brand-blue-primary/5 rounded-full -translate-x-48"></div>
       <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-brand-orange-warm/5 rounded-full translate-x-40"></div>
@@ -207,6 +207,6 @@ export function Approach() {
           </div>
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 }

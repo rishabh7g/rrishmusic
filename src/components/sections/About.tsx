@@ -7,7 +7,7 @@ export function About() {
 
   if (loading) {
     return (
-      <section id="about" className="section bg-white">
+      <div className="section bg-white">
         <div className="container-custom">
           <div className="animate-pulse">
             <div className="h-12 bg-gray-300 rounded mb-8 mx-auto max-w-md"></div>
@@ -28,13 +28,13 @@ export function About() {
             </div>
           </div>
         </div>
-      </section>
+      </div>
     );
   }
 
   if (error || !about) {
     return (
-      <section id="about" className="section bg-white">
+      <div className="section bg-white">
         <div className="container-custom text-center">
           <h2 className="text-4xl font-heading font-bold text-neutral-charcoal">
             About Me
@@ -43,12 +43,12 @@ export function About() {
             Content temporarily unavailable. Please try again later.
           </p>
         </div>
-      </section>
+      </div>
     );
   }
 
   return (
-    <section id="about" className="section bg-white relative">
+    <div className="section bg-white relative">
       {/* Background decoration */}
       <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange-warm/5 rounded-full -translate-y-32 translate-x-32"></div>
       
@@ -115,7 +115,7 @@ export function About() {
             <div className="grid grid-cols-2 gap-4">
               {about.skills.map((skill, index) => (
                 <motion.div
-                  key={skill}
+                  key={skill.name}
                   className="bg-white rounded-xl p-4 text-center shadow-sm hover:shadow-md 
                     transition-shadow duration-300"
                   variants={fadeInUp}
@@ -131,7 +131,7 @@ export function About() {
                     </svg>
                   </div>
                   <p className="font-semibold text-neutral-charcoal text-sm">
-                    {skill}
+                    {skill.name}
                   </p>
                 </motion.div>
               ))}
@@ -165,6 +165,6 @@ export function About() {
           ))}
         </motion.div>
       </motion.div>
-    </section>
+    </div>
   );
 }
