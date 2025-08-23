@@ -51,7 +51,7 @@ export function About() {
   return (
     <div className="section bg-white relative">
       {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-64 h-64 bg-brand-orange-warm/5 rounded-full -translate-y-32 translate-x-32"></div>
+      <div className="absolute top-0 right-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-brand-orange-warm/5 rounded-full -translate-y-12 sm:-translate-y-24 lg:-translate-y-32 translate-x-12 sm:translate-x-24 lg:translate-x-32 hidden sm:block"></div>
       
       <motion.div 
         className="container-custom relative z-10"

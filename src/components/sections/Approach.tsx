@@ -109,8 +109,8 @@ export function Approach() {
   return (
     <div className="section bg-neutral-gray-light relative overflow-hidden">
       {/* Background decoration */}
-      <div className="absolute top-1/4 left-0 w-96 h-96 bg-brand-blue-primary/5 rounded-full -translate-x-48"></div>
-      <div className="absolute bottom-1/4 right-0 w-80 h-80 bg-brand-orange-warm/5 rounded-full translate-x-40"></div>
+      <div className="absolute top-1/4 left-0 w-32 h-32 sm:w-64 sm:h-64 lg:w-96 lg:h-96 bg-brand-blue-primary/5 rounded-full -translate-x-16 sm:-translate-x-32 lg:-translate-x-48 hidden sm:block"></div>
+      <div className="absolute bottom-1/4 right-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-80 lg:h-80 bg-brand-orange-warm/5 rounded-full translate-x-12 sm:translate-x-24 lg:translate-x-40 hidden sm:block"></div>
       
       <motion.div 
         className="container-custom relative z-10"
