@@ -109,6 +109,25 @@ export function useContent(): UseContentReturn {
     error: null
   });
 
+  // Construct site content from modular JSON files
+  const siteContent: SiteContent = useMemo(() => ({
+    hero: heroData,
+    about: aboutData,
+    approach: approachData,
+    community: {
+      ...communityData,
+      communityStats: {
+        totalStudents: stats.students.total,
+        activeMembers: stats.students.active,
+        successStories: stats.quality.successStories,
+        averageRating: stats.quality.averageRating,
+        countriesRepresented: stats.reach.countries
+      }
+    },
+    contact: contactData,
+    seo: seoData
+  } as SiteContent), []);
+
   const refresh = useCallback(() => {
     setState({ isLoading: true, isError: false, error: null });
     
@@ -129,7 +148,7 @@ export function useContent(): UseContentReturn {
         });
       }
     }, 100);
-  }, []);
+  }, [siteContent]);
 
   useEffect(() => {
     refresh();
@@ -143,7 +162,7 @@ export function useContent(): UseContentReturn {
     loading: state.isLoading,
     error: state.error,
     refresh
-  }), [state.isLoading, state.error, refresh]);
+  }), [siteContent, state.isLoading, state.error, refresh]);
 
   return memoizedReturn;
 }
@@ -454,7 +473,7 @@ export function useSEO(customData?: {
   description?: string;
   keywords?: string;
 }): {
-  seo: SiteContent['seo'] | undefined;
+  seo: typeof seoData;
   data: {
     title: string;
     description: string;
@@ -466,33 +485,28 @@ export function useSEO(customData?: {
   } | null;
   generatePageTitle: (pageTitle?: string) => string;
 } {
-  const { content } = useContent();
-  
-  const seoData = useMemo(() => {
-    const seo = content?.seo;
-    if (!seo) return null;
-
+  const processedSeoData = useMemo(() => {
     return {
-      title: customData?.title || seo.defaultTitle,
-      description: customData?.description || seo.defaultDescription,
-      keywords: customData?.keywords || seo.defaultKeywords,
-      ogImage: seo.ogImage,
-      canonicalUrl: seo.canonicalUrl,
-      robots: seo.robots,
-      twitterCard: seo.twitterCard
+      title: customData?.title || seoData.defaultTitle,
+      description: customData?.description || seoData.defaultDescription,
+      keywords: customData?.keywords || seoData.defaultKeywords,
+      ogImage: seoData.ogImage,
+      canonicalUrl: seoData.canonicalUrl,
+      robots: seoData.robots,
+      twitterCard: seoData.twitterCard
     };
-  }, [content, customData]);
+  }, [customData]);
 
   const generatePageTitle = useCallback((pageTitle?: string): string => {
-    const siteTitle = content?.seo?.defaultTitle || 'RrishMusic';
+    const siteTitle = seoData.defaultTitle || 'RrishMusic';
     return pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle;
-  }, [content]);
+  }, []);
 
   return useMemo(() => ({
-    seo: content?.seo,
-    data: seoData,
+    seo: seoData,
+    data: processedSeoData,
     generatePageTitle
-  }), [content, seoData, generatePageTitle]);
+  }), [processedSeoData, generatePageTitle]);
 }
 
 /**
