@@ -5,6 +5,7 @@ name: Deploy RrishMusic to GitHub Pages
       branches: [ main ]
     pull_request:
       branches: [ main ]
+      types: [opened, synchronize, reopened]
 
   permissions:
     contents: read
@@ -12,6 +13,7 @@ name: Deploy RrishMusic to GitHub Pages
     id-token: write
     pull-requests: write
     checks: write
+    statuses: write
 
   jobs:
     test:
@@ -20,6 +22,11 @@ name: Deploy RrishMusic to GitHub Pages
       steps:
         - name: Checkout code
           uses: actions/checkout@v4
+
+        - name: Report pending status
+          if: always()
+          run: |
+            echo "Test suite started"
 
         - name: Setup Node.js
           uses: actions/setup-node@v4
