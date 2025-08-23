@@ -18,6 +18,7 @@ export const formatCurrency = (amount: number): string => {
     style: "currency",
     currency: "AUD",
     minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
   }).format(amount);
 };
 
