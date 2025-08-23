@@ -13,6 +13,9 @@ import {
 } from '../animations';
 import { ANIMATION_DURATION } from '../constants';
 
+// Helper type for accessing animation properties safely
+type AnimationState = Record<string, any>;
+
 describe('Animation Variants', () => {
   describe('fadeInUp', () => {
     it('should have correct hidden state', () => {
@@ -34,7 +37,7 @@ describe('Animation Variants', () => {
     });
 
     it('should use normal animation duration', () => {
-      expect(fadeInUp.visible.transition.duration).toBe(ANIMATION_DURATION.normal);
+      expect((fadeInUp.visible as AnimationState).transition.duration).toBe(ANIMATION_DURATION.normal);
     });
   });
 
@@ -58,8 +61,8 @@ describe('Animation Variants', () => {
     });
 
     it('should move from negative y position', () => {
-      expect(fadeInDown.hidden.y).toBe(-60);
-      expect(fadeInDown.visible.y).toBe(0);
+      expect((fadeInDown.hidden as AnimationState).y).toBe(-60);
+      expect((fadeInDown.visible as AnimationState).y).toBe(0);
     });
   });
 
@@ -81,8 +84,9 @@ describe('Animation Variants', () => {
     });
 
     it('should have proper stagger timing', () => {
-      expect(staggerContainer.visible.transition.staggerChildren).toBe(0.1);
-      expect(staggerContainer.visible.transition.delayChildren).toBe(0.2);
+      const visible = staggerContainer.visible as AnimationState;
+      expect(visible.transition.staggerChildren).toBe(0.1);
+      expect(visible.transition.delayChildren).toBe(0.2);
     });
   });
 
@@ -106,8 +110,8 @@ describe('Animation Variants', () => {
     });
 
     it('should scale from 0.8 to 1', () => {
-      expect(scaleIn.hidden.scale).toBe(0.8);
-      expect(scaleIn.visible.scale).toBe(1);
+      expect((scaleIn.hidden as AnimationState).scale).toBe(0.8);
+      expect((scaleIn.visible as AnimationState).scale).toBe(1);
     });
   });
 
@@ -131,8 +135,8 @@ describe('Animation Variants', () => {
     });
 
     it('should slide from left (negative x)', () => {
-      expect(slideInLeft.hidden.x).toBe(-100);
-      expect(slideInLeft.visible.x).toBe(0);
+      expect((slideInLeft.hidden as AnimationState).x).toBe(-100);
+      expect((slideInLeft.visible as AnimationState).x).toBe(0);
     });
   });
 
@@ -156,8 +160,8 @@ describe('Animation Variants', () => {
     });
 
     it('should slide from right (positive x)', () => {
-      expect(slideInRight.hidden.x).toBe(100);
-      expect(slideInRight.visible.x).toBe(0);
+      expect((slideInRight.hidden as AnimationState).x).toBe(100);
+      expect((slideInRight.visible as AnimationState).x).toBe(0);
     });
   });
 
@@ -178,8 +182,8 @@ describe('Animation Variants', () => {
     });
 
     it('should only animate opacity', () => {
-      expect(Object.keys(fadeIn.hidden)).toEqual(['opacity']);
-      expect(Object.keys(fadeIn.visible)).toEqual(['opacity', 'transition']);
+      expect(Object.keys(fadeIn.hidden as AnimationState)).toEqual(['opacity']);
+      expect(Object.keys(fadeIn.visible as AnimationState)).toEqual(['opacity', 'transition']);
     });
   });
 
@@ -203,12 +207,12 @@ describe('Animation Variants', () => {
     });
 
     it('should rotate from -180 to 0 degrees', () => {
-      expect(rotateIn.hidden.rotate).toBe(-180);
-      expect(rotateIn.visible.rotate).toBe(0);
+      expect((rotateIn.hidden as AnimationState).rotate).toBe(-180);
+      expect((rotateIn.visible as AnimationState).rotate).toBe(0);
     });
 
     it('should use slow animation duration', () => {
-      expect(rotateIn.visible.transition.duration).toBe(ANIMATION_DURATION.slow);
+      expect((rotateIn.visible as AnimationState).transition.duration).toBe(ANIMATION_DURATION.slow);
     });
   });
 });
@@ -216,37 +220,37 @@ describe('Animation Variants', () => {
 describe('Hover Animations', () => {
   describe('buttonHover', () => {
     it('should have correct scale value', () => {
-      expect(buttonHover.scale).toBe(1.05);
+      expect((buttonHover as AnimationState).scale).toBe(1.05);
     });
 
     it('should have correct transition duration', () => {
-      expect(buttonHover.transition).toEqual({
+      expect((buttonHover as AnimationState).transition).toEqual({
         duration: ANIMATION_DURATION.fast,
       });
     });
 
     it('should use fast animation duration', () => {
-      expect(buttonHover.transition.duration).toBe(ANIMATION_DURATION.fast);
+      expect((buttonHover as AnimationState).transition.duration).toBe(ANIMATION_DURATION.fast);
     });
   });
 
   describe('cardHover', () => {
     it('should have correct y transformation', () => {
-      expect(cardHover.y).toBe(-8);
+      expect((cardHover as AnimationState).y).toBe(-8);
     });
 
     it('should have correct transition duration', () => {
-      expect(cardHover.transition).toEqual({
+      expect((cardHover as AnimationState).transition).toEqual({
         duration: ANIMATION_DURATION.fast,
       });
     });
 
     it('should use fast animation duration', () => {
-      expect(cardHover.transition.duration).toBe(ANIMATION_DURATION.fast);
+      expect((cardHover as AnimationState).transition.duration).toBe(ANIMATION_DURATION.fast);
     });
 
     it('should move element up (negative y)', () => {
-      expect(cardHover.y).toBeLessThan(0);
+      expect((cardHover as AnimationState).y).toBeLessThan(0);
     });
   });
 });
@@ -257,7 +261,7 @@ describe('Animation Properties', () => {
 
     it('should use easeOut easing for most animations', () => {
       easingAnimations.forEach((animation) => {
-        expect(animation.visible.transition.ease).toBe('easeOut');
+        expect((animation.visible as AnimationState).transition.ease).toBe('easeOut');
       });
     });
   });
@@ -267,7 +271,7 @@ describe('Animation Properties', () => {
 
     it('should use normal duration for most animations', () => {
       normalDurationAnimations.forEach((animation) => {
-        expect(animation.visible.transition.duration).toBe(ANIMATION_DURATION.normal);
+        expect((animation.visible as AnimationState).transition.duration).toBe(ANIMATION_DURATION.normal);
       });
     });
 
@@ -275,7 +279,7 @@ describe('Animation Properties', () => {
 
     it('should use fast duration for hover animations', () => {
       fastDurationAnimations.forEach((animation) => {
-        expect(animation.transition.duration).toBe(ANIMATION_DURATION.fast);
+        expect((animation as AnimationState).transition.duration).toBe(ANIMATION_DURATION.fast);
       });
     });
   });
@@ -285,8 +289,8 @@ describe('Animation Properties', () => {
 
     it('should start with opacity 0 and end with opacity 1', () => {
       opacityAnimations.forEach((animation) => {
-        expect(animation.hidden.opacity).toBe(0);
-        expect(animation.visible.opacity).toBe(1);
+        expect((animation.hidden as AnimationState).opacity).toBe(0);
+        expect((animation.visible as AnimationState).opacity).toBe(1);
       });
     });
   });
@@ -322,25 +326,25 @@ describe('Animation Integration', () => {
 
 describe('Animation Values', () => {
   it('should use reasonable transform values', () => {
-    expect(fadeInUp.hidden.y).toBe(60); // Move up from bottom
-    expect(fadeInDown.hidden.y).toBe(-60); // Move down from top
-    expect(slideInLeft.hidden.x).toBe(-100); // Slide from left
-    expect(slideInRight.hidden.x).toBe(100); // Slide from right
-    expect(scaleIn.hidden.scale).toBe(0.8); // Scale from smaller
-    expect(rotateIn.hidden.rotate).toBe(-180); // Half rotation
+    expect((fadeInUp.hidden as AnimationState).y).toBe(60); // Move up from bottom
+    expect((fadeInDown.hidden as AnimationState).y).toBe(-60); // Move down from top
+    expect((slideInLeft.hidden as AnimationState).x).toBe(-100); // Slide from left
+    expect((slideInRight.hidden as AnimationState).x).toBe(100); // Slide from right
+    expect((scaleIn.hidden as AnimationState).scale).toBe(0.8); // Scale from smaller
+    expect((rotateIn.hidden as AnimationState).rotate).toBe(-180); // Half rotation
   });
 
   it('should use subtle hover effects', () => {
-    expect(buttonHover.scale).toBe(1.05); // 5% scale increase
-    expect(cardHover.y).toBe(-8); // 8px upward movement
+    expect((buttonHover as AnimationState).scale).toBe(1.05); // 5% scale increase
+    expect((cardHover as AnimationState).y).toBe(-8); // 8px upward movement
   });
 
   it('should end all animations at neutral positions', () => {
-    expect(fadeInUp.visible.y).toBe(0);
-    expect(fadeInDown.visible.y).toBe(0);
-    expect(slideInLeft.visible.x).toBe(0);
-    expect(slideInRight.visible.x).toBe(0);
-    expect(scaleIn.visible.scale).toBe(1);
-    expect(rotateIn.visible.rotate).toBe(0);
+    expect((fadeInUp.visible as AnimationState).y).toBe(0);
+    expect((fadeInDown.visible as AnimationState).y).toBe(0);
+    expect((slideInLeft.visible as AnimationState).x).toBe(0);
+    expect((slideInRight.visible as AnimationState).x).toBe(0);
+    expect((scaleIn.visible as AnimationState).scale).toBe(1);
+    expect((rotateIn.visible as AnimationState).rotate).toBe(0);
   });
 });
