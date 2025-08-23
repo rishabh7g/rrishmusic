@@ -1,0 +1,85 @@
+name: Deploy RrishMusic to GitHub Pages
+
+  on:
+    push:
+      branches: [ main ]
+    pull_request:
+      branches: [ main ]
+
+  permissions:
+    contents: read
+    pages: write
+    id-token: write
+    pull-requests: write
+    checks: write
+
+  jobs:
+    test:
+      runs-on: ubuntu-latest
+      name: Test Suite
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '18'
+            cache: 'npm'
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Run type checking
+          run: npm run type-check
+
+        - name: Run linting
+          run: npm run lint
+
+        - name: Run unit tests
+          run: npm run test -- --watchAll=false
+
+        - name: Build project
+          run: npm run build
+
+        - name: Upload test results
+          uses: actions/upload-artifact@v4
+          if: always()
+          with:
+            name: test-results
+            path: coverage/
+
+    deploy:
+      needs: test
+      runs-on: ubuntu-latest
+      name: Deploy to GitHub Pages
+      if: github.ref == 'refs/heads/main'
+      environment:
+        name: github-pages
+        url: ${{ steps.deployment.outputs.page_url }}
+      steps:
+        - name: Checkout code
+          uses: actions/checkout@v4
+
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: '18'
+            cache: 'npm'
+
+        - name: Install dependencies
+          run: npm ci
+
+        - name: Build for production
+          run: npm run build
+          env:
+            GENERATE_SOURCEMAP: false
+
+        - name: Upload build artifacts
+          uses: actions/upload-pages-artifact@v3
+          with:
+            path: ./dist
+
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v4
