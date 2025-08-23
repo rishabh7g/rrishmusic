@@ -24,8 +24,11 @@ describe('Basic Tests', () => {
   })
 
   it('should handle boolean logic', () => {
-    expect(true && true).toBe(true)
-    expect(true || false).toBe(true)
-    expect(!false).toBe(true)
+    const a = true
+    const b = true
+    const c = false
+    expect(a && b).toBe(true)
+    expect(a || c).toBe(true)
+    expect(!c).toBe(true)
   })
 })
