@@ -1,9 +1,10 @@
 import { motion } from 'framer-motion';
-import { useSectionContent } from '@/hooks/useContent';
+import { useSectionContent, useStats } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
 
 export function About() {
   const { data: about, loading, error } = useSectionContent('about');
+  const { aboutStats } = useStats();
 
   if (loading) {
     return (
@@ -144,7 +145,7 @@ export function About() {
           className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-8"
           variants={fadeInUp}
         >
-          {about.stats?.map((stat, index) => (
+          {aboutStats.map((stat, index) => (
             <motion.div
               key={stat.label}
               className="text-center"

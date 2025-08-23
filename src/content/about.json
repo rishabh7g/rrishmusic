@@ -1,0 +1,59 @@
+{
+  "title": "About Rrish",
+  "subtitle": "Passionate Educator. Blues Improviser. Musical Guide.",
+  "content": [
+    "Music has been my constant companion for over 5 years. What started as a personal journey into blues improvisation has evolved into a deep passion for helping others discover their own musical voice.",
+    "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations. With 1 year of teaching experience, my approach combines technical skill development with creative expression, ensuring that every student not only learns to play but learns to communicate through music.",
+    "I believe that music is a language that everyone can speak. My role is not to dictate how you should sound, but to guide you toward finding your authentic musical expression."
+  ],
+  "skills": [
+    {
+      "name": "Blues Improvisation",
+      "level": "intermediate",
+      "yearsExperience": 5,
+      "description": "Specialized in blues guitar improvisation and expression"
+    },
+    {
+      "name": "Music Education",
+      "level": "intermediate",
+      "yearsExperience": 1,
+      "description": "Adult learning focused music instruction"
+    },
+    {
+      "name": "Guitar Technique",
+      "level": "intermediate",
+      "yearsExperience": 5,
+      "description": "Technical proficiency across multiple styles"
+    },
+    {
+      "name": "Creative Development",
+      "level": "intermediate",
+      "yearsExperience": 1,
+      "description": "Helping students find their unique musical voice"
+    }
+  ],
+  "achievements": [
+    {
+      "id": "students-taught",
+      "title": "2 Happy Students",
+      "description": "Currently teaching 2 dedicated students who are developing their improvisation skills",
+      "date": "2024-2025",
+      "category": "teaching"
+    },
+    {
+      "id": "student-review",
+      "title": "5-Star Review",
+      "description": "\"Rrish is an amazing teacher who really helped me understand blues improvisation\" - Blake",
+      "date": "2024",
+      "category": "teaching"
+    },
+    {
+      "id": "performance-experience",
+      "title": "1 Year Teaching Experience",
+      "description": "Dedicated to helping students grow their musical abilities with personalized instruction",
+      "date": "2024-2025",
+      "category": "performance"
+    }
+  ],
+  "personalQuote": "Music is a language that everyone can speak. My role is to guide you toward finding your authentic musical expression."
+}

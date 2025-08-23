@@ -63,7 +63,7 @@ export const Community: React.FC = () => {
                   transition={{ duration: 0.2 }}
                 >
                   <div className="text-3xl font-bold text-brand-blue-primary">
-                    {community.communityStats.totalStudents}+
+                    {community.communityStats.totalStudents}
                   </div>
                   <div className="text-sm text-neutral-charcoal/70">
                     Total Students

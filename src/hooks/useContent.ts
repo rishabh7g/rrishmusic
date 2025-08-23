@@ -12,14 +12,40 @@ import type {
 } from '@/types/content';
 
 // Import JSON files directly - Vite handles this at build time
-import siteContentData from '@/content/site-content.json';
 import lessonsData from '@/content/lessons.json';
 import testimonialsData from '@/content/testimonials.json';
+import statsData from '@/content/stats.json';
+import heroData from '@/content/hero.json';
+import aboutData from '@/content/about.json';
+import approachData from '@/content/approach.json';
+import communityData from '@/content/community.json';
+import contactData from '@/content/contact.json';
+import seoData from '@/content/seo.json';
+
+interface StatsData {
+  experience: {
+    playingYears: number;
+    teachingYears: number;
+  };
+  students: {
+    total: number;
+    active: number;
+  };
+  quality: {
+    averageRating: number;
+    successStories: number;
+    testimonials: number;
+  };
+  reach: {
+    countries: number;
+    city: string;
+  };
+}
 
 // Type assertions for imported data
-const siteContent = siteContentData as unknown as SiteContent;
 const lessonContent = lessonsData as LessonContent;
 const testimonials = testimonialsData as Testimonial[];
+const stats = statsData as StatsData;
 
 interface UseContentReturn {
   content: SiteContent;
@@ -123,36 +149,46 @@ export function useContent(): UseContentReturn {
 }
 
 /**
- * Hook for accessing specific content sections with type safety and caching
+ * Hook for accessing specific content sections with modular data files
  */
-export function useSectionContent<T extends keyof SiteContent>(
-  section: T
-): {
-  data: SiteContent[T];
-  loading: boolean;
-  error: string | null;
-} {
-  const { content, loading, error } = useContent();
-  
+export function useSectionContent(section: string) {
+  const [loading] = useState(false);
+  const [error] = useState<string | null>(null);
+
   const sectionData = useMemo(() => {
-    // Try cache first
-    const cacheKey = `section-${section}`;
-    const cached = cacheUtils.get<SiteContent[T]>(cacheKey);
-    
-    if (cached) {
-      return cached;
+    switch (section) {
+      case 'hero':
+        return heroData;
+      case 'about':
+        return aboutData;
+      case 'approach':
+        return approachData;
+      case 'community':
+        // Add community stats from centralized stats
+        return {
+          ...communityData,
+          communityStats: {
+            totalStudents: stats.students.total,
+            activeMembers: stats.students.active,
+            successStories: stats.quality.successStories,
+            averageRating: stats.quality.averageRating,
+            countriesRepresented: stats.reach.countries
+          }
+        };
+      case 'contact':
+        return contactData;
+      case 'lessons':
+        return lessonContent;
+      default:
+        return null;
     }
+  }, [section]);
 
-    const data = content[section];
-    cacheUtils.set(cacheKey, data);
-    return data;
-  }, [content, section]);
-
-  return useMemo(() => ({
+  return {
     data: sectionData,
     loading,
     error
-  }), [sectionData, loading, error]);
+  };
 }
 
 /**
@@ -528,9 +564,57 @@ export const contentUtils = {
   }
 };
 
+/**
+ * Hook for accessing site statistics with computed values
+ */
+export const useStats = () => {
+  return useMemo(() => ({
+    data: stats,
+    // Computed values for different contexts
+    socialProof: {
+      studentsCount: stats.students.total,
+      yearsTeaching: stats.experience.teachingYears,
+      averageRating: stats.quality.averageRating,
+      successStories: stats.quality.successStories
+    },
+    heroStats: {
+      studentsCount: stats.students.total,
+      yearsExperience: stats.experience.playingYears,
+      successStories: stats.quality.successStories
+    },
+    aboutStats: [
+      {
+        number: stats.experience.teachingYears.toString(),
+        label: "Years Teaching"
+      },
+      {
+        number: stats.students.total.toString(),
+        label: "Happy Students"
+      },
+      {
+        number: "∞",
+        label: "Musical Moments"
+      }
+    ],
+    communityStats: {
+      totalStudents: stats.students.total,
+      activeMembers: stats.students.active,
+      successStories: stats.quality.successStories,
+      averageRating: stats.quality.averageRating,
+      countriesRepresented: stats.reach.countries
+    }
+  }), []);
+};
+
 // Export content data for direct access when needed
 export const rawContent = {
-  site: siteContent,
+  hero: heroData,
+  about: aboutData,
+  approach: approachData,
+  community: communityData,
+  contact: contactData,
   lessons: lessonContent,
-  testimonials: testimonials
+  testimonials: testimonials,
+  stats: stats,
+  seo: seoData
 } as const;
