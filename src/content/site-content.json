@@ -10,65 +10,65 @@
     "instagramHandle": "@rrishmusic",
     "instagramUrl": "https://instagram.com/rrishmusic",
     "socialProof": {
-      "studentsCount": 120,
-      "yearsExperience": 15,
-      "successStories": 95
+      "studentsCount": 2,
+      "yearsExperience": 4,
+      "successStories": 1
     }
   },
   "about": {
     "title": "About Rrish",
     "subtitle": "Passionate Educator. Blues Improviser. Musical Guide.",
     "content": [
-      "Music has been my constant companion for over 15 years. What started as a personal journey into blues improvisation has evolved into a deep passion for helping others discover their own musical voice.",
-      "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations. My approach combines technical skill development with creative expression, ensuring that every student not only learns to play but learns to communicate through music.",
+      "Music has been my constant companion for over 5 years. What started as a personal journey into blues improvisation has evolved into a deep passion for helping others discover their own musical voice.",
+      "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations. With 4 years of teaching experience, my approach combines technical skill development with creative expression, ensuring that every student not only learns to play but learns to communicate through music.",
       "I believe that music is a language that everyone can speak. My role is not to dictate how you should sound, but to guide you toward finding your authentic musical expression."
     ],
     "skills": [
       {
         "name": "Blues Improvisation",
-        "level": "expert",
-        "yearsExperience": 15,
+        "level": "intermediate",
+        "yearsExperience": 5,
         "description": "Specialized in blues guitar improvisation and expression"
       },
       {
         "name": "Music Education",
-        "level": "expert",
-        "yearsExperience": 7,
+        "level": "intermediate",
+        "yearsExperience": 4,
         "description": "Adult learning focused music instruction"
       },
       {
         "name": "Guitar Technique",
-        "level": "expert",
-        "yearsExperience": 15,
+        "level": "intermediate",
+        "yearsExperience": 5,
         "description": "Technical proficiency across multiple styles"
       },
       {
         "name": "Creative Development",
-        "level": "expert",
-        "yearsExperience": 7,
+        "level": "intermediate",
+        "yearsExperience": 4,
         "description": "Helping students find their unique musical voice"
       }
     ],
     "achievements": [
       {
         "id": "students-taught",
-        "title": "120+ Students Taught",
-        "description": "Helped over 120 students develop their improvisation skills",
-        "date": "2018-2025",
-        "category": "teaching"
-      },
-      {
-        "id": "retention-rate",
-        "title": "92% Student Retention Rate",
-        "description": "High satisfaction and continued learning with students",
+        "title": "2 Happy Students",
+        "description": "Currently teaching 2 dedicated students who are developing their improvisation skills",
         "date": "2021-2025",
         "category": "teaching"
       },
       {
+        "id": "student-review",
+        "title": "5-Star Review",
+        "description": "\"Rrish is an amazing teacher who really helped me understand blues improvisation\" - Blake",
+        "date": "2024",
+        "category": "teaching"
+      },
+      {
         "id": "performance-experience",
-        "title": "Melbourne Music Scene Performer",
-        "description": "Active performer in Melbourne's vibrant music community",
-        "date": "2015-2025",
+        "title": "4 Years Teaching Experience",
+        "description": "Dedicated to helping students grow their musical abilities with personalized instruction",
+        "date": "2021-2025",
         "category": "performance"
       }
     ],
@@ -175,10 +175,10 @@
       "showCaptions": true
     },
     "communityStats": {
-      "totalStudents": 120,
-      "activeMembers": 95,
-      "successStories": 85,
-      "countriesRepresented": 3
+      "totalStudents": 2,
+      "activeMembers": 2,
+      "successStories": 1,
+      "countriesRepresented": 1
     }
   },
   "contact": {

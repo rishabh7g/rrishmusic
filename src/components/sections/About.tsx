@@ -145,9 +145,9 @@ export function About() {
           variants={fadeInUp}
         >
           {[
-            { number: "5+", label: "Years Teaching" },
-            { number: "100+", label: "Happy Students" },
-            { number: "∞", label: "Musical Moments" }
+            { number: "4", label: "Years Teaching" },
+            { number: "2", label: "Happy Students" },
+            { number: "5★", label: "Student Review" }
           ].map((stat, index) => (
             <motion.div
               key={stat.label}
