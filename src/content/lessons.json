@@ -1,0 +1,79 @@
+{
+  "title": "Music Lessons",
+  "subtitle": "Choose the perfect package for your musical journey",
+  "packages": [
+    {
+      "id": "single",
+      "name": "Single Lesson",
+      "sessions": 1,
+      "price": 50,
+      "features": [
+        "1-hour individual lesson",
+        "Personalized feedback",
+        "Practice materials provided",
+        "Session recording included",
+        "Flexible scheduling"
+      ],
+      "description": "Perfect for trying out a lesson or focusing on a specific challenge."
+    },
+    {
+      "id": "package-4", 
+      "name": "4-Lesson Package",
+      "sessions": 4,
+      "price": 190,
+      "discount": 5,
+      "features": [
+        "4 individual lessons (1 hour each)",
+        "Progressive skill building",
+        "Custom practice plan",
+        "Email support between lessons",
+        "Flexible scheduling",
+        "5% savings compared to single lessons"
+      ],
+      "description": "Great for building momentum and establishing a routine.",
+      "popular": false
+    },
+    {
+      "id": "package-8",
+      "name": "8-Lesson Package", 
+      "sessions": 8,
+      "price": 360,
+      "discount": 10,
+      "popular": true,
+      "features": [
+        "8 individual lessons (1 hour each)",
+        "Structured learning pathway",
+        "Performance goal setting",
+        "Priority booking slots",
+        "Community group access",
+        "Ongoing progress tracking",
+        "10% savings compared to single lessons"
+      ],
+      "description": "Most popular choice - perfect for serious skill development."
+    },
+    {
+      "id": "monthly",
+      "name": "Monthly Unlimited",
+      "sessions": 0,
+      "price": 300,
+      "features": [
+        "Unlimited lessons (subject to availability)",
+        "Weekly group sessions",
+        "Priority support",
+        "Community forum access",
+        "All learning materials included",
+        "Performance opportunities"
+      ],
+      "description": "For dedicated students who want maximum flexibility and support."
+    }
+  ],
+  "additionalInfo": {
+    "sessionLength": "60 minutes per individual lesson",
+    "cancellationPolicy": "24-hour notice required for cancellations",
+    "reschedulePolicy": "Free rescheduling with 4-hour notice",
+    "location": "Melbourne CBD studio or online via Zoom",
+    "instruments": ["Guitar", "Piano", "Music Theory", "Improvisation", "Blues Harmonica"],
+    "levels": "All levels welcome - from complete beginners to advanced players",
+    "ageRange": "Lessons available for ages 12 and up"
+  }
+}

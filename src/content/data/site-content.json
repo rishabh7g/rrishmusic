@@ -1,0 +1,227 @@
+{
+  "hero": {
+    "headline": "Hi, I'm Rrish.",
+    "subtitle": "I'm a musician who improvises on blues and different music genres. I help people learn music at every level and improve their improvisation skills.",
+    "callToAction": {
+      "primary": {
+        "text": "Start Your Musical Journey",
+        "href": "#lessons"
+      },
+      "secondary": {
+        "text": "Learn About My Approach",
+        "href": "#approach"
+      }
+    },
+    "social": {
+      "instagram": {
+        "text": "Find me on Instagram:",
+        "handle": "@rrishmusic",
+        "url": "https://instagram.com/rrishmusic"
+      }
+    }
+  },
+  "about": {
+    "title": "About Rrish",
+    "tagline": "Passionate Educator. Blues Improviser. Musical Guide.",
+    "story": {
+      "intro": "Music has been my constant companion for over 15 years. What started as a personal journey into blues improvisation has evolved into a deep passion for helping others discover their own musical voice.",
+      "background": "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations. My approach combines technical skill development with creative expression, ensuring that every student not only learns to play but learns to communicate through music.",
+      "philosophy": "I believe that music is a language that everyone can speak. My role is not to dictate how you should sound, but to guide you toward finding your authentic musical expression."
+    },
+    "credentials": [
+      {
+        "title": "15+ Years Playing Experience",
+        "description": "Extensive experience in blues improvisation and multiple genres"
+      },
+      {
+        "title": "Certified Music Educator",
+        "description": "Professional training in music pedagogy and adult learning"
+      },
+      {
+        "title": "Performance Background",
+        "description": "Regular performer in Melbourne's vibrant music scene"
+      },
+      {
+        "title": "Student Success Stories",
+        "description": "Helped 100+ students develop their improvisation skills"
+      }
+    ],
+    "highlights": {
+      "studentsHelped": "100+",
+      "yearsExperience": "15+",
+      "successRate": "95%",
+      "lessonsSince": "2018"
+    }
+  },
+  "approach": {
+    "title": "Guided Independence",
+    "subtitle": "My Teaching Philosophy",
+    "description": "True musical growth happens when you develop the confidence to explore and express yourself authentically. My 'Guided Independence' approach provides you with solid foundations while nurturing your unique musical voice.",
+    "pillars": [
+      {
+        "title": "Foundation First",
+        "description": "We start with essential techniques and theory, building the groundwork you need for confident improvisation.",
+        "icon": "foundation"
+      },
+      {
+        "title": "Personal Expression",
+        "description": "Once you have the basics, we focus on developing your individual style and musical personality.",
+        "icon": "expression"
+      },
+      {
+        "title": "Creative Freedom",
+        "description": "The ultimate goal is your independence—playing with confidence, creativity, and authentic expression.",
+        "icon": "freedom"
+      },
+      {
+        "title": "Ongoing Support",
+        "description": "Even as you become more independent, I'm here to guide you through new challenges and musical territories.",
+        "icon": "support"
+      }
+    ],
+    "methodology": {
+      "title": "How We Work Together",
+      "steps": [
+        {
+          "step": 1,
+          "title": "Assessment & Goal Setting",
+          "description": "We'll discuss your musical background, goals, and what inspires you to play."
+        },
+        {
+          "step": 2,
+          "title": "Structured Foundation",
+          "description": "Learn essential techniques, scales, and concepts that form the basis of great improvisation."
+        },
+        {
+          "step": 3,
+          "title": "Guided Practice",
+          "description": "Apply new skills in real musical contexts with personalized feedback and direction."
+        },
+        {
+          "step": 4,
+          "title": "Independent Exploration",
+          "description": "Develop your own musical ideas with confidence, knowing you have solid foundations to build upon."
+        }
+      ]
+    },
+    "forWhom": {
+      "title": "Perfect For",
+      "audienceTypes": [
+        {
+          "type": "Beginners",
+          "description": "New to guitar or improvisation, wanting to start with proper foundations"
+        },
+        {
+          "type": "Intermediate Players",
+          "description": "Have basic skills but want to break through to expressive improvisation"
+        },
+        {
+          "type": "Experienced Musicians",
+          "description": "Looking to refine technique or explore new musical territories"
+        },
+        {
+          "type": "Adult Learners",
+          "description": "Busy professionals seeking flexible, goal-oriented music education"
+        }
+      ]
+    }
+  },
+  "contact": {
+    "title": "Let's Start Your Musical Journey",
+    "subtitle": "Ready to discover your authentic musical voice?",
+    "description": "Whether you're a complete beginner or an experienced player looking to expand your horizons, I'm here to guide you every step of the way.",
+    "contactInfo": {
+      "email": {
+        "address": "hello@rrishmusic.com",
+        "label": "Email"
+      },
+      "phone": {
+        "number": "+61 423 xxx xxx",
+        "label": "Phone",
+        "note": "Available for initial consultations"
+      },
+      "location": {
+        "city": "Melbourne",
+        "state": "Victoria",
+        "country": "Australia",
+        "label": "Location",
+        "note": "In-person and online lessons available"
+      }
+    },
+    "social": {
+      "instagram": {
+        "handle": "@rrishmusic",
+        "url": "https://instagram.com/rrishmusic",
+        "description": "Follow for daily musical inspiration and student spotlights"
+      }
+    },
+    "callToAction": {
+      "primary": "Book Your First Lesson",
+      "secondary": "Ask a Question"
+    },
+    "availability": {
+      "days": "Monday - Saturday",
+      "times": "9:00 AM - 8:00 PM",
+      "timezone": "AEST",
+      "note": "Flexible scheduling available for working professionals"
+    },
+    "lessonFormats": [
+      {
+        "type": "In-Person",
+        "description": "Face-to-face lessons in Melbourne",
+        "duration": "60 minutes"
+      },
+      {
+        "type": "Online",
+        "description": "High-quality video lessons via Zoom",
+        "duration": "60 minutes"
+      },
+      {
+        "type": "Hybrid",
+        "description": "Combination of in-person and online sessions",
+        "duration": "Flexible"
+      }
+    ]
+  },
+  "community": {
+    "title": "Join Our Musical Community",
+    "subtitle": "Connect, Learn, and Grow Together",
+    "description": "Being part of a supportive musical community accelerates your growth and keeps you motivated. Connect with fellow learners and share in the joy of musical discovery.",
+    "instagram": {
+      "title": "Follow @rrishmusic",
+      "description": "Get daily inspiration, see student progress, and stay connected with our musical family.",
+      "features": [
+        "Daily playing tips and techniques",
+        "Student spotlight stories",
+        "Behind-the-scenes practice sessions",
+        "Live Q&A sessions",
+        "Musical challenges and exercises"
+      ]
+    },
+    "studentNetwork": {
+      "title": "Student Network",
+      "description": "Connect with other learners, share progress, and participate in group activities.",
+      "benefits": [
+        "Monthly virtual jam sessions",
+        "Peer support and encouragement",
+        "Collaborative learning opportunities",
+        "Performance opportunities",
+        "Resource sharing and tips"
+      ]
+    }
+  },
+  "general": {
+    "brandName": "RrishMusic",
+    "tagline": "Guided Independence in Musical Expression",
+    "mission": "To guide musicians toward authentic self-expression through structured learning and creative freedom.",
+    "location": "Melbourne, Australia",
+    "established": "2018",
+    "specialties": [
+      "Blues Improvisation",
+      "Guitar Technique",
+      "Musical Expression",
+      "Adult Music Education",
+      "Creative Development"
+    ]
+  }
+}

@@ -1,0 +1,47 @@
+[
+  {
+    "id": "sarah-m",
+    "name": "Sarah M.",
+    "text": "Rrish helped me understand blues improvisation in a way that finally clicked. His teaching style is patient and encouraging, and I went from barely knowing scales to confidently jamming within months.",
+    "rating": 5,
+    "instrument": "Guitar",
+    "level": "beginner",
+    "featured": true
+  },
+  {
+    "id": "james-t", 
+    "name": "James T.",
+    "text": "I've been playing for years but was stuck in a rut. Rrish's approach to music theory and improvisation opened up new possibilities I never knew existed. Highly recommend!",
+    "rating": 5,
+    "instrument": "Piano",
+    "level": "intermediate",
+    "featured": true
+  },
+  {
+    "id": "maria-l",
+    "name": "Maria L.",
+    "text": "The online lessons work perfectly. Great sound quality and Rrish makes it feel like we're in the same room. My playing has improved dramatically.",
+    "rating": 5,
+    "instrument": "Guitar",
+    "level": "intermediate",
+    "featured": false
+  },
+  {
+    "id": "david-k",
+    "name": "David K.",
+    "text": "As someone who started learning music later in life, I was nervous about lessons. Rrish creates such a supportive environment - I actually look forward to practice now!",
+    "rating": 5,
+    "instrument": "Piano",
+    "level": "beginner",
+    "featured": true
+  },
+  {
+    "id": "emma-r",
+    "name": "Emma R.",
+    "text": "The community aspect is amazing. Meeting other students and participating in jam sessions has been incredible for my confidence and growth as a musician.",
+    "rating": 5,
+    "instrument": "Harmonica",
+    "level": "beginner",
+    "featured": false
+  }
+]
