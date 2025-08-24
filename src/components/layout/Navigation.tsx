@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useLocation, useNavigate, Location } from "react-router-dom";
 import { NAVIGATION_ITEMS } from "@/utils/constants";
 import { useSmoothScroll, useScrollSpy } from "@/hooks/useScrollSpy";
+import { useDeviceDetection } from "@/hooks/useDeviceDetection";
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing
@@ -38,54 +39,54 @@ const getNavigationItemStyles = (
   isActive: boolean,
   isMobile: boolean
 ) => {
-  const baseClasses = "font-heading transition-all duration-200";
+  const baseClasses = "font-heading transition-all duration-200 focus-visible-enhanced";
   
   if (isMobile) {
-    const mobileBase = `${baseClasses} text-left py-2 px-4 rounded-lg block w-full`;
+    const mobileBase = `${baseClasses} text-left py-3 px-6 rounded-xl block w-full touch-target-comfortable`;
     
     switch (type) {
       case 'primary':
-        return `${mobileBase} font-semibold ${
+        return `${mobileBase} font-semibold text-responsive-base ${
           isActive
-            ? "text-brand-blue-primary bg-brand-blue-primary/15 border border-brand-blue-primary/20"
-            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-brand-blue-primary/10 hover:border hover:border-brand-blue-primary/20"
+            ? "text-white bg-brand-blue-primary border border-brand-blue-primary/20 shadow-lg"
+            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-brand-blue-primary/10 hover:border hover:border-brand-blue-primary/20 active:bg-brand-blue-primary/20"
         }`;
       case 'secondary':
-        return `${mobileBase} font-medium ${
+        return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-brand-blue-secondary bg-brand-blue-secondary/10"
-            : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/5"
+            ? "text-white bg-brand-blue-secondary border border-brand-blue-secondary/20 shadow-lg"
+            : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/10 active:bg-brand-blue-secondary/15"
         }`;
       case 'tertiary':
-        return `${mobileBase} font-medium ${
+        return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-brand-blue-primary bg-brand-blue-primary/10"
-            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50"
+            ? "text-white bg-brand-blue-primary border border-brand-blue-primary/20 shadow-lg"
+            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50 active:bg-gray-100"
         }`;
     }
   }
   
   // Desktop styles with visual hierarchy
-  const desktopBase = `${baseClasses} relative`;
+  const desktopBase = `${baseClasses} relative touch-target px-4 py-2 rounded-lg`;
   
   switch (type) {
     case 'primary':
       return `${desktopBase} font-bold text-lg ${
         isActive
           ? "text-brand-blue-primary"
-          : "text-neutral-charcoal hover:text-brand-blue-primary hover:scale-105"
+          : "text-neutral-charcoal hover:text-brand-blue-primary hover:scale-105 hover:bg-brand-blue-primary/5"
       }`;
     case 'secondary':
       return `${desktopBase} font-semibold ${
         isActive
           ? "text-brand-blue-secondary"
-          : "text-neutral-charcoal hover:text-brand-blue-secondary"
+          : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/5"
       }`;
     case 'tertiary':
       return `${desktopBase} font-medium ${
         isActive
           ? "text-brand-blue-primary"
-          : "text-neutral-charcoal hover:text-brand-blue-primary"
+          : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50"
       }`;
   }
 };
@@ -98,16 +99,16 @@ const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) =
     const baseClasses = "w-2 h-2 rounded-full";
     switch (type) {
       case 'primary':
-        return `${baseClasses} bg-brand-blue-primary`;
+        return `${baseClasses} bg-white`;
       case 'secondary':
-        return `${baseClasses} bg-brand-blue-secondary`;
+        return `${baseClasses} bg-white`;
       case 'tertiary':
-        return `${baseClasses} bg-brand-blue-primary`;
+        return `${baseClasses} bg-white`;
     }
   }
 
   // Desktop active indicator
-  const baseClasses = "absolute -bottom-1 left-0 right-0 h-0.5 rounded-full";
+  const baseClasses = "absolute -bottom-1 left-2 right-2 h-0.5 rounded-full";
   switch (type) {
     case 'primary':
       return `${baseClasses} bg-brand-blue-primary`;
@@ -206,14 +207,29 @@ const NavigationItem = React.memo<{
   const content = (
     <>
       {isMobile ? (
-        <div className="flex items-center justify-between">
-          <span>{item.label}</span>
-          {isActive && (
+        <div className="flex items-center justify-between w-full">
+          <span className="font-semibold">{item.label}</span>
+          {isActive ? (
             <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
+              initial={{ scale: 0, rotate: -90 }}
+              animate={{ scale: 1, rotate: 0 }}
               className={getActiveIndicatorStyles(itemType, true)}
+              transition={{ type: "spring", bounce: 0.4, duration: 0.4 }}
             />
+          ) : (
+            <svg
+              className="w-5 h-5 opacity-60 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                strokeWidth={2} 
+                d="M9 5l7 7-7 7" 
+              />
+            </svg>
           )}
         </div>
       ) : (
@@ -231,6 +247,13 @@ const NavigationItem = React.memo<{
     </>
   );
 
+  const animationStyles = isMobile && typeof index !== 'undefined' 
+    ? { 
+        animationDelay: `${index * 50}ms`,
+        transitionDelay: `${index * 50}ms` 
+      } 
+    : undefined;
+
   // Handle different navigation types
   if (target.type === 'route') {
     return (
@@ -240,11 +263,7 @@ const NavigationItem = React.memo<{
         className={`${baseClassName} ${className || ''}`}
         aria-current={isActive ? 'page' : undefined}
         onKeyDown={handleKeyDown}
-        style={
-          isMobile && typeof index !== 'undefined'
-            ? { animationDelay: `${index * 50}ms` }
-            : undefined
-        }
+        style={animationStyles}
       >
         {content}
       </Link>
@@ -259,11 +278,7 @@ const NavigationItem = React.memo<{
         rel="noopener noreferrer"
         className={`${baseClassName} ${className || ''}`}
         onKeyDown={handleKeyDown}
-        style={
-          isMobile && typeof index !== 'undefined'
-            ? { animationDelay: `${index * 50}ms` }
-            : undefined
-        }
+        style={animationStyles}
       >
         {content}
       </a>
@@ -277,11 +292,7 @@ const NavigationItem = React.memo<{
       onKeyDown={handleKeyDown}
       className={`${baseClassName} ${className || ''}`}
       aria-current={isActive ? 'page' : undefined}
-      style={
-        isMobile && typeof index !== 'undefined'
-          ? { animationDelay: `${index * 50}ms` }
-          : undefined
-      }
+      style={animationStyles}
     >
       {content}
     </button>
@@ -291,13 +302,15 @@ const NavigationItem = React.memo<{
 NavigationItem.displayName = 'NavigationItem';
 
 /**
- * Main Navigation Component
+ * Main Navigation Component with Responsive Design
  */
 export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiveSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { smoothScrollTo } = useSmoothScroll();
+  const device = useDeviceDetection();
   
   // Use scroll spy only for items that should be tracked on home page
   const scrollSpyItems = useMemo(() => getScrollSpyItems(), []);
@@ -314,6 +327,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
    * Handle navigation clicks with intelligent routing
    */
   const handleNavClick = useCallback((item: typeof NAVIGATION_ITEMS[0]) => {
+    setIsAnimating(true);
     setIsMenuOpen(false);
     
     const target = getNavigationTarget(item);
@@ -343,8 +357,19 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       console.error('[Navigation] Error navigating to:', item, error);
       // Fallback to homepage
       navigate('/');
+    } finally {
+      setTimeout(() => setIsAnimating(false), 300);
     }
   }, [navigate, location.pathname, smoothScrollTo]);
+
+  /**
+   * Toggle mobile menu
+   */
+  const toggleMenu = useCallback(() => {
+    if (!isAnimating) {
+      setIsMenuOpen(!isMenuOpen);
+    }
+  }, [isMenuOpen, isAnimating]);
 
   /**
    * Close mobile menu when clicking outside or on escape
@@ -366,11 +391,13 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
     if (isMenuOpen) {
       document.addEventListener('keydown', handleEscape);
       document.addEventListener('click', handleClickOutside);
+      document.body.style.overflow = 'hidden'; // Prevent background scroll
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
       document.removeEventListener('click', handleClickOutside);
+      document.body.style.overflow = 'unset';
     };
   }, [isMenuOpen]);
 
@@ -406,81 +433,110 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
     )), [location, activeSection, handleNavClick]
   );
 
+  // Menu animation variants
+  const menuVariants = {
+    hidden: {
+      opacity: 0,
+      height: 0,
+      transition: {
+        duration: 0.2,
+        ease: 'easeInOut',
+      }
+    },
+    visible: {
+      opacity: 1,
+      height: 'auto',
+      transition: {
+        duration: 0.3,
+        ease: 'easeOut',
+      }
+    }
+  };
+
   return (
     <>
       {/* Skip to content link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-brand-blue-primary px-4 py-2 rounded-md shadow-lg z-50"
+        className="sr-only focusable absolute top-4 left-4 bg-brand-blue-primary text-white px-4 py-2 rounded-md shadow-lg z-50"
       >
         Skip to main content
       </a>
 
       <nav
         id="main-navigation"
-        className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40"
+        className="nav-mobile backdrop-blur-optimized"
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="container mx-auto px-4">
+        <div className="container-responsive">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200"
+              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200 touch-target"
               aria-label="Rrish Music - Home"
             >
               <span>Rrish</span>
             </Link>
 
             {/* Desktop Navigation */}
-            <div className="hidden md:flex items-center space-x-8">
-              {desktopNavItems}
-            </div>
+            {device.isDesktop && (
+              <div className="desktop-only flex items-center space-x-2">
+                {desktopNavItems}
+              </div>
+            )}
 
             {/* Mobile Menu Button */}
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors duration-200"
-              aria-expanded={isMenuOpen}
-              aria-controls="mobile-menu"
-              aria-label="Toggle navigation menu"
-            >
-              <motion.div
-                animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
-                transition={{ duration: 0.2 }}
+            {!device.isDesktop && (
+              <motion.button
+                onClick={toggleMenu}
+                className="mobile-only touch-target-comfortable relative z-50"
+                aria-expanded={isMenuOpen}
+                aria-controls="mobile-menu"
+                aria-label="Toggle navigation menu"
+                whileTap={{ scale: 0.95 }}
+                disabled={isAnimating}
               >
-                {isMenuOpen ? (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                ) : (
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                  </svg>
-                )}
-              </motion.div>
-            </button>
+                <motion.div
+                  animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="w-6 h-6"
+                >
+                  {isMenuOpen ? (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                  ) : (
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                  )}
+                </motion.div>
+              </motion.button>
+            )}
           </div>
         </div>
 
         {/* Mobile Menu */}
-        <AnimatePresence>
-          {isMenuOpen && (
-            <motion.div
-              id="mobile-menu"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.2, ease: 'easeInOut' }}
-              className="md:hidden bg-white border-t border-gray-200 shadow-lg"
-            >
-              <div className="container mx-auto px-4 py-4 space-y-2">
-                {mobileNavItems}
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {!device.isDesktop && (
+          <AnimatePresence>
+            {isMenuOpen && (
+              <motion.div
+                id="mobile-menu"
+                variants={menuVariants}
+                initial="hidden"
+                animate="visible"
+                exit="hidden"
+                className="nav-mobile-menu open bg-white/98 backdrop-blur-optimized border-t border-gray-200 shadow-lg"
+              >
+                <div className="container-responsive py-6 space-y-2">
+                  {mobileNavItems}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
       </nav>
 
       {/* Navigation spacer to prevent content overlap */}
