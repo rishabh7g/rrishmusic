@@ -1,0 +1,73 @@
+{
+  "serviceAllocation": {
+    "performance": {
+      "percentage": 60,
+      "priority": 1,
+      "description": "Primary service focus",
+      "contentAllocation": 80
+    },
+    "teaching": {
+      "percentage": 25,
+      "priority": 2,
+      "description": "Secondary service focus",
+      "contentAllocation": 15
+    },
+    "collaboration": {
+      "percentage": 15,
+      "priority": 3,
+      "description": "Tertiary service focus",
+      "contentAllocation": 5
+    }
+  },
+  "contentAllocationRules": {
+    "primary": {
+      "service": "performance",
+      "allocation": 80,
+      "description": "Majority of content focuses on performance services"
+    },
+    "secondary": {
+      "service": "teaching", 
+      "allocation": 15,
+      "description": "Secondary focus on teaching services"
+    },
+    "tertiary": {
+      "service": "collaboration",
+      "allocation": 5,
+      "description": "Minimal but present collaboration content"
+    }
+  },
+  "testimonialsAllocation": {
+    "featured": {
+      "performance": 60,
+      "teaching": 25,
+      "collaboration": 15
+    },
+    "general": {
+      "performance": 50,
+      "teaching": 31,
+      "collaboration": 19
+    }
+  },
+  "navigationHierarchy": {
+    "primary": ["home", "performance"],
+    "secondary": ["lessons", "about"],
+    "tertiary": ["collaboration", "contact"]
+  },
+  "serviceMetrics": {
+    "performance": {
+      "revenueWeight": 60,
+      "priorityScore": 100,
+      "contentScore": 80
+    },
+    "teaching": {
+      "revenueWeight": 25,
+      "priorityScore": 70,
+      "contentScore": 15
+    },
+    "collaboration": {
+      "revenueWeight": 15,
+      "priorityScore": 40,
+      "contentScore": 5
+    }
+  }
+}

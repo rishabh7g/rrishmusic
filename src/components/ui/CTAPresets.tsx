@@ -6,6 +6,7 @@
 
 import React from 'react';
 import { CTAHierarchy, type CTAContext, type CTALayout } from './CTAHierarchy';
+import ctaConfig from '@/data/ui/cta.json';
 
 /**
  * Props interface for CTA Hierarchy (imported from main component)
@@ -34,12 +35,12 @@ export const CTAPresets = {
    */
   hero: (props?: Partial<CTAHierarchyProps>) => (
     <CTAHierarchy
-      layout="horizontal"
-      context="hero"
+      layout={ctaConfig.presets.hero.layout as CTALayout}
+      context={ctaConfig.presets.hero.context as CTAContext}
       customMessages={{
-        primary: "Book Performance Now",
-        secondary: "Start Learning Guitar",
-        tertiary: "Let's Collaborate"
+        primary: ctaConfig.presets.hero.primary,
+        secondary: ctaConfig.presets.hero.secondary,
+        tertiary: ctaConfig.presets.hero.tertiary
       }}
       {...props}
     />

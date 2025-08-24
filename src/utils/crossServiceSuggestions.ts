@@ -13,6 +13,7 @@
  */
 
 import { ServiceType } from '@/utils/contactRouting';
+import suggestionsData from '@/data/crossServiceSuggestions.json';
 
 /**
  * Cross-service suggestion data
@@ -55,159 +56,7 @@ export interface SuggestionInteraction {
 /**
  * Suggestion configuration for each service relationship
  */
-const CROSS_SERVICE_SUGGESTIONS: CrossServiceSuggestion[] = [
-  // From Teaching → Performance
-  {
-    id: 'teaching-to-performance-band',
-    targetService: 'performance',
-    title: 'See Rrish perform live',
-    description: 'Experience the techniques you\'re learning in a professional performance setting',
-    benefits: [
-      'Watch advanced techniques in action',
-      'See performance dynamics and stage presence',
-      'Learn from real-world applications'
-    ],
-    ctaText: 'View Performance Schedule',
-    priority: 8,
-    contexts: [{
-      fromService: 'teaching',
-      pageSection: 'about-instructor',
-      timing: 'after-engagement',
-      placement: 'inline'
-    }],
-    dismissable: true
-  },
-  
-  {
-    id: 'teaching-to-performance-private',
-    targetService: 'performance',
-    title: 'Book a Private Performance',
-    description: 'Arrange a personalized performance session for deeper learning',
-    benefits: [
-      'One-on-one performance demonstration',
-      'Custom setlist based on your learning goals',
-      'Q&A session with techniques explained'
-    ],
-    ctaText: 'Learn About Private Sessions',
-    priority: 6,
-    contexts: [{
-      fromService: 'teaching',
-      pageSection: 'advanced-packages',
-      timing: 'after-engagement',
-      placement: 'sidebar'
-    }],
-    dismissable: true
-  },
-
-  // From Performance → Teaching
-  {
-    id: 'performance-to-teaching-learn',
-    targetService: 'teaching',
-    title: 'Learn these techniques',
-    description: 'Master the guitar skills you\'re hearing in personalized lessons',
-    benefits: [
-      'Learn the exact techniques from performances',
-      'Personalized instruction at your pace',
-      'Build skills from beginner to advanced'
-    ],
-    ctaText: 'Start Guitar Lessons',
-    priority: 9,
-    contexts: [{
-      fromService: 'performance',
-      pageSection: 'portfolio-gallery',
-      timing: 'after-engagement',
-      placement: 'inline'
-    }],
-    dismissable: true
-  },
-
-  {
-    id: 'performance-to-teaching-style',
-    targetService: 'teaching',
-    title: 'Develop your performance style',
-    description: 'Learn stage presence and performance techniques through focused lessons',
-    benefits: [
-      'Performance-focused instruction',
-      'Stage presence and confidence building',
-      'Real-world playing techniques'
-    ],
-    ctaText: 'Explore Performance Lessons',
-    priority: 7,
-    contexts: [{
-      fromService: 'performance',
-      pageSection: 'hero-section',
-      timing: 'before-exit',
-      placement: 'banner'
-    }],
-    dismissable: true
-  },
-
-  // From Performance → Collaboration
-  {
-    id: 'performance-to-collaboration-venue',
-    targetService: 'collaboration',
-    title: 'Collaborate on your event',
-    description: 'Work together to create custom performances for your venue or event',
-    benefits: [
-      'Custom setlist development',
-      'Long-term venue partnerships',
-      'Collaborative creative process'
-    ],
-    ctaText: 'Discuss Collaboration',
-    priority: 7,
-    contexts: [{
-      fromService: 'performance',
-      pageSection: 'booking-info',
-      timing: 'after-engagement',
-      placement: 'inline'
-    }],
-    dismissable: true
-  },
-
-  // From Collaboration → Performance
-  {
-    id: 'collaboration-to-performance-showcase',
-    targetService: 'performance',
-    title: 'Showcase our collaboration',
-    description: 'Present collaborative work through live performances',
-    benefits: [
-      'Live debut of collaborative pieces',
-      'Professional presentation platform',
-      'Audience engagement opportunities'
-    ],
-    ctaText: 'Plan Performance Showcase',
-    priority: 6,
-    contexts: [{
-      fromService: 'collaboration',
-      pageSection: 'project-examples',
-      timing: 'after-engagement',
-      placement: 'sidebar'
-    }],
-    dismissable: true
-  },
-
-  // From Collaboration → Teaching
-  {
-    id: 'collaboration-to-teaching-skills',
-    targetService: 'teaching',
-    title: 'Build collaboration skills',
-    description: 'Develop the musical foundation for successful collaborative work',
-    benefits: [
-      'Learn collaboration fundamentals',
-      'Develop listening and adaptation skills',
-      'Build technical proficiency for projects'
-    ],
-    ctaText: 'Start Skill Building',
-    priority: 8,
-    contexts: [{
-      fromService: 'collaboration',
-      pageSection: 'requirements',
-      timing: 'after-engagement',
-      placement: 'inline'
-    }],
-    dismissable: true
-  }
-];
+const CROSS_SERVICE_SUGGESTIONS: CrossServiceSuggestion[] = suggestionsData.suggestions as CrossServiceSuggestion[];
 
 /**
  * Get suggestions for the current service context
@@ -384,17 +233,9 @@ export function getContextualMessage(
 ): string {
   const { fromService, hasEngaged } = userContext;
   
-  if (fromService === 'teaching' && hasEngaged) {
-    return "Since you're interested in learning, you might also enjoy...";
+  if (hasEngaged && suggestionsData.contextualMessages[fromService]) {
+    return suggestionsData.contextualMessages[fromService];
   }
   
-  if (fromService === 'performance' && hasEngaged) {
-    return "Enjoyed the performance? You might also be interested in...";
-  }
-  
-  if (fromService === 'collaboration' && hasEngaged) {
-    return "Looking for creative partnerships? Consider also...";
-  }
-  
-  return "You might also be interested in...";
+  return suggestionsData.contextualMessages.default;
 }

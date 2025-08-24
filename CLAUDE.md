@@ -152,17 +152,18 @@ Test Analysis:
 - Use standardized commit message format
 - Push changes to feature branch
 
-#### 7. **Create PR with Auto-Merge Enabled**
+#### 7. **Create PR and Wait for All Checks**
 - Create PR with detailed description
 - Link to GitHub issue: `Closes #[issue_number]`
-- **Enable auto-merge**: `gh pr merge --auto --squash`
 - Include comprehensive testing checklist
+- **DO NOT enable auto-merge yet** - wait for all checks to complete first
 
-#### 8. **Monitor PR Status Until Merged**
-- **Continuously monitor PR status** until merged
+#### 8. **Monitor PR Status Until All Checks Pass**
+- **Continuously monitor PR status** until all checks complete
 - Watch for CI/CD failures, merge conflicts, or review requests
 - Fix any issues immediately and push updates
-- **Auto-merge will complete when all checks pass**
+- **Only enable auto-merge AFTER all status checks pass**: `gh pr merge --auto --squash`
+- Verify `"conclusion":"SUCCESS"` for all status checks before auto-merge
 
 #### 9. **Switch to Main, Pull Latest**
 - Switch to main branch and pull latest changes
