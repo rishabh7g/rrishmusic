@@ -17,3 +17,14 @@ export {
   VenueInquiryCTA
 } from './PerformanceInquiryCTA';
 export type { CTAVariant, CTASize } from './PerformanceInquiryCTA';
+
+export {
+  CollaborationInquiryCTA,
+  PrimaryCollaborationCTA,
+  SecondaryCollaborationCTA,
+  OutlineCollaborationCTA,
+  MinimalCollaborationCTA,
+  StudioCollaborationCTA,
+  CreativeProjectCTA,
+  PartnershipInquiryCTA
+} from './CollaborationInquiryCTA';

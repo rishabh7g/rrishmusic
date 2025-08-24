@@ -1,8 +1,9 @@
 import { NavigationItem } from '@/types';
 
-// Navigation Configuration - organized for user journey: Performances → Teaching → About → Contact
+// Navigation Configuration - organized for user journey: Performances → Collaboration → Teaching → About → Contact
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   { id: "performances", label: "Performances", href: "#performances" },
+  { id: "collaboration", label: "Collaboration", href: "#collaboration" },
   { id: "hero", label: "Home", href: "#hero" },
   { id: "about", label: "About", href: "#about" },
   { id: "approach", label: "Approach", href: "#approach" },

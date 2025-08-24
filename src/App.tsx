@@ -1,7 +1,7 @@
 import React, { Suspense } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Navigation } from '@/components/layout/Navigation'
-import { Home, Performance } from '@/components/pages'
+import { Home, Performance, Collaboration } from '@/components/pages'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import '@/index.css'
 
@@ -104,6 +104,7 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
  * Routes:
  * - / : Home page with all teaching-focused sections
  * - /performance : Performance services page
+ * - /collaboration : Collaboration services page
  * - /* : Redirects to home
  */
 function App(): React.JSX.Element {
@@ -125,12 +126,22 @@ function App(): React.JSX.Element {
                 } 
               />
               
-              {/* Performance route - New performance services page */}
+              {/* Performance route - Performance services page */}
               <Route 
                 path="/performance" 
                 element={
                   <ErrorBoundary fallback={<AppErrorFallback />}>
                     <Performance />
+                  </ErrorBoundary>
+                } 
+              />
+              
+              {/* Collaboration route - Collaboration services page */}
+              <Route 
+                path="/collaboration" 
+                element={
+                  <ErrorBoundary fallback={<AppErrorFallback />}>
+                    <Collaboration />
                   </ErrorBoundary>
                 } 
               />
