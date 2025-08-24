@@ -597,7 +597,7 @@ export const PerformanceGallery: React.FC = () => {
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
-          className="text-center bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white p-12 rounded-2xl"
+          className="text-center bg-gradient-to-r from-brand-blue-primary to-brand-orange-primary text-white p-12 rounded-2xl"
         >
           <h3 className="text-3xl font-bold mb-4">Ready to Book Your Performance?</h3>
           <p className="text-xl mb-8 opacity-90">

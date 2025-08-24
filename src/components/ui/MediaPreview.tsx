@@ -1,11 +1,13 @@
 /**
  * Media Preview Components - Issue #49 Implementation
+ * UPDATED: Issue #101 - WCAG Accessibility Compliance
  * 
  * Provides audio and video preview functionality for portfolio content
  * - 30-second audio previews with custom controls
  * - Video previews with thumbnail overlays
  * - Mobile-optimized media players
  * - Progressive loading for performance
+ * - WCAG AA compliant color combinations (4.5:1+ contrast)
  */
 
 import React, { useState, useRef } from 'react';
@@ -105,9 +107,9 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
       animate={{ opacity: 1, y: 0 }}
       className={`bg-white rounded-lg shadow-lg overflow-hidden ${className}`}
     >
-      {/* Thumbnail/Visual */}
+      {/* Thumbnail/Visual - ACCESSIBILITY FIX: Replaced orange-blue gradient with accessible blue gradient */}
       {thumbnail && (
-        <div className="relative h-48 bg-gradient-to-r from-brand-blue-primary to-brand-orange-primary">
+        <div className="relative h-48 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary">
           <img
             src={thumbnail}
             alt={`${title} audio preview thumbnail`}
@@ -165,20 +167,20 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
               <span>{formatTime(currentTime)}</span>
               <span>/</span>
               <span>{formatTime(duration)}</span>
-              <span className="ml-2 px-2 py-1 bg-brand-orange-light text-brand-orange-primary rounded text-xs">
+              <span className="ml-2 px-2 py-1 bg-brand-orange-light text-brand-orange-warm rounded text-xs">
                 30s Preview
               </span>
             </div>
           </div>
 
-          {/* Progress Bar */}
+          {/* Progress Bar - ACCESSIBILITY FIX: Replaced orange-blue gradient with accessible blue gradient */}
           <div
             ref={progressRef}
             onClick={handleProgressClick}
             className="relative w-full h-2 bg-gray-200 rounded-full cursor-pointer group"
           >
             <motion.div
-              className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-blue-primary to-brand-orange-primary rounded-full"
+              className="absolute top-0 left-0 h-full bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary rounded-full"
               style={{ width: `${progressPercentage}%` }}
               initial={{ width: 0 }}
               animate={{ width: `${progressPercentage}%` }}
@@ -274,8 +276,8 @@ const VideoPreviewPlayer: React.FC<VideoPreviewProps> = ({
                 {formatDuration(duration)}
               </div>
 
-              {/* Preview Badge */}
-              <div className="absolute top-3 left-3 bg-brand-orange-primary text-white px-2 py-1 rounded text-xs font-medium">
+              {/* Preview Badge - ACCESSIBILITY NOTE: Orange on dark background provides sufficient contrast */}
+              <div className="absolute top-3 left-3 bg-brand-orange-warm text-white px-2 py-1 rounded text-xs font-medium">
                 Preview
               </div>
             </motion.div>

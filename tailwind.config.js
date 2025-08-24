@@ -7,7 +7,10 @@ export default {
 				brand: {
 					'blue-primary': '#1e40af', // Deep blue for main elements
 					'blue-secondary': '#3b82f6', // Lighter blue for hover states
+					'blue-light': '#dbeafe', // Light blue for backgrounds  
+					'blue-dark': '#1e3a8a', // Darker blue for hover states
 					'orange-warm': '#ea580c', // Orange for accent elements
+					'orange-light': '#fed7aa', // Light orange for backgrounds
 					'yellow-accent': '#fbbf24', // Yellow for highlights
 				},
 				neutral: {
