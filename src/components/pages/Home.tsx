@@ -14,6 +14,7 @@ import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
 import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
 import EnhancedServiceColumn from '@/components/ui/EnhancedServiceColumn';
+import ServiceNavigationControls from '@/components/ServiceNavigationControls';
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
 /**
@@ -39,17 +40,18 @@ interface HomePageProps {
 }
 
 /**
- * Home Page Component - THREE-COLUMN LAYOUT WITH INTEGRATED SERVICE CONTENT
+ * Home Page Component - THREE-COLUMN LAYOUT WITH INTERACTIVE NAVIGATION
  * 
  * Implements the new 3-column layout structure with:
  * - Responsive CSS Grid (3 columns on desktop, stacked on mobile)
+ * - Interactive navigation between services with smooth scrolling
  * - Background image system with overlays and optimization
  * - Dynamic service-specific content integration
  * - Real-time statistics and testimonials
  * - Service hierarchy: Performance (primary), Teaching, Collaboration
  * - Mobile-first responsive design principles
  * - Lazy loading for performance optimization
- * - Accessibility support with proper contrast
+ * - Accessibility support with proper contrast and keyboard navigation
  * - Error handling and loading states
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
@@ -102,8 +104,8 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* THREE-COLUMN LAYOUT WITH INTEGRATED SERVICE CONTENT - Main Service Navigation */}
-        <section id="three-column-services" className="py-16 bg-gradient-to-b from-gray-50 to-white">
+        {/* THREE-COLUMN LAYOUT WITH INTERACTIVE NAVIGATION - Main Service Navigation */}
+        <section id="three-column-services" className="py-16 bg-gradient-to-b from-gray-50 to-white relative">
           <div className="container-custom">
             {/* Section Header */}
             <div className="text-center mb-12">
@@ -116,7 +118,21 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
               </p>
             </div>
 
-            {/* Three-Column Grid Layout with Integrated Service Content */}
+            {/* Interactive Navigation Instructions */}
+            <div className="text-center mb-8">
+              <div className="inline-flex items-center space-x-4 bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 border border-gray-200 shadow-sm">
+                <span className="text-sm text-gray-600">Navigate:</span>
+                <div className="flex items-center space-x-2 text-sm text-gray-500">
+                  <span>Click</span>
+                  <span className="text-gray-300">|</span>
+                  <span>↑↓ Keys</span>
+                  <span className="text-gray-300">|</span>
+                  <span>1-3 Numbers</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Three-Column Grid Layout with Enhanced Interactive Service Content */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
               
               {/* Column 1: Performance Services - PRIMARY with Dynamic Content */}
@@ -144,22 +160,65 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
               />
             </div>
 
-            {/* Call-to-Action Section */}
+            {/* Interactive Service Navigation Controls - Fixed Position */}
+            <ServiceNavigationControls
+              position="fixed"
+              showLabels={true}
+              compact={false}
+              className="hidden md:block"
+            />
+
+            {/* Mobile Navigation Controls - Relative Position */}
+            <div className="block md:hidden mt-8">
+              <ServiceNavigationControls
+                position="relative"
+                showLabels={true}
+                compact={true}
+                className="justify-center"
+              />
+            </div>
+
+            {/* Call-to-Action Section with Enhanced Interactivity */}
             <div className="text-center mt-16">
               <p className="text-lg text-gray-600 mb-8">
                 Ready to enhance your musical experience?
               </p>
-              <a
-                href="#contact"
-                className="inline-flex items-center px-8 py-4 bg-brand-blue-primary text-white font-bold rounded-full 
-                  hover:bg-brand-blue-secondary transition-all duration-300 shadow-lg hover:shadow-xl 
-                  transform hover:-translate-y-1"
-              >
-                Get Started Today
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                </svg>
-              </a>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <a
+                  href="#contact"
+                  className="inline-flex items-center px-8 py-4 bg-brand-blue-primary text-white font-bold rounded-full 
+                    hover:bg-brand-blue-secondary transition-all duration-300 shadow-lg hover:shadow-xl 
+                    transform hover:-translate-y-1 group"
+                >
+                  Get Started Today
+                  <svg 
+                    className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24" 
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </a>
+                <a
+                  href="/performance"
+                  className="inline-flex items-center px-8 py-4 bg-transparent border border-brand-blue-primary 
+                    text-brand-blue-primary font-semibold rounded-full hover:bg-brand-blue-primary hover:text-white 
+                    transition-all duration-300 group"
+                >
+                  View All Services
+                  <svg 
+                    className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" 
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24" 
+                    aria-hidden="true"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                  </svg>
+                </a>
+              </div>
             </div>
           </div>
         </section>
@@ -288,9 +347,16 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Final Performance CTA - Before Contact */}
-        <section className="py-16 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
-          <div className="container-custom text-center">
+        {/* Final Performance CTA - Before Contact with Interactive Elements */}
+        <section className="py-16 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden">
+          {/* Background Interactive Elements */}
+          <div className="absolute inset-0 opacity-10">
+            <div className="absolute top-10 left-10 w-32 h-32 bg-white rounded-full animate-pulse"></div>
+            <div className="absolute bottom-10 right-10 w-24 h-24 bg-brand-yellow-accent rounded-full animate-bounce"></div>
+            <div className="absolute top-1/2 left-1/4 w-16 h-16 bg-white rounded-full animate-ping"></div>
+          </div>
+          
+          <div className="container-custom text-center relative z-10">
             <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">
               Ready to Book Your Live Performance?
             </h3>
@@ -303,19 +369,34 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
                 href="/performance"
                 className="inline-flex items-center px-8 py-4 bg-brand-yellow-accent text-brand-blue-primary 
                   font-bold rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl 
-                  transform hover:-translate-y-1"
+                  transform hover:-translate-y-1 group"
               >
                 View Performance Services
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                <svg 
+                  className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
+                  aria-hidden="true"
+                >
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </a>
               <a
                 href="#contact"
                 className="inline-flex items-center px-8 py-4 bg-transparent border border-white text-white 
-                  font-semibold rounded-full hover:bg-white hover:text-brand-blue-primary transition-all duration-300"
+                  font-semibold rounded-full hover:bg-white hover:text-brand-blue-primary transition-all duration-300 group"
               >
                 Get Quote
+                <svg 
+                  className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24" 
+                  aria-hidden="true"
+                >
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
               </a>
             </div>
           </div>
