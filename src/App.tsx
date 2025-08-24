@@ -5,6 +5,7 @@ import { Home, Performance, Collaboration } from '@/components/pages'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
 import { initProtocolHandling, validateURLHandling } from '@/utils/protocolHandling'
+import uiMessages from '@/data/ui/messages.json'
 import "@/index.css"
 
 interface LayoutShiftEntry extends PerformanceEntry {
@@ -19,7 +20,7 @@ const AppLoadingFallback: React.FC = () => (
   <div className="min-h-screen flex items-center justify-center">
     <div className="text-center">
       <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
-      <p className="text-gray-600">Loading...</p>
+      <p className="text-gray-600">{uiMessages.loading.default}</p>
     </div>
   </div>
 )
@@ -31,16 +32,16 @@ const AppErrorFallback: React.FC = () => (
   <div className="min-h-screen flex items-center justify-center bg-gray-50">
     <div className="text-center p-8">
       <h1 className="text-2xl font-bold text-gray-800 mb-4">
-        Something went wrong
+        {uiMessages.errors.generic.title}
       </h1>
       <p className="text-gray-600 mb-6">
-        We're sorry, but something went wrong. Please try refreshing the page.
+        {uiMessages.errors.generic.message}
       </p>
       <button
         onClick={() => window.location.reload()}
         className="bg-brand-blue-primary text-white px-6 py-3 rounded-lg hover:bg-brand-blue-dark transition-colors"
       >
-        Refresh Page
+        {uiMessages.errors.generic.actionText}
       </button>
     </div>
   </div>
@@ -55,15 +56,15 @@ const PerformanceMonitor: React.FC = () => {
       const observer = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
           if (entry.entryType === 'largest-contentful-paint') {
-            console.log('LCP:', entry.startTime)
+            console.log(uiMessages.performance.monitoring.lcp, entry.startTime)
           }
           if (entry.entryType === 'first-input') {
-            console.log('FID:', (entry as PerformanceEventTiming).processingStart - entry.startTime)
+            console.log(uiMessages.performance.monitoring.fid, (entry as PerformanceEventTiming).processingStart - entry.startTime)
           }
           if (entry.entryType === 'layout-shift') {
             const layoutShiftEntry = entry as LayoutShiftEntry
             if (!layoutShiftEntry.hadRecentInput) {
-              console.log('CLS:', layoutShiftEntry.value)
+              console.log(uiMessages.performance.monitoring.cls, layoutShiftEntry.value)
             }
           }
         }
@@ -78,7 +79,7 @@ const PerformanceMonitor: React.FC = () => {
           ],
         })
       } catch (error) {
-        console.warn('Performance observer not supported:', error)
+        console.warn(uiMessages.performance.monitoring.unsupported, error)
       }
 
       return () => observer.disconnect()

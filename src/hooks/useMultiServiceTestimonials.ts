@@ -1,8 +1,9 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Testimonial, TestimonialFilters, TestimonialStats, ServiceType } from '@/types/content';
 
-// Import testimonials directly
+// Import testimonials and service configuration
 import testimonialsData from '@/content/testimonials.json';
+import serviceConfig from '@/data/serviceConfiguration.json';
 
 interface TestimonialData {
   testimonials: Testimonial[];
@@ -156,10 +157,10 @@ export function useMultiServiceTestimonials(
     return (limit: number = 9): Testimonial[] => {
       if (!data) return [];
 
-      // Apply 60/25/15 allocation for featured testimonials
-      const performanceSlots = Math.ceil(limit * 0.6);
-      const teachingSlots = Math.ceil(limit * 0.25);
-      const collaborationSlots = Math.floor(limit * 0.15);
+      // Apply service allocation from configuration
+      const performanceSlots = Math.ceil(limit * (serviceConfig.serviceAllocation.performance.percentage / 100));
+      const teachingSlots = Math.ceil(limit * (serviceConfig.serviceAllocation.teaching.percentage / 100));
+      const collaborationSlots = Math.floor(limit * (serviceConfig.serviceAllocation.collaboration.percentage / 100));
 
       const performanceTestimonials = filterTestimonials({
         service: 'performance',

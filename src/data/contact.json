@@ -1,0 +1,15 @@
+{
+  "contactInfo": {
+    "email": "hello@rrishmusic.com",
+    "instagram": "https://instagram.com/rrishmusic",
+    "location": "Melbourne, Victoria, Australia"
+  },
+  "businessHours": {
+    "timezone": "Australia/Melbourne",
+    "availability": "Monday to Friday, 9 AM - 6 PM"
+  },
+  "responseTime": {
+    "email": "24-48 hours",
+    "general": "Within 1-2 business days"
+  }
+}

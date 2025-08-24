@@ -1,22 +1,12 @@
 import { NavigationItem } from '@/types';
+import navigationData from '@/data/navigation.json';
+import contactData from '@/data/contact.json';
 
 // Navigation Configuration - Optimized order for better UX flow and service hierarchy
-export const NAVIGATION_ITEMS: NavigationItem[] = [
-  { id: "home", label: "Home", href: "/" },
-  { id: "lessons", label: "Lessons", href: "#lessons" },
-  { id: "performance", label: "Performances", href: "/performance" },
-  { id: "collaboration", label: "Collaboration", href: "/collaboration" },
-  { id: "about", label: "About", href: "#about" },
-  { id: "approach", label: "Approach", href: "#approach" },
-  { id: "contact", label: "Contact", href: "#contact" },
-];
+export const NAVIGATION_ITEMS: NavigationItem[] = navigationData.navigationItems;
 
 // Contact Configuration (fallbacks - use content management system for actual data)
-export const CONTACT_INFO = {
-  email: "hello@rrishmusic.com",
-  instagram: "https://instagram.com/rrishmusic", 
-  location: "Melbourne, Victoria, Australia",
-};
+export const CONTACT_INFO = contactData.contactInfo;
 
 // Animation Configuration - keeping as constants since these are technical settings
 export const ANIMATION_DURATION = {
