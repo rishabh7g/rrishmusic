@@ -1,6 +1,8 @@
 import { motion } from 'framer-motion';
 import { useSectionContent } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
+import { CTAHierarchy } from '@/components/ui/CTAHierarchy';
+import { CTAPresets } from '@/components/ui/CTAPresets';
 
 export function Hero() {
   const { data: hero, loading, error } = useSectionContent('hero');
@@ -36,31 +38,10 @@ export function Hero() {
             Whether you need a live performer, music instructor, or collaborative partner, 
             I bring passion and expertise to every musical experience.
           </p>
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <a
-              href="/performance"
-              className="inline-flex items-center px-8 py-3 bg-brand-yellow-accent text-brand-blue-primary 
-                font-semibold rounded-full hover:bg-white transition-colors duration-300 
-                shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-            >
-              View Performances
-            </a>
-            <a
-              href="#lessons"
-              className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-brand-yellow-accent 
-                text-brand-yellow-accent font-semibold rounded-full hover:bg-brand-yellow-accent 
-                hover:text-brand-blue-primary transition-colors duration-300"
-            >
-              Learn Music
-            </a>
-            <a
-              href="/collaboration"
-              className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white/50 
-                text-white font-semibold rounded-full hover:bg-white/10 transition-colors duration-300"
-            >
-              Collaborate
-            </a>
-          </div>
+          
+          {/* Primary/Secondary CTA Strategy Implementation */}
+          {CTAPresets.hero({ className: "mb-8" })}
+          
           <p className="text-lg font-body">
             Find me on Instagram:{' '}
             <a
@@ -110,35 +91,20 @@ export function Hero() {
           {hero.description}
         </motion.p>
         
-        {/* Multi-Service CTAs */}
+        {/* Primary/Secondary CTA Strategy Implementation */}
         <motion.div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 flex-wrap"
+          className="mb-8"
           variants={fadeInUp}
         >
-          {/* Primary CTA - Performance (60% emphasis) */}
-          <a
-            href={hero.primaryCta?.link || '/performance'}
-            className="inline-flex items-center px-8 py-3 bg-brand-yellow-accent text-brand-blue-primary 
-              font-semibold rounded-full hover:bg-white transition-colors duration-300 
-              shadow-lg hover:shadow-xl transform hover:-translate-y-1"
-          >
-            {hero.primaryCta?.text || 'View Performances'}
-          </a>
-          
-          {/* Secondary CTAs - Teaching & Collaboration */}
-          {hero.secondaryCtas?.map((cta, index) => (
-            <a
-              key={index}
-              href={cta.link}
-              className={`inline-flex items-center px-8 py-3 font-semibold rounded-full transition-colors duration-300 
-                ${cta.type === 'secondary' 
-                  ? 'bg-transparent border-2 border-brand-yellow-accent text-brand-yellow-accent hover:bg-brand-yellow-accent hover:text-brand-blue-primary' 
-                  : 'bg-transparent border-2 border-white/50 text-white hover:bg-white/10'
-                }`}
-            >
-              {cta.text}
-            </a>
-          ))}
+          <CTAHierarchy 
+            layout="horizontal"
+            context="hero"
+            customMessages={{
+              primary: hero.primaryCta?.text || "Book Performance Now",
+              secondary: "Start Learning Guitar",
+              tertiary: "Let's Collaborate"
+            }}
+          />
         </motion.div>
         
         {/* Social Proof */}
@@ -188,7 +154,7 @@ export function Hero() {
           animate={{ y: [0, 10, 0] }}
           transition={{ repeat: Infinity, duration: 2 }}
         >
-          <a href="#about" className="inline-block text-brand-yellow-accent hover:text-white transition-colors">
+          <a href="#services-hierarchy" className="inline-block text-brand-yellow-accent hover:text-white transition-colors">
             <svg className="w-8 h-8 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
             </svg>
