@@ -155,13 +155,7 @@ Test Analysis:
 - Fix any issues immediately and push updates
 - **Auto-merge will complete when all checks pass**
 
-#### 9. **Clean Up: Delete Branch**
-- Delete local feature branch after successful merge
-```bash
-git branch -D feature/issue-{number}-{description}
-```
-
-#### 10. **Switch to Main, Pull Latest**
+#### 9. **Switch to Main, Pull Latest**
 - Switch to main branch and pull latest changes
 ```bash
 git checkout main
@@ -169,11 +163,18 @@ git pull origin main
 git status  # Verify clean state
 ```
 
+#### 10. **Clean Up: Delete Branch**
+- Delete local feature branch after switching to main
+```bash
+git branch -D feature/issue-{number}-{description}
+```
+
 #### 11. **Pick New Issue from Git - Start Process Again**
-- Return to step 1 with next priority issue
+- **Automatically** return to step 1 with next priority issue
 - Ensure main branch is clean before starting new feature
 - **Never work on multiple features simultaneously**
 - **Repeat process until no GitHub issues remain**
+- **No asking for permission** - continue workflow automatically
 
 ### Branch Naming Convention
 
