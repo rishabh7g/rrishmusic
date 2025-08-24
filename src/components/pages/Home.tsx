@@ -6,6 +6,7 @@ import {
   Lessons,
   Community,
   Contact,
+  ServicesHierarchy,
 } from '@/components/sections';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
@@ -37,16 +38,18 @@ interface HomePageProps {
 /**
  * Home Page Component
  * 
- * Primary landing page focused on guitar lessons and teaching services.
- * Includes cross-service suggestions for performance and collaboration.
+ * Multi-service platform homepage implementing 60/25/15 service hierarchy:
+ * - Performance services: 60% prominence
+ * - Teaching services: 25% prominence  
+ * - Collaboration services: 15% prominence
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
   return (
     <>
       <SEOHead
-        title="Guitar Lessons & Blues Improvisation | Rrish Music"
-        description="Learn guitar and blues improvisation with Rrish in Melbourne. Personalized lessons for all levels. Start your musical journey today!"
-        keywords="guitar lessons, blues improvisation, music teacher, Melbourne, guitar instructor, music education"
+        title="Melbourne Musician | Performance, Teaching & Collaboration | Rrish Music"
+        description="Professional Melbourne musician specializing in blues and improvisation. Live performances, personalized music lessons, and collaborative partnerships. Book today!"
+        keywords="Melbourne musician, guitar lessons, blues improvisation, live performance, music teacher, collaboration, guitar instructor, music education"
         canonical="https://www.rrishmusic.com/"
         ogType="website"
       />
@@ -57,6 +60,15 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           <ErrorBoundary fallback={<SectionFallback sectionName="Hero" />}>
             <Suspense fallback={<SectionFallback sectionName="Hero" />}>
               <Hero />
+            </Suspense>
+          </ErrorBoundary>
+        </section>
+
+        {/* Services Hierarchy Section - 60/25/15 Implementation */}
+        <section id="services-hierarchy" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Services" />}>
+            <Suspense fallback={<SectionFallback sectionName="Services" />}>
+              <ServicesHierarchy />
             </Suspense>
           </ErrorBoundary>
         </section>
@@ -87,7 +99,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Lessons Section - Lazy loaded */}
+        {/* Lessons Section - Lazy loaded with 25% prominence in hierarchy */}
         <section id="lessons" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="Lessons" />}>
             <LazySection
@@ -99,10 +111,10 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Cross-Service Suggestions Section - After Lessons */}
+        {/* Cross-Service Suggestions Section - Performance Focus */}
         <section className="py-8">
           <div className="container-custom">
-            {/* Performance Services Suggestion - Inline */}
+            {/* Performance Services Suggestion - Inline with hierarchy emphasis */}
             <CrossServiceSuggestion
               fromService="teaching"
               pageSection="about-instructor"
@@ -129,7 +141,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Cross-Service Suggestions Banner - Before Contact */}
+        {/* Cross-Service Suggestions Banner - Before Contact with Performance Priority */}
         <section className="py-8">
           <div className="container-custom">
             <CrossServiceSuggestion
