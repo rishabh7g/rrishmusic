@@ -1,603 +1,167 @@
-/**
- * Content Management Hook for RrishMusic
- * Unified content access with type safety, caching, and error handling
- */
-
-import { useState, useEffect, useMemo, useCallback } from 'react';
-import type { 
-  SiteContent, 
-  LessonContent, 
-  Testimonial,
-  ContentLoadingState 
-} from '@/types/content';
-import { pluralizeWithCount } from '@/utils/string';
-
-// Import JSON files directly - Vite handles this at build time
-import lessonsData from '@/content/lessons.json';
-import testimonialsData from '@/content/testimonials.json';
-import statsData from '@/content/stats.json';
+import { useMemo } from 'react';
+import { PageContent } from '@/types/content';
 import heroData from '@/content/hero.json';
 import aboutData from '@/content/about.json';
 import approachData from '@/content/approach.json';
 import communityData from '@/content/community.json';
 import contactData from '@/content/contact.json';
+import lessonContent from '@/content/lessons.json';
+import testimonials from '@/content/testimonials.json';
+import stats from '@/content/stats.json';
 import seoData from '@/content/seo.json';
-import performanceData from '@/content/performance.json';
 
-interface StatsData {
-  experience: {
-    playingYears: number;
-    teachingYears: number;
-    performanceYears: number;
-  };
-  students: {
-    total: number;
-    active: number;
-  };
-  performance: {
-    venuePerformances: string;
-    weddingPerformances: string;
-    corporateEvents: string;
-    averagePerformanceRating: number;
-  };
-  quality: {
-    averageRating: number;
-    successStories: number;
-    testimonials: number;
-  };
-  reach: {
-    countries: number;
-    city: string;
-    venues: number;
-  };
-}
+// Define section keys for type safety
+type SectionKey = 'hero' | 'about' | 'approach' | 'community' | 'contact' | 'lessons' | 'testimonials' | 'stats' | 'seo';
 
-// Type assertions for imported data
-const lessonContent = lessonsData as LessonContent;
-const testimonials = testimonialsData as Testimonial[];
-const stats = statsData as StatsData;
-
-interface UseContentReturn {
-  content: SiteContent;
-  lessons: LessonContent;
-  testimonials: Testimonial[];
-  loading: boolean;
-  error: string | null;
-  refresh: () => void;
-}
-
-// Content cache for performance optimization
-const contentCache = new Map<string, {
-  data: unknown;
-  timestamp: number;
-  ttl: number;
-}>();
-
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+// Content map for centralized access
+const contentMap = {
+  hero: heroData,
+  about: aboutData,
+  approach: approachData,
+  community: communityData,
+  contact: contactData,
+  lessons: lessonContent,
+  testimonials: testimonials,
+  stats: stats,
+  seo: seoData
+} as const;
 
 /**
- * Cache utility functions
+ * Enhanced content hook with loading states and error handling
  */
-const cacheUtils = {
-  set<T>(key: string, data: T, ttl = CACHE_TTL): void {
-    contentCache.set(key, {
-      data,
-      timestamp: Date.now(),
-      ttl,
-    });
-  },
-
-  get<T>(key: string): T | null {
-    const cached = contentCache.get(key);
-    if (!cached) return null;
-
-    const isExpired = Date.now() - cached.timestamp > cached.ttl;
-    if (isExpired) {
-      contentCache.delete(key);
-      return null;
-    }
-
-    return cached.data as T;
-  },
-
-  clear(): void {
-    contentCache.clear();
-  },
-
-  has(key: string): boolean {
-    return contentCache.has(key);
-  },
-};
-
-/**
- * Main content hook - provides all site content with type safety and caching
- */
-export function useContent(): UseContentReturn {
-  const [state, setState] = useState<ContentLoadingState>({
-    isLoading: true,
-    isError: false,
-    error: null
-  });
-
-  // Construct site content from modular JSON files
-  const siteContent: SiteContent = useMemo(() => ({
-    hero: heroData,
-    about: aboutData,
-    approach: approachData,
-    community: {
-      ...communityData,
-      communityStats: {
-        totalStudents: stats.students.total,
-        activeMembers: stats.students.active,
-        successStories: stats.quality.successStories,
-        averageRating: stats.quality.averageRating,
-        countriesRepresented: stats.reach.countries
+export const useSectionContent = (section: SectionKey) => {
+  return useMemo(() => {
+    try {
+      const data = contentMap[section];
+      if (!data) {
+        throw new Error(`Content for section "${section}" not found`);
       }
-    },
-    contact: contactData,
-    seo: seoData
-  } as SiteContent), []);
-
-  const refresh = useCallback(() => {
-    setState({ isLoading: true, isError: false, error: null });
-    
-    // Simulate loading for consistency with future API integration
-    setTimeout(() => {
-      try {
-        // Cache the content
-        cacheUtils.set('site-content', siteContent);
-        cacheUtils.set('lessons', lessonContent);
-        cacheUtils.set('testimonials', testimonials);
-
-        setState({ isLoading: false, isError: false, error: null });
-      } catch (error) {
-        setState({
-          isLoading: false,
-          isError: true,
-          error: error instanceof Error ? error.message : 'Failed to load content'
-        });
-      }
-    }, 100);
-  }, [siteContent]);
-
-  useEffect(() => {
-    refresh();
-  }, [refresh]);
-
-  // Memoize the return value to prevent unnecessary re-renders
-  const memoizedReturn = useMemo((): UseContentReturn => ({
-    content: siteContent,
-    lessons: lessonContent,
-    testimonials,
-    loading: state.isLoading,
-    error: state.error,
-    refresh
-  }), [siteContent, state.isLoading, state.error, refresh]);
-
-  return memoizedReturn;
-}
-
-/**
- * Hook for accessing specific content sections with modular data files
- */
-export function useSectionContent(section: string) {
-  const [loading] = useState(false);
-  const [error] = useState<string | null>(null);
-
-  const sectionData = useMemo(() => {
-    switch (section) {
-      case 'hero':
-        return heroData;
-      case 'about':
-        return aboutData;
-      case 'approach':
-        return approachData;
-      case 'community':
-        // Add community stats from centralized stats
-        return {
-          ...communityData,
-          communityStats: {
-            totalStudents: stats.students.total,
-            activeMembers: stats.students.active,
-            successStories: stats.quality.successStories,
-            averageRating: stats.quality.averageRating,
-            countriesRepresented: stats.reach.countries
-          }
-        };
-      case 'contact':
-        return contactData;
-      case 'lessons':
-        return lessonContent;
-      case 'performance':
-        return performanceData;
-      default:
-        return null;
+      
+      return {
+        data,
+        loading: false,
+        error: null
+      };
+    } catch (error) {
+      console.error(`Error loading content for section "${section}":`, error);
+      return {
+        data: null,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
     }
   }, [section]);
-
-  return {
-    data: sectionData,
-    loading,
-    error
-  };
-}
-
-/**
- * Hook for lesson packages with filtering capabilities and performance optimization
- */
-export function useLessonPackages(filters?: {
-  popular?: boolean;
-  maxPrice?: number;
-  minSessions?: number;
-  targetAudience?: ('beginner' | 'intermediate' | 'advanced')[];
-  recommended?: boolean;
-}) {
-  const { lessons, loading, error } = useContent();
-
-  const filteredPackages = useMemo(() => {
-    if (!lessons?.packages) return [];
-
-    // Create cache key from filters
-    const cacheKey = `filtered-packages-${JSON.stringify(filters)}`;
-    const cached = cacheUtils.get<typeof lessons.packages>(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
-    const filtered = lessons.packages.filter(pkg => {
-      // Apply filters
-      if (filters?.popular !== undefined && pkg.popular !== filters.popular) {
-        return false;
-      }
-
-      if (filters?.recommended !== undefined && pkg.recommended !== filters.recommended) {
-        return false;
-      }
-
-      if (filters?.maxPrice !== undefined && pkg.price > filters.maxPrice) {
-        return false;
-      }
-
-      if (filters?.minSessions !== undefined && pkg.sessions > 0 && pkg.sessions < filters.minSessions) {
-        return false;
-      }
-
-      if (filters?.targetAudience && pkg.targetAudience) {
-        const hasMatchingAudience = filters.targetAudience.some(level => 
-          pkg.targetAudience?.includes(level)
-        );
-        if (!hasMatchingAudience) return false;
-      }
-
-      return true;
-    });
-
-    cacheUtils.set(cacheKey, filtered);
-    return filtered;
-  }, [lessons, filters]);
-
-  const packageStats = useMemo(() => {
-    if (!lessons?.packages) return null;
-
-    const cacheKey = 'package-stats';
-    const cached = cacheUtils.get<ReturnType<typeof calculatePackageStats>>(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
-    const stats = calculatePackageStats(lessons.packages);
-    cacheUtils.set(cacheKey, stats);
-    return stats;
-  }, [lessons]);
-
-  return useMemo(() => ({
-    packages: filteredPackages,
-    allPackages: lessons?.packages || [],
-    packageInfo: lessons?.additionalInfo,
-    stats: packageStats,
-    loading,
-    error
-  }), [filteredPackages, lessons, packageStats, loading, error]);
-}
-
-/**
- * Helper function for calculating package statistics
- */
-function calculatePackageStats(packages: LessonContent['packages']) {
-  return {
-    total: packages.length,
-    popular: packages.filter(p => p.popular).length,
-    recommended: packages.filter(p => p.recommended).length,
-    priceRange: {
-      min: Math.min(...packages.map(p => p.price)),
-      max: Math.max(...packages.map(p => p.price))
-    },
-    averagePrice: Math.round((packages.reduce((sum, p) => sum + p.price, 0) / packages.length) * 100) / 100
-  };
-}
-
-/**
- * Hook for testimonials with filtering, sorting, and caching
- */
-export function useTestimonials(filters?: {
-  featured?: boolean;
-  instrument?: string;
-  level?: string;
-  minRating?: number;
-  verified?: boolean;
-  limit?: number;
-}) {
-  const { testimonials, loading, error } = useContent();
-
-  const filteredTestimonials = useMemo(() => {
-    const cacheKey = `filtered-testimonials-${JSON.stringify(filters)}`;
-    const cached = cacheUtils.get<Testimonial[]>(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
-    let filtered = testimonials.filter(testimonial => {
-      // Apply filters
-      if (filters?.featured !== undefined && testimonial.featured !== filters.featured) {
-        return false;
-      }
-
-      if (filters?.verified !== undefined && testimonial.verified !== filters.verified) {
-        return false;
-      }
-
-      if (filters?.instrument && testimonial.instrument !== filters.instrument) {
-        return false;
-      }
-
-      if (filters?.level && testimonial.level !== filters.level) {
-        return false;
-      }
-
-      if (filters?.minRating && testimonial.rating < filters.minRating) {
-        return false;
-      }
-
-      return true;
-    });
-
-    // Sort by rating (desc) then by date (desc)
-    filtered.sort((a, b) => {
-      if (a.rating !== b.rating) {
-        return b.rating - a.rating;
-      }
-      if (a.date && b.date) {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
-      }
-      return 0;
-    });
-
-    // Apply limit
-    if (filters?.limit) {
-      filtered = filtered.slice(0, filters.limit);
-    }
-
-    cacheUtils.set(cacheKey, filtered);
-    return filtered;
-  }, [testimonials, filters]);
-
-  const testimonialStats = useMemo(() => {
-    if (!testimonials.length) return null;
-
-    const cacheKey = 'testimonial-stats';
-    const cached = cacheUtils.get<ReturnType<typeof calculateTestimonialStats>>(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
-    const stats = calculateTestimonialStats(testimonials);
-    cacheUtils.set(cacheKey, stats);
-    return stats;
-  }, [testimonials]);
-
-  const featuredTestimonials = useMemo(() => {
-    return testimonials.filter(t => t.featured);
-  }, [testimonials]);
-
-  return useMemo(() => ({
-    testimonials: filteredTestimonials,
-    featured: featuredTestimonials,
-    stats: testimonialStats,
-    loading,
-    error
-  }), [filteredTestimonials, featuredTestimonials, testimonialStats, loading, error]);
-}
-
-/**
- * Helper function for calculating testimonial statistics
- */
-function calculateTestimonialStats(testimonials: Testimonial[]) {
-  const totalRating = testimonials.reduce((sum, t) => sum + t.rating, 0);
-  const averageRating = totalRating / testimonials.length;
-
-  return {
-    total: testimonials.length,
-    averageRating: Math.round(averageRating * 10) / 10,
-    featured: testimonials.filter(t => t.featured).length,
-    ratingDistribution: testimonials.reduce((dist, t) => {
-      dist[t.rating] = (dist[t.rating] || 0) + 1;
-      return dist;
-    }, {} as Record<number, number>)
-  };
-}
-
-/**
- * Hook for contact methods with caching
- */
-export function useContactMethods(filters?: {
-  primary?: boolean;
-  type?: string;
-}) {
-  const { content, loading, error } = useContent();
-
-  const contactMethods = useMemo(() => {
-    const cacheKey = `contact-methods-${JSON.stringify(filters)}`;
-    const cached = cacheUtils.get<typeof content.contact.methods>(cacheKey);
-    
-    if (cached) {
-      return cached;
-    }
-
-    const methods = content?.contact?.methods || [];
-    
-    const filtered = methods.filter(method => {
-      if (filters?.primary !== undefined && method.primary !== filters.primary) {
-        return false;
-      }
-      
-      if (filters?.type && method.type !== filters.type) {
-        return false;
-      }
-      
-      return true;
-    });
-
-    cacheUtils.set(cacheKey, filtered);
-    return filtered;
-  }, [content, filters]);
-
-  const primaryContact = useMemo(() => {
-    return contactMethods.find(method => method.primary) || contactMethods[0] || null;
-  }, [contactMethods]);
-
-  return useMemo(() => ({
-    methods: contactMethods,
-    primaryContact,
-    loading,
-    error
-  }), [contactMethods, primaryContact, loading, error]);
-}
-
-/**
- * Hook for SEO content management with proper typing
- */
-export function useSEO(customData?: {
-  title?: string;
-  description?: string;
-  keywords?: string;
-}): {
-  seo: typeof seoData;
-  data: {
-    title: string;
-    description: string;
-    keywords: string;
-    ogImage: string;
-    canonicalUrl?: string;
-    robots?: string;
-    twitterCard?: string;
-  } | null;
-  generatePageTitle: (pageTitle?: string) => string;
-} {
-  const processedSeoData = useMemo(() => {
-    return {
-      title: customData?.title || seoData.defaultTitle,
-      description: customData?.description || seoData.defaultDescription,
-      keywords: customData?.keywords || seoData.defaultKeywords,
-      ogImage: seoData.ogImage,
-      canonicalUrl: seoData.canonicalUrl,
-      robots: seoData.robots,
-      twitterCard: seoData.twitterCard
-    };
-  }, [customData]);
-
-  const generatePageTitle = useCallback((pageTitle?: string): string => {
-    const siteTitle = seoData.defaultTitle || 'RrishMusic';
-    return pageTitle ? `${pageTitle} | ${siteTitle}` : siteTitle;
-  }, []);
-
-  return useMemo(() => ({
-    seo: seoData,
-    data: processedSeoData,
-    generatePageTitle
-  }), [processedSeoData, generatePageTitle]);
-}
-
-/**
- * Content utilities for formatting and calculations
- */
-export const contentUtils = {
-  /**
-   * Format price with currency
-   */
-  formatPrice: (price: number, currency = 'AUD'): string => {
-    return new Intl.NumberFormat('en-AU', {
-      style: 'currency',
-      currency,
-      minimumFractionDigits: 0
-    }).format(price);
-  },
-
-  /**
-   * Calculate package savings
-   */
-  calculateSavings: (packagePrice: number, sessions: number, singlePrice: number): number => {
-    if (sessions === 0) return 0; // Unlimited packages
-    const fullPrice = sessions * singlePrice;
-    return Math.round(((fullPrice - packagePrice) / fullPrice) * 100);
-  },
-
-  /**
-   * Generate SEO-friendly slugs
-   */
-  generateSlug: (text: string): string => {
-    return text
-      .toLowerCase()
-      .replace(/[^a-z0-9 -]/g, '')
-      .replace(/\s+/g, '-')
-      .replace(/-+/g, '-')
-      .trim();
-  },
-
-  /**
-   * Truncate text to specified length
-   */
-  truncateText: (text: string, maxLength: number): string => {
-    if (text.length <= maxLength) return text;
-    return text.slice(0, maxLength).replace(/\s+\S*$/, '') + '...';
-  },
-
-  /**
-   * Get content preview
-   */
-  getPreview: (content: string, maxLength = 150): string => {
-    return contentUtils.truncateText(content, maxLength);
-  },
-
-  /**
-   * Clear content cache
-   */
-  clearCache: (): void => {
-    cacheUtils.clear();
-  },
-
-  /**
-   * Get cache statistics
-   */
-  getCacheStats: (): { size: number; keys: string[] } => {
-    return {
-      size: contentCache.size,
-      keys: Array.from(contentCache.keys())
-    };
-  }
 };
 
 /**
- * Hook for accessing site statistics with computed values
+ * Specialized hook for hero content with enhanced type safety
+ */
+export const useHeroContent = () => {
+  return useMemo(() => ({
+    data: heroData,
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Pluralization helper function
+ */
+export const pluralize = (word: string, count: number) => {
+  return count === 1 ? word : `${word}s`;
+};
+
+/**
+ * Pluralization with count display
+ */
+export const pluralizeWithCount = (count: number, word: string) => {
+  return `${count} ${pluralize(word, count)}`;
+};
+
+/**
+ * Hook for testimonials content
+ */
+export const useTestimonials = () => {
+  return useMemo(() => ({
+    data: testimonials,
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for lessons content
+ */
+export const useLessons = () => {
+  return useMemo(() => ({
+    data: lessonContent,
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for lesson packages with structured data
+ */
+export const useLessonPackages = () => {
+  return useMemo(() => {
+    try {
+      if (!lessonContent || !lessonContent.packages) {
+        throw new Error('Lesson packages data not found');
+      }
+
+      return {
+        packages: lessonContent.packages,
+        packageInfo: {
+          title: lessonContent.title,
+          subtitle: lessonContent.subtitle,
+          description: lessonContent.description
+        },
+        loading: false,
+        error: null
+      };
+    } catch (error) {
+      console.error('Error loading lesson packages:', error);
+      return {
+        packages: [],
+        packageInfo: {
+          title: 'Guitar Lessons & Packages',
+          subtitle: 'Choose the learning path that works best for your goals and schedule',
+          description: 'Whether you\'re taking your first steps or looking to refine your improvisation skills, these packages are designed to meet you where you are and guide you to where you want to be.'
+        },
+        loading: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      };
+    }
+  }, []);
+};
+
+/**
+ * Hook for SEO data
+ */
+export const useSEO = () => {
+  return useMemo(() => ({
+    data: seoData,
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for stats with computed values for different contexts
  */
 export const useStats = () => {
   return useMemo(() => ({
     data: stats,
     // Computed values for different contexts
     socialProof: {
+      // Properties expected by Contact component
+      students: stats.students.total,
+      performances: parseInt(stats.performance.venuePerformances.replace('+', '')), // Convert "50+" to 50
+      experience: stats.experience.teachingYears,
+      satisfaction: Math.round(stats.quality.averageRating * 20), // Convert 5.0 rating to 100% satisfaction
+      
+      // Legacy properties for backward compatibility
       studentsCount: stats.students.total,
       yearsTeaching: stats.experience.teachingYears,
       averageRating: stats.quality.averageRating,
@@ -643,3 +207,173 @@ export const rawContent = {
   stats: stats,
   seo: seoData
 } as const;
+
+// Enhanced page content interface
+export interface EnhancedPageContent extends PageContent {
+  meta?: {
+    lastUpdated?: string;
+    version?: string;
+    author?: string;
+  };
+}
+
+/**
+ * Navigation utility for multi-service platform
+ */
+export const useNavigation = () => {
+  return useMemo(() => ({
+    primarySections: [
+      { id: 'hero', label: 'Home', path: '/' },
+      { id: 'performances', label: 'Performances', path: '/performances' },
+      { id: 'lessons', label: 'Lessons', path: '/lessons' },
+      { id: 'about', label: 'About', path: '/about' },
+      { id: 'contact', label: 'Contact', path: '/contact' }
+    ],
+    serviceSections: {
+      performance: ['hero', 'performances', 'about', 'contact'],
+      teaching: ['hero', 'lessons', 'approach', 'community', 'contact'],
+      collaboration: ['hero', 'about', 'contact']
+    }
+  }), []);
+};
+
+/**
+ * Content validation utility
+ */
+export const validateContent = (content: Record<string, unknown>, section: string): boolean => {
+  if (!content) {
+    console.error(`Content validation failed: ${section} content is null or undefined`);
+    return false;
+  }
+  
+  // Add specific validation rules based on content structure
+  if (section === 'hero' && !content.title) {
+    console.error(`Content validation failed: ${section} missing required title`);
+    return false;
+  }
+  
+  return true;
+};
+
+/**
+ * Content transformation utility for different contexts
+ */
+export const useContentTransformer = () => {
+  return useMemo(() => ({
+    transformForSEO: (content: Record<string, unknown>) => ({
+      ...content,
+      meta: {
+        ...((content.meta as Record<string, unknown>) || {}),
+        generatedAt: new Date().toISOString()
+      }
+    }),
+    transformForMobile: (content: Record<string, unknown>) => ({
+      ...content,
+      // Mobile-specific transformations
+      title: (content.shortTitle as string) || (content.title as string),
+      description: (content.shortDescription as string) || (content.description as string)
+    }),
+    transformForAccessibility: (content: Record<string, unknown>) => ({
+      ...content,
+      // Accessibility enhancements
+      ariaLabels: (content.ariaLabels as Record<string, string>) || {},
+      altTexts: (content.altTexts as Record<string, string>) || {}
+    })
+  }), []);
+};
+
+/**
+ * Performance monitoring for content loading
+ */
+export const useContentPerformance = (section: string) => {
+  return useMemo(() => {
+    const startTime = performance.now();
+    
+    return {
+      measureLoadTime: () => {
+        const endTime = performance.now();
+        const loadTime = endTime - startTime;
+        console.log(`Content loading time for ${section}: ${loadTime}ms`);
+        return loadTime;
+      }
+    };
+  }, [section]);
+};
+
+/**
+ * Content caching utility
+ */
+export const useContentCache = () => {
+  return useMemo(() => ({
+    getCached: (key: string) => {
+      try {
+        const cached = sessionStorage.getItem(`content_${key}`);
+        return cached ? JSON.parse(cached) : null;
+      } catch {
+        return null;
+      }
+    },
+    setCached: (key: string, data: Record<string, unknown>) => {
+      try {
+        sessionStorage.setItem(`content_${key}`, JSON.stringify(data));
+      } catch (error) {
+        console.warn('Failed to cache content:', error);
+      }
+    },
+    clearCache: () => {
+      try {
+        Object.keys(sessionStorage)
+          .filter(key => key.startsWith('content_'))
+          .forEach(key => sessionStorage.removeItem(key));
+      } catch (error) {
+        console.warn('Failed to clear content cache:', error);
+      }
+    }
+  }), []);
+};
+
+/**
+ * Multi-language content support (future enhancement)
+ */
+export const useInternationalization = () => {
+  return useMemo(() => ({
+    currentLanguage: 'en',
+    supportedLanguages: ['en'],
+    translate: (key: string) => {
+      // Future implementation for multi-language support
+      return key;
+    }
+  }), []);
+};
+
+/**
+ * Enhanced error boundary integration
+ */
+export const useContentErrorBoundary = () => {
+  return useMemo(() => ({
+    handleContentError: (error: Error) => {
+      console.error('Content error:', error);
+      // Could integrate with error reporting service
+    },
+    getErrorFallback: () => ({
+      title: 'Content Temporarily Unavailable',
+      description: 'Please refresh the page or try again later.',
+      showRetry: true
+    })
+  }), []);
+};
+
+/**
+ * Content analytics integration
+ */
+export const useContentAnalytics = () => {
+  return useMemo(() => ({
+    trackContentView: (section: string) => {
+      // Future implementation for analytics tracking
+      console.log(`Content view tracked: ${section}`);
+    },
+    trackContentInteraction: (section: string, action: string) => {
+      console.log(`Content interaction tracked: ${section} - ${action}`);
+    }
+  }), []);
+};
