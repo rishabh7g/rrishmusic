@@ -28,3 +28,5 @@ export {
   CreativeProjectCTA,
   PartnershipInquiryCTA
 } from './CollaborationInquiryCTA';
+
+export { MediaPreview } from "./MediaPreview";

@@ -560,7 +560,7 @@ export const PerformanceGallery: React.FC = () => {
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredTestimonials.slice(0, 4).map((testimonial) => (
+              {featuredTestimonials.slice(0, 4).map((testimonial, index) => (
                 <motion.div
                   key={testimonial.id}
                   variants={fadeInUp}

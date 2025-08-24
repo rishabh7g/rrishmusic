@@ -9,15 +9,15 @@
     "backgroundAlt": "Rrish performing live with acoustic guitar in an intimate venue setting",
     "features": [
       {
-        "icon": "\ud83c\udfb8",
+        "icon": "🎸",
         "text": "Guitar & Blues Specialist"
       },
       {
-        "icon": "\ud83c\udfb5",
+        "icon": "🎵",
         "text": "Custom Setlists"
       },
       {
-        "icon": "\ud83c\udfa4",
+        "icon": "🎤",
         "text": "Professional Equipment"
       }
     ]
@@ -35,7 +35,7 @@
         "Custom song requests and dedications",
         "Professional sound system included"
       ],
-      "icon": "\ud83d\udc90",
+      "icon": "💐",
       "colorScheme": "orange"
     },
     "corporate_events": {
@@ -50,7 +50,7 @@
         "Team building event entertainment",
         "Professional presentation and setup"
       ],
-      "icon": "\ud83c\udfe2",
+      "icon": "🏢",
       "colorScheme": "blue"
     },
     "venue_performances": {
@@ -58,14 +58,14 @@
       "title": "Venue Performances",
       "description": "Regular live music performances for restaurants, bars, clubs, and private venues. From intimate acoustic sessions to energetic blues sets, I create the perfect atmosphere for your establishment and patrons.",
       "highlights": [
-        "Restaurant and caf\u00e9 performances",
+        "Restaurant and café performances",
         "Bar and club live music",
         "Private venue entertainment",
         "Weekly residency opportunities",
         "Acoustic and electric setups available",
         "Crowd-engaging interactive performances"
       ],
-      "icon": "\ud83c\udfb8",
+      "icon": "🎸",
       "colorScheme": "yellow"
     }
   },
@@ -80,24 +80,9 @@
         "alt": "Acoustic guitar performance in intimate Melbourne venue setting with warm lighting",
         "title": "Intimate Venue Performance",
         "category": "venue",
-        "description": "Acoustic performance at a cozy Melbourne caf\u00e9, creating the perfect atmosphere for an evening out",
-        "venue": "Local Melbourne Caf\u00e9",
-        "aspectRatio": "4/3",
-        "audioPreview": {
-          "url": "/audio/previews/acoustic-cafe-preview.mp3",
-          "duration": 30,
-          "genre": [
-            "acoustic",
-            "indie"
-          ],
-          "thumbnail": "/images/portfolio/acoustic-venue-performance.webp"
-        },
-        "performanceType": "acoustic",
-        "genre": [
-          "acoustic",
-          "indie"
-        ],
-        "eventType": "venue"
+        "description": "Acoustic performance at a cozy Melbourne café, creating the perfect atmosphere for an evening out",
+        "venue": "Local Melbourne Café",
+        "aspectRatio": "4/3"
       },
       {
         "id": "wedding-ceremony-1",
@@ -107,22 +92,7 @@
         "category": "wedding",
         "description": "Providing beautiful acoustic accompaniment for a couple's special day",
         "venue": "Garden Wedding Venue",
-        "aspectRatio": "3/2",
-        "audioPreview": {
-          "url": "/audio/previews/wedding-acoustic-preview.mp3",
-          "duration": 30,
-          "genre": [
-            "acoustic",
-            "romantic"
-          ],
-          "thumbnail": "/images/portfolio/wedding-ceremony-guitar.webp"
-        },
-        "performanceType": "solo",
-        "genre": [
-          "acoustic",
-          "folk"
-        ],
-        "eventType": "wedding"
+        "aspectRatio": "3/2"
       },
       {
         "id": "corporate-event-1",
@@ -132,13 +102,7 @@
         "category": "corporate",
         "description": "Background music for a corporate networking event, enhancing professional atmosphere",
         "venue": "Corporate Conference Center",
-        "aspectRatio": "16/9",
-        "performanceType": "acoustic",
-        "genre": [
-          "jazz",
-          "easy listening"
-        ],
-        "eventType": "corporate"
+        "aspectRatio": "16/9"
       },
       {
         "id": "blues-performance-1",
@@ -148,22 +112,7 @@
         "category": "venue",
         "description": "Electric blues performance bringing energy and soul to the stage",
         "venue": "Melbourne Blues Club",
-        "aspectRatio": "4/3",
-        "audioPreview": {
-          "url": "/audio/previews/blues-stage-preview.mp3",
-          "duration": 30,
-          "genre": [
-            "blues",
-            "electric"
-          ],
-          "thumbnail": "/images/portfolio/blues-performance-stage.webp"
-        },
-        "performanceType": "band",
-        "genre": [
-          "blues",
-          "rock"
-        ],
-        "eventType": "venue"
+        "aspectRatio": "4/3"
       },
       {
         "id": "private-event-1",
@@ -173,13 +122,7 @@
         "category": "private",
         "description": "Creating a memorable musical experience for a private celebration",
         "venue": "Private Residence",
-        "aspectRatio": "3/2",
-        "performanceType": "acoustic",
-        "genre": [
-          "acoustic",
-          "indie"
-        ],
-        "eventType": "private"
+        "aspectRatio": "3/2"
       },
       {
         "id": "restaurant-performance-1",
@@ -189,13 +132,7 @@
         "category": "venue",
         "description": "Weekly acoustic performances enhancing the dining experience",
         "venue": "Upscale Melbourne Restaurant",
-        "aspectRatio": "4/3",
-        "performanceType": "acoustic",
-        "genre": [
-          "acoustic",
-          "indie"
-        ],
-        "eventType": "venue"
+        "aspectRatio": "4/3"
       },
       {
         "id": "festival-performance-1",
@@ -205,13 +142,7 @@
         "category": "festival",
         "description": "Bringing blues and acoustic music to outdoor festival audiences",
         "venue": "Melbourne Music Festival",
-        "aspectRatio": "16/9",
-        "performanceType": "acoustic",
-        "genre": [
-          "acoustic",
-          "indie"
-        ],
-        "eventType": "festival"
+        "aspectRatio": "16/9"
       },
       {
         "id": "wedding-reception-1",
@@ -221,13 +152,7 @@
         "category": "wedding",
         "description": "Reception entertainment keeping guests dancing and celebrating",
         "venue": "Wedding Reception Venue",
-        "aspectRatio": "3/2",
-        "performanceType": "solo",
-        "genre": [
-          "acoustic",
-          "folk"
-        ],
-        "eventType": "wedding"
+        "aspectRatio": "3/2"
       }
     ],
     "categories": [
@@ -261,118 +186,7 @@
         "label": "Festivals",
         "count": 1
       }
-    ],
-    "videos": [
-      {
-        "id": "blues-performance-video",
-        "title": "Blues Performance Highlight",
-        "description": "Dynamic blues performance showcasing guitar skills and stage presence",
-        "videoUrl": "/videos/previews/blues-performance-preview.mp4",
-        "thumbnail": "/images/portfolio/video-thumbnails/blues-performance-thumb.webp",
-        "duration": 45,
-        "embedUrl": "",
-        "performanceType": "band",
-        "genre": [
-          "blues",
-          "rock"
-        ],
-        "venue": "Melbourne Blues Club"
-      },
-      {
-        "id": "acoustic-session-video",
-        "title": "Acoustic Session Preview",
-        "description": "Intimate acoustic performance demonstrating versatility and musical connection",
-        "videoUrl": "/videos/previews/acoustic-session-preview.mp4",
-        "thumbnail": "/images/portfolio/video-thumbnails/acoustic-session-thumb.webp",
-        "duration": 35,
-        "embedUrl": "",
-        "performanceType": "solo",
-        "genre": [
-          "acoustic",
-          "folk"
-        ],
-        "venue": "Studio Session"
-      },
-      {
-        "id": "teaching-demo-video",
-        "title": "Guitar Teaching Demonstration",
-        "description": "Teaching approach and methodology showcase for potential students",
-        "videoUrl": "/videos/previews/teaching-demo-preview.mp4",
-        "thumbnail": "/images/portfolio/video-thumbnails/teaching-demo-thumb.webp",
-        "duration": 40,
-        "embedUrl": "",
-        "performanceType": "solo",
-        "genre": [
-          "educational",
-          "acoustic"
-        ],
-        "venue": "Teaching Studio"
-      }
-    ],
-    "audioPreviews": [
-      {
-        "id": "blues-electric-sample",
-        "title": "Electric Blues Sample",
-        "description": "High-energy electric blues performance with dynamic guitar work",
-        "audioUrl": "/audio/previews/blues-electric-sample.mp3",
-        "duration": 30,
-        "genre": [
-          "blues",
-          "electric",
-          "rock"
-        ],
-        "thumbnail": "/images/portfolio/audio-thumbnails/blues-electric-thumb.webp",
-        "performanceType": "band",
-        "venue": "Live Performance"
-      },
-      {
-        "id": "acoustic-folk-sample",
-        "title": "Acoustic Folk Sample",
-        "description": "Gentle acoustic folk performance perfect for intimate venues",
-        "audioUrl": "/audio/previews/acoustic-folk-sample.mp3",
-        "duration": 30,
-        "genre": [
-          "acoustic",
-          "folk",
-          "indie"
-        ],
-        "thumbnail": "/images/portfolio/audio-thumbnails/acoustic-folk-thumb.webp",
-        "performanceType": "solo",
-        "venue": "Caf\u00e9 Performance"
-      },
-      {
-        "id": "wedding-romantic-sample",
-        "title": "Wedding Romance Sample",
-        "description": "Beautiful romantic acoustic piece perfect for wedding ceremonies",
-        "audioUrl": "/audio/previews/wedding-romantic-sample.mp3",
-        "duration": 30,
-        "genre": [
-          "acoustic",
-          "romantic",
-          "wedding"
-        ],
-        "thumbnail": "/images/portfolio/audio-thumbnails/wedding-romantic-thumb.webp",
-        "performanceType": "solo",
-        "venue": "Wedding Ceremony"
-      },
-      {
-        "id": "jazz-fusion-sample",
-        "title": "Jazz Fusion Sample",
-        "description": "Sophisticated jazz fusion piece showcasing technical versatility",
-        "audioUrl": "/audio/previews/jazz-fusion-sample.mp3",
-        "duration": 30,
-        "genre": [
-          "jazz",
-          "fusion",
-          "electric"
-        ],
-        "thumbnail": "/images/portfolio/audio-thumbnails/jazz-fusion-thumb.webp",
-        "performanceType": "band",
-        "venue": "Jazz Club"
-      }
-    ],
-    "bandDescription": "High-energy electric blues and rock performances featuring dynamic guitar work and stage presence. Perfect for venues looking to create an exciting atmosphere with crowd-engaging music that gets people moving and creates memorable nights out.",
-    "soloDescription": "Intimate acoustic performances showcasing musical versatility and connection with the audience. Ideal for caf\u00e9s, restaurants, weddings, and private events where a more personal musical experience enhances the atmosphere without overwhelming conversation."
+    ]
   },
   "credentials": [
     "10+ years of live performance experience",
