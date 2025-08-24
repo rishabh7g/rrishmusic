@@ -17,19 +17,21 @@ interface ServiceItem {
 }
 
 /**
- * Services Hierarchy Component
+ * Services Hierarchy Component - UPDATED for 80/15/5 Content Allocation Rule
  * 
- * Implements 60/25/15 visual hierarchy for services with Primary/Secondary CTA strategy:
- * - Performance Services: 60% prominence (primary CTA)
- * - Teaching Services: 25% prominence (secondary CTA) 
- * - Collaboration Services: 15% prominence (tertiary CTA)
+ * Implements 80/15/5 content allocation:
+ * - Performance Services: 80% content allocation (expanded content, multiple service types, detailed descriptions)
+ * - Teaching Services: 15% content allocation (concise but compelling content)
+ * - Collaboration Services: 5% content allocation (minimal but present content)
+ * 
+ * Visual hierarchy maintained with performance services taking dominant space.
  */
 export function ServicesHierarchy() {
   const services: ServiceItem[] = [
     {
-      title: "Live Performance",
-      description: "Professional blues and improvisation performances for venues, events, and private functions across Melbourne. Bringing soulful music and engaging stage presence to create memorable experiences.",
-      ctaText: "Book Performance",
+      title: "Live Performance Services",
+      description: "Professional blues and improvisation performances across Melbourne - from intimate venues to major events. Specializing in soulful blues guitar, engaging stage presence, and memorable musical experiences. Available for pubs, clubs, private functions, weddings, corporate events, and festivals. Full band or solo acoustic setups with professional sound equipment and technical support included.",
+      ctaText: "Book Performance Now",
       ctaLink: "/performance",
       prominence: 'primary',
       icon: (
@@ -40,8 +42,8 @@ export function ServicesHierarchy() {
       )
     },
     {
-      title: "Music Lessons",
-      description: "Personalized guitar and blues improvisation lessons for all skill levels. Learn proper technique, music theory, and develop your unique style with structured learning paths.",
+      title: "Guitar Lessons",
+      description: "Structured guitar lessons focused on blues and improvisation techniques for developing musicians.",
       ctaText: "Start Learning",
       ctaLink: "#lessons",
       prominence: 'secondary',
@@ -53,8 +55,8 @@ export function ServicesHierarchy() {
       )
     },
     {
-      title: "Musical Collaboration",
-      description: "Partner with other musicians, bands, or projects. Available for studio sessions, songwriting collaborations, and creative musical partnerships.",
+      title: "Studio Sessions",
+      description: "Available for recording collaborations and creative partnerships.",
       ctaText: "Collaborate",
       ctaLink: "/collaboration",
       prominence: 'tertiary',
@@ -75,25 +77,70 @@ export function ServicesHierarchy() {
         initial="hidden"
         animate="visible"
       >
-        {/* Section Header */}
+        {/* Section Header - Performance-Focused */}
         <motion.div 
           className="text-center mb-16"
           variants={fadeInUp}
         >
           <h2 className="text-4xl md:text-5xl font-heading font-bold text-brand-blue-primary mb-4">
-            Musical Services
+            Melbourne Live Music Services
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed">
-            Professional music services tailored to your needs. From live performances to personalized lessons, 
-            I bring expertise and passion to every musical experience.
+          <p className="text-xl text-gray-600 max-w-4xl mx-auto leading-relaxed">
+            Professional live performance services bringing authentic blues and improvisation to Melbourne venues and events. 
+            Specializing in memorable musical experiences that connect with audiences and create lasting impressions.
           </p>
         </motion.div>
 
-        {/* Services Grid with Hierarchy */}
+        {/* Performance Service Types - Expanded Content (80% allocation) */}
+        <motion.div 
+          className="mb-16"
+          variants={fadeInUp}
+        >
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+            <div className="bg-brand-blue-primary/5 rounded-lg p-6 text-center">
+              <div className="w-12 h-12 bg-brand-blue-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-brand-blue-primary mb-2">Venue Performances</h4>
+              <p className="text-sm text-gray-600">Pubs, clubs, and live music venues</p>
+            </div>
+            <div className="bg-brand-blue-primary/5 rounded-lg p-6 text-center">
+              <div className="w-12 h-12 bg-brand-blue-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-brand-blue-primary mb-2">Private Events</h4>
+              <p className="text-sm text-gray-600">Weddings, parties, celebrations</p>
+            </div>
+            <div className="bg-brand-blue-primary/5 rounded-lg p-6 text-center">
+              <div className="w-12 h-12 bg-brand-blue-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2-2v2m8 0H8m8 0v6l-8 5-8-5V6" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-brand-blue-primary mb-2">Corporate Events</h4>
+              <p className="text-sm text-gray-600">Professional business functions</p>
+            </div>
+            <div className="bg-brand-blue-primary/5 rounded-lg p-6 text-center">
+              <div className="w-12 h-12 bg-brand-blue-primary rounded-full mx-auto mb-4 flex items-center justify-center">
+                <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                </svg>
+              </div>
+              <h4 className="font-bold text-brand-blue-primary mb-2">Festival Sets</h4>
+              <p className="text-sm text-gray-600">Music festivals and outdoor events</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Services Grid with 80/15/5 Layout */}
         <div className="grid lg:grid-cols-12 gap-8">
-          {/* Primary Service - Performance (60% prominence) */}
+          {/* Primary Service - Performance (80% content allocation) */}
           <motion.div 
-            className="lg:col-span-7"
+            className="lg:col-span-8"
             variants={fadeInUp}
           >
             <ServiceCard 
@@ -102,9 +149,9 @@ export function ServicesHierarchy() {
             />
           </motion.div>
 
-          {/* Secondary and Tertiary Services (40% combined) */}
-          <div className="lg:col-span-5 space-y-8">
-            {/* Secondary Service - Teaching (25% prominence) */}
+          {/* Secondary and Tertiary Services (20% combined) */}
+          <div className="lg:col-span-4 space-y-6">
+            {/* Secondary Service - Teaching (15% allocation) */}
             <motion.div variants={fadeInUp}>
               <ServiceCard 
                 service={services[1]} 
@@ -112,7 +159,7 @@ export function ServicesHierarchy() {
               />
             </motion.div>
 
-            {/* Tertiary Service - Collaboration (15% prominence) */}
+            {/* Tertiary Service - Collaboration (5% allocation) */}
             <motion.div variants={fadeInUp}>
               <ServiceCard 
                 service={services[2]} 
@@ -122,21 +169,48 @@ export function ServicesHierarchy() {
           </div>
         </div>
 
-        {/* Primary/Secondary CTA Strategy Implementation */}
+        {/* Performance-Focused Value Proposition (Additional 80% content) */}
+        <motion.div 
+          className="mt-16 bg-gradient-to-r from-brand-blue-primary/5 to-brand-yellow-accent/5 rounded-2xl p-8"
+          variants={fadeInUp}
+        >
+          <div className="grid md:grid-cols-3 gap-8 text-center">
+            <div>
+              <div className="text-3xl font-bold text-brand-blue-primary mb-2">100+</div>
+              <div className="font-semibold text-brand-blue-primary mb-2">Live Performances</div>
+              <p className="text-sm text-gray-600">Across Melbourne venues and events</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-brand-blue-primary mb-2">5+</div>
+              <div className="font-semibold text-brand-blue-primary mb-2">Years Experience</div>
+              <p className="text-sm text-gray-600">Professional live music performance</p>
+            </div>
+            <div>
+              <div className="text-3xl font-bold text-brand-blue-primary mb-2">100%</div>
+              <div className="font-semibold text-brand-blue-primary mb-2">Professional Setup</div>
+              <p className="text-sm text-gray-600">Equipment and technical support included</p>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Performance-Focused CTA Strategy */}
         <motion.div 
           className="mt-16 text-center"
           variants={fadeInUp}
         >
-          <h3 className="text-2xl font-heading font-bold text-brand-blue-primary mb-6">
-            Ready to Get Started?
+          <h3 className="text-3xl font-heading font-bold text-brand-blue-primary mb-6">
+            Ready to Book Your Live Performance?
           </h3>
+          <p className="text-lg text-gray-600 mb-8 max-w-2xl mx-auto">
+            Professional blues guitar performances that create memorable experiences for your venue or event
+          </p>
           <CTAHierarchy 
             layout="horizontal"
             context="services"
             customMessages={{
               primary: "Book Performance Today",
-              secondary: "Start Guitar Lessons",
-              tertiary: "Discuss Collaboration"
+              secondary: "Learn Guitar Skills", 
+              tertiary: "Studio Work"
             }}
             className="justify-center"
           />
@@ -148,7 +222,7 @@ export function ServicesHierarchy() {
             className="text-sm text-gray-500"
             variants={fadeInUp}
           >
-            Each service is designed to provide exceptional value and memorable musical experiences
+            Professional live music services designed to deliver exceptional experiences and lasting memories
           </motion.p>
         </div>
       </motion.div>
@@ -157,7 +231,7 @@ export function ServicesHierarchy() {
 }
 
 /**
- * Service Card Component with size variations
+ * Service Card Component with size variations - Updated for 80/15/5 allocation
  */
 interface ServiceCardProps {
   service: ServiceItem;
@@ -167,23 +241,23 @@ interface ServiceCardProps {
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
   const sizeClasses = {
     large: {
-      container: "h-full bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 md:p-12 group",
+      container: "h-full bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 md:p-12 group border border-brand-blue-primary/10",
       icon: "w-16 h-16 md:w-20 md:h-20 text-brand-blue-primary mb-6 group-hover:text-brand-yellow-accent transition-colors duration-300",
-      title: "text-3xl md:text-4xl font-heading font-bold text-brand-blue-primary mb-4 group-hover:text-brand-blue-secondary transition-colors duration-300",
+      title: "text-3xl md:text-4xl font-heading font-bold text-brand-blue-primary mb-6 group-hover:text-brand-blue-secondary transition-colors duration-300",
       description: "text-lg text-gray-600 mb-8 leading-relaxed",
-      cta: "inline-flex items-center px-8 py-4 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+      cta: "inline-flex items-center px-8 py-4 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg"
     },
     medium: {
       container: "h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group",
-      icon: "w-12 h-12 text-brand-blue-primary mb-4 group-hover:text-brand-yellow-accent transition-colors duration-300",
-      title: "text-2xl font-heading font-bold text-brand-blue-primary mb-3 group-hover:text-brand-blue-secondary transition-colors duration-300",
+      icon: "w-10 h-10 text-brand-blue-primary mb-4 group-hover:text-brand-yellow-accent transition-colors duration-300",
+      title: "text-xl font-heading font-bold text-brand-blue-primary mb-3 group-hover:text-brand-blue-secondary transition-colors duration-300",
       description: "text-base text-gray-600 mb-6 leading-relaxed",
       cta: "inline-flex items-center px-6 py-3 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 shadow-md hover:shadow-lg"
     },
     small: {
       container: "h-full bg-white rounded-lg shadow-md hover:shadow-lg transition-all duration-300 p-4 group",
-      icon: "w-8 h-8 text-brand-blue-primary mb-3 group-hover:text-brand-yellow-accent transition-colors duration-300",
-      title: "text-xl font-heading font-bold text-brand-blue-primary mb-2 group-hover:text-brand-blue-secondary transition-colors duration-300",
+      icon: "w-6 h-6 text-brand-blue-primary mb-3 group-hover:text-brand-yellow-accent transition-colors duration-300",
+      title: "text-lg font-heading font-bold text-brand-blue-primary mb-2 group-hover:text-brand-blue-secondary transition-colors duration-300",
       description: "text-sm text-gray-600 mb-4 leading-relaxed",
       cta: "inline-flex items-center px-4 py-2 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 text-sm"
     }
@@ -195,15 +269,16 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
     <motion.div 
       className={classes.container}
       variants={scaleIn}
-      whileHover={{ scale: 1.02 }}
+      whileHover={{ scale: size === 'large' ? 1.02 : 1.03 }}
       onClick={() => {
         // Analytics tracking for service hierarchy engagement
         if (typeof window !== 'undefined' && window.gtag) {
           window.gtag('event', 'service_card_click', {
-            event_category: 'Services Hierarchy',
+            event_category: 'Content Allocation 80/15/5',
             event_label: service.title,
             service_prominence: service.prominence,
-            card_size: size
+            card_size: size,
+            content_allocation: size === 'large' ? '80%' : size === 'medium' ? '15%' : '5%'
           });
         }
       }}
@@ -223,19 +298,20 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
         {service.description}
       </p>
 
-      {/* Call to Action - Using basic link for now, CTA hierarchy handles main CTAs */}
+      {/* Call to Action */}
       <a 
         href={service.ctaLink}
         className={classes.cta}
         onClick={(e) => {
           e.stopPropagation();
-          // Analytics tracking for CTA clicks
+          // Analytics tracking for CTA clicks with content allocation context
           if (typeof window !== 'undefined' && window.gtag) {
             window.gtag('event', 'service_cta_click', {
-              event_category: 'Services Hierarchy',
+              event_category: 'Content Allocation 80/15/5',
               event_label: `${service.title} - ${service.ctaText}`,
               service_prominence: service.prominence,
-              destination: service.ctaLink
+              destination: service.ctaLink,
+              content_allocation: size === 'large' ? '80%' : size === 'medium' ? '15%' : '5%'
             });
           }
         }}
