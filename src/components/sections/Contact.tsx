@@ -3,10 +3,56 @@ import { useSectionContent, useStats } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
 import { pluralize } from '@/utils/string';
 import { SmartContactCTA } from '@/components/ui/SmartContactCTA';
+import { SmartRoutingDebug } from '@/components/debug/SmartRoutingDebug';
+import type { ContactContext, ServiceType } from '@/utils/contactRouting';
+import type { InquiryFormData } from '@/types/forms';
 
 export function Contact() {
   const { data: contact, loading, error } = useSectionContent('contact');
   const { socialProof } = useStats();
+
+  /**
+   * Enhanced form open handler with journey analysis
+   */
+  const handleFormOpen = (serviceType: ServiceType, context: ContactContext) => {
+    console.log('Enhanced Contact form opened:', {
+      service: serviceType,
+      confidence: context.sessionData.confidenceScore,
+      referralSource: context.referralSourceType,
+      journeyLength: context.userJourney.length,
+      campaignData: context.campaignData
+    });
+  };
+
+  /**
+   * Enhanced form submit handler with context tracking
+   */
+  const handleFormSubmit = (serviceType: ServiceType, data: InquiryFormData, context: ContactContext) => {
+    console.log('Enhanced Contact form submitted:', {
+      service: serviceType,
+      data,
+      context: {
+        confidence: context.sessionData.confidenceScore,
+        referralSource: context.referralSourceType,
+        sessionDuration: Math.round(context.sessionData.totalTimeSpent / 1000),
+        campaignSource: context.campaignData?.utm_source
+      }
+    });
+  };
+
+  /**
+   * Journey analysis handler for debugging and optimization
+   */
+  const handleJourneyAnalyzed = (context: ContactContext) => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('User journey analyzed in Contact section:', {
+        primaryInterest: context.sessionData.primaryServiceInterest,
+        confidence: context.sessionData.confidenceScore,
+        pagesVisited: context.sessionData.pagesVisited,
+        referralType: context.referralSourceType
+      });
+    }
+  };
 
   if (loading) {
     return (
@@ -49,205 +95,173 @@ export function Contact() {
             >
               hello@rrishmusic.com
             </a>
-            {' '}or find me on{' '}
-            <a 
-              href="https://instagram.com/rrishmusic" 
-              target="_blank" 
-              rel="noopener noreferrer"
-              className="text-brand-yellow-accent hover:text-white underline"
-            >
-              Instagram @rrishmusic
-            </a>
           </p>
         </div>
       </div>
     );
   }
 
-  const getContactIcon = (type: string) => {
-    switch (type) {
-      case 'email':
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-          </svg>
-        );
-      case 'instagram':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-          </svg>
-        );
-      case 'phone':
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-          </svg>
-        );
-      default:
-        return (
-          <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-          </svg>
-        );
-    }
-  };
-
-  const primaryMethod = contact.methods.find(method => method.primary);
-  const secondaryMethods = contact.methods.filter(method => !method.primary);
-
   return (
-    <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white relative overflow-hidden"
-    >
-      {/* Background decoration */}
-      <div className="absolute inset-0 bg-[url('/images/contact-pattern.svg')] bg-repeat opacity-10"></div>
-      <div className="absolute top-1/4 right-0 w-32 h-32 sm:w-64 sm:h-64 lg:w-96 lg:h-96 bg-white/5 rounded-full translate-x-16 sm:translate-x-32 lg:translate-x-48 hidden sm:block"></div>
-      <div className="absolute bottom-1/4 left-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-80 lg:h-80 bg-brand-yellow-accent/10 rounded-full -translate-x-12 sm:-translate-x-24 lg:-translate-x-40 hidden sm:block"></div>
-      
-      <motion.div 
-        className="container-custom relative z-10"
-        variants={staggerContainer}
-        initial="hidden"
-        whileInView="visible"
-        viewport={{ once: true, margin: "-100px" }}
-      >
-        <motion.div 
-          className="text-center mb-16"
-          variants={fadeInUp}
+    <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white overflow-hidden">
+      <div className="container-custom">
+        <motion.div
+          className="text-center mb-12"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
         >
-          <h2 className="text-4xl md:text-5xl font-heading font-bold mb-4">
+          <motion.h2 
+            className="text-4xl lg:text-5xl font-heading font-bold mb-4"
+            variants={fadeInUp}
+          >
             {contact.title}
-          </h2>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed">
+          </motion.h2>
+          <motion.p 
+            className="text-xl text-white/80 max-w-2xl mx-auto"
+            variants={fadeInUp}
+          >
             {contact.subtitle}
-          </p>
-          <div className="w-24 h-1 bg-brand-yellow-accent mx-auto mt-6 rounded-full"></div>
+          </motion.p>
         </motion.div>
 
-        <div className="grid lg:grid-cols-2 gap-16 items-start">
+        <motion.div 
+          className="grid lg:grid-cols-2 gap-12 items-start"
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-100px" }}
+          variants={staggerContainer}
+        >
           {/* Contact Methods */}
           <motion.div 
             className="space-y-8"
             variants={slideInLeft}
           >
-            {/* Primary contact method - featured */}
-            {primaryMethod && (
-              <motion.a
-                href={primaryMethod.href}
-                className="block bg-white/10 backdrop-blur-sm rounded-3xl p-8 hover:bg-white/20 
-                  transition-all duration-300 group border border-white/20 hover:border-brand-yellow-accent/50"
-                variants={fadeInUp}
-                whileHover={{ scale: 1.02, y: -5 }}
-                whileTap={{ scale: 0.98 }}
-                {...(primaryMethod.type === 'email' ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-              >
-                <div className="flex items-center space-x-6">
-                  <div className="w-16 h-16 bg-brand-yellow-accent text-brand-blue-primary rounded-2xl 
-                    flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    {getContactIcon(primaryMethod.type)}
-                  </div>
-                  <div>
-                    <h3 className="text-xl font-heading font-bold mb-2 group-hover:text-brand-yellow-accent 
-                      transition-colors duration-300">
-                      {primaryMethod.label}
-                    </h3>
-                    <p className="text-white/80 text-lg">
-                      {primaryMethod.value}
-                    </p>
-                    <p className="text-brand-yellow-accent text-sm mt-1 font-medium">
-                      Primary Contact Method
-                    </p>
-                  </div>
-                </div>
-              </motion.a>
-            )}
-
-            {/* Secondary contact methods */}
-            <div className="grid gap-4">
-              {secondaryMethods.map((method, index) => (
-                <motion.a
-                  key={method.type}
-                  href={method.href}
-                  className="block bg-white/5 backdrop-blur-sm rounded-2xl p-6 hover:bg-white/10 
-                    transition-all duration-300 group border border-white/10"
-                  variants={fadeInUp}
-                  custom={index + 1}
-                  whileHover={{ scale: 1.01, x: 10 }}
-                  {...(method.type === 'email' ? {} : { target: '_blank', rel: 'noopener noreferrer' })}
-                >
-                  <div className="flex items-center space-x-4">
-                    <div className="w-12 h-12 bg-white/10 text-white rounded-xl flex items-center justify-center 
-                      group-hover:bg-brand-yellow-accent group-hover:text-brand-blue-primary 
-                      transition-all duration-300">
-                      {getContactIcon(method.type)}
-                    </div>
-                    <div>
-                      <h4 className="font-semibold text-white group-hover:text-brand-yellow-accent 
-                        transition-colors duration-300">
-                        {method.label}
-                      </h4>
-                      <p className="text-white/70 text-sm">
-                        {method.value}
-                      </p>
-                    </div>
-                    <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <svg className="w-5 h-5 text-brand-yellow-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                      </svg>
-                    </div>
-                  </div>
-                </motion.a>
-              ))}
-            </div>
-
-            {/* Location */}
             <motion.div 
-              className="bg-white/5 backdrop-blur-sm rounded-2xl p-6 border border-white/10"
+              className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20"
               variants={fadeInUp}
             >
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-white/10 text-white rounded-xl flex items-center justify-center">
-                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                  </svg>
+              <h3 className="text-2xl font-heading font-bold mb-6 text-brand-yellow-accent">
+                Get in Touch
+              </h3>
+              
+              <div className="space-y-6">
+                {/* Email */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-brand-yellow-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-brand-blue-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z" />
+                      <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Email</h4>
+                    <a 
+                      href={`mailto:${contact.email}`}
+                      className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
+                    >
+                      {contact.email}
+                    </a>
+                  </div>
                 </div>
-                <div>
-                  <h4 className="font-semibold text-white mb-1">Location</h4>
-                  <p className="text-white/70">
-                    {contact.location}
-                  </p>
+
+                {/* Phone */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-brand-yellow-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-brand-blue-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Phone</h4>
+                    <a 
+                      href={`tel:${contact.phone}`}
+                      className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
+                    >
+                      {contact.phone}
+                    </a>
+                  </div>
+                </div>
+
+                {/* Social Links */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-brand-yellow-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-brand-blue-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M3.172 5.172a4 4 0 015.656 0L10 6.343l1.172-1.171a4 4 0 115.656 5.656L10 17.657l-6.828-6.829a4 4 0 010-5.656z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Follow</h4>
+                    <div className="flex space-x-4">
+                      {contact.social.instagram && (
+                        <a 
+                          href={contact.social.instagram}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
+                          aria-label="Instagram"
+                        >
+                          Instagram
+                        </a>
+                      )}
+                      {contact.social.youtube && (
+                        <a 
+                          href={contact.social.youtube}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
+                          aria-label="YouTube"
+                        >
+                          YouTube
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                </div>
+
+                {/* Location */}
+                <div className="flex items-center space-x-4">
+                  <div className="w-12 h-12 bg-brand-yellow-accent rounded-full flex items-center justify-center flex-shrink-0">
+                    <svg className="w-6 h-6 text-brand-blue-primary" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                    </svg>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-lg">Location</h4>
+                    <p className="text-white/70">
+                      {contact.location}
+                    </p>
+                  </div>
                 </div>
               </div>
             </motion.div>
           </motion.div>
 
-          {/* Smart Contact CTA and Additional Info */}
+          {/* Enhanced Smart Contact CTA and Additional Info */}
           <motion.div 
             className="space-y-8"
             variants={slideInRight}
           >
-            {/* Smart Contact CTA - Context-aware form routing */}
+            {/* Enhanced Smart Contact CTA with personalization and confidence indicators */}
             <motion.div variants={fadeInUp}>
               <SmartContactCTA
-                variant="prominent"
+                variant="personalized"
                 showServiceInfo={true}
-                analyticsSource="contact_section"
+                showConfidenceIndicator={true}
+                enablePersonalization={true}
+                analyticsSource="contact_section_enhanced"
                 className="mb-8"
-                onFormOpen={(serviceType) => {
-                  console.log('Contact form opened from contact section:', serviceType);
-                }}
-                onFormSubmit={(serviceType, data) => {
-                  console.log('Contact form submitted from contact section:', { serviceType, data });
-                }}
+                onFormOpen={handleFormOpen}
+                onFormSubmit={handleFormSubmit}
+                onJourneyAnalyzed={handleJourneyAnalyzed}
               />
             </motion.div>
 
-            {/* Additional Information */}
+            {/* Enhanced Information with Smart Routing Features */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
               <motion.div variants={fadeInUp}>
                 <h3 className="text-2xl font-heading font-bold mb-6 text-brand-yellow-accent">
-                  What to Expect
+                  Smart Contact Experience
                 </h3>
                 
                 <div className="space-y-6 text-white/90">
@@ -258,7 +272,10 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Smart form selection based on your service needs</p>
+                    <div>
+                      <p className="font-medium">Intelligent Service Detection</p>
+                      <p className="text-sm text-white/70">Automatically detects your service interest based on your journey</p>
+                    </div>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -268,7 +285,10 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Personalized questions relevant to your inquiry type</p>
+                    <div>
+                      <p className="font-medium">Personalized Form Pre-filling</p>
+                      <p className="text-sm text-white/70">Forms are pre-configured based on your specific needs and source</p>
+                    </div>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -278,7 +298,10 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Quick response with tailored information for your project</p>
+                    <div>
+                      <p className="font-medium">Context-Aware Responses</p>
+                      <p className="text-sm text-white/70">Tailored information based on your referral source and journey</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
@@ -321,8 +344,15 @@ export function Contact() {
               </div>
             </motion.div>
           </motion.div>
-        </div>
-      </motion.div>
+        </motion.div>
+      </div>
+
+      {/* Smart Routing Debug Panel (Development Only) */}
+      <SmartRoutingDebug 
+        isVisible={process.env.NODE_ENV === 'development'}
+        position="bottom-right"
+        showAnalytics={true}
+      />
     </div>
   );
 }

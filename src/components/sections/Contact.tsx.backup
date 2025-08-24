@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { useSectionContent, useStats } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
 import { pluralize } from '@/utils/string';
+import { SmartContactCTA } from '@/components/ui/SmartContactCTA';
 
 export function Contact() {
   const { data: contact, loading, error } = useSectionContent('contact');
@@ -221,15 +222,32 @@ export function Contact() {
             </motion.div>
           </motion.div>
 
-          {/* Additional Info / Call to Action */}
+          {/* Smart Contact CTA and Additional Info */}
           <motion.div 
             className="space-y-8"
             variants={slideInRight}
           >
+            {/* Smart Contact CTA - Context-aware form routing */}
+            <motion.div variants={fadeInUp}>
+              <SmartContactCTA
+                variant="prominent"
+                showServiceInfo={true}
+                analyticsSource="contact_section"
+                className="mb-8"
+                onFormOpen={(serviceType) => {
+                  console.log('Contact form opened from contact section:', serviceType);
+                }}
+                onFormSubmit={(serviceType, data) => {
+                  console.log('Contact form submitted from contact section:', { serviceType, data });
+                }}
+              />
+            </motion.div>
+
+            {/* Additional Information */}
             <div className="bg-white/10 backdrop-blur-sm rounded-3xl p-8 border border-white/20">
               <motion.div variants={fadeInUp}>
                 <h3 className="text-2xl font-heading font-bold mb-6 text-brand-yellow-accent">
-                  Ready to Start Your Musical Journey?
+                  What to Expect
                 </h3>
                 
                 <div className="space-y-6 text-white/90">
@@ -240,7 +258,7 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Get a personalized lesson plan tailored to your goals</p>
+                    <p>Smart form selection based on your service needs</p>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -250,7 +268,7 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Ask questions about my teaching approach</p>
+                    <p>Personalized questions relevant to your inquiry type</p>
                   </div>
                   
                   <div className="flex items-start space-x-3">
@@ -260,17 +278,7 @@ export function Contact() {
                         <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                       </svg>
                     </div>
-                    <p>Schedule your first lesson at a convenient time</p>
-                  </div>
-                  
-                  <div className="flex items-start space-x-3">
-                    <div className="w-6 h-6 bg-brand-yellow-accent rounded-full flex items-center justify-center 
-                      flex-shrink-0 mt-1">
-                      <svg className="w-3 h-3 text-brand-blue-primary" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                      </svg>
-                    </div>
-                    <p>Get started on your musical journey today</p>
+                    <p>Quick response with tailored information for your project</p>
                   </div>
                 </div>
               </motion.div>

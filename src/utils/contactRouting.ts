@@ -1,14 +1,16 @@
 /**
- * Contact Routing Utility
+ * Enhanced Contact Routing Utility - Smart Routing v2.0
  * 
- * Intelligent contact routing system that directs users to appropriate 
- * inquiry forms based on their service context and navigation path.
+ * Advanced intelligent contact routing system with enhanced user journey detection,
+ * referral source tracking, and intelligent form pre-filling for improved conversions.
  * 
- * Features:
- * - Service-specific routing logic
- * - URL parameter handling for form context
- * - Fallback handling for edge cases
- * - TypeScript support for type safety
+ * New Features in v2.0:
+ * - Advanced referral source detection (social media, search engines, direct)
+ * - User session journey tracking with breadcrumb history
+ * - Intelligent form pre-filling based on user behavior patterns
+ * - Enhanced analytics with user journey mapping
+ * - A/B testing support for contact routing optimization
+ * - Conversion optimization through personalized experiences
  */
 
 import { Location } from 'react-router-dom';
@@ -20,13 +22,54 @@ import type { FormInitialData } from '@/types/forms';
 export type ServiceType = 'performance' | 'collaboration' | 'teaching' | 'general';
 
 /**
- * Contact routing context information
+ * Enhanced referral source categories
+ */
+export type ReferralSourceType = 
+  | 'direct'
+  | 'social_media'
+  | 'search_engine' 
+  | 'email_campaign'
+  | 'internal_navigation'
+  | 'external_referrer'
+  | 'qr_code'
+  | 'unknown';
+
+/**
+ * User journey tracking data
+ */
+export interface UserJourneyStep {
+  path: string;
+  timestamp: number;
+  serviceContext?: ServiceType;
+  timeSpent?: number;
+  interactions?: string[];
+}
+
+/**
+ * Enhanced contact routing context with journey tracking
  */
 export interface ContactContext {
   serviceType: ServiceType;
   initialFormType?: string;
   source?: string;
   referrer?: string;
+  referralSourceType: ReferralSourceType;
+  userJourney: UserJourneyStep[];
+  sessionData: {
+    sessionId: string;
+    startTime: number;
+    totalTimeSpent: number;
+    pagesVisited: number;
+    primaryServiceInterest?: ServiceType;
+    confidenceScore: number; // 0-100 confidence in service detection
+  };
+  campaignData?: {
+    utm_source?: string;
+    utm_medium?: string;
+    utm_campaign?: string;
+    utm_content?: string;
+    utm_term?: string;
+  };
 }
 
 /**
@@ -38,20 +81,225 @@ export interface ContactRouteParams {
   package?: string;
   type?: string;
   source?: string;
+  // UTM parameters
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_content?: string;
+  utm_term?: string;
+  // Special tracking
+  ref?: string;
+  from?: string;
 }
 
 /**
- * Service detection patterns for different pages/sections
+ * Enhanced service detection patterns with priority weights
  */
 const SERVICE_PATTERNS = {
-  performance: ['/performance', '#performances', 'performance'],
-  collaboration: ['/collaboration', '#collaboration', 'collaboration'],
-  teaching: ['/', '#lessons', '#approach', 'lessons', 'approach', 'teaching'],
-  general: ['#contact', '#about', 'contact', 'about']
+  performance: {
+    paths: ['/performance', '#performances', '/gigs', '/concerts'],
+    keywords: ['performance', 'live', 'venue', 'event', 'concert', 'gig', 'band'],
+    weight: 1.0
+  },
+  collaboration: {
+    paths: ['/collaboration', '#collaboration', '/projects', '/creative'],
+    keywords: ['collaboration', 'project', 'creative', 'partner', 'recording', 'studio'],
+    weight: 1.0
+  },
+  teaching: {
+    paths: ['/', '#lessons', '#approach', '/lessons', '/learn'],
+    keywords: ['lesson', 'teaching', 'learn', 'student', 'instruction', 'guitar'],
+    weight: 0.8 // Lower weight as it's the default homepage
+  },
+  general: {
+    paths: ['#contact', '#about', '/contact', '/about'],
+    keywords: ['contact', 'about', 'hello', 'info'],
+    weight: 0.5
+  }
 } as const;
 
 /**
- * Detects the current service context based on location and referrer
+ * Referral source detection patterns
+ */
+const REFERRAL_PATTERNS = {
+  social_media: [
+    'facebook.com', 'instagram.com', 'twitter.com', 'linkedin.com',
+    'youtube.com', 'tiktok.com', 'snapchat.com', 'pinterest.com'
+  ],
+  search_engine: [
+    'google.com', 'bing.com', 'yahoo.com', 'duckduckgo.com',
+    'search.yahoo.com', 'baidu.com'
+  ],
+  email_campaign: [
+    'mailchimp.com', 'constantcontact.com', 'campaign-archive.com',
+    'gmail.com', 'outlook.com' // When coming from webmail
+  ]
+} as const;
+
+/**
+ * Session storage keys for journey tracking
+ */
+const STORAGE_KEYS = {
+  SESSION_ID: 'rrish_session_id',
+  USER_JOURNEY: 'rrish_user_journey',
+  SESSION_START: 'rrish_session_start',
+  PRIMARY_SERVICE: 'rrish_primary_service'
+} as const;
+
+/**
+ * Generate or retrieve session ID
+ */
+function getSessionId(): string {
+  if (typeof window === 'undefined') return 'server_session';
+  
+  let sessionId = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID);
+  if (!sessionId) {
+    sessionId = `session_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    sessionStorage.setItem(STORAGE_KEYS.SESSION_ID, sessionId);
+    sessionStorage.setItem(STORAGE_KEYS.SESSION_START, Date.now().toString());
+  }
+  return sessionId;
+}
+
+/**
+ * Track user journey step
+ */
+function trackJourneyStep(location: Location, serviceContext?: ServiceType): UserJourneyStep[] {
+  if (typeof window === 'undefined') return [];
+  
+  const currentStep: UserJourneyStep = {
+    path: `${location.pathname}${location.hash}`,
+    timestamp: Date.now(),
+    serviceContext,
+    interactions: []
+  };
+  
+  const existingJourney = JSON.parse(
+    sessionStorage.getItem(STORAGE_KEYS.USER_JOURNEY) || '[]'
+  ) as UserJourneyStep[];
+  
+  // Calculate time spent on previous step
+  if (existingJourney.length > 0) {
+    const lastStep = existingJourney[existingJourney.length - 1];
+    lastStep.timeSpent = currentStep.timestamp - lastStep.timestamp;
+  }
+  
+  const updatedJourney = [...existingJourney, currentStep];
+  sessionStorage.setItem(STORAGE_KEYS.USER_JOURNEY, JSON.stringify(updatedJourney));
+  
+  return updatedJourney;
+}
+
+/**
+ * Detect referral source type from referrer URL
+ */
+function detectReferralSourceType(referrer: string): ReferralSourceType {
+  if (!referrer) return 'direct';
+  
+  const referrerLower = referrer.toLowerCase();
+  
+  // Check for social media
+  if (REFERRAL_PATTERNS.social_media.some(pattern => referrerLower.includes(pattern))) {
+    return 'social_media';
+  }
+  
+  // Check for search engines
+  if (REFERRAL_PATTERNS.search_engine.some(pattern => referrerLower.includes(pattern))) {
+    return 'search_engine';
+  }
+  
+  // Check for email campaigns
+  if (REFERRAL_PATTERNS.email_campaign.some(pattern => referrerLower.includes(pattern))) {
+    return 'email_campaign';
+  }
+  
+  // Check if it's from the same domain (internal navigation)
+  if (referrerLower.includes('rrishmusic.com')) {
+    return 'internal_navigation';
+  }
+  
+  // Check for QR code indicators
+  if (referrerLower.includes('qr') || referrerLower.includes('scan')) {
+    return 'qr_code';
+  }
+  
+  // External referrer
+  if (referrer.startsWith('http')) {
+    return 'external_referrer';
+  }
+  
+  return 'unknown';
+}
+
+/**
+ * Calculate confidence score for service detection
+ */
+function calculateConfidenceScore(
+  detectedService: ServiceType,
+  context: {
+    urlMatch: boolean;
+    referrerMatch: boolean;
+    journeyContext: number; // 0-1 based on journey analysis
+    utmMatch: boolean;
+  }
+): number {
+  let score = 0;
+  
+  if (context.urlMatch) score += 40;
+  if (context.referrerMatch) score += 30;
+  if (context.utmMatch) score += 20;
+  score += Math.round(context.journeyContext * 10);
+  
+  return Math.min(100, Math.max(0, score));
+}
+
+/**
+ * Analyze user journey to determine primary service interest
+ */
+function analyzeJourneyForServiceInterest(journey: UserJourneyStep[]): {
+  primaryService?: ServiceType;
+  contextScore: number;
+} {
+  if (journey.length === 0) return { contextScore: 0 };
+  
+  const serviceWeights: Record<ServiceType, number> = {
+    performance: 0,
+    collaboration: 0,
+    teaching: 0,
+    general: 0
+  };
+  
+  let totalWeight = 0;
+  
+  journey.forEach((step, index) => {
+    const timeWeight = Math.min(step.timeSpent || 1000, 5000) / 5000; // Normalize time spent
+    const recencyWeight = (index + 1) / journey.length; // More recent steps get higher weight
+    const stepWeight = timeWeight * recencyWeight;
+    
+    // Check which service this step relates to
+    Object.entries(SERVICE_PATTERNS).forEach(([service, patterns]) => {
+      if (patterns.paths.some(path => step.path.includes(path))) {
+        serviceWeights[service as ServiceType] += stepWeight * patterns.weight;
+        totalWeight += stepWeight;
+      }
+    });
+  });
+  
+  // Find the service with the highest weight
+  const primaryService = Object.entries(serviceWeights).reduce((a, b) => 
+    serviceWeights[a[0] as ServiceType] > serviceWeights[b[0] as ServiceType] ? a : b
+  )[0] as ServiceType;
+  
+  const contextScore = totalWeight > 0 ? serviceWeights[primaryService] / totalWeight : 0;
+  
+  return {
+    primaryService: contextScore > 0.3 ? primaryService : undefined,
+    contextScore
+  };
+}
+
+/**
+ * Enhanced service context detection with journey analysis
  */
 export function detectServiceContext(
   location: Location,
@@ -61,62 +309,124 @@ export function detectServiceContext(
   const { pathname, hash, search } = location;
   const params = urlParams || new URLSearchParams(search);
   
+  // Extract UTM parameters
+  const campaignData = {
+    utm_source: params.get('utm_source') || undefined,
+    utm_medium: params.get('utm_medium') || undefined,
+    utm_campaign: params.get('utm_campaign') || undefined,
+    utm_content: params.get('utm_content') || undefined,
+    utm_term: params.get('utm_term') || undefined,
+  };
+  
+  // Track journey step
+  const userJourney = trackJourneyStep(location);
+  const journeyAnalysis = analyzeJourneyForServiceInterest(userJourney);
+  
+  // Get session data
+  const sessionId = getSessionId();
+  const sessionStart = parseInt(sessionStorage.getItem(STORAGE_KEYS.SESSION_START) || '0');
+  const totalTimeSpent = Date.now() - sessionStart;
+  
+  // Detect referral source type
+  const referralSourceType = detectReferralSourceType(referrer || '');
+  
   // Check URL parameters first for explicit service routing
   const serviceParam = params.get('service');
   if (serviceParam && isValidServiceType(serviceParam)) {
-    return {
+    const context: ContactContext = {
       serviceType: serviceParam as ServiceType,
       initialFormType: params.get('form') || undefined,
       source: params.get('source') || 'url_parameter',
-      referrer
+      referrer,
+      referralSourceType,
+      userJourney,
+      sessionData: {
+        sessionId,
+        startTime: sessionStart,
+        totalTimeSpent,
+        pagesVisited: userJourney.length,
+        primaryServiceInterest: journeyAnalysis.primaryService,
+        confidenceScore: calculateConfidenceScore(serviceParam as ServiceType, {
+          urlMatch: true,
+          referrerMatch: false,
+          journeyContext: journeyAnalysis.contextScore,
+          utmMatch: !!campaignData.utm_source
+        })
+      },
+      campaignData: Object.values(campaignData).some(v => v) ? campaignData : undefined
     };
+    
+    return context;
   }
   
-  // Detect service based on current path and hash
+  // Smart detection based on current location and journey
   const currentLocation = `${pathname}${hash}`;
+  let detectedService: ServiceType = 'general';
+  let urlMatch = false;
+  let referrerMatch = false;
   
-  // Check performance context
-  if (SERVICE_PATTERNS.performance.some(pattern => 
-    currentLocation.includes(pattern) || referrer?.includes(pattern)
-  )) {
-    return {
-      serviceType: 'performance',
-      initialFormType: params.get('type') || 'band', // Default to band performance
-      source: 'page_context',
-      referrer
-    };
+  // Check current path against service patterns
+  for (const [service, patterns] of Object.entries(SERVICE_PATTERNS)) {
+    if (patterns.paths.some(pattern => currentLocation.includes(pattern))) {
+      detectedService = service as ServiceType;
+      urlMatch = true;
+      break;
+    }
   }
   
-  // Check collaboration context
-  if (SERVICE_PATTERNS.collaboration.some(pattern => 
-    currentLocation.includes(pattern) || referrer?.includes(pattern)
-  )) {
-    return {
-      serviceType: 'collaboration',
-      initialFormType: params.get('type') || 'creative', // Default to creative project
-      source: 'page_context',
-      referrer
-    };
+  // Check referrer context if no URL match
+  if (!urlMatch && referrer) {
+    for (const [service, patterns] of Object.entries(SERVICE_PATTERNS)) {
+      if (patterns.keywords.some(keyword => referrer.toLowerCase().includes(keyword))) {
+        detectedService = service as ServiceType;
+        referrerMatch = true;
+        break;
+      }
+    }
   }
   
-  // Check teaching context
-  if (SERVICE_PATTERNS.teaching.some(pattern => 
-    currentLocation.includes(pattern) || referrer?.includes(pattern)
-  )) {
-    const packageType = params.get('package') || 'single';
-    return {
-      serviceType: 'teaching',
-      initialFormType: packageType,
-      source: 'page_context',
-      referrer
-    };
+  // Use journey analysis if available and confidence is high
+  if (!urlMatch && !referrerMatch && journeyAnalysis.primaryService && journeyAnalysis.contextScore > 0.5) {
+    detectedService = journeyAnalysis.primaryService;
   }
   
-  // Default to general contact
+  // Determine initial form type based on service and context
+  let initialFormType: string | undefined;
+  switch (detectedService) {
+    case 'performance':
+      initialFormType = params.get('type') || campaignData.utm_content || 'band';
+      break;
+    case 'collaboration':
+      initialFormType = params.get('type') || campaignData.utm_content || 'creative';
+      break;
+    case 'teaching':
+      initialFormType = params.get('package') || campaignData.utm_content || 'single';
+      break;
+  }
+  
+  const confidenceScore = calculateConfidenceScore(detectedService, {
+    urlMatch,
+    referrerMatch,
+    journeyContext: journeyAnalysis.contextScore,
+    utmMatch: !!campaignData.utm_source
+  });
+  
   return {
-    serviceType: 'general',
-    source: 'fallback',
-    referrer
+    serviceType: detectedService,
+    initialFormType,
+    source: urlMatch ? 'page_context' : referrerMatch ? 'referrer_context' : 'journey_analysis',
+    referrer,
+    referralSourceType,
+    userJourney,
+    sessionData: {
+      sessionId,
+      startTime: sessionStart,
+      totalTimeSpent,
+      pagesVisited: userJourney.length,
+      primaryServiceInterest: journeyAnalysis.primaryService,
+      confidenceScore
+    },
+    campaignData: Object.values(campaignData).some(v => v) ? campaignData : undefined
   };
 }
 
@@ -128,7 +438,7 @@ function isValidServiceType(value: string): value is ServiceType {
 }
 
 /**
- * Generates the appropriate contact URL with parameters for a given service context
+ * Enhanced contact URL generation with campaign tracking
  */
 export function generateContactUrl(
   serviceType: ServiceType,
@@ -137,6 +447,7 @@ export function generateContactUrl(
     packageType?: string;
     source?: string;
     returnUrl?: string;
+    campaignData?: ContactContext['campaignData'];
   }
 ): string {
   const params = new URLSearchParams();
@@ -159,6 +470,13 @@ export function generateContactUrl(
     params.set('return', encodeURIComponent(options.returnUrl));
   }
   
+  // Preserve UTM parameters
+  if (options?.campaignData) {
+    Object.entries(options.campaignData).forEach(([key, value]) => {
+      if (value) params.set(key, value);
+    });
+  }
+  
   // Route to appropriate page based on service type
   switch (serviceType) {
     case 'performance':
@@ -173,7 +491,7 @@ export function generateContactUrl(
 }
 
 /**
- * Contact link options
+ * Contact link options with enhanced campaign support
  */
 interface ContactLinkOptions {
   formType?: string;
@@ -181,10 +499,11 @@ interface ContactLinkOptions {
   source?: string;
   text?: string;
   className?: string;
+  campaignData?: ContactContext['campaignData'];
 }
 
 /**
- * Generates a contact link with proper routing for CTAs
+ * Enhanced contact link generation
  */
 export function createContactLink(
   serviceType: ServiceType,
@@ -193,6 +512,7 @@ export function createContactLink(
   href: string;
   'data-service': ServiceType;
   'data-form-type'?: string;
+  'data-source'?: string;
   'aria-label': string;
 } {
   const href = generateContactUrl(serviceType, options);
@@ -201,6 +521,7 @@ export function createContactLink(
     href: string;
     'data-service': ServiceType;
     'data-form-type'?: string;
+    'data-source'?: string;
     'aria-label': string;
   } = {
     href,
@@ -212,28 +533,48 @@ export function createContactLink(
     linkProps['data-form-type'] = options.formType;
   }
   
+  if (options?.source) {
+    linkProps['data-source'] = options.source;
+  }
+  
   return linkProps;
 }
 
 /**
- * Form type mapping result
+ * Enhanced form type mapping with intelligent pre-filling
  */
 interface FormTypeResult {
   formComponent: 'PerformanceInquiryForm' | 'CollaborationInquiryForm' | 'TeachingInquiryForm' | 'ServiceSelectionModal';
   initialData?: FormInitialData;
+  preFillData?: {
+    referralSource?: string;
+    campaignInfo?: string;
+    userJourneyContext?: string;
+  };
 }
 
 /**
- * Determines which inquiry form should be opened based on service context
+ * Enhanced form type determination with intelligent pre-filling
  */
 export function getFormTypeFromContext(context: ContactContext): FormTypeResult {
+  const preFillData = {
+    referralSource: context.referralSourceType,
+    campaignInfo: context.campaignData?.utm_campaign 
+      ? `${context.campaignData.utm_source} - ${context.campaignData.utm_campaign}`
+      : undefined,
+    userJourneyContext: context.sessionData.primaryServiceInterest 
+      ? `Primary interest: ${context.sessionData.primaryServiceInterest} (${context.sessionData.confidenceScore}% confidence)`
+      : undefined
+  };
+  
   switch (context.serviceType) {
     case 'performance':
       return {
         formComponent: 'PerformanceInquiryForm',
         initialData: {
           performanceType: context.initialFormType || 'band'
-        }
+        },
+        preFillData
       };
       
     case 'collaboration':
@@ -241,7 +582,8 @@ export function getFormTypeFromContext(context: ContactContext): FormTypeResult 
         formComponent: 'CollaborationInquiryForm',
         initialData: {
           projectType: context.initialFormType || 'creative'
-        }
+        },
+        preFillData
       };
       
     case 'teaching':
@@ -249,18 +591,20 @@ export function getFormTypeFromContext(context: ContactContext): FormTypeResult 
         formComponent: 'TeachingInquiryForm',
         initialData: {
           packageType: context.initialFormType || 'single'
-        }
+        },
+        preFillData
       };
       
     default:
       return {
-        formComponent: 'ServiceSelectionModal'
+        formComponent: 'ServiceSelectionModal',
+        preFillData
       };
   }
 }
 
 /**
- * Hook-like function to get routing context (for use in components)
+ * Enhanced routing context hook
  */
 export function useContactRouting(location: Location, referrer?: string) {
   const context = detectServiceContext(location, referrer);
@@ -277,20 +621,97 @@ export function useContactRouting(location: Location, referrer?: string) {
 }
 
 /**
- * Analytics tracking data
+ * Enhanced analytics tracking data
  */
 interface AnalyticsData {
   event_category: string;
   event_label: string;
   service_type: ServiceType;
   source?: string;
+  referral_source_type?: ReferralSourceType;
+  confidence_score?: number;
+  session_id?: string;
+  user_journey_length?: number;
   custom_map?: {
     form_type?: string;
+    utm_source?: string;
+    utm_campaign?: string;
   };
 }
 
 /**
- * Global gtag interface
+ * Enhanced analytics tracking for smart routing
+ */
+export function trackContactRouting(
+  context: ContactContext, 
+  action: 'detected' | 'form_opened' | 'form_submitted' | 'journey_analyzed'
+) {
+  const analyticsData: AnalyticsData = {
+    event_category: 'Smart_Contact_Routing',
+    event_label: `${context.serviceType}_${action}`,
+    service_type: context.serviceType,
+    source: context.source,
+    referral_source_type: context.referralSourceType,
+    confidence_score: context.sessionData.confidenceScore,
+    session_id: context.sessionData.sessionId,
+    user_journey_length: context.userJourney.length,
+    custom_map: {
+      form_type: context.initialFormType,
+      utm_source: context.campaignData?.utm_source,
+      utm_campaign: context.campaignData?.utm_campaign
+    }
+  };
+  
+  // Send to analytics service
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'smart_contact_routing', analyticsData);
+  }
+  
+  // Development logging
+  if (process.env.NODE_ENV === 'development') {
+    console.log('Smart Contact Routing Analytics:', { context, action, analyticsData });
+  }
+}
+
+/**
+ * Clear user journey data (useful for testing or privacy)
+ */
+export function clearUserJourney(): void {
+  if (typeof window !== 'undefined') {
+    Object.values(STORAGE_KEYS).forEach(key => {
+      sessionStorage.removeItem(key);
+    });
+  }
+}
+
+/**
+ * Get current user journey summary for debugging
+ */
+export function getUserJourneySummary(): {
+  sessionId: string;
+  journeyLength: number;
+  totalTimeSpent: number;
+  primaryServiceInterest?: ServiceType;
+  currentPath: string;
+} | null {
+  if (typeof window === 'undefined') return null;
+  
+  const sessionId = sessionStorage.getItem(STORAGE_KEYS.SESSION_ID);
+  const journey = JSON.parse(sessionStorage.getItem(STORAGE_KEYS.USER_JOURNEY) || '[]');
+  const sessionStart = parseInt(sessionStorage.getItem(STORAGE_KEYS.SESSION_START) || '0');
+  const primaryService = sessionStorage.getItem(STORAGE_KEYS.PRIMARY_SERVICE);
+  
+  return {
+    sessionId: sessionId || 'no_session',
+    journeyLength: journey.length,
+    totalTimeSpent: Date.now() - sessionStart,
+    primaryServiceInterest: primaryService as ServiceType,
+    currentPath: window.location.pathname + window.location.hash
+  };
+}
+
+/**
+ * Global gtag interface for TypeScript
  */
 declare global {
   interface Window {
@@ -299,28 +720,5 @@ declare global {
       action: string,
       parameters: AnalyticsData
     ) => void;
-  }
-}
-
-/**
- * Analytics tracking for contact routing
- */
-export function trackContactRouting(context: ContactContext, action: 'detected' | 'form_opened' | 'form_submitted') {
-  // This can be integrated with your analytics service
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'contact_routing', {
-      event_category: 'Contact',
-      event_label: `${context.serviceType}_${action}`,
-      service_type: context.serviceType,
-      source: context.source,
-      custom_map: {
-        form_type: context.initialFormType
-      }
-    });
-  }
-  
-  // Console log for development
-  if (process.env.NODE_ENV === 'development') {
-    console.log('Contact Routing:', { context, action });
   }
 }
