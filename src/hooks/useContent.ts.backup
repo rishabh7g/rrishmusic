@@ -28,17 +28,10 @@ interface StatsData {
   experience: {
     playingYears: number;
     teachingYears: number;
-    performanceYears: number;
   };
   students: {
     total: number;
     active: number;
-  };
-  performance: {
-    venuePerformances: string;
-    weddingPerformances: string;
-    corporateEvents: string;
-    averagePerformanceRating: number;
   };
   quality: {
     averageRating: number;
@@ -48,7 +41,6 @@ interface StatsData {
   reach: {
     countries: number;
     city: string;
-    venues: number;
   };
 }
 
@@ -610,17 +602,18 @@ export const useStats = () => {
     },
     aboutStats: [
       {
-        number: stats.experience.performanceYears.toString() + "+",
-        label: `${pluralizeWithCount(stats.experience.performanceYears, "Year")} Performing`
-      },
-      {
         number: stats.experience.teachingYears.toString(),
-        label: `${pluralizeWithCount(stats.experience.teachingYears, "Year")} Teaching`
+        label: `${pluralizeWithCount(stats.experience.teachingYears, 'Year')} Teaching`
       },
       {
         number: stats.students.total.toString(),
-        label: `Happy ${pluralizeWithCount(stats.students.total, "Student")}`
-      }    ],
+        label: `Happy ${pluralizeWithCount(stats.students.total, 'Student')}`
+      },
+      {
+        number: "∞",
+        label: "Musical Moments"
+      }
+    ],
     communityStats: {
       totalStudents: stats.students.total,
       activeMembers: stats.students.active,

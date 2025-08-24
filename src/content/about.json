@@ -2,58 +2,92 @@
   "title": "About Rrish",
   "subtitle": "Passionate Educator. Blues Improviser. Musical Guide.",
   "content": [
-    "Music has been my constant companion for over 5 years. What started as a personal journey into blues improvisation has evolved into a deep passion for helping others discover their own musical voice.",
-    "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations. With 1 year of teaching experience, my approach combines technical skill development with creative expression, ensuring that every student not only learns to play but learns to communicate through music.",
-    "I believe that music is a language that everyone can speak. My role is not to dictate how you should sound, but to guide you toward finding your authentic musical expression."
+    "Music has been my constant companion for over 5 years. What started as a personal journey into blues improvisation has evolved into a deep passion for both performing and helping others discover their own musical voice.",
+    "Based in Melbourne, I specialize in guitar improvisation with a focus on blues foundations while drawing from pop, rock, and acoustic styles. My performance experience across Melbourne's live music scene enriches my teaching approach, bringing real-world musical insight into every lesson.",
+    "With 1 year of teaching experience and regular performance engagements across Melbourne venues, I bridge the gap between technical skill development and authentic musical expression. Whether I'm performing for audiences or guiding students, my focus remains the same: helping everyone discover that music is a language we can all speak.",
+    "My role as both performer and educator allows me to offer students a unique perspective - not just how to play music, but how to communicate through it, whether in a practice room or on stage."
   ],
   "skills": [
     {
       "name": "Blues Improvisation",
-      "level": "intermediate",
-      "yearsExperience": 5,
-      "description": "Specialized in blues guitar improvisation and expression"
+      "level": "advanced",
+      "yearsExperience": 10,
+      "description": "Specialized in blues guitar improvisation with extensive performance experience"
+    },
+    {
+      "name": "Live Performance",
+      "level": "advanced", 
+      "yearsExperience": 10,
+      "description": "Regular performer across Melbourne venues, weddings, and corporate events"
     },
     {
       "name": "Music Education",
       "level": "intermediate",
       "yearsExperience": 1,
-      "description": "Adult learning focused music instruction"
+      "description": "Adult learning focused music instruction informed by performance experience"
+    },
+    {
+      "name": "Multi-Style Versatility",
+      "level": "intermediate",
+      "yearsExperience": 5,
+      "description": "Blues, pop, rock, and acoustic performance and instruction"
     },
     {
       "name": "Guitar Technique",
-      "level": "intermediate",
-      "yearsExperience": 5,
-      "description": "Technical proficiency across multiple styles"
+      "level": "advanced",
+      "yearsExperience": 10,
+      "description": "Technical proficiency across electric and acoustic guitar styles"
     },
     {
       "name": "Creative Development",
       "level": "intermediate",
       "yearsExperience": 1,
-      "description": "Helping students find their unique musical voice"
+      "description": "Helping students find their unique musical voice through performance-informed teaching"
     }
   ],
   "achievements": [
     {
+      "id": "performance-experience",
+      "title": "10+ Years Performance Experience",
+      "description": "Regular live performances across Melbourne venues including restaurants, weddings, corporate events, and private functions",
+      "date": "2014-2024",
+      "category": "performance"
+    },
+    {
+      "id": "venue-performances",
+      "title": "Melbourne Venue Regular",
+      "description": "Weekly performances at established Melbourne venues, bringing blues and acoustic music to diverse audiences",
+      "date": "2023-2024", 
+      "category": "performance"
+    },
+    {
       "id": "students-taught",
       "title": "2 Happy Students",
-      "description": "Currently teaching 2 dedicated students who are developing their improvisation skills",
+      "description": "Currently teaching 2 dedicated students who are developing their improvisation skills with performance-informed instruction",
       "date": "2024-2025",
       "category": "teaching"
     },
     {
       "id": "student-review",
-      "title": "5-Star Review",
+      "title": "5-Star Teaching Review",
       "description": "\"Rrish is an amazing teacher who really helped me understand blues improvisation\" - Blake",
       "date": "2024",
       "category": "teaching"
     },
     {
-      "id": "performance-experience",
-      "title": "1 Year Teaching Experience",
-      "description": "Dedicated to helping students grow their musical abilities with personalized instruction",
-      "date": "2024-2025",
+      "id": "performance-testimonials",
+      "title": "5-Star Performance Reviews",
+      "description": "Consistently rated 5 stars by wedding couples, corporate clients, and venue owners for professional live music services",
+      "date": "2024",
       "category": "performance"
+    },
+    {
+      "id": "teaching-experience",
+      "title": "Performance-Informed Teaching",
+      "description": "Unique teaching approach that combines 10+ years of live performance experience with dedicated music education",
+      "date": "2024-2025",
+      "category": "teaching"
     }
   ],
-  "personalQuote": "Music is a language that everyone can speak. My role is to guide you toward finding your authentic musical expression."
+  "personalQuote": "Whether teaching or performing, my goal is the same: helping others discover that music is a language we can all speak authentically."
 }
