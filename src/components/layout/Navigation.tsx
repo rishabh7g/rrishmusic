@@ -16,12 +16,12 @@ type NavigationItemType = 'primary' | 'secondary' | 'tertiary';
 
 /**
  * Determines the navigation item type based on service hierarchy:
- * - Primary: Performances (highest revenue potential)
+ * - Primary: Performances and Collaboration (highest revenue potential)
  * - Secondary: Teaching services (Approach, Lessons)  
  * - Tertiary: Standard navigation (Home, About, Contact)
  */
 const getNavigationItemType = (itemId: string): NavigationItemType => {
-  if (itemId === 'performances') {
+  if (itemId === 'performances' || itemId === 'collaboration') {
     return 'primary';
   }
   if (itemId === 'approach' || itemId === 'lessons') {
@@ -105,56 +105,38 @@ const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) =
         return `${baseClasses} bg-brand-blue-primary`;
     }
   }
-  
-  // Desktop active indicators
-  const baseClasses = "absolute -bottom-1 left-0 right-0";
+
+  // Desktop active indicator
+  const baseClasses = "absolute -bottom-1 left-0 right-0 h-0.5 rounded-full";
   switch (type) {
     case 'primary':
-      return `${baseClasses} h-1 bg-brand-blue-primary`;
+      return `${baseClasses} bg-brand-blue-primary`;
     case 'secondary':
-      return `${baseClasses} h-0.5 bg-brand-blue-secondary`;
+      return `${baseClasses} bg-brand-blue-secondary`;
     case 'tertiary':
-      return `${baseClasses} h-0.5 bg-brand-blue-primary`;
+      return `${baseClasses} bg-brand-blue-primary`;
   }
 };
 
 /**
- * Memoized hamburger icon component to prevent unnecessary re-renders
+ * Scroll spy configuration to exclude route-based navigation items
  */
-const HamburgerIcon = React.memo<{ isOpen: boolean }>(({ isOpen }) => (
-  <svg
-    className={`w-6 h-6 transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
-    fill="none"
-    stroke="currentColor"
-    viewBox="0 0 24 24"
-    aria-hidden="true"
-  >
-    {isOpen ? (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M6 18L18 6M6 6l12 12"
-      />
-    ) : (
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth={2}
-        d="M4 6h16M4 12h16M4 18h16"
-      />
-    )}
-  </svg>
-));
-HamburgerIcon.displayName = 'HamburgerIcon';
+const getScrollSpyItems = () => 
+  NAVIGATION_ITEMS
+    .filter(item => !['performances', 'collaboration'].includes(item.id)) // Exclude route-based items from scroll spy
+    .map(item => item.id);
 
 /**
- * Determines if a navigation item is active based on current route and section
+ * Determines if a navigation item is currently active
  */
 const getIsItemActive = (item: typeof NAVIGATION_ITEMS[0], location: Location, activeSection: string): boolean => {
   // For performances, check if we're on the /performance route
   if (item.id === 'performances') {
     return location.pathname === '/performance';
+  }
+  // For collaboration, check if we're on the /collaboration route
+  if (item.id === 'collaboration') {
+    return location.pathname === '/collaboration';
   }
   
   // For other items, use scroll-based active section on home page
@@ -171,6 +153,9 @@ const getIsItemActive = (item: typeof NAVIGATION_ITEMS[0], location: Location, a
 const getNavigationTarget = (item: typeof NAVIGATION_ITEMS[0]) => {
   if (item.id === 'performances') {
     return { type: 'route' as const, path: '/performance' };
+  }
+  if (item.id === 'collaboration') {
+    return { type: 'route' as const, path: '/collaboration' };
   }
   return { type: 'scroll' as const, anchor: item.id };
 };
@@ -203,9 +188,7 @@ const NavigationItem = React.memo<{
     [itemType, isActive, isMobile]
   );
 
-  const combinedClassName = className ? `${baseClassName} ${className}` : baseClassName;
   const target = getNavigationTarget(item);
-
   const content = (
     <>
       {isMobile ? (
@@ -216,18 +199,17 @@ const NavigationItem = React.memo<{
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               className={getActiveIndicatorStyles(itemType, true)}
-              aria-hidden="true"
             />
           )}
         </div>
       ) : (
         <>
-          {item.label}
+          <span>{item.label}</span>
           {isActive && (
             <motion.div
               layoutId="activeIndicator"
               className={getActiveIndicatorStyles(itemType, false)}
-              transition={{ type: "spring", stiffness: 380, damping: 30 }}
+              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
             />
           )}
         </>
@@ -235,157 +217,69 @@ const NavigationItem = React.memo<{
     </>
   );
 
-  if (isMobile) {
+  if (target.type === 'route') {
     return (
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ delay: (index || 0) * 0.1 }}
+      <Link
+        to={target.path}
+        className={`${baseClassName} ${className || ''}`}
+        aria-current={isActive ? 'page' : undefined}
+        onKeyDown={handleKeyDown}
+        style={
+          isMobile && typeof index !== 'undefined'
+            ? { animationDelay: `${index * 50}ms` }
+            : undefined
+        }
       >
-        {target.type === 'route' ? (
-          <Link
-            to={target.path}
-            onClick={() => onClick(item)}
-            className={combinedClassName}
-            role="menuitem"
-            aria-label={`Navigate to ${item.label} page`}
-          >
-            {content}
-          </Link>
-        ) : (
-          <button
-            onClick={handleClick}
-            onKeyDown={handleKeyDown}
-            className={combinedClassName}
-            role="menuitem"
-            aria-label={`Navigate to ${item.label} section`}
-          >
-            {content}
-          </button>
-        )}
-      </motion.div>
+        {content}
+      </Link>
     );
   }
 
-  return target.type === 'route' ? (
-    <Link
-      to={target.path}
-      className={combinedClassName}
-      aria-label={`Navigate to ${item.label} page`}
-    >
-      {content}
-    </Link>
-  ) : (
+  return (
     <button
       onClick={handleClick}
       onKeyDown={handleKeyDown}
-      className={combinedClassName}
-      aria-label={`Navigate to ${item.label} section`}
+      className={`${baseClassName} ${className || ''}`}
+      aria-current={isActive ? 'page' : undefined}
+      style={
+        isMobile && typeof index !== 'undefined'
+          ? { animationDelay: `${index * 50}ms` }
+          : undefined
+      }
     >
       {content}
     </button>
   );
 });
+
 NavigationItem.displayName = 'NavigationItem';
 
 /**
- * Memoized logo component
+ * Main Navigation Component
  */
-const Logo = React.memo(() => (
-  <Link to="/">
-    <motion.div
-      whileHover={{ scale: 1.05 }}
-      className="font-heading font-bold text-xl text-brand-blue-primary cursor-pointer"
-      aria-label="RrishMusic home"
-    >
-      RrishMusic
-    </motion.div>
-  </Link>
-));
-Logo.displayName = 'Logo';
-
-export const Navigation: React.FC<NavigationProps> = ({ activeSection: overrideActiveSection }) => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
+export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiveSection }) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
-  const smoothScrollTo = useSmoothScroll();
+  const { smoothScrollTo } = useSmoothScroll();
+  
+  // Use scroll spy only for items that should be tracked on home page
+  const scrollSpyItems = useMemo(() => getScrollSpyItems(), []);
+  const detectedActiveSection = useScrollSpy(scrollSpyItems, {
+    offset: 100,
+    throttle: 50,
+    rootMargin: '-10% 0px -85% 0px',
+  });
+  
+  // Use prop override or detected section
+  const activeSection = propActiveSection || detectedActiveSection;
 
-  // Memoize section IDs to prevent unnecessary recalculations
-  const sectionIds = useMemo(() => 
-    NAVIGATION_ITEMS
-      .filter(item => item.id !== 'performances') // Exclude performances from scroll spy
-      .map(item => item.id), 
-    []
-  );
-
-  // Use scroll spy only on the home page, otherwise use empty string
-  const scrollSpyActiveSection = useScrollSpy(
-    location.pathname === '/' ? sectionIds : [], 
-    {
-      offset: 100,
-      throttle: 50,
-      rootMargin: '-10% 0px -85% 0px',
-    }
-  );
-
-  // Use override if provided (mainly for testing), otherwise use scroll spy result
-  const activeSection = overrideActiveSection || scrollSpyActiveSection;
-
-  // Optimized scroll handler with throttling
-  useEffect(() => {
-    let ticking = false;
-    
-    const handleScroll = () => {
-      if (!ticking) {
-        requestAnimationFrame(() => {
-          const isScrolled = window.scrollY > 10;
-          setScrolled(isScrolled);
-          ticking = false;
-        });
-        ticking = true;
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
-
-  // Close mobile menu handlers
-  useEffect(() => {
-    const handleEscape = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isMobileMenuOpen) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    const handleClickOutside = (e: MouseEvent) => {
-      const target = e.target as Element;
-      if (
-        isMobileMenuOpen &&
-        !target.closest('.mobile-menu') && 
-        !target.closest('.mobile-menu-button')
-      ) {
-        setIsMobileMenuOpen(false);
-      }
-    };
-
-    if (isMobileMenuOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.addEventListener('click', handleClickOutside);
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
-
-    return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.removeEventListener('click', handleClickOutside);
-      document.body.style.overflow = '';
-    };
-  }, [isMobileMenuOpen]);
-
+  /**
+   * Handle navigation clicks with route or scroll behavior
+   */
   const handleNavClick = useCallback((item: typeof NAVIGATION_ITEMS[0]) => {
+    setIsMenuOpen(false);
+    
     const target = getNavigationTarget(item);
     
     if (target.type === 'route') {
@@ -402,24 +296,42 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: overrideA
         smoothScrollTo(target.anchor, 80);
       }
     }
-    
-    setIsMobileMenuOpen(false);
   }, [navigate, location.pathname, smoothScrollTo]);
 
-  const toggleMobileMenu = useCallback(() => {
-    setIsMobileMenuOpen(prev => !prev);
-  }, []);
-
-  // Memoize navigation classes
-  const navClasses = useMemo(() => {
-    return `
-      fixed top-0 left-0 right-0 z-50 transition-all duration-300
-      ${scrolled 
-        ? 'bg-white/95 backdrop-blur-md border-b border-gray-200 shadow-sm' 
-        : 'bg-white/90 backdrop-blur-sm border-b border-neutral-gray-light'
+  /**
+   * Close mobile menu when clicking outside or on escape
+   */
+  useEffect(() => {
+    const handleEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsMenuOpen(false);
       }
-    `;
-  }, [scrolled]);
+    };
+
+    const handleClickOutside = (event: MouseEvent) => {
+      const nav = document.getElementById('main-navigation');
+      if (nav && !nav.contains(event.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('keydown', handleEscape);
+      document.addEventListener('click', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('click', handleClickOutside);
+    };
+  }, [isMenuOpen]);
+
+  /**
+   * Close mobile menu on route changes
+   */
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
 
   // Memoize navigation items for performance
   const desktopNavItems = useMemo(() => 
@@ -432,7 +344,6 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: overrideA
       />
     )), [location, activeSection, handleNavClick]
   );
-
   const mobileNavItems = useMemo(() => 
     NAVIGATION_ITEMS.map((item, index) => (
       <NavigationItem
@@ -445,84 +356,87 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: overrideA
       />
     )), [location, activeSection, handleNavClick]
   );
-
   return (
     <>
       {/* Skip to content link for accessibility */}
-      <a 
-        href="#main-content" 
-        className="skip-link sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 bg-brand-blue-primary text-white px-4 py-2 rounded z-50"
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 bg-white text-brand-blue-primary px-4 py-2 rounded-md shadow-lg z-50"
       >
         Skip to main content
       </a>
 
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className={navClasses}
+      <nav
+        id="main-navigation"
+        className="fixed top-0 left-0 right-0 bg-white/95 backdrop-blur-sm border-b border-gray-200 z-40"
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="container-custom">
+        <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Logo />
+            <Link
+              to="/"
+              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200"
+              aria-label="Rrish Music - Home"
+            >
+              <span>Rrish</span>
+            </Link>
 
-            {/* Desktop Navigation Links */}
-            <div className="hidden md:flex space-x-8">
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex items-center space-x-8">
               {desktopNavItems}
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile Menu Button */}
             <button
-              className="md:hidden p-2 text-neutral-charcoal hover:text-brand-blue-primary transition-colors mobile-menu-button"
-              onClick={toggleMobileMenu}
-              aria-expanded={isMobileMenuOpen}
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              className="md:hidden flex items-center justify-center w-10 h-10 rounded-lg hover:bg-gray-100 transition-colors duration-200"
+              aria-expanded={isMenuOpen}
               aria-controls="mobile-menu"
-              aria-label={isMobileMenuOpen ? "Close navigation menu" : "Open navigation menu"}
+              aria-label="Toggle navigation menu"
             >
-              <HamburgerIcon isOpen={isMobileMenuOpen} />
+              <motion.div
+                animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
+                transition={{ duration: 0.2 }}
+              >
+                {isMenuOpen ? (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                ) : (
+                  <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </motion.div>
             </button>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
+        {/* Mobile Menu */}
         <AnimatePresence>
-          {isMobileMenuOpen && (
-            <>
-              {/* Backdrop */}
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                exit={{ opacity: 0 }}
-                className="fixed inset-0 bg-black/20 backdrop-blur-sm md:hidden"
-                style={{ top: '64px' }}
-                onClick={() => setIsMobileMenuOpen(false)}
-                aria-hidden="true"
-              />
-
-              {/* Mobile Menu Panel */}
-              <motion.div
-                id="mobile-menu"
-                initial={{ opacity: 0, y: -20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                transition={{ duration: 0.2 }}
-                className="absolute top-full left-0 right-0 bg-white border-b border-gray-200 shadow-lg md:hidden mobile-menu"
-                role="menu"
-                aria-label="Mobile navigation menu"
-              >
-                <div className="container-custom py-4">
-                  <div className="flex flex-col space-y-4">
-                    {mobileNavItems}
-                  </div>
-                </div>
-              </motion.div>
-            </>
+          {isMenuOpen && (
+            <motion.div
+              id="mobile-menu"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="md:hidden bg-white border-t border-gray-200 shadow-lg"
+            >
+              <div className="container mx-auto px-4 py-4 space-y-2">
+                {mobileNavItems}
+              </div>
+            </motion.div>
           )}
         </AnimatePresence>
-      </motion.nav>
+      </nav>
+
+      {/* Navigation spacer to prevent content overlap */}
+      <div className="h-16" aria-hidden="true" />
     </>
   );
 };
+
+export default Navigation;
