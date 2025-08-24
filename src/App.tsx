@@ -3,8 +3,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Navigation } from '@/components/layout/Navigation'
 import { Home, Performance, Collaboration } from '@/components/pages'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
-import '@/index.css'
-
+import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
+import "@/index.css"
 interface LayoutShiftEntry extends PerformanceEntry {
   hadRecentInput: boolean
   value: number
@@ -156,7 +156,9 @@ function App(): React.JSX.Element {
           </Suspense>
         </AppLayout>
       </Router>
-    </ErrorBoundary>
+
+      {/* Analytics Debug Panel - Development Only */}
+      <AnalyticsDebugPanel />    </ErrorBoundary>
   )
 }
 
