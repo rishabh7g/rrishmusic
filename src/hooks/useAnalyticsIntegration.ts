@@ -72,7 +72,6 @@ export function useAnalyticsIntegration(config: AnalyticsConfig = {}) {
     trackConversionStage,
     getPerformanceDashboard,
     getABTestVariant,
-    analyzeUserBehavior,
     getOptimizationRecommendations
   } = useAdvancedAnalytics();
 
@@ -90,7 +89,7 @@ export function useAnalyticsIntegration(config: AnalyticsConfig = {}) {
       initializeAnalytics();
       setIsInitialized(true);
     }
-  }, [isInitialized]);
+  }, [isInitialized, initializeAnalytics]);
 
   /**
    * Initialize analytics session
