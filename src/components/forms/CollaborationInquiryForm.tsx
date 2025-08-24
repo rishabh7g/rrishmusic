@@ -14,7 +14,7 @@
  * - Integration with collaboration services
  */
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 /**
@@ -61,7 +61,7 @@ export interface CollaborationInquiryFormProps {
 }
 
 /**
- * Initial form data
+ * Initial Form Data
  */
 const initialFormData: CollaborationInquiryData = {
   name: '',
@@ -83,9 +83,6 @@ const initialFormData: CollaborationInquiryData = {
 
 /**
  * Collaboration Inquiry Form Component
- * 
- * Modal form for collecting detailed information about collaboration
- * projects with comprehensive field validation.
  */
 export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> = ({
   isOpen,
@@ -98,18 +95,78 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
     projectType: initialProjectType || initialFormData.projectType
   });
   const [errors, setErrors] = useState<Partial<Record<keyof CollaborationInquiryData, string>>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
   const [currentStep, setCurrentStep] = useState(1);
   const totalSteps = 4;
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   /**
-   * Handle form field updates
+   * Update form field and clear related errors
    */
-  const updateField = (field: keyof CollaborationInquiryData, value: string | number | boolean) => {
+  const updateField = <K extends keyof CollaborationInquiryData>(
+    field: K,
+    value: CollaborationInquiryData[K]
+  ) => {
     setFormData(prev => ({ ...prev, [field]: value }));
-    // Clear error for this field when user starts typing
     if (errors[field]) {
       setErrors(prev => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  /**
+   * Handle file upload
+   */
+  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (files) {
+      const fileArray = Array.from(files);
+      
+      // Validate file types (images, audio, video, PDFs)
+      const allowedTypes = [
+        'image/', 'audio/', 'video/',
+        'application/pdf',
+        'application/msword',
+        'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+      ];
+      
+      const validFiles = fileArray.filter(file => 
+        allowedTypes.some(type => file.type.startsWith(type))
+      );
+      
+      // Validate file sizes (max 10MB per file)
+      const maxSize = 10 * 1024 * 1024; // 10MB
+      const sizeValidFiles = validFiles.filter(file => file.size <= maxSize);
+      
+      if (sizeValidFiles.length !== fileArray.length) {
+        setErrors(prev => ({ 
+          ...prev, 
+          portfolioFiles: 'Some files were rejected. Please upload only images, audio, video, or document files under 10MB each.' 
+        }));
+      } else if (errors.portfolioFiles) {
+        setErrors(prev => ({ ...prev, portfolioFiles: undefined }));
+      }
+      
+      setSelectedFiles(sizeValidFiles);
+      updateField('portfolioFiles', event.target.files);
+    }
+  };
+
+  /**
+   * Remove selected file
+   */
+  const removeFile = (index: number) => {
+    const newFiles = selectedFiles.filter((_, i) => i !== index);
+    setSelectedFiles(newFiles);
+    
+    // Create new FileList-like object
+    const dt = new DataTransfer();
+    newFiles.forEach(file => dt.items.add(file));
+    
+    updateField('portfolioFiles', dt.files);
+    
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -120,27 +177,23 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
     const newErrors: Partial<Record<keyof CollaborationInquiryData, string>> = {};
 
     switch (step) {
-      case 1: // Contact Information
+      case 1:
         if (!formData.name.trim()) newErrors.name = 'Name is required';
-        if (!formData.email.trim()) {
-          newErrors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+        if (!formData.email.trim()) newErrors.email = 'Email is required';
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
           newErrors.email = 'Please enter a valid email address';
         }
         break;
-
-      case 2: // Project Details
+      case 2:
         if (!formData.creativeVision.trim()) {
           newErrors.creativeVision = 'Please describe your creative vision';
-        } else if (formData.creativeVision.trim().length < 20) {
-          newErrors.creativeVision = 'Please provide more details (at least 20 characters)';
         }
         break;
-
-      case 3: // Timeline and Scope - No required validation
+      case 3:
+        // Timeline and scope are optional but if specific date is chosen, details might be helpful
         break;
-
-      case 4: // Final Details - No required validation
+      case 4:
+        // All fields in step 4 are optional
         break;
     }
 
@@ -169,7 +222,6 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
    */
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
     if (!validateStep(currentStep)) return;
 
     setIsSubmitting(true);
@@ -177,23 +229,26 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
       await onSubmit(formData);
       // Reset form on successful submission
       setFormData({ ...initialFormData, projectType: initialProjectType || initialFormData.projectType });
+      setSelectedFiles([]);
       setCurrentStep(1);
       setErrors({});
+      onClose();
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Error submitting collaboration inquiry:', error);
+      setErrors({ email: 'Failed to submit inquiry. Please try again.' });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   /**
-   * Handle form reset and close
+   * Handle form close
    */
   const handleClose = () => {
     setFormData({ ...initialFormData, projectType: initialProjectType || initialFormData.projectType });
+    setSelectedFiles([]);
     setCurrentStep(1);
     setErrors({});
-    setIsSubmitting(false);
     onClose();
   };
 
@@ -205,53 +260,60 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
-        className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50"
-        onClick={(e) => e.target === e.currentTarget && handleClose()}
+        className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+        onClick={handleClose}
       >
         <motion.div
-          initial={{ opacity: 0, scale: 0.95, y: 20 }}
-          animate={{ opacity: 1, scale: 1, y: 0 }}
-          exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          initial={{ scale: 0.95, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          exit={{ scale: 0.95, opacity: 0 }}
+          className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Form Header */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 p-6 rounded-t-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-neutral-charcoal">
-                Collaboration Inquiry
-              </h2>
+          <form onSubmit={handleSubmit} className="p-8">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h2 className="text-2xl font-bold text-neutral-charcoal">
+                  Collaboration Inquiry
+                </h2>
+                <p className="text-gray-600 mt-1">
+                  Let's explore working together on your creative project
+                </p>
+              </div>
               <button
+                type="button"
                 onClick={handleClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
-                aria-label="Close form"
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
             </div>
-            
-            {/* Progress Indicator */}
-            <div className="flex items-center gap-2">
-              {[...Array(totalSteps)].map((_, index) => (
-                <div
-                  key={index}
-                  className={`h-2 flex-1 rounded-full transition-colors duration-200 ${
-                    index + 1 <= currentStep 
-                      ? 'bg-brand-blue-primary' 
-                      : 'bg-gray-200'
-                  }`}
-                />
-              ))}
-            </div>
-            <p className="text-sm text-gray-600 mt-2">
-              Step {currentStep} of {totalSteps}
-            </p>
-          </div>
 
-          {/* Form Content */}
-          <form onSubmit={handleSubmit} className="p-6">
+            {/* Progress Indicator */}
+            <div className="mb-8">
+              <div className="flex items-center justify-between mb-4">
+                {[...Array(totalSteps)].map((_, index) => (
+                  <div
+                    key={index}
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 ${
+                      index + 1 <= currentStep 
+                        ? 'bg-brand-blue-primary text-white' 
+                        : 'bg-gray-200 text-gray-500'
+                    }`}
+                  >
+                    {index + 1}
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-gray-600 text-center">
+                Step {currentStep} of {totalSteps}
+              </p>
+            </div>
+
+            {/* Form Steps */}
             <AnimatePresence mode="wait">
               {/* Step 1: Contact Information */}
               {currentStep === 1 && (
@@ -267,13 +329,13 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       Contact Information
                     </h3>
                     <p className="text-gray-600 mb-6">
-                      Let's start with your contact details so we can discuss your collaboration project.
+                      Let's start with your basic contact information.
                     </p>
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-neutral-charcoal mb-2">
-                      Full Name *
+                      Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="text"
@@ -291,7 +353,7 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
 
                   <div>
                     <label className="block text-sm font-medium text-neutral-charcoal mb-2">
-                      Email Address *
+                      Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
                       type="email"
@@ -316,7 +378,7 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       value={formData.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200"
-                      placeholder="+61 xxx xxx xxx"
+                      placeholder="(555) 123-4567"
                     />
                   </div>
                 </motion.div>
@@ -336,7 +398,7 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       Project Details
                     </h3>
                     <p className="text-gray-600 mb-6">
-                      Tell us about your creative vision and the type of collaboration you're looking for.
+                      Tell us about your creative project and what you envision.
                     </p>
                   </div>
 
@@ -349,9 +411,9 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       onChange={(e) => updateField('projectType', e.target.value as CollaborationInquiryData['projectType'])}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200"
                     >
-                      <option value="studio">Studio Session</option>
+                      <option value="studio">Studio Recording</option>
                       <option value="creative">Creative Project</option>
-                      <option value="partnership">Ongoing Partnership</option>
+                      <option value="partnership">Long-term Partnership</option>
                       <option value="other">Other</option>
                     </select>
                   </div>
@@ -365,13 +427,13 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       value={formData.projectTitle}
                       onChange={(e) => updateField('projectTitle', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200"
-                      placeholder="Give your project a working title"
+                      placeholder="What's your project called?"
                     />
                   </div>
 
                   <div>
                     <label className="block text-sm font-medium text-neutral-charcoal mb-2">
-                      Creative Vision *
+                      Creative Vision <span className="text-red-500">*</span>
                     </label>
                     <textarea
                       value={formData.creativeVision}
@@ -380,14 +442,11 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200 resize-none ${
                         errors.creativeVision ? 'border-red-500' : 'border-gray-300'
                       }`}
-                      placeholder="Describe your creative vision, goals, style preferences, and what you hope to achieve through this collaboration..."
+                      placeholder="Describe your creative vision, the style you're going for, your goals for this collaboration..."
                     />
                     {errors.creativeVision && (
                       <p className="text-red-500 text-sm mt-1">{errors.creativeVision}</p>
                     )}
-                    <p className="text-gray-500 text-sm mt-1">
-                      {formData.creativeVision.length}/500 characters
-                    </p>
                   </div>
                 </motion.div>
               )}
@@ -411,13 +470,13 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
-                      Timeline Preference
+                    <label className="block text-sm font-medium text-neutral-charcoal mb-3">
+                      Project Timeline
                     </label>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-2">
                       {[
                         { value: 'urgent', label: 'Urgent (within 2 weeks)' },
-                        { value: 'flexible', label: 'Flexible (no rush)' },
+                        { value: 'flexible', label: 'Flexible timeline' },
                         { value: 'specific-date', label: 'Specific deadline' },
                         { value: 'ongoing', label: 'Ongoing collaboration' }
                       ].map((option) => (
@@ -458,10 +517,10 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       onChange={(e) => updateField('projectScope', e.target.value as CollaborationInquiryData['projectScope'])}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200"
                     >
-                      <option value="single-session">Single Session</option>
-                      <option value="short-term">Short-term (2-4 weeks)</option>
-                      <option value="long-term">Long-term (1-3 months)</option>
-                      <option value="ongoing">Ongoing Collaboration</option>
+                      <option value="single-session">Single session/recording</option>
+                      <option value="short-term">Short-term project (1-4 weeks)</option>
+                      <option value="long-term">Long-term project (1-6 months)</option>
+                      <option value="ongoing">Ongoing collaboration</option>
                     </select>
                   </div>
 
@@ -481,6 +540,19 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                       <option value="5000-plus">$5,000+</option>
                       <option value="discuss">Prefer to discuss</option>
                     </select>
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
+                      Budget Notes (Optional)
+                    </label>
+                    <textarea
+                      value={formData.budgetNotes}
+                      onChange={(e) => updateField('budgetNotes', e.target.value)}
+                      rows={2}
+                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors duration-200 resize-none"
+                      placeholder="Any specific budget considerations or notes..."
+                    />
                   </div>
                 </motion.div>
               )}
@@ -532,6 +604,86 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                     />
                   </div>
 
+                  {/* Portfolio Upload Section */}
+                  <div>
+                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
+                      Portfolio/Reference Files (Optional)
+                    </label>
+                    <p className="text-xs text-gray-500 mb-3">
+                      Upload audio samples, images, videos, or documents that help illustrate your project vision. Max 10MB per file.
+                    </p>
+                    
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center hover:border-brand-blue-primary/50 transition-colors duration-200">
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        multiple
+                        accept="image/*,audio/*,video/*,.pdf,.doc,.docx"
+                        onChange={handleFileUpload}
+                        className="hidden"
+                        id="portfolio-upload"
+                      />
+                      <label
+                        htmlFor="portfolio-upload"
+                        className="cursor-pointer flex flex-col items-center"
+                      >
+                        <svg className="w-12 h-12 text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                        <p className="text-sm text-gray-600 mb-1">
+                          Click to upload files or drag and drop
+                        </p>
+                        <p className="text-xs text-gray-400">
+                          Images, audio, video, PDFs, or documents
+                        </p>
+                      </label>
+                    </div>
+
+                    {errors.portfolioFiles && (
+                      <p className="text-red-500 text-sm mt-2">{errors.portfolioFiles}</p>
+                    )}
+
+                    {/* Selected Files Display */}
+                    {selectedFiles.length > 0 && (
+                      <div className="mt-4">
+                        <p className="text-sm font-medium text-neutral-charcoal mb-2">
+                          Selected Files:
+                        </p>
+                        <div className="space-y-2">
+                          {selectedFiles.map((file, index) => (
+                            <div
+                              key={index}
+                              className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                            >
+                              <div className="flex items-center">
+                                <svg className="w-5 h-5 text-gray-400 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                                </svg>
+                                <div>
+                                  <p className="text-sm font-medium text-neutral-charcoal">
+                                    {file.name}
+                                  </p>
+                                  <p className="text-xs text-gray-500">
+                                    {(file.size / 1024 / 1024).toFixed(2)} MB
+                                  </p>
+                                </div>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => removeFile(index)}
+                                className="p-1 hover:bg-gray-200 rounded transition-colors duration-200"
+                              >
+                                <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                              </button>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+
                   <div>
                     <label className="block text-sm font-medium text-neutral-charcoal mb-2">
                       Preferred Contact Method
@@ -580,7 +732,7 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                   <button
                     type="button"
                     onClick={handlePreviousStep}
-                    className="flex items-center gap-2 px-4 py-2 text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200"
+                    className="flex items-center gap-2 px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -589,7 +741,7 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
                   </button>
                 )}
               </div>
-
+              
               <div className="flex items-center gap-3">
                 <button
                   type="button"
