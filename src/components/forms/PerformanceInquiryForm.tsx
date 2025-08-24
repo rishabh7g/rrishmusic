@@ -1,16 +1,15 @@
 /**
  * Performance Inquiry Form Component
  * 
- * Features:
- * - Comprehensive performance booking form with service-specific fields
- * - Native React form validation with TypeScript
- * - Event type selection (wedding, corporate, venue, private)
- * - Date, venue, budget, and special requirements capture
- * - Mobile-optimized responsive design
+ * Enhanced features for Issue #42:
+ * - Event type, date, venue, budget range fields implemented
+ * - Band vs solo performance selection option added
+ * - Custom pricing messaging (no fixed rates shown)
+ * - Comprehensive form validation with TypeScript
+ * - Mobile-optimized responsive design with professional appearance
  * - Form submission handling with confirmation flow
  * - Analytics tracking for conversion measurement
  */
-
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
@@ -28,8 +27,9 @@ export interface PerformanceInquiryData {
   venueName?: string;
   venueAddress?: string;
   
-  // Performance Requirements
-  performanceType: 'acoustic' | 'electric' | 'both' | 'unsure';
+  // Performance Requirements - Enhanced for Issue #42
+  performanceFormat: 'solo' | 'band' | 'flexible' | 'unsure';
+  performanceStyle: 'acoustic' | 'electric' | 'both' | 'unsure';
   duration: string;
   guestCount?: string;
   budgetRange: 'under-500' | '500-1000' | '1000-2000' | '2000-plus' | 'discuss';
@@ -61,7 +61,8 @@ const initialFormData: PerformanceInquiryData = {
   eventTime: '',
   venueName: '',
   venueAddress: '',
-  performanceType: 'unsure',
+  performanceFormat: 'unsure',
+  performanceStyle: 'unsure',
   duration: '',
   guestCount: '',
   budgetRange: 'discuss',
@@ -89,7 +90,6 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
   const [errors, setErrors] = useState<Partial<Record<keyof PerformanceInquiryData, string>>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
-  // const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1); // Reserved for multi-step form in future
 
   // Handle form field changes
   const handleChange = (field: keyof PerformanceInquiryData, value: string | boolean) => {
@@ -101,7 +101,7 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
     }
   };
 
-  // Validate form
+  // Enhanced validation for Issue #42 requirements
   const validateForm = (): boolean => {
     const newErrors: Partial<Record<keyof PerformanceInquiryData, string>> = {};
 
@@ -117,6 +117,13 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
     
     if (formData.hasVenueRestrictions && !formData.venueRestrictions?.trim()) {
       newErrors.venueRestrictions = 'Please describe the venue restrictions';
+    }
+
+    // Enhanced validation for performance format
+    if (formData.performanceFormat === 'unsure' && formData.performanceStyle === 'unsure') {
+      if (!formData.specialRequests || !formData.specialRequests.includes('performance')) {
+        newErrors.specialRequests = 'Please provide more details about your performance preferences in the special requests';
+      }
     }
 
     setErrors(newErrors);
@@ -141,7 +148,7 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
       if (typeof gtag !== 'undefined') {
         gtag('event', 'form_submit', {
           event_category: 'Performance Inquiry',
-          event_label: formData.eventType,
+          event_label: `${formData.eventType}-${formData.performanceFormat}`,
           value: 1
         });
       }
@@ -161,7 +168,6 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
   const handleClose = React.useCallback(() => {
     if (!isSubmitting) {
       setIsSubmitted(false);
-      // setCurrentStep(1); // Reserved for multi-step form
       setFormData({ ...initialFormData, eventType: initialEventType || initialFormData.eventType });
       setErrors({});
       onClose();
@@ -231,21 +237,29 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                 </motion.div>
                 
                 <h2 className="text-2xl font-heading font-bold text-neutral-charcoal mb-4">
-                  Inquiry Submitted Successfully!
+                  Performance Inquiry Submitted!
                 </h2>
                 
                 <p className="text-neutral-charcoal/80 mb-6 leading-relaxed">
-                  Thank you for your interest in live music for your {formData.eventType} event. I'll review your details and get back to you within 24 hours with availability and next steps.
+                  Thank you for your interest in live music for your {formData.eventType} event. I'll review your requirements for a {formData.performanceFormat} performance and get back to you within 24 hours.
                 </p>
                 
                 <div className="bg-blue-50 rounded-lg p-4 mb-6 text-left">
                   <h3 className="font-semibold text-neutral-charcoal mb-2">What happens next:</h3>
                   <ul className="text-sm text-neutral-charcoal/80 space-y-1">
-                    <li>• I'll review your event details and requirements</li>
+                    <li>• I'll review your event details and performance requirements</li>
                     <li>• You'll receive a personalized quote within 24 hours</li>
-                    <li>• We can schedule a call to discuss your vision</li>
-                    <li>• I'll send contract details if you'd like to proceed</li>
+                    <li>• We can schedule a call to discuss your musical vision</li>
+                    <li>• I'll provide repertoire suggestions based on your preferences</li>
+                    <li>• Contract details will be sent if you'd like to proceed</li>
                   </ul>
+                </div>
+
+                <div className="bg-brand-blue-primary/5 border border-brand-blue-primary/20 rounded-lg p-4 mb-6">
+                  <p className="text-sm text-brand-blue-primary font-medium mb-2">Custom Pricing Approach</p>
+                  <p className="text-sm text-neutral-charcoal/80">
+                    Every event is unique. Your quote will be tailored to your specific requirements, venue, duration, and performance format - no fixed rates, just fair and personalized pricing.
+                  </p>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 justify-center">
@@ -275,7 +289,7 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                       Performance Inquiry
                     </h2>
                     <p className="text-neutral-charcoal/70 mt-1">
-                      Let's discuss your event and musical needs
+                      Let's discuss your event and musical requirements
                     </p>
                   </div>
                   
@@ -443,31 +457,55 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                       </div>
                     </motion.div>
 
-                    {/* Performance Requirements */}
+                    {/* Performance Requirements - Enhanced for Issue #42 */}
                     <motion.div variants={fadeInUp} className="space-y-4">
                       <h3 className="text-lg font-semibold text-neutral-charcoal">Performance Requirements</h3>
                       
+                      {/* Band vs Solo Selection - NEW for Issue #42 */}
                       <div className="grid sm:grid-cols-2 gap-4">
                         <div>
-                          <label htmlFor="performanceType" className="block text-sm font-medium text-neutral-charcoal mb-2">
-                            Performance Type
+                          <label htmlFor="performanceFormat" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                            Performance Format *
                           </label>
                           <select
-                            id="performanceType"
-                            value={formData.performanceType}
-                            onChange={(e) => handleChange('performanceType', e.target.value as PerformanceInquiryData['performanceType'])}
+                            id="performanceFormat"
+                            value={formData.performanceFormat}
+                            onChange={(e) => handleChange('performanceFormat', e.target.value as PerformanceInquiryData['performanceFormat'])}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
+                            required
+                          >
+                            <option value="solo">Solo Performance</option>
+                            <option value="band">Band Performance</option>
+                            <option value="flexible">Either Solo or Band</option>
+                            <option value="unsure">Not Sure Yet</option>
+                          </select>
+                          <p className="text-xs text-gray-500 mt-1">
+                            Solo: Just me and my guitar | Band: Full ensemble with backing musicians
+                          </p>
+                        </div>
+
+                        <div>
+                          <label htmlFor="performanceStyle" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                            Performance Style
+                          </label>
+                          <select
+                            id="performanceStyle"
+                            value={formData.performanceStyle}
+                            onChange={(e) => handleChange('performanceStyle', e.target.value as PerformanceInquiryData['performanceStyle'])}
                             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                           >
                             <option value="acoustic">Acoustic Only</option>
-                            <option value="electric">Electric Only</option>
+                            <option value="electric">Electric/Amplified</option>
                             <option value="both">Both Acoustic & Electric</option>
                             <option value="unsure">Not Sure Yet</option>
                           </select>
                         </div>
+                      </div>
 
+                      <div className="grid sm:grid-cols-2 gap-4">
                         <div>
                           <label htmlFor="duration" className="block text-sm font-medium text-neutral-charcoal mb-2">
-                            Duration *
+                            Performance Duration *
                           </label>
                           <input
                             type="text"
@@ -477,31 +515,31 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                             className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
                               errors.duration ? 'border-red-300 bg-red-50' : 'border-gray-300'
                             }`}
-                            placeholder="e.g., 2 hours, 3-4 hours"
+                            placeholder="e.g., 2 hours, 3 sets of 45 minutes"
                             required
                           />
                           {errors.duration && (
                             <p className="text-red-600 text-sm mt-1">{errors.duration}</p>
                           )}
                         </div>
-                      </div>
 
-                      <div>
-                        <label htmlFor="budgetRange" className="block text-sm font-medium text-neutral-charcoal mb-2">
-                          Budget Range
-                        </label>
-                        <select
-                          id="budgetRange"
-                          value={formData.budgetRange}
-                          onChange={(e) => handleChange('budgetRange', e.target.value as PerformanceInquiryData['budgetRange'])}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
-                        >
-                          <option value="under-500">Under $500</option>
-                          <option value="500-1000">$500 - $1000</option>
-                          <option value="1000-2000">$1000 - $2000</option>
-                          <option value="2000-plus">$2000+</option>
-                          <option value="discuss">Prefer to Discuss</option>
-                        </select>
+                        <div>
+                          <label htmlFor="budgetRange" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                            Budget Range
+                          </label>
+                          <select
+                            id="budgetRange"
+                            value={formData.budgetRange}
+                            onChange={(e) => handleChange('budgetRange', e.target.value as PerformanceInquiryData['budgetRange'])}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
+                          >
+                            <option value="discuss">Let's Discuss</option>
+                            <option value="under-500">Under $500</option>
+                            <option value="500-1000">$500 - $1,000</option>
+                            <option value="1000-2000">$1,000 - $2,000</option>
+                            <option value="2000-plus">$2,000+</option>
+                          </select>
+                        </div>
                       </div>
                     </motion.div>
 
@@ -517,47 +555,11 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                           id="musicPreferences"
                           value={formData.musicPreferences}
                           onChange={(e) => handleChange('musicPreferences', e.target.value)}
+                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                           rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors resize-vertical"
-                          placeholder="Any specific songs, genres, or styles you'd like?"
+                          placeholder="e.g., Blues, jazz, acoustic covers, specific songs you'd like..."
                         />
                       </div>
-
-                      <div>
-                        <label className="flex items-start space-x-3">
-                          <input
-                            type="checkbox"
-                            checked={formData.hasVenueRestrictions}
-                            onChange={(e) => handleChange('hasVenueRestrictions', e.target.checked)}
-                            className="mt-1 rounded border-gray-300 text-brand-blue-primary focus:ring-brand-blue-primary/20"
-                          />
-                          <div>
-                            <span className="text-sm font-medium text-neutral-charcoal">
-                              My venue has specific restrictions or requirements
-                            </span>
-                            <p className="text-xs text-gray-500">
-                              Sound limits, setup constraints, etc.
-                            </p>
-                          </div>
-                        </label>
-                      </div>
-
-                      {formData.hasVenueRestrictions && (
-                        <div>
-                          <textarea
-                            value={formData.venueRestrictions}
-                            onChange={(e) => handleChange('venueRestrictions', e.target.value)}
-                            rows={2}
-                            className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors resize-vertical ${
-                              errors.venueRestrictions ? 'border-red-300 bg-red-50' : 'border-gray-300'
-                            }`}
-                            placeholder="Please describe any venue restrictions..."
-                          />
-                          {errors.venueRestrictions && (
-                            <p className="text-red-600 text-sm mt-1">{errors.venueRestrictions}</p>
-                          )}
-                        </div>
-                      )}
 
                       <div>
                         <label htmlFor="specialRequests" className="block text-sm font-medium text-neutral-charcoal mb-2">
@@ -567,38 +569,121 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
                           id="specialRequests"
                           value={formData.specialRequests}
                           onChange={(e) => handleChange('specialRequests', e.target.value)}
+                          className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
+                            errors.specialRequests ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                          }`}
                           rows={3}
-                          className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors resize-vertical"
-                          placeholder="Any other details or special requests..."
+                          placeholder="Any specific requirements, timing, or special considerations..."
                         />
+                        {errors.specialRequests && (
+                          <p className="text-red-600 text-sm mt-1">{errors.specialRequests}</p>
+                        )}
+                      </div>
+
+                      {/* Venue Restrictions */}
+                      <div className="space-y-3">
+                        <div className="flex items-center">
+                          <input
+                            type="checkbox"
+                            id="hasVenueRestrictions"
+                            checked={formData.hasVenueRestrictions}
+                            onChange={(e) => handleChange('hasVenueRestrictions', e.target.checked)}
+                            className="h-4 w-4 text-brand-blue-primary focus:ring-brand-blue-primary border-gray-300 rounded"
+                          />
+                          <label htmlFor="hasVenueRestrictions" className="ml-2 text-sm text-neutral-charcoal">
+                            The venue has sound/equipment restrictions
+                          </label>
+                        </div>
+
+                        {formData.hasVenueRestrictions && (
+                          <div>
+                            <label htmlFor="venueRestrictions" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                              Venue Restrictions *
+                            </label>
+                            <textarea
+                              id="venueRestrictions"
+                              value={formData.venueRestrictions}
+                              onChange={(e) => handleChange('venueRestrictions', e.target.value)}
+                              className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
+                                errors.venueRestrictions ? 'border-red-300 bg-red-50' : 'border-gray-300'
+                              }`}
+                              rows={2}
+                              placeholder="Describe sound limits, equipment restrictions, etc."
+                            />
+                            {errors.venueRestrictions && (
+                              <p className="text-red-600 text-sm mt-1">{errors.venueRestrictions}</p>
+                            )}
+                          </div>
+                        )}
                       </div>
                     </motion.div>
 
+                    {/* How did you hear about us */}
+                    <motion.div variants={fadeInUp} className="space-y-4">
+                      <h3 className="text-lg font-semibold text-neutral-charcoal">How did you hear about us?</h3>
+                      
+                      <div className="grid sm:grid-cols-2 gap-4">
+                        <div>
+                          <label htmlFor="hearAboutUs" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                            Source <span className="text-gray-500">(optional)</span>
+                          </label>
+                          <select
+                            id="hearAboutUs"
+                            value={formData.hearAboutUs}
+                            onChange={(e) => handleChange('hearAboutUs', e.target.value as PerformanceInquiryData['hearAboutUs'])}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
+                          >
+                            <option value="google">Google Search</option>
+                            <option value="instagram">Instagram</option>
+                            <option value="referral">Friend/Family Referral</option>
+                            <option value="venue">Venue Recommendation</option>
+                            <option value="other">Other</option>
+                          </select>
+                        </div>
+
+                        <div>
+                          <label htmlFor="hearAboutUsDetail" className="block text-sm font-medium text-neutral-charcoal mb-2">
+                            Details <span className="text-gray-500">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            id="hearAboutUsDetail"
+                            value={formData.hearAboutUsDetail}
+                            onChange={(e) => handleChange('hearAboutUsDetail', e.target.value)}
+                            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
+                            placeholder="e.g., venue name, friend's name"
+                          />
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    {/* Custom Pricing Message */}
+                    <motion.div variants={fadeInUp} className="bg-brand-blue-primary/5 border border-brand-blue-primary/20 rounded-lg p-4">
+                      <h4 className="font-semibold text-brand-blue-primary mb-2">Personalized Pricing</h4>
+                      <p className="text-sm text-neutral-charcoal/80">
+                        I don't use fixed rates because every event is unique. Your quote will be tailored specifically to your requirements, venue, performance format, and duration. This ensures you get the best value and exactly what you need for your special day.
+                      </p>
+                    </motion.div>
+
                     {/* Submit Button */}
-                    <motion.div variants={fadeInUp} className="pt-4 border-t border-gray-100">
+                    <motion.div variants={fadeInUp} className="pt-4">
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="w-full bg-brand-orange-warm text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-orange-warm/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center space-x-2"
+                        className="w-full bg-brand-blue-primary text-white font-semibold py-4 px-6 rounded-lg hover:bg-brand-blue-secondary transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
                       >
                         {isSubmitting ? (
                           <>
-                            <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                            <span>Submitting...</span>
+                            <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                              <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                              <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                            </svg>
+                            Submitting Your Inquiry...
                           </>
                         ) : (
-                          <>
-                            <span>Submit Inquiry</span>
-                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                            </svg>
-                          </>
+                          'Submit Performance Inquiry'
                         )}
                       </button>
-                      
-                      <p className="text-xs text-gray-500 text-center mt-3">
-                        I'll respond to your inquiry within 24 hours with availability and pricing.
-                      </p>
                     </motion.div>
                   </motion.div>
                 </form>
