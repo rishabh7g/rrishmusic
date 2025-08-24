@@ -1,10 +1,12 @@
-import React, { Suspense } from 'react'
+import React, { Suspense, useEffect } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Navigation } from '@/components/layout/Navigation'
 import { Home, Performance, Collaboration } from '@/components/pages'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
+import { initProtocolHandling, validateURLHandling } from '@/utils/protocolHandling'
 import "@/index.css"
+
 interface LayoutShiftEntry extends PerformanceEntry {
   hadRecentInput: boolean
   value: number
@@ -87,6 +89,27 @@ const PerformanceMonitor: React.FC = () => {
 }
 
 /**
+ * Protocol handling component - ensures proper HTTPS enforcement
+ */
+const ProtocolHandler: React.FC = () => {
+  useEffect(() => {
+    // Initialize protocol handling on app startup
+    initProtocolHandling()
+
+    // Validate URL handling in development
+    if (process.env.NODE_ENV === 'development') {
+      const validation = validateURLHandling()
+      if (!validation.isValid) {
+        console.warn('[ProtocolHandling] URL validation issues:', validation.issues)
+        console.info('[ProtocolHandling] Recommendations:', validation.recommendations)
+      }
+    }
+  }, [])
+
+  return null
+}
+
+/**
  * Layout wrapper component that provides consistent navigation
  */
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -111,6 +134,7 @@ function App(): React.JSX.Element {
   return (
     <ErrorBoundary fallback={<AppErrorFallback />}>
       <PerformanceMonitor />
+      <ProtocolHandler />
       
       <Router>
         <AppLayout>
@@ -158,7 +182,8 @@ function App(): React.JSX.Element {
       </Router>
 
       {/* Analytics Debug Panel - Development Only */}
-      <AnalyticsDebugPanel />    </ErrorBoundary>
+      <AnalyticsDebugPanel />
+    </ErrorBoundary>
   )
 }
 
