@@ -13,3 +13,4 @@ export { CollaborationHero } from './CollaborationHero';
 export { CollaborationPortfolio } from './CollaborationPortfolio';
 export { CollaborationProcess } from './CollaborationProcess';
 export { CollaborationCTA } from './CollaborationCTA';
+export { ServicesHierarchy } from './ServicesHierarchy';
