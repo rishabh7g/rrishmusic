@@ -142,6 +142,10 @@ export const useLessonPackages = () => {
 export const useSEO = () => {
   return useMemo(() => ({
     data: seoData,
+    generatePageTitle: (title: string) => {
+      const siteName = seoData.siteName || 'RrishMusic';
+      return title ? `${title} | ${siteName}` : seoData.title || siteName;
+    },
     loading: false,
     error: null
   }), []);
