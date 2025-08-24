@@ -1,9 +1,11 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Link, useLocation, useNavigate, Location } from "react-router-dom";
 import { NAVIGATION_ITEMS } from "@/utils/constants";
-import { useSmoothScroll } from "@/hooks/useScrollSpy";
+import { useSmoothScroll, useScrollSpy } from "@/hooks/useScrollSpy";
 
 interface NavigationProps {
+  // Optional activeSection override - mainly for testing
   activeSection?: string;
 }
 
@@ -39,7 +41,7 @@ const getNavigationItemStyles = (
   const baseClasses = "font-heading transition-all duration-200";
   
   if (isMobile) {
-    const mobileBase = `${baseClasses} text-left py-2 px-4 rounded-lg`;
+    const mobileBase = `${baseClasses} text-left py-2 px-4 rounded-lg block w-full`;
     
     switch (type) {
       case 'primary':
@@ -147,19 +149,46 @@ const HamburgerIcon = React.memo<{ isOpen: boolean }>(({ isOpen }) => (
 HamburgerIcon.displayName = 'HamburgerIcon';
 
 /**
+ * Determines if a navigation item is active based on current route and section
+ */
+const getIsItemActive = (item: typeof NAVIGATION_ITEMS[0], location: Location, activeSection: string): boolean => {
+  // For performances, check if we're on the /performance route
+  if (item.id === 'performances') {
+    return location.pathname === '/performance';
+  }
+  
+  // For other items, use scroll-based active section on home page
+  if (location.pathname === '/') {
+    return activeSection === item.id;
+  }
+  
+  return false;
+};
+
+/**
+ * Gets the navigation target (route or anchor) for an item
+ */
+const getNavigationTarget = (item: typeof NAVIGATION_ITEMS[0]) => {
+  if (item.id === 'performances') {
+    return { type: 'route' as const, path: '/performance' };
+  }
+  return { type: 'scroll' as const, anchor: item.id };
+};
+
+/**
  * Memoized navigation item component for better performance with service hierarchy styling
  */
 const NavigationItem = React.memo<{
   item: typeof NAVIGATION_ITEMS[0];
   isActive: boolean;
-  onClick: (id: string) => void;
+  onClick: (item: typeof NAVIGATION_ITEMS[0]) => void;
   className?: string;
   isMobile?: boolean;
   index?: number;
 }>(({ item, isActive, onClick, className, isMobile, index }) => {
   const handleClick = useCallback(() => {
-    onClick(item.id);
-  }, [onClick, item.id]);
+    onClick(item);
+  }, [onClick, item]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -175,6 +204,7 @@ const NavigationItem = React.memo<{
   );
 
   const combinedClassName = className ? `${baseClassName} ${className}` : baseClassName;
+  const target = getNavigationTarget(item);
 
   const content = (
     <>
@@ -207,22 +237,45 @@ const NavigationItem = React.memo<{
 
   if (isMobile) {
     return (
-      <motion.button
+      <motion.div
         initial={{ opacity: 0, x: -20 }}
         animate={{ opacity: 1, x: 0 }}
         transition={{ delay: (index || 0) * 0.1 }}
-        onClick={handleClick}
-        onKeyDown={handleKeyDown}
-        className={combinedClassName}
-        role="menuitem"
-        aria-label={`Navigate to ${item.label} section`}
       >
-        {content}
-      </motion.button>
+        {target.type === 'route' ? (
+          <Link
+            to={target.path}
+            onClick={() => onClick(item)}
+            className={combinedClassName}
+            role="menuitem"
+            aria-label={`Navigate to ${item.label} page`}
+          >
+            {content}
+          </Link>
+        ) : (
+          <button
+            onClick={handleClick}
+            onKeyDown={handleKeyDown}
+            className={combinedClassName}
+            role="menuitem"
+            aria-label={`Navigate to ${item.label} section`}
+          >
+            {content}
+          </button>
+        )}
+      </motion.div>
     );
   }
 
-  return (
+  return target.type === 'route' ? (
+    <Link
+      to={target.path}
+      className={combinedClassName}
+      aria-label={`Navigate to ${item.label} page`}
+    >
+      {content}
+    </Link>
+  ) : (
     <button
       onClick={handleClick}
       onKeyDown={handleKeyDown}
@@ -238,34 +291,46 @@ NavigationItem.displayName = 'NavigationItem';
 /**
  * Memoized logo component
  */
-const Logo = React.memo<{ onClick: () => void }>(({ onClick }) => {
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClick();
-    }
-  }, [onClick]);
-
-  return (
+const Logo = React.memo(() => (
+  <Link to="/">
     <motion.div
       whileHover={{ scale: 1.05 }}
       className="font-heading font-bold text-xl text-brand-blue-primary cursor-pointer"
-      onClick={onClick}
-      role="button"
-      tabIndex={0}
-      onKeyDown={handleKeyDown}
       aria-label="RrishMusic home"
     >
       RrishMusic
     </motion.div>
-  );
-});
+  </Link>
+));
 Logo.displayName = 'Logo';
 
-export const Navigation: React.FC<NavigationProps> = ({ activeSection = '' }) => {
+export const Navigation: React.FC<NavigationProps> = ({ activeSection: overrideActiveSection }) => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const location = useLocation();
+  const navigate = useNavigate();
   const smoothScrollTo = useSmoothScroll();
+
+  // Memoize section IDs to prevent unnecessary recalculations
+  const sectionIds = useMemo(() => 
+    NAVIGATION_ITEMS
+      .filter(item => item.id !== 'performances') // Exclude performances from scroll spy
+      .map(item => item.id), 
+    []
+  );
+
+  // Use scroll spy only on the home page, otherwise use empty string
+  const scrollSpyActiveSection = useScrollSpy(
+    location.pathname === '/' ? sectionIds : [], 
+    {
+      offset: 100,
+      throttle: 50,
+      rootMargin: '-10% 0px -85% 0px',
+    }
+  );
+
+  // Use override if provided (mainly for testing), otherwise use scroll spy result
+  const activeSection = overrideActiveSection || scrollSpyActiveSection;
 
   // Optimized scroll handler with throttling
   useEffect(() => {
@@ -320,15 +385,26 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection = '' }) =>
     };
   }, [isMobileMenuOpen]);
 
-  const handleNavClick = useCallback((sectionId: string) => {
-    // Use optimized smooth scroll
-    smoothScrollTo(sectionId, 80); // 80px offset for fixed nav
+  const handleNavClick = useCallback((item: typeof NAVIGATION_ITEMS[0]) => {
+    const target = getNavigationTarget(item);
+    
+    if (target.type === 'route') {
+      navigate(target.path);
+    } else {
+      // If we're not on the home page, navigate there first
+      if (location.pathname !== '/') {
+        navigate('/', { replace: true });
+        // Small delay to allow navigation to complete before scrolling
+        setTimeout(() => {
+          smoothScrollTo(target.anchor, 80);
+        }, 100);
+      } else {
+        smoothScrollTo(target.anchor, 80);
+      }
+    }
+    
     setIsMobileMenuOpen(false);
-  }, [smoothScrollTo]);
-
-  const handleLogoClick = useCallback(() => {
-    handleNavClick('hero');
-  }, [handleNavClick]);
+  }, [navigate, location.pathname, smoothScrollTo]);
 
   const toggleMobileMenu = useCallback(() => {
     setIsMobileMenuOpen(prev => !prev);
@@ -351,10 +427,10 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection = '' }) =>
       <NavigationItem
         key={item.id}
         item={item}
-        isActive={activeSection === item.id}
+        isActive={getIsItemActive(item, location, activeSection)}
         onClick={handleNavClick}
       />
-    )), [activeSection, handleNavClick]
+    )), [location, activeSection, handleNavClick]
   );
 
   const mobileNavItems = useMemo(() => 
@@ -362,12 +438,12 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection = '' }) =>
       <NavigationItem
         key={item.id}
         item={item}
-        isActive={activeSection === item.id}
+        isActive={getIsItemActive(item, location, activeSection)}
         onClick={handleNavClick}
         isMobile
         index={index}
       />
-    )), [activeSection, handleNavClick]
+    )), [location, activeSection, handleNavClick]
   );
 
   return (
@@ -391,7 +467,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection = '' }) =>
         <div className="container-custom">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Logo onClick={handleLogoClick} />
+            <Logo />
 
             {/* Desktop Navigation Links */}
             <div className="hidden md:flex space-x-8">
