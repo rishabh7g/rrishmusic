@@ -82,16 +82,6 @@ export function useAnalyticsIntegration(config: AnalyticsConfig = {}) {
   } = useUpsellingAnalytics();
 
   /**
-   * Initialize analytics system
-   */
-  useEffect(() => {
-    if (!isInitialized) {
-      initializeAnalytics();
-      setIsInitialized(true);
-    }
-  }, [isInitialized, initializeAnalytics]);
-
-  /**
    * Initialize analytics session
    */
   const initializeAnalytics = useCallback(() => {
@@ -116,6 +106,16 @@ export function useAnalyticsIntegration(config: AnalyticsConfig = {}) {
       trackConversionStage('teaching', 'session_start', sessionId);
     }
   }, [enableFunnelTracking, debugMode, trackConversionStage]);
+
+  /**
+   * Initialize analytics system
+   */
+  useEffect(() => {
+    if (!isInitialized) {
+      initializeAnalytics();
+      setIsInitialized(true);
+    }
+  }, [isInitialized, initializeAnalytics]);
 
   /**
    * Track page view
