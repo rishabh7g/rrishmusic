@@ -8,6 +8,115 @@ interface NavigationProps {
 }
 
 /**
+ * Navigation item hierarchy types for service-based visual prioritization
+ */
+type NavigationItemType = 'primary' | 'secondary' | 'tertiary';
+
+/**
+ * Determines the navigation item type based on service hierarchy:
+ * - Primary: Performances (highest revenue potential)
+ * - Secondary: Teaching services (Approach, Lessons)  
+ * - Tertiary: Standard navigation (Home, About, Contact)
+ */
+const getNavigationItemType = (itemId: string): NavigationItemType => {
+  if (itemId === 'performances') {
+    return 'primary';
+  }
+  if (itemId === 'approach' || itemId === 'lessons') {
+    return 'secondary';
+  }
+  return 'tertiary';
+};
+
+/**
+ * Gets styling classes for navigation items based on hierarchy
+ */
+const getNavigationItemStyles = (
+  type: NavigationItemType,
+  isActive: boolean,
+  isMobile: boolean
+) => {
+  const baseClasses = "font-heading transition-all duration-200";
+  
+  if (isMobile) {
+    const mobileBase = `${baseClasses} text-left py-2 px-4 rounded-lg`;
+    
+    switch (type) {
+      case 'primary':
+        return `${mobileBase} font-semibold ${
+          isActive
+            ? "text-brand-blue-primary bg-brand-blue-primary/15 border border-brand-blue-primary/20"
+            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-brand-blue-primary/10 hover:border hover:border-brand-blue-primary/20"
+        }`;
+      case 'secondary':
+        return `${mobileBase} font-medium ${
+          isActive
+            ? "text-brand-blue-secondary bg-brand-blue-secondary/10"
+            : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/5"
+        }`;
+      case 'tertiary':
+        return `${mobileBase} font-medium ${
+          isActive
+            ? "text-brand-blue-primary bg-brand-blue-primary/10"
+            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50"
+        }`;
+    }
+  }
+  
+  // Desktop styles with visual hierarchy
+  const desktopBase = `${baseClasses} relative`;
+  
+  switch (type) {
+    case 'primary':
+      return `${desktopBase} font-bold text-lg ${
+        isActive
+          ? "text-brand-blue-primary"
+          : "text-neutral-charcoal hover:text-brand-blue-primary hover:scale-105"
+      }`;
+    case 'secondary':
+      return `${desktopBase} font-semibold ${
+        isActive
+          ? "text-brand-blue-secondary"
+          : "text-neutral-charcoal hover:text-brand-blue-secondary"
+      }`;
+    case 'tertiary':
+      return `${desktopBase} font-medium ${
+        isActive
+          ? "text-brand-blue-primary"
+          : "text-neutral-charcoal hover:text-brand-blue-primary"
+      }`;
+  }
+};
+
+/**
+ * Gets active indicator styles based on item type
+ */
+const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) => {
+  if (isMobile) {
+    const baseClasses = "w-2 h-2 rounded-full";
+    switch (type) {
+      case 'primary':
+        return `${baseClasses} bg-brand-blue-primary`;
+      case 'secondary':
+        return `${baseClasses} bg-brand-blue-secondary`;
+      case 'tertiary':
+        return `${baseClasses} bg-brand-blue-primary`;
+    }
+  }
+  
+  // Desktop active indicators
+  const baseClasses = "absolute -bottom-1 left-0 right-0";
+  switch (type) {
+    case 'primary':
+      return `${baseClasses} h-1 bg-brand-blue-primary`;
+    case 'secondary':
+      return `${baseClasses} h-0.5 bg-brand-blue-secondary`;
+    case 'tertiary':
+      return `${baseClasses} h-0.5 bg-brand-blue-primary`;
+  }
+};
+
+/**
  * Memoized hamburger icon component to prevent unnecessary re-renders
  */
 const HamburgerIcon = React.memo<{ isOpen: boolean }>(({ isOpen }) => (
@@ -38,7 +147,7 @@ const HamburgerIcon = React.memo<{ isOpen: boolean }>(({ isOpen }) => (
 HamburgerIcon.displayName = 'HamburgerIcon';
 
 /**
- * Memoized navigation item component for better performance
+ * Memoized navigation item component for better performance with service hierarchy styling
  */
 const NavigationItem = React.memo<{
   item: typeof NAVIGATION_ITEMS[0];
@@ -59,23 +168,11 @@ const NavigationItem = React.memo<{
     }
   }, [handleClick]);
 
-  const baseClassName = useMemo(() => {
-    const base = "font-heading font-medium transition-all duration-200";
-    
-    if (isMobile) {
-      return `${base} text-left py-2 px-4 rounded-lg ${
-        isActive
-          ? "text-brand-blue-primary bg-brand-blue-primary/10"
-          : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50"
-      }`;
-    }
-    
-    return `${base} relative ${
-      isActive
-        ? "text-brand-blue-primary"
-        : "text-neutral-charcoal hover:text-brand-blue-primary"
-    }`;
-  }, [isMobile, isActive]);
+  const itemType = useMemo(() => getNavigationItemType(item.id), [item.id]);
+  const baseClassName = useMemo(() => 
+    getNavigationItemStyles(itemType, isActive, !!isMobile), 
+    [itemType, isActive, isMobile]
+  );
 
   const combinedClassName = className ? `${baseClassName} ${className}` : baseClassName;
 
@@ -88,7 +185,7 @@ const NavigationItem = React.memo<{
             <motion.div
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
-              className="w-2 h-2 bg-brand-blue-primary rounded-full"
+              className={getActiveIndicatorStyles(itemType, true)}
               aria-hidden="true"
             />
           )}
@@ -99,7 +196,7 @@ const NavigationItem = React.memo<{
           {isActive && (
             <motion.div
               layoutId="activeIndicator"
-              className="absolute -bottom-1 left-0 right-0 h-0.5 bg-brand-blue-primary"
+              className={getActiveIndicatorStyles(itemType, false)}
               transition={{ type: "spring", stiffness: 380, damping: 30 }}
             />
           )}
