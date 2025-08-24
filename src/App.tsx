@@ -1,12 +1,34 @@
-import React, { Suspense, useEffect } from 'react'
+import React, { Suspense, useEffect, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
 import { Navigation } from '@/components/layout/Navigation'
-import { Home, Performance, Collaboration } from '@/components/pages'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
 import { initProtocolHandling, validateURLHandling } from '@/utils/protocolHandling'
+import { performanceMonitor, startPerformanceMonitoring } from '@/utils/performanceMonitor'
 import uiMessages from '@/data/ui/messages.json'
 import "@/index.css"
+
+// Lazy load page components for code splitting
+const Home = lazy(() => 
+  import('@/components/pages/Home').then(module => {
+    performanceMonitor.mark('home-page-loaded');
+    return { default: module.Home };
+  })
+);
+
+const Performance = lazy(() => 
+  import('@/components/pages/Performance').then(module => {
+    performanceMonitor.mark('performance-page-loaded');
+    return { default: module.Performance };
+  })
+);
+
+const Collaboration = lazy(() => 
+  import('@/components/pages/Collaboration').then(module => {
+    performanceMonitor.mark('collaboration-page-loaded');
+    return { default: module.Collaboration };
+  })
+);
 
 interface LayoutShiftEntry extends PerformanceEntry {
   hadRecentInput: boolean
@@ -14,16 +36,29 @@ interface LayoutShiftEntry extends PerformanceEntry {
 }
 
 /**
- * Global loading fallback component
+ * Enhanced loading fallback component with performance hints
  */
-const AppLoadingFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
-      <p className="text-gray-600">{uiMessages.loading.default}</p>
+const AppLoadingFallback: React.FC<{ pageName?: string }> = ({ pageName }) => {
+  useEffect(() => {
+    if (pageName) {
+      performanceMonitor.mark(`${pageName}-loading-start`);
+    }
+  }, [pageName]);
+
+  return (
+    <div className="min-h-screen flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
+        <p className="text-gray-600">
+          {pageName ? `Loading ${pageName}...` : uiMessages.loading.default}
+        </p>
+        {process.env.NODE_ENV === 'development' && (
+          <p className="text-xs text-gray-400 mt-2">Code splitting in progress...</p>
+        )}
+      </div>
     </div>
-  </div>
-)
+  )
+}
 
 /**
  * Global error fallback component
@@ -48,10 +83,24 @@ const AppErrorFallback: React.FC = () => (
 )
 
 /**
- * Performance monitoring component for development
+ * Enhanced Performance monitoring component
  */
 const PerformanceMonitor: React.FC = () => {
   React.useEffect(() => {
+    // Initialize comprehensive performance monitoring
+    const monitor = startPerformanceMonitoring({
+      enableConsoleLogging: process.env.NODE_ENV === 'development',
+      enableAnalytics: process.env.NODE_ENV === 'production',
+      threshold: {
+        fcp: 1500, // Stricter FCP threshold for better UX
+        lcp: 2000, // Stricter LCP threshold
+        fid: 100,
+        cls: 0.1,
+        pageLoad: 2000 // Target: under 2 seconds
+      }
+    });
+
+    // Legacy observer for development logging compatibility
     if (process.env.NODE_ENV === 'development') {
       const observer = new PerformanceObserver(list => {
         for (const entry of list.getEntries()) {
@@ -82,8 +131,23 @@ const PerformanceMonitor: React.FC = () => {
         console.warn(uiMessages.performance.monitoring.unsupported, error)
       }
 
-      return () => observer.disconnect()
+      // Log performance recommendations after page load
+      setTimeout(() => {
+        const recommendations = monitor.getRecommendations();
+        if (recommendations.length > 0) {
+          console.group('[Performance Recommendations]');
+          recommendations.forEach(rec => console.log(`• ${rec}`));
+          console.groupEnd();
+        }
+      }, 5000);
+
+      return () => {
+        observer.disconnect()
+        monitor.cleanup()
+      }
     }
+
+    return () => monitor.cleanup()
   }, [])
 
   return null
@@ -111,6 +175,61 @@ const ProtocolHandler: React.FC = () => {
 }
 
 /**
+ * Preloader component for critical resources
+ */
+const ResourcePreloader: React.FC = () => {
+  useEffect(() => {
+    // Preload critical CSS and fonts
+    const criticalResources = [
+      // Add critical resources here
+      'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
+      'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap'
+    ];
+
+    criticalResources.forEach(href => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'style';
+      link.href = href;
+      link.onload = () => {
+        link.rel = 'stylesheet';
+      };
+      document.head.appendChild(link);
+    });
+
+    // Preload hero images for faster LCP
+    const heroImages = [
+      '/images/hero-bg.jpg',
+      '/images/performance-hero.jpg'
+    ];
+
+    heroImages.forEach(src => {
+      const link = document.createElement('link');
+      link.rel = 'preload';
+      link.as = 'image';
+      link.href = src;
+      document.head.appendChild(link);
+    });
+
+    // DNS prefetch for external domains
+    const externalDomains = [
+      'https://www.googletagmanager.com',
+      'https://www.google-analytics.com'
+    ];
+
+    externalDomains.forEach(href => {
+      const link = document.createElement('link');
+      link.rel = 'dns-prefetch';
+      link.href = href;
+      document.head.appendChild(link);
+    });
+
+  }, []);
+
+  return null;
+};
+
+/**
  * Layout wrapper component that provides consistent navigation
  */
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -123,7 +242,43 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
 }
 
 /**
- * Main App component with React Router configuration
+ * Route wrapper with performance tracking
+ */
+interface RouteWrapperProps {
+  children: React.ReactNode;
+  routeName: string;
+}
+
+const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, routeName }) => {
+  useEffect(() => {
+    performanceMonitor.mark(`${routeName}-route-start`);
+    
+    return () => {
+      performanceMonitor.measure(`${routeName}-route-total`);
+    };
+  }, [routeName]);
+
+  return (
+    <ErrorBoundary 
+      fallback={<AppErrorFallback />}
+      onError={(error, errorInfo) => {
+        console.error(`[${routeName} Route Error]`, error, errorInfo);
+      }}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+};
+
+/**
+ * Main App component with React Router configuration and performance optimizations
+ * 
+ * Features:
+ * - Code splitting for all major routes
+ * - Comprehensive performance monitoring
+ * - Resource preloading for critical assets
+ * - Enhanced error boundaries with route-specific handling
+ * - DNS prefetching for external resources
  * 
  * Routes:
  * - / : Home page with all teaching-focused sections
@@ -132,10 +287,22 @@ const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
  * - /* : Redirects to home
  */
 function App(): React.JSX.Element {
+  useEffect(() => {
+    performanceMonitor.mark('app-start');
+    
+    // Mark app as fully loaded after all initial effects
+    const loadTimeout = setTimeout(() => {
+      performanceMonitor.measure('app-initialization');
+    }, 100);
+
+    return () => clearTimeout(loadTimeout);
+  }, []);
+
   return (
     <ErrorBoundary fallback={<AppErrorFallback />}>
       <PerformanceMonitor />
       <ProtocolHandler />
+      <ResourcePreloader />
       
       <Router>
         <AppLayout>
@@ -145,9 +312,11 @@ function App(): React.JSX.Element {
               <Route 
                 path="/" 
                 element={
-                  <ErrorBoundary fallback={<AppErrorFallback />}>
-                    <Home />
-                  </ErrorBoundary>
+                  <RouteWrapper routeName="home">
+                    <Suspense fallback={<AppLoadingFallback pageName="Home" />}>
+                      <Home />
+                    </Suspense>
+                  </RouteWrapper>
                 } 
               />
               
@@ -155,9 +324,11 @@ function App(): React.JSX.Element {
               <Route 
                 path="/performance" 
                 element={
-                  <ErrorBoundary fallback={<AppErrorFallback />}>
-                    <Performance />
-                  </ErrorBoundary>
+                  <RouteWrapper routeName="performance">
+                    <Suspense fallback={<AppLoadingFallback pageName="Performance" />}>
+                      <Performance />
+                    </Suspense>
+                  </RouteWrapper>
                 } 
               />
               
@@ -165,9 +336,11 @@ function App(): React.JSX.Element {
               <Route 
                 path="/collaboration" 
                 element={
-                  <ErrorBoundary fallback={<AppErrorFallback />}>
-                    <Collaboration />
-                  </ErrorBoundary>
+                  <RouteWrapper routeName="collaboration">
+                    <Suspense fallback={<AppLoadingFallback pageName="Collaboration" />}>
+                      <Collaboration />
+                    </Suspense>
+                  </RouteWrapper>
                 } 
               />
               
