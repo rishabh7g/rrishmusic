@@ -105,6 +105,14 @@ export const CrossServiceSuggestion: React.FC<CrossServiceSuggestionProps> = ({
     hasEngaged: false
   });
 
+
+  // Advanced upselling analytics
+  // const {
+    // trackSuggestionView,
+    // trackSuggestionClick,
+    // trackSuggestionDismiss
+  // } = useUpsellingAnalytics();
+
   /**
    * Track user engagement and determine when to show suggestion
    */
