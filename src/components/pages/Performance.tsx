@@ -6,7 +6,7 @@ import { usePageSEO } from '@/hooks/usePageSEO';
 import { useSectionContent } from '@/hooks/useContent';
 import PerformanceHero from '@/components/sections/PerformanceHero';
 import PerformanceGallery from '@/components/sections/PerformanceGallery';
-import { TestimonialsSection, PricingSection } from '@/components/sections';
+import { TestimonialsSection, PricingSection, InstagramFeed } from '@/components/sections';
 import { ServiceCard } from '@/components/ui/ServiceCard';
 import type { ServiceCardData } from '@/components/ui/ServiceCard';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
@@ -308,6 +308,7 @@ const PerformanceCredentials: React.FC = () => {
  * - Reusable ServiceCard components for service offerings
  * - Professional performance hero section
  * - Performance portfolio gallery with lazy loading
+ * - Instagram feed with performance-related content filtering
  * - Comprehensive service sections using new ServiceCard component
  * - Client testimonials section with performance-specific feedback
  * - Professional pricing section with transparent package information
@@ -346,6 +347,9 @@ export const Performance: React.FC<PerformancePageProps> = ({
 
             {/* Performance Portfolio Gallery - NEW: Issue #60 Implementation */}
             <PerformanceGallery />
+
+            {/* Instagram Performance Content - NEW: Issue #28 Implementation */}
+            <InstagramFeed limit={6} />
 
             {/* Performance Credentials Section */}
             <PerformanceCredentials />

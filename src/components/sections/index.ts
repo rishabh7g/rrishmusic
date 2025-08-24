@@ -8,3 +8,4 @@ export { PerformanceHero } from './PerformanceHero';
 export { PerformanceGallery } from './PerformanceGallery';
 export { default as TestimonialsSection } from './TestimonialsSection';
 export { default as PricingSection } from './PricingSection';
+export { InstagramFeed } from './InstagramFeed';
