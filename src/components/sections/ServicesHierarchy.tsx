@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { fadeInUp, staggerContainer, scaleIn } from '@/utils/animations';
+import { CTAHierarchy } from '@/components/ui/CTAHierarchy';
 
 /**
  * Service item interface for the hierarchy
@@ -12,15 +13,16 @@ interface ServiceItem {
   ctaLink: string;
   icon: React.ReactNode;
   prominence: 'primary' | 'secondary' | 'tertiary';
+  ctaComponent?: React.ReactNode;
 }
 
 /**
  * Services Hierarchy Component
  * 
- * Implements 60/25/15 visual hierarchy for services:
- * - Performance Services: 60% prominence (primary)
- * - Teaching Services: 25% prominence (secondary) 
- * - Collaboration Services: 15% prominence (tertiary)
+ * Implements 60/25/15 visual hierarchy for services with Primary/Secondary CTA strategy:
+ * - Performance Services: 60% prominence (primary CTA)
+ * - Teaching Services: 25% prominence (secondary CTA) 
+ * - Collaboration Services: 15% prominence (tertiary CTA)
  */
 export function ServicesHierarchy() {
   const services: ServiceItem[] = [
@@ -120,6 +122,26 @@ export function ServicesHierarchy() {
           </div>
         </div>
 
+        {/* Primary/Secondary CTA Strategy Implementation */}
+        <motion.div 
+          className="mt-16 text-center"
+          variants={fadeInUp}
+        >
+          <h3 className="text-2xl font-heading font-bold text-brand-blue-primary mb-6">
+            Ready to Get Started?
+          </h3>
+          <CTAHierarchy 
+            layout="horizontal"
+            context="services"
+            customMessages={{
+              primary: "Book Performance Today",
+              secondary: "Start Guitar Lessons",
+              tertiary: "Discuss Collaboration"
+            }}
+            className="justify-center"
+          />
+        </motion.div>
+
         {/* Analytics Tracking */}
         <div className="mt-16 text-center">
           <motion.p 
@@ -201,7 +223,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
         {service.description}
       </p>
 
-      {/* Call to Action */}
+      {/* Call to Action - Using basic link for now, CTA hierarchy handles main CTAs */}
       <a 
         href={service.ctaLink}
         className={classes.cta}
