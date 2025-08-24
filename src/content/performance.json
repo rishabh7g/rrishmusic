@@ -69,6 +69,125 @@
       "colorScheme": "yellow"
     }
   },
+  "portfolio": {
+    "title": "Performance Portfolio",
+    "subtitle": "Capturing moments from live performances across Melbourne",
+    "description": "From intimate acoustic sets in cozy venues to energetic blues performances that get crowds moving, these images showcase the variety and passion of my live musical experiences.",
+    "gallery": [
+      {
+        "id": "acoustic-venue-1",
+        "src": "/images/portfolio/acoustic-venue-performance.webp",
+        "alt": "Acoustic guitar performance in intimate Melbourne venue setting with warm lighting",
+        "title": "Intimate Venue Performance",
+        "category": "venue",
+        "description": "Acoustic performance at a cozy Melbourne café, creating the perfect atmosphere for an evening out",
+        "venue": "Local Melbourne Café",
+        "aspectRatio": "4/3"
+      },
+      {
+        "id": "wedding-ceremony-1",
+        "src": "/images/portfolio/wedding-ceremony-guitar.webp",
+        "alt": "Live acoustic guitar music during outdoor wedding ceremony with guests seated in natural setting",
+        "title": "Wedding Ceremony Music",
+        "category": "wedding",
+        "description": "Providing beautiful acoustic accompaniment for a couple's special day",
+        "venue": "Garden Wedding Venue",
+        "aspectRatio": "3/2"
+      },
+      {
+        "id": "corporate-event-1",
+        "src": "/images/portfolio/corporate-event-entertainment.webp",
+        "alt": "Professional musician performing at corporate networking event with business attendees",
+        "title": "Corporate Event Entertainment",
+        "category": "corporate",
+        "description": "Background music for a corporate networking event, enhancing professional atmosphere",
+        "venue": "Corporate Conference Center",
+        "aspectRatio": "16/9"
+      },
+      {
+        "id": "blues-performance-1",
+        "src": "/images/portfolio/blues-performance-stage.webp",
+        "alt": "Dynamic blues guitar performance on stage with dramatic lighting and engaged audience",
+        "title": "Blues Stage Performance",
+        "category": "venue",
+        "description": "Electric blues performance bringing energy and soul to the stage",
+        "venue": "Melbourne Blues Club",
+        "aspectRatio": "4/3"
+      },
+      {
+        "id": "private-event-1",
+        "src": "/images/portfolio/private-party-performance.webp",
+        "alt": "Live music performance at private party with intimate crowd and relaxed atmosphere",
+        "title": "Private Event Performance",
+        "category": "private",
+        "description": "Creating a memorable musical experience for a private celebration",
+        "venue": "Private Residence",
+        "aspectRatio": "3/2"
+      },
+      {
+        "id": "restaurant-performance-1",
+        "src": "/images/portfolio/restaurant-live-music.webp",
+        "alt": "Acoustic guitar performance in upscale restaurant with diners enjoying dinner and live music",
+        "title": "Restaurant Live Music",
+        "category": "venue",
+        "description": "Weekly acoustic performances enhancing the dining experience",
+        "venue": "Upscale Melbourne Restaurant",
+        "aspectRatio": "4/3"
+      },
+      {
+        "id": "festival-performance-1",
+        "src": "/images/portfolio/outdoor-festival-performance.webp",
+        "alt": "Outdoor music festival performance with large audience and festival atmosphere",
+        "title": "Festival Performance",
+        "category": "festival",
+        "description": "Bringing blues and acoustic music to outdoor festival audiences",
+        "venue": "Melbourne Music Festival",
+        "aspectRatio": "16/9"
+      },
+      {
+        "id": "wedding-reception-1",
+        "src": "/images/portfolio/wedding-reception-music.webp",
+        "alt": "Wedding reception live music with dancing guests and celebration atmosphere",
+        "title": "Wedding Reception Music",
+        "category": "wedding",
+        "description": "Reception entertainment keeping guests dancing and celebrating",
+        "venue": "Wedding Reception Venue",
+        "aspectRatio": "3/2"
+      }
+    ],
+    "categories": [
+      {
+        "id": "all",
+        "label": "All Performances",
+        "count": 8
+      },
+      {
+        "id": "venue",
+        "label": "Venue Performances",
+        "count": 3
+      },
+      {
+        "id": "wedding",
+        "label": "Wedding Events",
+        "count": 2
+      },
+      {
+        "id": "corporate",
+        "label": "Corporate Events",
+        "count": 1
+      },
+      {
+        "id": "private",
+        "label": "Private Events",
+        "count": 1
+      },
+      {
+        "id": "festival",
+        "label": "Festivals",
+        "count": 1
+      }
+    ]
+  },
   "credentials": [
     "10+ years of live performance experience",
     "Regular performances across Melbourne venues",

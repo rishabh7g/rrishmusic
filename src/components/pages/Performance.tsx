@@ -5,6 +5,7 @@ import { SEOHead } from '@/components/common/SEOHead';
 import { usePageSEO } from '@/hooks/usePageSEO';
 import { useSectionContent } from '@/hooks/useContent';
 import PerformanceHero from '@/components/sections/PerformanceHero';
+import PerformanceGallery from '@/components/sections/PerformanceGallery';
 import { ServiceCard } from '@/components/ui/ServiceCard';
 import type { ServiceCardData } from '@/components/ui/ServiceCard';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
@@ -305,6 +306,7 @@ const PerformanceCredentials: React.FC = () => {
  * - Accessibility compliance with ARIA labels and semantic HTML
  * - Reusable ServiceCard components for service offerings
  * - Professional performance hero section
+ * - Performance portfolio gallery with lazy loading
  * - Comprehensive service sections using new ServiceCard component
  * - Strong call-to-action elements
  */
@@ -338,6 +340,9 @@ export const Performance: React.FC<PerformancePageProps> = ({
 
             {/* Performance Services Section - Now using reusable ServiceCard components */}
             <PerformanceServices />
+
+            {/* Performance Portfolio Gallery - NEW: Issue #60 Implementation */}
+            <PerformanceGallery />
 
             {/* Performance Credentials Section */}
             <PerformanceCredentials />
