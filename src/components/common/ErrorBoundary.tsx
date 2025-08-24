@@ -1,6 +1,7 @@
 /**
  * Error Boundary Component for React Application
  * Provides production-ready error handling with fallback UI
+ * Enhanced with SPA routing support for GitHub Pages
  */
 
 import { Component, ErrorInfo, ReactNode } from 'react';
@@ -77,6 +78,12 @@ class ErrorBoundary extends Component<Props, State> {
     });
   };
 
+  private handleGoHome = (): void => {
+    // Use React Router navigation instead of window.location to avoid 404
+    window.history.pushState(null, '', '/');
+    window.location.reload();
+  };
+
   public render(): ReactNode {
     if (this.state.hasError) {
       // Custom fallback UI
@@ -84,7 +91,7 @@ class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
-      // Default fallback UI
+      // Default fallback UI with SPA routing support
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50">
           <div className="max-w-md mx-auto text-center p-6">
@@ -93,7 +100,7 @@ class ErrorBoundary extends Component<Props, State> {
               Oops! Something went wrong
             </h1>
             <p className="text-gray-600 mb-6">
-              We encountered an unexpected error. Please try refreshing the page or contact support if the problem persists.
+              We encountered an unexpected error. Please try refreshing the page or go back to the homepage.
             </p>
             
             <div className="space-y-3">
@@ -105,8 +112,15 @@ class ErrorBoundary extends Component<Props, State> {
               </button>
               
               <button
-                onClick={() => window.location.reload()}
+                onClick={this.handleGoHome}
                 className="w-full bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+              >
+                Go to Homepage
+              </button>
+              
+              <button
+                onClick={() => window.location.reload()}
+                className="w-full bg-gray-100 text-gray-600 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-semibold"
               >
                 Refresh Page
               </button>

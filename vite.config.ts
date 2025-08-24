@@ -19,11 +19,30 @@ export default defineConfig({
     outDir: "dist",
     assetsDir: "assets",
     sourcemap: false,
+    // GitHub Pages SPA optimization
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
   },
   test: {
     globals: true,
     environment: "jsdom",
     // Remove the setupFiles reference since the file doesn't exist
     // setupFiles: "./src/test/setup.ts",
+  },
+  // GitHub Pages preview configuration
+  preview: {
+    port: 4173,
+    host: true,
+    strictPort: true,
+  },
+  // Development server configuration
+  server: {
+    port: 5173,
+    host: true,
+    // Handle client-side routing in development
+    historyApiFallback: true,
   },
 });
