@@ -1,7 +1,7 @@
 /**
  * Routing utilities for GitHub Pages SPA compatibility
  * Handles URL construction and navigation for proper GitHub Pages deployment
- * Enhanced for page refresh 404 error prevention
+ * Enhanced for page refresh 404 error prevention and navigation links
  */
 
 /**

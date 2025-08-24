@@ -2,9 +2,9 @@ import { NavigationItem } from '@/types';
 
 // Navigation Configuration - organized for user journey: Performances → Collaboration → Teaching → About → Contact
 export const NAVIGATION_ITEMS: NavigationItem[] = [
-  { id: "performances", label: "Performances", href: "#performances" },
-  { id: "collaboration", label: "Collaboration", href: "#collaboration" },
-  { id: "hero", label: "Home", href: "#hero" },
+  { id: "home", label: "Home", href: "/" },
+  { id: "performance", label: "Performances", href: "/performance" },
+  { id: "collaboration", label: "Collaboration", href: "/collaboration" },
   { id: "about", label: "About", href: "#about" },
   { id: "approach", label: "Approach", href: "#approach" },
   { id: "lessons", label: "Lessons", href: "#lessons" },

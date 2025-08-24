@@ -16,15 +16,15 @@ type NavigationItemType = 'primary' | 'secondary' | 'tertiary';
 
 /**
  * Determines the navigation item type based on service hierarchy:
- * - Primary: Performances and Collaboration (highest revenue potential)
+ * - Primary: Home and main service pages (Performances, Collaboration)
  * - Secondary: Teaching services (Approach, Lessons)  
- * - Tertiary: Standard navigation (Home, About, Contact)
+ * - Tertiary: Standard navigation (About, Contact)
  */
 const getNavigationItemType = (itemId: string): NavigationItemType => {
-  if (itemId === 'performances' || itemId === 'collaboration') {
+  if (['home', 'performance', 'collaboration'].includes(itemId)) {
     return 'primary';
   }
-  if (itemId === 'approach' || itemId === 'lessons') {
+  if (['approach', 'lessons'].includes(itemId)) {
     return 'secondary';
   }
   return 'tertiary';
@@ -119,49 +119,61 @@ const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) =
 };
 
 /**
- * Scroll spy configuration to exclude route-based navigation items
+ * Determines navigation type and target based on href
  */
-const getScrollSpyItems = () => 
-  NAVIGATION_ITEMS
-    .filter(item => !['performances', 'collaboration'].includes(item.id)) // Exclude route-based items from scroll spy
-    .map(item => item.id);
+const getNavigationTarget = (item: typeof NAVIGATION_ITEMS[0]) => {
+  if (!item.href) {
+    return { type: 'scroll' as const, anchor: item.id };
+  }
+  
+  if (item.href.startsWith('/')) {
+    return { type: 'route' as const, path: item.href };
+  }
+  
+  if (item.href.startsWith('#')) {
+    return { type: 'scroll' as const, anchor: item.href.substring(1) };
+  }
+  
+  // External or other links
+  return { type: 'external' as const, url: item.href };
+};
 
 /**
  * Determines if a navigation item is currently active
  */
 const getIsItemActive = (item: typeof NAVIGATION_ITEMS[0], location: Location, activeSection: string): boolean => {
-  // For performances, check if we're on the /performance route
-  if (item.id === 'performances') {
-    return location.pathname === '/performance';
-  }
-  // For collaboration, check if we're on the /collaboration route
-  if (item.id === 'collaboration') {
-    return location.pathname === '/collaboration';
+  const target = getNavigationTarget(item);
+  
+  if (target.type === 'route') {
+    return location.pathname === target.path;
   }
   
-  // For other items, use scroll-based active section on home page
-  if (location.pathname === '/') {
-    return activeSection === item.id;
+  if (target.type === 'scroll') {
+    // For scroll targets, check if we're on the home page and the section is active
+    if (location.pathname === '/') {
+      return activeSection === target.anchor || activeSection === item.id;
+    }
   }
   
   return false;
 };
 
 /**
- * Gets the navigation target (route or anchor) for an item
+ * Scroll spy configuration for anchor navigation items
  */
-const getNavigationTarget = (item: typeof NAVIGATION_ITEMS[0]) => {
-  if (item.id === 'performances') {
-    return { type: 'route' as const, path: '/performance' };
-  }
-  if (item.id === 'collaboration') {
-    return { type: 'route' as const, path: '/collaboration' };
-  }
-  return { type: 'scroll' as const, anchor: item.id };
-};
+const getScrollSpyItems = () => 
+  NAVIGATION_ITEMS
+    .filter(item => {
+      const target = getNavigationTarget(item);
+      return target.type === 'scroll';
+    })
+    .map(item => {
+      const target = getNavigationTarget(item);
+      return target.type === 'scroll' ? target.anchor : item.id;
+    });
 
 /**
- * Memoized navigation item component for better performance with service hierarchy styling
+ * Memoized navigation item component
  */
 const NavigationItem = React.memo<{
   item: typeof NAVIGATION_ITEMS[0];
@@ -171,16 +183,17 @@ const NavigationItem = React.memo<{
   isMobile?: boolean;
   index?: number;
 }>(({ item, isActive, onClick, className, isMobile, index }) => {
-  const handleClick = useCallback(() => {
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
     onClick(item);
   }, [onClick, item]);
 
   const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      handleClick();
+      onClick(item);
     }
-  }, [handleClick]);
+  }, [onClick, item]);
 
   const itemType = useMemo(() => getNavigationItemType(item.id), [item.id]);
   const baseClassName = useMemo(() => 
@@ -189,6 +202,7 @@ const NavigationItem = React.memo<{
   );
 
   const target = getNavigationTarget(item);
+  
   const content = (
     <>
       {isMobile ? (
@@ -217,10 +231,12 @@ const NavigationItem = React.memo<{
     </>
   );
 
+  // Handle different navigation types
   if (target.type === 'route') {
     return (
       <Link
         to={target.path}
+        onClick={handleClick}
         className={`${baseClassName} ${className || ''}`}
         aria-current={isActive ? 'page' : undefined}
         onKeyDown={handleKeyDown}
@@ -235,6 +251,26 @@ const NavigationItem = React.memo<{
     );
   }
 
+  if (target.type === 'external') {
+    return (
+      <a
+        href={target.url}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={`${baseClassName} ${className || ''}`}
+        onKeyDown={handleKeyDown}
+        style={
+          isMobile && typeof index !== 'undefined'
+            ? { animationDelay: `${index * 50}ms` }
+            : undefined
+        }
+      >
+        {content}
+      </a>
+    );
+  }
+
+  // Default to button for scroll navigation and other actions
   return (
     <button
       onClick={handleClick}
@@ -275,26 +311,38 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
   const activeSection = propActiveSection || detectedActiveSection;
 
   /**
-   * Handle navigation clicks with route or scroll behavior
+   * Handle navigation clicks with intelligent routing
    */
   const handleNavClick = useCallback((item: typeof NAVIGATION_ITEMS[0]) => {
     setIsMenuOpen(false);
     
     const target = getNavigationTarget(item);
     
-    if (target.type === 'route') {
-      navigate(target.path);
-    } else {
-      // If we're not on the home page, navigate there first
-      if (location.pathname !== '/') {
-        navigate('/', { replace: true });
-        // Small delay to allow navigation to complete before scrolling
-        setTimeout(() => {
+    try {
+      if (target.type === 'route') {
+        // Direct route navigation
+        navigate(target.path);
+      } else if (target.type === 'scroll') {
+        // Scroll to anchor navigation
+        if (location.pathname !== '/') {
+          // If we're not on the home page, navigate there first
+          navigate('/', { replace: false });
+          // Small delay to allow navigation to complete before scrolling
+          setTimeout(() => {
+            smoothScrollTo(target.anchor, 80);
+          }, 100);
+        } else {
+          // If we're already on the home page, just scroll
           smoothScrollTo(target.anchor, 80);
-        }, 100);
-      } else {
-        smoothScrollTo(target.anchor, 80);
+        }
+      } else if (target.type === 'external') {
+        // External links are handled by the anchor element directly
+        return;
       }
+    } catch (error) {
+      console.error('[Navigation] Error navigating to:', item, error);
+      // Fallback to homepage
+      navigate('/');
     }
   }, [navigate, location.pathname, smoothScrollTo]);
 
@@ -344,6 +392,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       />
     )), [location, activeSection, handleNavClick]
   );
+  
   const mobileNavItems = useMemo(() => 
     NAVIGATION_ITEMS.map((item, index) => (
       <NavigationItem
@@ -356,6 +405,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       />
     )), [location, activeSection, handleNavClick]
   );
+
   return (
     <>
       {/* Skip to content link for accessibility */}
