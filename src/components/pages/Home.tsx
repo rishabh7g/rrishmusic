@@ -13,6 +13,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
 import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
+import BackgroundImageColumn from '@/components/ui/BackgroundImageColumn';
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
 /**
@@ -28,83 +29,6 @@ const SectionFallback: React.FC<{ sectionName: string }> = ({ sectionName }) => 
 );
 
 /**
- * Three-Column Service Card Component
- */
-const ServiceColumn: React.FC<{
-  title: string;
-  description: string;
-  icon: string;
-  href: string;
-  primary?: boolean;
-  children?: React.ReactNode;
-}> = ({ title, description, icon, href, primary = false, children }) => (
-  <div 
-    className={`
-      relative overflow-hidden rounded-xl transition-all duration-300 transform
-      ${primary 
-        ? 'bg-gradient-to-br from-brand-blue-primary to-brand-blue-secondary text-white shadow-xl hover:shadow-2xl hover:-translate-y-2' 
-        : 'bg-white border border-gray-200 hover:border-brand-blue-primary hover:shadow-lg hover:-translate-y-1'
-      }
-      group cursor-pointer
-    `}
-    onClick={() => window.location.href = href}
-    role="button"
-    tabIndex={0}
-    onKeyDown={(e) => {
-      if (e.key === 'Enter' || e.key === ' ') {
-        e.preventDefault();
-        window.location.href = href;
-      }
-    }}
-    aria-label={`Navigate to ${title} services`}
-  >
-    {/* Background Pattern for Primary Column */}
-    {primary && (
-      <div className="absolute inset-0 opacity-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-transparent via-white/20 to-transparent"></div>
-      </div>
-    )}
-    
-    <div className="relative p-8 h-full flex flex-col">
-      {/* Icon */}
-      <div className={`text-6xl mb-4 transition-transform duration-300 group-hover:scale-110 ${primary ? 'text-brand-yellow-accent' : 'text-brand-blue-primary'}`}>
-        {icon}
-      </div>
-      
-      {/* Title */}
-      <h3 className={`text-2xl md:text-3xl font-heading font-bold mb-4 ${primary ? 'text-white' : 'text-brand-blue-primary'}`}>
-        {title}
-      </h3>
-      
-      {/* Description */}
-      <p className={`text-lg mb-6 flex-grow ${primary ? 'text-white/90' : 'text-gray-600'}`}>
-        {description}
-      </p>
-      
-      {/* Call to Action */}
-      <div className={`inline-flex items-center font-semibold transition-all duration-300 ${
-        primary 
-          ? 'text-brand-yellow-accent group-hover:text-white' 
-          : 'text-brand-blue-primary group-hover:text-brand-blue-secondary'
-      }`}>
-        Explore {title}
-        <svg className="w-5 h-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" 
-             fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-        </svg>
-      </div>
-      
-      {/* Additional Content */}
-      {children && (
-        <div className="mt-6 pt-6 border-t border-current/20">
-          {children}
-        </div>
-      )}
-    </div>
-  </div>
-);
-
-/**
  * Props interface for Home page
  */
 interface HomePageProps {
@@ -115,14 +39,17 @@ interface HomePageProps {
 }
 
 /**
- * Home Page Component - THREE-COLUMN LAYOUT TRANSFORMATION
+ * Home Page Component - THREE-COLUMN LAYOUT WITH BACKGROUND IMAGES
  * 
  * Implements the new 3-column layout structure with:
  * - Responsive CSS Grid (3 columns on desktop, stacked on mobile)
+ * - Background image system with overlays and optimization
  * - Equal-width columns with proper spacing
  * - Hover states and smooth transitions
  * - Service hierarchy: Performance (primary), Teaching, Collaboration
  * - Mobile-first responsive design principles
+ * - Lazy loading for performance optimization
+ * - Accessibility support with proper contrast
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
   // Load testimonials for homepage display
@@ -174,7 +101,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* THREE-COLUMN LAYOUT - Main Service Navigation */}
+        {/* THREE-COLUMN LAYOUT WITH BACKGROUND IMAGES - Main Service Navigation */}
         <section id="three-column-services" className="py-16 bg-gradient-to-b from-gray-50 to-white">
           <div className="container-custom">
             {/* Section Header */}
@@ -188,103 +115,112 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
               </p>
             </div>
 
-            {/* Three-Column Grid Layout */}
+            {/* Three-Column Grid Layout with Background Images */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
-              {/* Column 1: Performance Services - PRIMARY */}
-              <ServiceColumn
+              
+              {/* Column 1: Performance Services - PRIMARY with Background */}
+              <BackgroundImageColumn
                 title="Performances"
                 description="Professional live music for venues, events, and celebrations. Authentic blues guitar with engaging stage presence that creates memorable experiences for any audience."
                 icon="🎸"
                 href="/performance"
+                service="performance"
                 primary={true}
+                lazy={true}
               >
                 {/* Performance highlights */}
-                <div className="space-y-2 text-sm">
+                <div className="space-y-3 text-sm">
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Venues & Events
+                    <span>Venues & Events</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Private Functions
+                    <span>Private Functions</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Corporate Entertainment
+                    <span>Corporate Entertainment</span>
                   </div>
                 </div>
-              </ServiceColumn>
+              </BackgroundImageColumn>
 
-              {/* Column 2: Teaching Services */}
-              <ServiceColumn
+              {/* Column 2: Teaching Services with Background */}
+              <BackgroundImageColumn
                 title="Teaching"
                 description="Personalized guitar instruction focused on blues techniques, improvisation, and musical expression. Learn from a professional performer with proven teaching methods."
                 icon="🎓"
                 href="/teaching"
+                service="teaching"
+                primary={false}
+                lazy={true}
               >
                 {/* Teaching highlights */}
-                <div className="space-y-2 text-sm opacity-75">
+                <div className="space-y-3 text-sm text-white/90">
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    One-on-One Lessons
+                    <span>One-on-One Lessons</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Blues Techniques
+                    <span>Blues Techniques</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Improvisation Skills
+                    <span>Improvisation Skills</span>
                   </div>
                 </div>
-              </ServiceColumn>
+              </BackgroundImageColumn>
 
-              {/* Column 3: Collaboration Services */}
-              <ServiceColumn
+              {/* Column 3: Collaboration Services with Background */}
+              <BackgroundImageColumn
                 title="Collaboration"
                 description="Creative musical partnerships for recordings, compositions, and artistic projects. Bringing blues guitar expertise to enhance your musical vision."
                 icon="🤝"
                 href="/collaboration"
+                service="collaboration"
+                primary={false}
+                lazy={true}
               >
                 {/* Collaboration highlights */}
-                <div className="space-y-2 text-sm opacity-75">
+                <div className="space-y-3 text-sm text-white/90">
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Studio Sessions
+                    <span>Studio Sessions</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Composition Support
+                    <span>Composition Support</span>
                   </div>
                   <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
                       <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                     </svg>
-                    Creative Projects
+                    <span>Creative Projects</span>
                   </div>
                 </div>
-              </ServiceColumn>
+              </BackgroundImageColumn>
             </div>
 
             {/* Call-to-Action Section */}
-            <div className="text-center mt-12">
-              <p className="text-lg text-gray-600 mb-6">
+            <div className="text-center mt-16">
+              <p className="text-lg text-gray-600 mb-8">
                 Ready to enhance your musical experience?
               </p>
               <a
@@ -294,7 +230,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
                   transform hover:-translate-y-1"
               >
                 Get Started Today
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </a>
@@ -444,7 +380,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
                   transform hover:-translate-y-1"
               >
                 View Performance Services
-                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
               </a>
