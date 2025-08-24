@@ -57,45 +57,45 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
       
       <div className={`collaboration-page min-h-screen bg-white ${className}`}>
         <ErrorBoundary>
-        {/* Hero Section - Collaboration focus with creative messaging */}
-        <CollaborationHero />
-        
-        {/* Portfolio Section - Instagram collaboration content integration */}
-        <CollaborationPortfolio />
-        
-        {/* Cross-Service Suggestion - Teaching Skills */}
-        <section className="py-8">
-          <div className="container-custom">
-            <CrossServiceSuggestion
-              fromService="collaboration"
-              pageSection="requirements"
-              placement="inline"
-              timing="after-engagement"
-              minTimeOnPage={25}
-              minScrollPercentage={40}
-              className="mb-8"
-            />
-          </div>
-        </section>
-        
-        {/* Process Section - Brief → Scope → Execution workflow */}
-        <CollaborationProcess />
-        
-        {/* Cross-Service Suggestion - Performance Showcase */}
-        <section className="py-8">
-          <div className="container-custom">
-            <CrossServiceSuggestion
-              fromService="collaboration"
-              pageSection="project-examples"
-              placement="banner"
-              timing="after-engagement"
-              minTimeOnPage={40}
-              minScrollPercentage={60}
-              className="max-w-4xl mx-auto"
-            />
-          </div>
-        </section>
-        
+          {/* Hero Section - Collaboration focus with creative messaging */}
+          <CollaborationHero />
+          
+          {/* Portfolio Section - Instagram collaboration content integration */}
+          <CollaborationPortfolio />
+          
+          {/* Cross-Service Suggestion - Teaching Skills */}
+          <section className="py-8">
+            <div className="container-custom">
+              <CrossServiceSuggestion
+                fromService="collaboration"
+                pageSection="requirements"
+                placement="inline"
+                timing="after-engagement"
+                minTimeOnPage={25}
+                minScrollPercentage={40}
+                className="mb-8"
+              />
+            </div>
+          </section>
+          
+          {/* Process Section - Brief → Scope → Execution workflow */}
+          <CollaborationProcess />
+          
+          {/* Cross-Service Suggestion - Performance Showcase */}
+          <section className="py-8">
+            <div className="container-custom">
+              <CrossServiceSuggestion
+                fromService="collaboration"
+                pageSection="project-examples"
+                placement="banner"
+                timing="after-engagement"
+                minTimeOnPage={40}
+                minScrollPercentage={60}
+                className="max-w-4xl mx-auto"
+              />
+            </div>
+          </section>
+          
           {/* CTA Section - Start Creative Project with appropriate routing */}
           <CollaborationCTA />
         </ErrorBoundary>

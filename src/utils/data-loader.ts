@@ -88,7 +88,7 @@ export interface UIConfig {
  */
 export class DataLoader {
   private static instance: DataLoader;
-  private dataCache: Map<string, any> = new Map();
+  private dataCache: Map<string, unknown> = new Map();
 
   private constructor() {}
 
@@ -154,7 +154,7 @@ export class DataLoader {
    * Get specific data by key with fallback
    */
   public getData<T>(key: string, fallback: T): T {
-    const methodMap: Record<string, () => any> = {
+    const methodMap: Record<string, () => unknown> = {
       'collaboration': () => this.getCollaborationData(),
       'teaching': () => this.getTeachingData(),
       'performanceGallery': () => this.getPerformanceGalleryData(),
@@ -201,7 +201,7 @@ export const getPerformanceGalleryData = () => dataLoader.getPerformanceGalleryD
 export const getUIConfig = () => dataLoader.getUIConfig();
 
 // Export validation helpers
-export const validateCollaborationProject = (project: any): project is CollaborationProject => {
+export const validateCollaborationProject = (project: unknown): project is CollaborationProject => {
   return (
     typeof project === 'object' &&
     project !== null &&
@@ -213,7 +213,7 @@ export const validateCollaborationProject = (project: any): project is Collabora
   );
 };
 
-export const validateTeachingPackage = (pkg: any): pkg is TeachingPackage => {
+export const validateTeachingPackage = (pkg: unknown): pkg is TeachingPackage => {
   return (
     typeof pkg === 'object' &&
     pkg !== null &&
