@@ -51,7 +51,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
         ogType="website"
       />
       
-      <div className={`min-h-screen ${className}`}>
+      <main id="main-content" className={`min-h-screen ${className}`}>
         {/* Hero Section */}
         <section id="hero" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="Hero" />}>
@@ -155,7 +155,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
             </LazySection>
           </ErrorBoundary>
         </section>
-      </div>
+      </main>
     </>
   );
 };

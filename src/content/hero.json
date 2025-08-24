@@ -1,8 +1,29 @@
 {
-  "title": "Hi, I'm Rrish.",
-  "subtitle": "I'm a musician who improvises on blues and different music genres. I help people learn music at every level and improve their improvisation skills.",
-  "ctaText": "Start Your Musical Journey",
-  "ctaLink": "#lessons",
+  "title": "Melbourne Musician",
+  "subtitle": "Performance | Teaching | Collaboration",
+  "description": "I'm Rrish, a versatile Melbourne musician specializing in blues and improvisation. Whether you need a live performer, music instructor, or collaborative partner, I bring passion and expertise to every musical experience.",
+  "ctaText": "Explore My Services",
+  "primaryCta": {
+    "text": "View Performances",
+    "link": "/performance",
+    "type": "primary"
+  },
+  "secondaryCtas": [
+    {
+      "text": "Learn Music",
+      "link": "#lessons",
+      "type": "secondary"
+    },
+    {
+      "text": "Collaborate",
+      "link": "/collaboration",
+      "type": "tertiary"
+    }
+  ],
   "instagramHandle": "@rrishmusic",
-  "instagramUrl": "https://instagram.com/rrishmusic"
+  "instagramUrl": "https://instagram.com/rrishmusic",
+  "socialProof": {
+    "highlight": "Professional Melbourne Musician",
+    "description": "Performing at venues across Melbourne while teaching students worldwide"
+  }
 }
