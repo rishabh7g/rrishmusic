@@ -1,8 +1,23 @@
 import React from 'react'
-import { describe, it, expect, vi } from 'vitest'
+import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import '@testing-library/jest-dom'
 import App from './App'
+
+// Mock window.matchMedia for device detection
+Object.defineProperty(window, 'matchMedia', {
+  writable: true,
+  value: vi.fn().mockImplementation(query => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  })),
+});
 
 // Mock all components to prevent complex rendering issues
 vi.mock('@/components/sections', () => ({
@@ -15,8 +30,14 @@ vi.mock('@/components/sections', () => ({
   ServicesHierarchy: () => <div data-testid="services-hierarchy-section">Services Hierarchy</div>,
 }))
 
-vi.mock('@/components/layout/Navigation', () => ({
-  Navigation: () => <nav data-testid="navigation">Navigation</nav>,
+// Mock the ContextAwareHeader component
+vi.mock('@/components/ContextAwareHeader', () => ({
+  ContextAwareHeader: () => <nav data-testid="navigation">Context Aware Navigation</nav>,
+}))
+
+// Mock the Teaching page component
+vi.mock('@/components/pages/Teaching', () => ({
+  Teaching: () => <div data-testid="teaching-page">Teaching Page</div>,
 }))
 
 // Mock the actual Home page component structure for testing
@@ -60,9 +81,50 @@ vi.mock('@/components/ui/CrossServiceSuggestion', () => ({
 
 vi.mock('@/hooks/useScrollSpy', () => ({
   useScrollSpy: () => 'hero',
+  useSmoothScroll: () => ({ smoothScrollTo: vi.fn() }),
+}))
+
+vi.mock('@/hooks/useDeviceDetection', () => ({
+  useDeviceDetection: () => ({
+    isMobile: false,
+    isTablet: false,
+    isDesktop: true,
+    hasHover: true,
+    hasTouch: false,
+    screenSize: 'desktop',
+    orientation: 'landscape'
+  }),
+}))
+
+vi.mock('@/hooks/useServiceContext', () => ({
+  useServiceContext: () => ({
+    currentService: 'home',
+    services: {
+      home: {
+        service: 'home',
+        name: 'Rrish Music',
+        primaryColor: 'var(--brand-blue-primary)',
+        secondaryColor: 'var(--brand-yellow-accent)',
+        navigationItems: [],
+        primaryCTA: { text: 'Explore Services', href: '#services', type: 'anchor', variant: 'primary' },
+        secondaryCTA: { text: 'Contact', href: '#contact', type: 'anchor', variant: 'outline' }
+      }
+    },
+    isTransitioning: false,
+    getCurrentNavigation: () => [],
+    getCurrentPrimaryCTA: () => ({ text: 'Explore Services', href: '#services', type: 'anchor', variant: 'primary' }),
+    getCurrentSecondaryCTA: () => ({ text: 'Contact', href: '#contact', type: 'anchor', variant: 'outline' }),
+    setService: vi.fn(),
+    getServiceData: vi.fn(),
+    isServiceActive: vi.fn(),
+  }),
 }))
 
 describe('App - Breakage Detection Tests', () => {
+  beforeEach(() => {
+    vi.clearAllMocks()
+  })
+
   it('renders without crashing', () => {
     expect(() => render(<App />)).not.toThrow()
   })
