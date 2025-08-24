@@ -1,14 +1,17 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { useSectionContent, useTestimonials } from "@/hooks/useContent";
+import { useSectionContent, useTestimonials, useStats } from "@/hooks/useContent";
+import type { Testimonial, CommunityFeature } from "@/types/content";
 
 export const Community: React.FC = () => {
-  const { data: community, loading } = useSectionContent("community");
-  const { featured, stats } = useTestimonials({ 
-    featured: true, 
-    verified: true, 
-    limit: 3 
-  });
+  const { data: community, loading, error } = useSectionContent("community");
+  const { data: testimonialsData } = useTestimonials();
+  const { communityStats } = useStats();
+
+  // Filter featured and verified testimonials if we have testimonials data
+  const featuredTestimonials = testimonialsData?.testimonials?.filter((testimonial: Testimonial) => 
+    testimonial.featured && testimonial.verified
+  ).slice(0, 3) || [];
 
   if (loading) {
     return (
@@ -23,12 +26,43 @@ export const Community: React.FC = () => {
     );
   }
 
-  if (!community) {
+  if (error || !community) {
     return (
       <div className="section bg-neutral-gray-light">
         <div className="container-custom">
-          <div className="error-container">
-            <p className="error-message">Unable to load community content.</p>
+          <div className="text-center py-16">
+            <h2 className="text-4xl font-heading font-bold text-neutral-charcoal mb-6">
+              Join Our Musical Community
+            </h2>
+            <p className="text-xl text-neutral-charcoal/80 mb-8">
+              Connect with fellow learners and share in the joy of musical discovery.
+            </p>
+            <motion.a
+              href="https://instagram.com/rrishmusic"
+              target="_blank"
+              rel="noopener noreferrer"
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="inline-flex items-center space-x-2 bg-brand-blue-primary text-white px-8 py-3 rounded-lg font-medium hover:bg-brand-blue-secondary transition-colors duration-300"
+              aria-label="Follow RrishMusic on Instagram (opens in new tab)"
+            >
+              <span>📸</span>
+              <span>Follow @rrishmusic</span>
+              <svg 
+                className="w-4 h-4" 
+                fill="none" 
+                stroke="currentColor" 
+                viewBox="0 0 24 24"
+                aria-hidden="true"
+              >
+                <path 
+                  strokeLinecap="round" 
+                  strokeLinejoin="round" 
+                  strokeWidth={2} 
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" 
+                />
+              </svg>
+            </motion.a>
           </div>
         </div>
       </div>
@@ -55,62 +89,60 @@ export const Community: React.FC = () => {
             </p>
             
             {/* Community Stats */}
-            {community.communityStats && (
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto">
-                <motion.div 
-                  className="bg-white rounded-lg p-4 shadow-sm"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="text-3xl font-bold text-brand-blue-primary">
-                    {community.communityStats.totalStudents}
-                  </div>
-                  <div className="text-sm text-neutral-charcoal/70">
-                    Total Students
-                  </div>
-                </motion.div>
-                <motion.div 
-                  className="bg-white rounded-lg p-4 shadow-sm"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="text-3xl font-bold text-brand-blue-primary">
-                    {community.communityStats.activeMembers}
-                  </div>
-                  <div className="text-sm text-neutral-charcoal/70">
-                    Active Members
-                  </div>
-                </motion.div>
-                <motion.div 
-                  className="bg-white rounded-lg p-4 shadow-sm"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="text-3xl font-bold text-brand-blue-primary">
-                    {community.communityStats.successStories}
-                  </div>
-                  <div className="text-sm text-neutral-charcoal/70">
-                    Success Stories
-                  </div>
-                </motion.div>
-                <motion.div 
-                  className="bg-white rounded-lg p-4 shadow-sm"
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ duration: 0.2 }}
-                >
-                  <div className="text-3xl font-bold text-brand-blue-primary">
-                    {stats?.averageRating || '5.0'}
-                  </div>
-                  <div className="text-sm text-neutral-charcoal/70">
-                    Average Rating
-                  </div>
-                </motion.div>
-              </div>
-            )}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-12 max-w-4xl mx-auto">
+              <motion.div 
+                className="bg-white rounded-lg p-4 shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-3xl font-bold text-brand-blue-primary">
+                  {communityStats.totalStudents}+
+                </div>
+                <div className="text-sm text-neutral-charcoal/70">
+                  Total Students
+                </div>
+              </motion.div>
+              <motion.div 
+                className="bg-white rounded-lg p-4 shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-3xl font-bold text-brand-blue-primary">
+                  {communityStats.activeMembers}
+                </div>
+                <div className="text-sm text-neutral-charcoal/70">
+                  Active Members
+                </div>
+              </motion.div>
+              <motion.div 
+                className="bg-white rounded-lg p-4 shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-3xl font-bold text-brand-blue-primary">
+                  {communityStats.successStories}
+                </div>
+                <div className="text-sm text-neutral-charcoal/70">
+                  Success Stories
+                </div>
+              </motion.div>
+              <motion.div 
+                className="bg-white rounded-lg p-4 shadow-sm"
+                whileHover={{ scale: 1.02 }}
+                transition={{ duration: 0.2 }}
+              >
+                <div className="text-3xl font-bold text-brand-blue-primary">
+                  {communityStats.averageRating}
+                </div>
+                <div className="text-sm text-neutral-charcoal/70">
+                  Average Rating
+                </div>
+              </motion.div>
+            </div>
           </motion.div>
 
           {/* Featured Testimonials */}
-          {featured.length > 0 && (
+          {featuredTestimonials.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
@@ -123,7 +155,7 @@ export const Community: React.FC = () => {
               </h3>
               
               <div className="grid md:grid-cols-3 gap-8">
-                {featured.map((testimonial, index) => (
+                {featuredTestimonials.map((testimonial: Testimonial, index: number) => (
                   <motion.div
                     key={testimonial.id}
                     initial={{ opacity: 0, y: 30 }}
@@ -167,8 +199,8 @@ export const Community: React.FC = () => {
                         {testimonial.name}
                       </div>
                       <div className="text-xs text-neutral-charcoal/60 flex items-center space-x-2">
-                        {testimonial.level && (
-                          <span className="capitalize">{testimonial.level}</span>
+                        {testimonial.serviceSubType && (
+                          <span className="capitalize">{testimonial.serviceSubType}</span>
                         )}
                         {testimonial.location && (
                           <>
@@ -192,7 +224,7 @@ export const Community: React.FC = () => {
             transition={{ duration: 0.6, delay: 0.3 }}
             className="grid md:grid-cols-2 gap-8 mb-12"
           >
-            {community.features.map((feature, index) => (
+            {community.features.map((feature: CommunityFeature, index: number) => (
               <motion.div
                 key={feature.id}
                 initial={{ opacity: 0, x: index % 2 === 0 ? -30 : 30 }}
@@ -216,7 +248,7 @@ export const Community: React.FC = () => {
                     </p>
                     {feature.benefits && (
                       <ul className="space-y-1">
-                        {feature.benefits.map((benefit, idx) => (
+                        {feature.benefits.map((benefit: string, idx: number) => (
                           <li key={idx} className="text-sm text-neutral-charcoal/70 flex items-center">
                             <span className="text-brand-orange-warm mr-2">✓</span>
                             {benefit}
