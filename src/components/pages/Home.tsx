@@ -13,7 +13,7 @@ import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
 import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
-import BackgroundImageColumn from '@/components/ui/BackgroundImageColumn';
+import EnhancedServiceColumn from '@/components/ui/EnhancedServiceColumn';
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
 /**
@@ -39,17 +39,18 @@ interface HomePageProps {
 }
 
 /**
- * Home Page Component - THREE-COLUMN LAYOUT WITH BACKGROUND IMAGES
+ * Home Page Component - THREE-COLUMN LAYOUT WITH INTEGRATED SERVICE CONTENT
  * 
  * Implements the new 3-column layout structure with:
  * - Responsive CSS Grid (3 columns on desktop, stacked on mobile)
  * - Background image system with overlays and optimization
- * - Equal-width columns with proper spacing
- * - Hover states and smooth transitions
+ * - Dynamic service-specific content integration
+ * - Real-time statistics and testimonials
  * - Service hierarchy: Performance (primary), Teaching, Collaboration
  * - Mobile-first responsive design principles
  * - Lazy loading for performance optimization
  * - Accessibility support with proper contrast
+ * - Error handling and loading states
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
   // Load testimonials for homepage display
@@ -101,7 +102,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* THREE-COLUMN LAYOUT WITH BACKGROUND IMAGES - Main Service Navigation */}
+        {/* THREE-COLUMN LAYOUT WITH INTEGRATED SERVICE CONTENT - Main Service Navigation */}
         <section id="three-column-services" className="py-16 bg-gradient-to-b from-gray-50 to-white">
           <div className="container-custom">
             {/* Section Header */}
@@ -115,107 +116,32 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
               </p>
             </div>
 
-            {/* Three-Column Grid Layout with Background Images */}
+            {/* Three-Column Grid Layout with Integrated Service Content */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
               
-              {/* Column 1: Performance Services - PRIMARY with Background */}
-              <BackgroundImageColumn
-                title="Performances"
-                description="Professional live music for venues, events, and celebrations. Authentic blues guitar with engaging stage presence that creates memorable experiences for any audience."
-                icon="🎸"
-                href="/performance"
+              {/* Column 1: Performance Services - PRIMARY with Dynamic Content */}
+              <EnhancedServiceColumn
                 service="performance"
                 primary={true}
                 lazy={true}
-              >
-                {/* Performance highlights */}
-                <div className="space-y-3 text-sm">
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Venues & Events</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Private Functions</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Corporate Entertainment</span>
-                  </div>
-                </div>
-              </BackgroundImageColumn>
+                showDetailedContent={true}
+              />
 
-              {/* Column 2: Teaching Services with Background */}
-              <BackgroundImageColumn
-                title="Teaching"
-                description="Personalized guitar instruction focused on blues techniques, improvisation, and musical expression. Learn from a professional performer with proven teaching methods."
-                icon="🎓"
-                href="/teaching"
+              {/* Column 2: Teaching Services with Dynamic Content */}
+              <EnhancedServiceColumn
                 service="teaching"
                 primary={false}
                 lazy={true}
-              >
-                {/* Teaching highlights */}
-                <div className="space-y-3 text-sm text-white/90">
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>One-on-One Lessons</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Blues Techniques</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Improvisation Skills</span>
-                  </div>
-                </div>
-              </BackgroundImageColumn>
+                showDetailedContent={true}
+              />
 
-              {/* Column 3: Collaboration Services with Background */}
-              <BackgroundImageColumn
-                title="Collaboration"
-                description="Creative musical partnerships for recordings, compositions, and artistic projects. Bringing blues guitar expertise to enhance your musical vision."
-                icon="🤝"
-                href="/collaboration"
+              {/* Column 3: Collaboration Services with Dynamic Content */}
+              <EnhancedServiceColumn
                 service="collaboration"
                 primary={false}
                 lazy={true}
-              >
-                {/* Collaboration highlights */}
-                <div className="space-y-3 text-sm text-white/90">
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Studio Sessions</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Composition Support</span>
-                  </div>
-                  <div className="flex items-center">
-                    <svg className="w-4 h-4 mr-3" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                    <span>Creative Projects</span>
-                  </div>
-                </div>
-              </BackgroundImageColumn>
+                showDetailedContent={true}
+              />
             </div>
 
             {/* Call-to-Action Section */}
