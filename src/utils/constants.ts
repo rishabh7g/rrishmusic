@@ -1,13 +1,13 @@
 import { NavigationItem } from '@/types';
 
-// Navigation Configuration - organized for user journey: Performances → Collaboration → Teaching → About → Contact
+// Navigation Configuration - Optimized order for better UX flow and service hierarchy
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   { id: "home", label: "Home", href: "/" },
+  { id: "lessons", label: "Lessons", href: "#lessons" },
   { id: "performance", label: "Performances", href: "/performance" },
   { id: "collaboration", label: "Collaboration", href: "/collaboration" },
   { id: "about", label: "About", href: "#about" },
   { id: "approach", label: "Approach", href: "#approach" },
-  { id: "lessons", label: "Lessons", href: "#lessons" },
   { id: "contact", label: "Contact", href: "#contact" },
 ];
 
