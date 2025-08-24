@@ -193,5 +193,125 @@
     "Regular performances across Melbourne venues",
     "Specialized in blues and acoustic genres",
     "Professional audio equipment and setup"
-  ]
+  ],
+  "testimonials": [
+    {
+      "id": "sarah-m-wedding",
+      "name": "Sarah M.",
+      "text": "Rrish made our wedding ceremony absolutely magical. His acoustic performance during the ceremony was beautiful and his energy during the reception had everyone dancing. Professional, talented, and such a lovely person to work with.",
+      "rating": 5,
+      "date": "2024-11-15",
+      "service": "wedding",
+      "event": "Wedding Ceremony & Reception",
+      "location": "Melbourne, VIC",
+      "featured": true,
+      "verified": true
+    },
+    {
+      "id": "james-corporate",
+      "name": "James L.",
+      "text": "Hired Rrish for our corporate networking event and he was fantastic. The music was perfect for the atmosphere we wanted to create - professional but warm and welcoming. Many attendees commented on how great the music was.",
+      "rating": 5,
+      "date": "2024-10-22",
+      "service": "corporate",
+      "event": "Corporate Networking Event",
+      "location": "Melbourne CBD",
+      "featured": true,
+      "verified": true
+    },
+    {
+      "id": "restaurant-owner-maria",
+      "name": "Maria K.",
+      "text": "Rrish has been performing at our restaurant weekly for over 6 months now. Our customers absolutely love him and we've had so many compliments about the live music. He's reliable, professional, and brings great energy to our venue.",
+      "rating": 5,
+      "date": "2024-09-10",
+      "service": "venue",
+      "event": "Weekly Restaurant Performances",
+      "location": "Carlton, VIC",
+      "featured": true,
+      "verified": true
+    }
+  ],
+  "pricing": {
+    "title": "Performance Packages",
+    "subtitle": "Transparent pricing for professional live music services",
+    "description": "Choose the perfect package for your event. All packages include professional sound equipment, setup, and customized setlists.",
+    "packages": [
+      {
+        "id": "acoustic-duo",
+        "name": "Acoustic Duo",
+        "description": "Perfect for intimate venues, ceremonies, and background music",
+        "price": "$400",
+        "duration": "2 hours",
+        "features": [
+          "Acoustic guitar and vocals",
+          "Professional sound system",
+          "Custom setlist consultation",
+          "Setup and breakdown included",
+          "Background and featured performance"
+        ],
+        "popular": false,
+        "bestFor": "Weddings, Corporate Events, Restaurants"
+      },
+      {
+        "id": "full-performance",
+        "name": "Full Performance",
+        "description": "Complete live music experience with electric and acoustic options",
+        "price": "$600",
+        "duration": "3 hours",
+        "features": [
+          "Electric and acoustic guitar options",
+          "Full PA system and microphones",
+          "Lighting consultation available",
+          "Custom setlist and requests",
+          "MC services if needed",
+          "Extended break coverage"
+        ],
+        "popular": true,
+        "bestFor": "Receptions, Private Parties, Venue Performances"
+      },
+      {
+        "id": "premium-package",
+        "name": "Premium Package",
+        "description": "Complete entertainment solution with full production support",
+        "price": "$900",
+        "duration": "4+ hours",
+        "features": [
+          "Full band coordination available",
+          "Professional lighting setup",
+          "Multiple performance areas",
+          "DJ services during breaks",
+          "Special song arrangements",
+          "Full event music coordination"
+        ],
+        "popular": false,
+        "bestFor": "Large Events, Festivals, Full Wedding Coverage"
+      }
+    ],
+    "additionalServices": [
+      {
+        "name": "Travel (Outside Melbourne Metro)",
+        "price": "$0.85/km"
+      },
+      {
+        "name": "Additional Hour",
+        "price": "$150"
+      },
+      {
+        "name": "Sound System Only",
+        "price": "$200"
+      },
+      {
+        "name": "Custom Song Learning",
+        "price": "$50 per song"
+      }
+    ],
+    "notes": [
+      "All prices are base rates for Melbourne metro area",
+      "Travel charges apply for venues outside 20km from Melbourne CBD",
+      "Package pricing includes GST",
+      "Deposits required for booking confirmation",
+      "Flexible payment terms available"
+    ]
+  }
 }
