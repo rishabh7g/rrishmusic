@@ -5,6 +5,8 @@ import { SEOHead } from '@/components/common/SEOHead';
 import { usePageSEO } from '@/hooks/usePageSEO';
 import { useSectionContent } from '@/hooks/useContent';
 import PerformanceHero from '@/components/sections/PerformanceHero';
+import { ServiceCard } from '@/components/ui/ServiceCard';
+import type { ServiceCardData } from '@/components/ui/ServiceCard';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
 
 interface PerformancePageProps {
@@ -46,7 +48,7 @@ const PerformanceLoadingFallback: React.FC = () => (
 );
 
 /**
- * Enhanced Performance Services Component
+ * Enhanced Performance Services Component with Reusable ServiceCard Components
  */
 const PerformanceServices: React.FC = () => {
   const { data: performanceData, loading } = useSectionContent('performance');
@@ -72,38 +74,77 @@ const PerformanceServices: React.FC = () => {
     );
   }
 
-  const services = performanceData?.services || {
-    venues: {
-      title: "Venue Performances",
-      description: "Regular performances at cafes, restaurants, and live music venues featuring guitar and blues repertoire.",
-      highlights: [
-        "Weekly residencies available",
-        "Acoustic and electric setups",
-        "Crowd-engaging performances",
-        "Professional reliability"
-      ]
+  // Transform performance data to ServiceCard format
+  const services: ServiceCardData[] = performanceData?.services ? [
+    // Wedding Bands
+    {
+      id: performanceData.services.wedding_bands?.id || 'wedding_bands',
+      title: performanceData.services.wedding_bands?.title || 'Wedding Bands',
+      description: performanceData.services.wedding_bands?.description || 'Professional wedding entertainment services',
+      highlights: performanceData.services.wedding_bands?.highlights || [],
+      icon: performanceData.services.wedding_bands?.icon || '💐',
+      colorScheme: (performanceData.services.wedding_bands?.colorScheme as 'blue' | 'orange' | 'yellow') || 'orange'
     },
-    events: {
-      title: "Special Events",
-      description: "Professional entertainment for weddings, corporate events, and private celebrations with customized setlists.",
-      highlights: [
-        "Wedding ceremony & reception music",
-        "Corporate event entertainment",
-        "Private party performances",
-        "Customized song selections"
-      ]
+    // Corporate Events
+    {
+      id: performanceData.services.corporate_events?.id || 'corporate_events',
+      title: performanceData.services.corporate_events?.title || 'Corporate Events',
+      description: performanceData.services.corporate_events?.description || 'Professional corporate event entertainment',
+      highlights: performanceData.services.corporate_events?.highlights || [],
+      icon: performanceData.services.corporate_events?.icon || '🏢',
+      colorScheme: (performanceData.services.corporate_events?.colorScheme as 'blue' | 'orange' | 'yellow') || 'blue'
     },
-    sessions: {
-      title: "Session Work",
-      description: "Studio session guitar work and collaboration with other musicians for recordings and live performances.",
-      highlights: [
-        "Studio recording sessions",
-        "Live performance backing",
-        "Musical collaboration",
-        "Genre versatility"
-      ]
+    // Venue Performances
+    {
+      id: performanceData.services.venue_performances?.id || 'venue_performances',
+      title: performanceData.services.venue_performances?.title || 'Venue Performances',
+      description: performanceData.services.venue_performances?.description || 'Regular venue performances and live music',
+      highlights: performanceData.services.venue_performances?.highlights || [],
+      icon: performanceData.services.venue_performances?.icon || '🎸',
+      colorScheme: (performanceData.services.venue_performances?.colorScheme as 'blue' | 'orange' | 'yellow') || 'yellow'
     }
-  };
+  ] : [
+    // Fallback data if no services in content
+    {
+      id: 'wedding_bands',
+      title: 'Wedding Bands',
+      description: 'Create unforgettable moments for your special day with professional live music for wedding ceremonies, receptions, and celebrations.',
+      highlights: [
+        'Wedding ceremony acoustic music',
+        'Reception entertainment and dancing',
+        'First dance and special moment songs',
+        'Custom song requests and dedications'
+      ],
+      icon: '💐',
+      colorScheme: 'orange' as const
+    },
+    {
+      id: 'corporate_events',
+      title: 'Corporate Events',
+      description: 'Enhance your business functions, networking events, conferences, and corporate celebrations with sophisticated live music.',
+      highlights: [
+        'Business function entertainment',
+        'Networking event background music',
+        'Conference opening and closing music',
+        'Professional presentation and setup'
+      ],
+      icon: '🏢',
+      colorScheme: 'blue' as const
+    },
+    {
+      id: 'venue_performances',
+      title: 'Venue Performances',
+      description: 'Regular live music performances for restaurants, bars, clubs, and private venues.',
+      highlights: [
+        'Restaurant and café performances',
+        'Bar and club live music',
+        'Weekly residency opportunities',
+        'Crowd-engaging interactive performances'
+      ],
+      icon: '🎸',
+      colorScheme: 'yellow' as const
+    }
+  ];
 
   return (
     <section 
@@ -118,6 +159,7 @@ const PerformanceServices: React.FC = () => {
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
         >
+          {/* Section Header */}
           <motion.div
             className="text-center mb-16"
             variants={fadeInUp}
@@ -126,92 +168,61 @@ const PerformanceServices: React.FC = () => {
               id="services-title"
               className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
             >
-              Performance Services
+              Performance Service Offerings
             </h2>
             <p className="text-lg sm:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
-              Professional music services tailored to create the perfect atmosphere for your venue or event
+              Professional music services tailored to create the perfect atmosphere for your venue or event. From intimate weddings to corporate gatherings and regular venue performances.
             </p>
           </motion.div>
 
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            {/* Venue Performances */}
-            <motion.div
-              className="bg-gradient-to-br from-brand-blue-primary/5 to-brand-blue-primary/10 rounded-xl p-8 border border-brand-blue-primary/20 hover:shadow-xl transition-shadow duration-300"
-              variants={fadeInUp}
-            >
-              <div className="mb-6">
-                <div className="w-12 h-12 bg-brand-blue-primary/20 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl" role="img" aria-label="Guitar">🎸</span>
-                </div>
-                <h3 className="text-2xl font-heading font-semibold text-neutral-charcoal mb-4">
-                  {services.venues.title}
-                </h3>
-                <p className="text-neutral-charcoal/80 leading-relaxed mb-6">
-                  {services.venues.description}
-                </p>
-              </div>
-              <ul className="space-y-2">
-                {services.venues.highlights.map((highlight, index) => (
-                  <li key={index} className="flex items-start gap-3 text-neutral-charcoal/80">
-                    <span className="text-brand-blue-primary mt-1 flex-shrink-0">✓</span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Special Events */}
-            <motion.div
-              className="bg-gradient-to-br from-brand-orange-warm/5 to-brand-orange-warm/10 rounded-xl p-8 border border-brand-orange-warm/20 hover:shadow-xl transition-shadow duration-300"
-              variants={fadeInUp}
-            >
-              <div className="mb-6">
-                <div className="w-12 h-12 bg-brand-orange-warm/20 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl" role="img" aria-label="Celebration">🎉</span>
-                </div>
-                <h3 className="text-2xl font-heading font-semibold text-neutral-charcoal mb-4">
-                  {services.events.title}
-                </h3>
-                <p className="text-neutral-charcoal/80 leading-relaxed mb-6">
-                  {services.events.description}
-                </p>
-              </div>
-              <ul className="space-y-2">
-                {services.events.highlights.map((highlight, index) => (
-                  <li key={index} className="flex items-start gap-3 text-neutral-charcoal/80">
-                    <span className="text-brand-orange-warm mt-1 flex-shrink-0">✓</span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            {/* Session Work */}
-            <motion.div
-              className="bg-gradient-to-br from-brand-yellow-accent/5 to-brand-yellow-accent/10 rounded-xl p-8 border border-brand-yellow-accent/20 hover:shadow-xl transition-shadow duration-300 md:col-span-2 lg:col-span-1"
-              variants={fadeInUp}
-            >
-              <div className="mb-6">
-                <div className="w-12 h-12 bg-brand-yellow-accent/20 rounded-lg flex items-center justify-center mb-4">
-                  <span className="text-2xl" role="img" aria-label="Recording">🎵</span>
-                </div>
-                <h3 className="text-2xl font-heading font-semibold text-neutral-charcoal mb-4">
-                  {services.sessions.title}
-                </h3>
-                <p className="text-neutral-charcoal/80 leading-relaxed mb-6">
-                  {services.sessions.description}
-                </p>
-              </div>
-              <ul className="space-y-2">
-                {services.sessions.highlights.map((highlight, index) => (
-                  <li key={index} className="flex items-start gap-3 text-neutral-charcoal/80">
-                    <span className="text-brand-yellow-accent mt-1 flex-shrink-0">✓</span>
-                    <span>{highlight}</span>
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
+          {/* Services Grid - Responsive Layout */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
+            {services.map((service, index) => (
+              <ServiceCard
+                key={service.id}
+                service={service}
+                delay={index * 0.1}
+                className={`
+                  ${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''}
+                  ${index === 2 ? 'md:col-span-2 lg:col-span-1' : ''}
+                `}
+              />
+            ))}
           </div>
+
+          {/* Additional Service Information */}
+          <motion.div
+            className="mt-16 text-center"
+            variants={fadeInUp}
+          >
+            <div className="bg-gradient-to-r from-neutral-light/50 to-neutral-light/30 rounded-2xl p-8 lg:p-12">
+              <h3 className="text-2xl lg:text-3xl font-heading font-semibold text-neutral-charcoal mb-4">
+                Custom Performance Solutions
+              </h3>
+              <p className="text-lg text-neutral-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-6">
+                Every event is unique, and so is every performance. I work closely with clients to understand your vision, 
+                audience, and requirements to create a tailored musical experience that exceeds expectations.
+              </p>
+              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🎼</div>
+                  <p className="font-medium text-neutral-charcoal">Custom Setlists</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🔊</div>
+                  <p className="font-medium text-neutral-charcoal">Professional Equipment</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">⏰</div>
+                  <p className="font-medium text-neutral-charcoal">Flexible Scheduling</p>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🤝</div>
+                  <p className="font-medium text-neutral-charcoal">Reliable Service</p>
+                </div>
+              </div>
+            </div>
+          </motion.div>
         </motion.div>
       </div>
     </section>
@@ -223,49 +234,58 @@ const PerformanceServices: React.FC = () => {
  */
 const PerformanceCredentials: React.FC = () => {
   const { data: performanceData } = useSectionContent('performance');
-  
+
   const credentials = performanceData?.credentials || [
-    "10+ years of live performance experience",
-    "Regular performances across Melbourne venues",
-    "Specialized in blues and acoustic genres",
-    "Professional audio equipment and setup"
+    '10+ years of live performance experience',
+    'Regular performances across Melbourne venues',
+    'Specialized in blues and acoustic genres',
+    'Professional audio equipment and setup'
   ];
 
   return (
-    <section className="py-16 lg:py-24 bg-gradient-to-r from-neutral-gray-light to-white">
+    <section 
+      id="credentials"
+      className="py-16 lg:py-24 bg-gradient-to-br from-neutral-light/30 to-neutral-light/10"
+      aria-labelledby="credentials-title"
+    >
       <div className="container-custom">
         <motion.div
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
-          className="text-center"
         >
-          <motion.h2 
-            className="text-3xl sm:text-4xl font-heading font-bold text-neutral-charcoal mb-12"
+          <motion.div
+            className="text-center mb-12"
             variants={fadeInUp}
           >
-            Professional Experience
-          </motion.h2>
-          
-          <motion.div 
-            className="grid sm:grid-cols-2 gap-6 max-w-4xl mx-auto"
+            <h2 
+              id="credentials-title"
+              className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
+            >
+              Professional Experience
+            </h2>
+            <p className="text-lg sm:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
+              Trusted by venues and event organizers across Melbourne for reliable, high-quality musical entertainment
+            </p>
+          </motion.div>
+
+          <motion.div
+            className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
             variants={staggerContainer}
           >
             {credentials.map((credential, index) => (
               <motion.div
                 key={index}
-                className="bg-white rounded-lg p-6 shadow-md border border-gray-100"
+                className="flex items-start gap-4 bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
                 variants={fadeInUp}
               >
-                <div className="flex items-start gap-4">
-                  <div className="w-8 h-8 bg-brand-blue-primary/10 rounded-full flex items-center justify-center flex-shrink-0 mt-1">
-                    <span className="text-brand-blue-primary font-bold text-sm">✓</span>
-                  </div>
-                  <p className="text-neutral-charcoal font-medium leading-relaxed">
-                    {credential}
-                  </p>
+                <div className="flex-shrink-0 w-8 h-8 bg-brand-blue-primary/20 rounded-full flex items-center justify-center">
+                  <span className="text-brand-blue-primary font-bold">✓</span>
                 </div>
+                <p className="text-neutral-charcoal font-medium leading-relaxed">
+                  {credential}
+                </p>
               </motion.div>
             ))}
           </motion.div>
@@ -279,15 +299,13 @@ const PerformanceCredentials: React.FC = () => {
  * Enhanced Performance page component following the multi-service platform architecture
  * 
  * Features:
- * - Mobile-first responsive design
- * - SEO optimization with usePageSEO hook
- * - Error boundary integration
- * - Framer Motion animations
- * - TypeScript type safety
- * - Semantic HTML structure
- * - Accessibility compliance
+ * - Complete error boundary and loading state handling
+ * - SEO optimization with proper meta tags and structured data
+ * - Responsive mobile-first design with Tailwind CSS
+ * - Accessibility compliance with ARIA labels and semantic HTML
+ * - Reusable ServiceCard components for service offerings
  * - Professional performance hero section
- * - Comprehensive service sections
+ * - Comprehensive service sections using new ServiceCard component
  * - Strong call-to-action elements
  */
 export const Performance: React.FC<PerformancePageProps> = ({ 
@@ -318,7 +336,7 @@ export const Performance: React.FC<PerformancePageProps> = ({
             {/* Enhanced Hero Section */}
             <PerformanceHero />
 
-            {/* Performance Services Section */}
+            {/* Performance Services Section - Now using reusable ServiceCard components */}
             <PerformanceServices />
 
             {/* Performance Credentials Section */}
