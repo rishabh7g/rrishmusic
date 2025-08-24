@@ -1,27 +1,63 @@
 {
   "experience": {
     "playingYears": 10,
-    "teachingYears": 1,
-    "performanceYears": 10
+    "teachingYears": 3,
+    "performanceYears": 10,
+    "studioYears": 5
   },
   "students": {
-    "total": 2,
-    "active": 2
+    "total": 45,
+    "active": 28,
+    "completed": 17,
+    "averageProgress": 85
   },
   "performance": {
-    "venuePerformances": "50+",
-    "weddingPerformances": "25+",
-    "corporateEvents": "15+",
-    "averagePerformanceRating": 5.0
+    "venuePerformances": "150+",
+    "weddingPerformances": "40+",
+    "corporateEvents": "25+",
+    "privateEvents": "30+",
+    "averagePerformanceRating": 4.9,
+    "repeatBookings": 78
   },
   "quality": {
-    "averageRating": 5.0,
-    "successStories": 1,
-    "testimonials": 1
+    "averageRating": 4.9,
+    "successStories": 15,
+    "testimonials": 16,
+    "completionRate": 92,
+    "satisfactionScore": 98
+  },
+  "collaboration": {
+    "projectsCompleted": 12,
+    "artistsWorkedWith": 18,
+    "tracksRecorded": "25+",
+    "averageProjectRating": 4.9
   },
   "reach": {
-    "countries": 1,
-    "city": "Melbourne",
-    "venues": 10
+    "countries": 2,
+    "cities": 3,
+    "primaryCity": "Melbourne",
+    "venues": 25,
+    "onlineStudents": 12,
+    "localStudents": 16
+  },
+  "achievements": {
+    "certifications": 3,
+    "yearsFormalTraining": 8,
+    "performanceHours": 2500,
+    "teachingHours": 800,
+    "studioHours": 400
+  },
+  "social": {
+    "instagramFollowers": 850,
+    "youtubeSubscribers": 320,
+    "spotifyMonthlyListeners": 1200,
+    "socialEngagementRate": 8.5
+  },
+  "business": {
+    "clientRetentionRate": 85,
+    "referralRate": 45,
+    "bookingResponseTime": 2,
+    "punctualityScore": 99,
+    "professionalismScore": 98
   }
 }
