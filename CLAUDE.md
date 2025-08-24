@@ -158,13 +158,15 @@ Test Analysis:
 - Include comprehensive testing checklist
 - **DO NOT enable auto-merge yet** - wait for all checks to complete first
 
-#### 8. **Monitor PR Status with 30-Second Intervals**
-**MANDATORY 3-Check Process:**
-1. **Wait 30 seconds** → Check PR status with `gh pr status`
-2. **Wait 30 seconds** → Check PR status with `gh pr status`  
-3. **Wait 30 seconds** → Check PR status with `gh pr status`
+#### 8. **Monitor PR Status with 10-Second Intervals**
+**MANDATORY 5-Check Process:**
+1. **Wait 10 seconds** → Check PR status with `gh pr status`
+2. **Wait 10 seconds** → Check PR status with `gh pr status`  
+3. **Wait 10 seconds** → Check PR status with `gh pr status`
+4. **Wait 10 seconds** → Check PR status with `gh pr status`
+5. **Wait 10 seconds** → Check PR status with `gh pr status`
 
-**After 3 checks (90 seconds total), determine outcome:**
+**After 5 checks (50 seconds total), determine outcome:**
 
 **✅ If PR can be merged (all checks pass):**
 - Enable auto-merge: `gh pr merge --auto --squash`
@@ -172,11 +174,11 @@ Test Analysis:
 
 **❌ If errors found:**
 - Fix issues immediately and push updates
-- **Restart the 3-check process** (wait 30s → check → wait 30s → check → wait 30s → check)
+- **Restart the 5-check process** (wait 10s → check → repeat 5x)
 - Repeat until PR can be merged or all issues resolved
 
-**⏳ If checks still pending after 3 intervals:**
-- Continue monitoring with additional 30-second intervals
+**⏳ If checks still pending after 5 intervals:**
+- Continue monitoring with additional 10-second intervals
 - Do not proceed until definitive result (merge ready OR errors to fix)
 
 #### 9. **Switch to Main, Pull Latest**
