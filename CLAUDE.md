@@ -60,15 +60,81 @@ npx tsc --noEmit
 # ESLint Check
 npx eslint src --ext .ts,.tsx
 
-# Test Suite (if tests exist)
+# Test Suite - CRITICAL REGRESSION ANALYSIS
 npm run test
 
 # Build Verification
 npm run build
 ```
 
+#### 4.1 **Test Failure Analysis Protocol** 🚨
+**If tests fail after implementation, MANDATORY analysis:**
+
+**Step 1: Identify Test Failures**
+```bash
+# Run tests with verbose output
+npm run test -- --verbose
+
+# Generate coverage report to see what changed
+npm run test:coverage
+```
+
+**Step 2: Categorize Each Failure**
+For each failing test, determine the category:
+
+**Category A: INTENTIONAL CHANGE** ✅ **Valid Failure**
+- Test fails because we deliberately changed functionality
+- Example: Navigation order changed from Home→About→Contact to Performances→Home→About→Contact
+- **Action**: Update test to reflect new intended behavior
+
+**Category B: UNINTENTIONAL REGRESSION** ❌ **Critical Issue**
+- Test fails because we accidentally broke existing functionality  
+- Example: Teaching conversion path broken, accessibility removed
+- **Action**: Fix implementation to restore functionality (do NOT change test)
+
+**Category C: TEST ENVIRONMENT ISSUE** ⚠️ **Investigation Needed**
+- Test fails due to environment/mocking/timing issues unrelated to our changes
+- Example: Mock setup changed, async timing issues, dependency conflicts
+- **Action**: Fix test setup without changing functionality
+
+**Step 3: Decision Matrix**
+```
+Test Failure Category → Action Required
+├── Category A (Intentional) → Update test cases to match new behavior
+├── Category B (Regression) → Fix implementation, keep tests unchanged  
+├── Category C (Environment) → Fix test setup/mocking
+└── If unsure → ALWAYS assume Category B first (protect existing functionality)
+```
+
+**Step 4: Document Decisions**
+In commit message, document test changes:
+```
+feat: add performance navigation
+
+- Updated Navigation.test.tsx: Changed expected order to include Performances (Category A)
+- Fixed About.test.tsx: Restored accessibility attributes that were accidentally removed (Category B)
+- Updated test mocks: Fixed navigation constant imports (Category C)
+
+Test Analysis:
+- 3 tests updated for intentional navigation changes
+- 1 implementation fix for accessibility regression
+- 2 test environment fixes
+
+🤖 Generated with [Claude Code](https://claude.ai/code)
+```
+
+#### 4.2 **Multi-Service Transformation Protected Elements** 🛡️
+**NEVER break these during transformation (Category B if they fail):**
+- Teaching conversion paths and forms
+- Existing accessibility features
+- Mobile responsiveness 
+- SEO meta tags and structured data
+- Performance loading patterns
+- Error boundary functionality
+
 #### 5. Commit & Push Changes
-- Only commit if ALL quality gates pass
+- Only commit if ALL quality gates pass AND test analysis complete
+- Document any test changes in commit message
 - Use standardized commit message format
 - Push changes to feature branch
 
