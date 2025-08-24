@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   serviceImages, 
   overlayConfigs, 
@@ -65,6 +65,7 @@ const ContentErrorFallback: React.FC<{ service: ServiceType }> = ({ service }) =
  * - Loading and error states for content
  * - Responsive design with accessibility support
  * - Smooth animations and transitions
+ * - Interactive navigation integration with service ID
  */
 export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
   service,
@@ -77,6 +78,7 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
   const [imageLoaded, setImageLoaded] = useState(false);
   const [imageError, setImageError] = useState(false);
   const [isIntersecting, setIsIntersecting] = useState(!lazy);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Load service content
   const { data: serviceContent, loading: contentLoading, error: contentError } = useServiceContent(service);
@@ -170,6 +172,7 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
 
   return (
     <motion.div
+      id={`service-${service}`} // Service ID for navigation
       ref={containerRef}
       className={`
         relative overflow-hidden rounded-xl transition-all duration-500 transform
@@ -178,10 +181,14 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
           : 'shadow-lg hover:shadow-xl hover:-translate-y-2'
         }
         group cursor-pointer min-h-[400px] md:min-h-[500px]
+        focus:outline-none focus:ring-4 focus:ring-brand-yellow-accent/50
+        scroll-mt-20
         ${className}
       `}
       onClick={handleNavigation}
       onKeyDown={handleKeyDown}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
       role="button"
       tabIndex={0}
       aria-label={`Navigate to ${serviceContent?.title || fallbackTitle} services`}
@@ -189,8 +196,36 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       whileHover={{ scale: 1.02 }}
+      whileFocus={{ scale: 1.02 }}
       transition={{ duration: 0.3 }}
     >
+      {/* Interactive Navigation Indicator */}
+      <motion.div
+        className="absolute top-4 left-4 z-20"
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ 
+          opacity: isHovered ? 1 : 0.7,
+          scale: isHovered ? 1.1 : 1
+        }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className={`
+          w-3 h-3 rounded-full border-2 transition-all duration-300
+          ${primary 
+            ? 'bg-brand-yellow-accent border-white shadow-lg' 
+            : 'bg-white/20 border-white/60 hover:bg-white/40'
+          }
+        `} />
+      </motion.div>
+
+      {/* Navigation Progress Indicator */}
+      <motion.div
+        className="absolute top-0 left-0 h-1 bg-brand-yellow-accent origin-left z-20"
+        initial={{ scaleX: 0 }}
+        animate={{ scaleX: primary ? 1 : 0 }}
+        transition={{ duration: 0.5, ease: 'easeInOut' }}
+      />
+
       {/* Background Image Container */}
       <div className="absolute inset-0">
         {/* Loading State */}
@@ -213,25 +248,33 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
         
         {/* Background Image */}
         {imageLoaded && imageConfig && (
-          <div
-            className="absolute inset-0 bg-cover bg-center bg-no-repeat transition-transform duration-700 group-hover:scale-105"
+          <motion.div
+            className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url('${imageConfig.src}')`,
               transform: 'scale(1.02)'
             }}
+            animate={{
+              scale: isHovered ? 1.08 : 1.02
+            }}
+            transition={{ duration: 0.7, ease: 'easeOut' }}
             aria-hidden="true"
           />
         )}
         
         {/* Overlay for Text Contrast */}
         {overlayConfig && (
-          <div 
-            className="absolute inset-0 transition-opacity duration-300"
+          <motion.div 
+            className="absolute inset-0"
             style={{
               background: overlayConfig.gradient 
                 ? `linear-gradient(${overlayConfig.gradient.direction}, ${overlayConfig.gradient.colors.join(', ')})`
                 : overlayConfig.color
             }}
+            animate={{
+              opacity: isHovered ? 0.8 : 0.9
+            }}
+            transition={{ duration: 0.3 }}
           />
         )}
       </div>
@@ -240,11 +283,19 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
       <div className="relative z-10 p-8 h-full flex flex-col text-white">
         {/* Service Icon */}
         <motion.div 
-          className={`text-6xl mb-6 transition-transform duration-300 group-hover:scale-110 ${
+          className={`text-6xl mb-6 transition-transform duration-300 ${
             primary ? 'text-brand-yellow-accent drop-shadow-lg' : 'text-white drop-shadow-md'
           }`}
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
+          whileHover={{ 
+            scale: 1.15, 
+            rotate: [0, -5, 5, 0],
+            transition: { 
+              scale: { duration: 0.2 },
+              rotate: { duration: 0.6, ease: 'easeInOut' }
+            }
+          }}
           transition={{ delay: 0.2, duration: 0.5 }}
         >
           {serviceIcons[service]}
@@ -256,6 +307,7 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
             className="absolute top-6 right-6 bg-brand-yellow-accent text-brand-blue-primary px-3 py-1 rounded-full text-sm font-bold shadow-lg"
             initial={{ scale: 0, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
+            whileHover={{ scale: 1.1 }}
             transition={{ delay: 0.4, duration: 0.3 }}
           >
             Featured
@@ -307,7 +359,7 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
           )}
         </motion.div>
         
-        {/* Call to Action */}
+        {/* Call to Action with Enhanced Interaction */}
         <motion.div 
           className={`inline-flex items-center font-semibold transition-all duration-300 ${
             primary 
@@ -316,22 +368,42 @@ export const EnhancedServiceColumn: React.FC<EnhancedServiceColumnProps> = ({
           }`}
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
+          whileHover={{ x: 5 }}
           transition={{ delay: 0.6, duration: 0.5 }}
         >
           <span className="mr-3">
             {serviceContent?.callToAction.text || `Explore ${fallbackTitle}`}
           </span>
-          <svg 
-            className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-2" 
+          <motion.svg 
+            className="w-5 h-5" 
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
             aria-hidden="true"
+            animate={{
+              x: isHovered ? 8 : 0
+            }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-          </svg>
+          </motion.svg>
         </motion.div>
       </div>
+
+      {/* Interactive Ripple Effect */}
+      <AnimatePresence>
+        {isHovered && (
+          <motion.div
+            className="absolute inset-0 pointer-events-none"
+            initial={{ scale: 0, opacity: 0.3 }}
+            animate={{ scale: 1.5, opacity: 0 }}
+            exit={{ scale: 0, opacity: 0 }}
+            transition={{ duration: 0.6, ease: 'easeOut' }}
+          >
+            <div className="absolute inset-0 bg-white/5 rounded-xl" />
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Loading Indicator for Lazy Loading */}
       {lazy && !isIntersecting && (
