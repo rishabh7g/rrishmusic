@@ -23,35 +23,50 @@
     ]
   },
   "services": {
-    "venues": {
+    "wedding_bands": {
+      "id": "wedding_bands",
+      "title": "Wedding Bands",
+      "description": "Create unforgettable moments for your special day with professional live music for wedding ceremonies, receptions, and celebrations. Customized setlists that reflect your love story and keep guests entertained throughout your event.",
+      "highlights": [
+        "Wedding ceremony acoustic music",
+        "Reception entertainment and dancing",
+        "First dance and special moment songs",
+        "Cocktail hour background music",
+        "Custom song requests and dedications",
+        "Professional sound system included"
+      ],
+      "icon": "💐",
+      "colorScheme": "orange"
+    },
+    "corporate_events": {
+      "id": "corporate_events",
+      "title": "Corporate Events",
+      "description": "Enhance your business functions, networking events, conferences, and corporate celebrations with sophisticated live music that creates the perfect professional atmosphere and helps guests connect.",
+      "highlights": [
+        "Business function entertainment",
+        "Networking event background music",
+        "Conference opening and closing music",
+        "Corporate party performances",
+        "Team building event entertainment",
+        "Professional presentation and setup"
+      ],
+      "icon": "🏢",
+      "colorScheme": "blue"
+    },
+    "venue_performances": {
+      "id": "venue_performances",
       "title": "Venue Performances",
-      "description": "Regular performances at cafes, restaurants, and live music venues featuring guitar and blues repertoire.",
+      "description": "Regular live music performances for restaurants, bars, clubs, and private venues. From intimate acoustic sessions to energetic blues sets, I create the perfect atmosphere for your establishment and patrons.",
       "highlights": [
-        "Weekly residencies available",
-        "Acoustic and electric setups",
-        "Crowd-engaging performances",
-        "Professional reliability"
-      ]
-    },
-    "events": {
-      "title": "Special Events",
-      "description": "Professional entertainment for weddings, corporate events, and private celebrations with customized setlists.",
-      "highlights": [
-        "Wedding ceremony & reception music",
-        "Corporate event entertainment",
-        "Private party performances",
-        "Customized song selections"
-      ]
-    },
-    "sessions": {
-      "title": "Session Work",
-      "description": "Studio session guitar work and collaboration with other musicians for recordings and live performances.",
-      "highlights": [
-        "Studio recording sessions",
-        "Live performance backing",
-        "Musical collaboration",
-        "Genre versatility"
-      ]
+        "Restaurant and café performances",
+        "Bar and club live music",
+        "Private venue entertainment",
+        "Weekly residency opportunities",
+        "Acoustic and electric setups available",
+        "Crowd-engaging interactive performances"
+      ],
+      "icon": "🎸",
+      "colorScheme": "yellow"
     }
   },
   "credentials": [
