@@ -9,7 +9,6 @@ import { useState, useEffect, useCallback, useRef } from 'react';
 import { ServiceType } from '@/types/content';
 import { 
   scrollToService, 
-  debounceScroll,
   isElementInViewport 
 } from '@/utils/smoothScroll';
 
@@ -45,6 +44,7 @@ export const useServiceNavigation = () => {
 
   const scrollPositionsRef = useRef<{ position: number; timestamp: number }[]>([]);
   const navigationTimeoutRef = useRef<NodeJS.Timeout>();
+  const scrollTimeoutRef = useRef<NodeJS.Timeout>();
 
   /**
    * Update navigation state
@@ -179,12 +179,17 @@ export const useServiceNavigation = () => {
   }, [navigationState.isNavigating, navigationState.activeService, setActiveService]);
 
   /**
-   * Debounced scroll handler
+   * Debounced scroll handler with proper dependencies
    */
-  const debouncedHandleScroll = useCallback(
-    debounceScroll(handleScroll, 50),
-    [handleScroll]
-  );
+  const debouncedHandleScroll = useCallback(() => {
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      handleScroll();
+    }, 50);
+  }, [handleScroll]);
 
   /**
    * Handle keyboard navigation
@@ -239,6 +244,10 @@ export const useServiceNavigation = () => {
       
       if (navigationTimeoutRef.current) {
         clearTimeout(navigationTimeoutRef.current);
+      }
+      
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
       }
     };
   }, [debouncedHandleScroll, handleKeyNavigation]);
