@@ -16,6 +16,13 @@ const Home = lazy(() =>
   })
 );
 
+const Teaching = lazy(() => 
+  import('@/components/pages/Teaching').then(module => {
+    performanceMonitor.mark('teaching-page-loaded');
+    return { default: module.Teaching };
+  })
+);
+
 const Performance = lazy(() => 
   import('@/components/pages/Performance').then(module => {
     performanceMonitor.mark('performance-page-loaded');
@@ -281,7 +288,8 @@ const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, routeName }) => {
  * - DNS prefetching for external resources
  * 
  * Routes:
- * - / : Home page with all teaching-focused sections
+ * - / : Home page with dual-service homepage
+ * - /teaching : Teaching services page with lessons and approach
  * - /performance : Performance services page
  * - /collaboration : Collaboration services page
  * - /* : Redirects to home
@@ -308,13 +316,25 @@ function App(): React.JSX.Element {
         <AppLayout>
           <Suspense fallback={<AppLoadingFallback />}>
             <Routes>
-              {/* Home route - All existing sections */}
+              {/* Home route - Dual-service homepage */}
               <Route 
                 path="/" 
                 element={
                   <RouteWrapper routeName="home">
                     <Suspense fallback={<AppLoadingFallback pageName="Home" />}>
                       <Home />
+                    </Suspense>
+                  </RouteWrapper>
+                } 
+              />
+              
+              {/* Teaching route - Teaching services page */}
+              <Route 
+                path="/teaching" 
+                element={
+                  <RouteWrapper routeName="teaching">
+                    <Suspense fallback={<AppLoadingFallback pageName="Teaching" />}>
+                      <Teaching />
                     </Suspense>
                   </RouteWrapper>
                 } 
@@ -344,8 +364,9 @@ function App(): React.JSX.Element {
                 } 
               />
               
-              {/* Legacy hash-based routes for backward compatibility */}
+              {/* Legacy and alternative routes for backward compatibility */}
               <Route path="/home" element={<Navigate to="/" replace />} />
+              <Route path="/lessons" element={<Navigate to="/teaching" replace />} />
               <Route path="/performances" element={<Navigate to="/performance" replace />} />
               
               {/* Catch-all route - Redirect to home */}

@@ -137,7 +137,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
 
           {/* Right Column - LESSONS FOR STUDENTS (50% width desktop, full width mobile) */}
           <Link
-            to="/lessons"
+            to="/teaching"
             className="homepage-column group gpu-accelerated"
             aria-label="Start Learning Guitar - Professional instruction for music theory, blues, and improvisation"
           >
