@@ -7,6 +7,7 @@ export { Contact } from './Contact';
 export { PerformanceHero } from './PerformanceHero';
 export { PerformanceGallery } from './PerformanceGallery';
 export { default as TestimonialsSection } from './TestimonialsSection';
+export { default as MultiServiceTestimonialsSection } from './MultiServiceTestimonialsSection';
 export { default as PricingSection } from './PricingSection';
 export { InstagramFeed } from './InstagramFeed';
 export { CollaborationHero } from './CollaborationHero';
