@@ -13,6 +13,7 @@ export function Hero() {
             <div className="h-16 bg-white/20 rounded mb-6 mx-auto max-w-md"></div>
             <div className="h-6 bg-white/20 rounded mb-4 mx-auto max-w-2xl"></div>
             <div className="h-6 bg-white/20 rounded mb-6 mx-auto max-w-xl"></div>
+            <div className="h-12 bg-white/20 rounded mb-4 mx-auto max-w-sm"></div>
             <div className="h-6 bg-white/20 rounded mx-auto max-w-xs"></div>
           </div>
         </div>
@@ -24,13 +25,42 @@ export function Hero() {
     return (
       <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
         <div className="container-custom text-center">
-          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6">
-            Hi, I'm Rrish.
+          <h1 className="text-4xl md:text-6xl font-heading font-bold mb-4">
+            Melbourne Musician
           </h1>
-          <p className="text-lg md:text-xl font-body mb-6 max-w-3xl mx-auto leading-relaxed">
-            I'm a musician who improvises on blues and different music genres.
-            I help people learn music at every level and improve their improvisation skills.
+          <h2 className="text-2xl md:text-3xl font-heading font-medium mb-6 text-brand-yellow-accent">
+            Performance | Teaching | Collaboration
+          </h2>
+          <p className="text-lg md:text-xl font-body mb-8 max-w-3xl mx-auto leading-relaxed">
+            I'm Rrish, a versatile Melbourne musician specializing in blues and improvisation. 
+            Whether you need a live performer, music instructor, or collaborative partner, 
+            I bring passion and expertise to every musical experience.
           </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
+            <a
+              href="/performance"
+              className="inline-flex items-center px-8 py-3 bg-brand-yellow-accent text-brand-blue-primary 
+                font-semibold rounded-full hover:bg-white transition-colors duration-300 
+                shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+            >
+              View Performances
+            </a>
+            <a
+              href="#lessons"
+              className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-brand-yellow-accent 
+                text-brand-yellow-accent font-semibold rounded-full hover:bg-brand-yellow-accent 
+                hover:text-brand-blue-primary transition-colors duration-300"
+            >
+              Learn Music
+            </a>
+            <a
+              href="/collaboration"
+              className="inline-flex items-center px-8 py-3 bg-transparent border-2 border-white/50 
+                text-white font-semibold rounded-full hover:bg-white/10 transition-colors duration-300"
+            >
+              Collaborate
+            </a>
+          </div>
           <p className="text-lg font-body">
             Find me on Instagram:{' '}
             <a
@@ -60,21 +90,75 @@ export function Hero() {
         animate="visible"
       >
         <motion.h1 
-          className="text-4xl md:text-6xl font-heading font-bold mb-6"
+          className="text-4xl md:text-6xl font-heading font-bold mb-4"
           variants={fadeInUp}
         >
           {hero.title}
         </motion.h1>
         
+        <motion.h2 
+          className="text-2xl md:text-3xl font-heading font-medium mb-6 text-brand-yellow-accent"
+          variants={fadeInUp}
+        >
+          {hero.subtitle}
+        </motion.h2>
+        
         <motion.p 
           className="text-lg md:text-xl font-body mb-8 max-w-3xl mx-auto leading-relaxed"
           variants={fadeInUp}
         >
-          {hero.subtitle}
+          {hero.description}
         </motion.p>
         
+        {/* Multi-Service CTAs */}
         <motion.div 
-          className="flex flex-col sm:flex-row items-center justify-center gap-6"
+          className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8 flex-wrap"
+          variants={fadeInUp}
+        >
+          {/* Primary CTA - Performance (60% emphasis) */}
+          <a
+            href={hero.primaryCta?.link || '/performance'}
+            className="inline-flex items-center px-8 py-3 bg-brand-yellow-accent text-brand-blue-primary 
+              font-semibold rounded-full hover:bg-white transition-colors duration-300 
+              shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+          >
+            {hero.primaryCta?.text || 'View Performances'}
+          </a>
+          
+          {/* Secondary CTAs - Teaching & Collaboration */}
+          {hero.secondaryCtas?.map((cta, index) => (
+            <a
+              key={index}
+              href={cta.link}
+              className={`inline-flex items-center px-8 py-3 font-semibold rounded-full transition-colors duration-300 
+                ${cta.type === 'secondary' 
+                  ? 'bg-transparent border-2 border-brand-yellow-accent text-brand-yellow-accent hover:bg-brand-yellow-accent hover:text-brand-blue-primary' 
+                  : 'bg-transparent border-2 border-white/50 text-white hover:bg-white/10'
+                }`}
+            >
+              {cta.text}
+            </a>
+          ))}
+        </motion.div>
+        
+        {/* Social Proof */}
+        {hero.socialProof && (
+          <motion.div 
+            className="mb-8 text-center"
+            variants={fadeInUp}
+          >
+            <p className="text-brand-yellow-accent font-semibold text-lg mb-1">
+              {hero.socialProof.highlight}
+            </p>
+            <p className="text-white/90 text-sm">
+              {hero.socialProof.description}
+            </p>
+          </motion.div>
+        )}
+        
+        {/* Instagram Link */}
+        <motion.div 
+          className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-8"
           variants={fadeInUp}
         >
           <p className="text-lg font-body">
@@ -85,8 +169,9 @@ export function Hero() {
             href={hero.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center px-6 py-3 bg-brand-yellow-accent text-brand-blue-primary 
-              font-semibold rounded-full hover:bg-white transition-colors duration-300 
+            className="inline-flex items-center px-6 py-3 bg-transparent border border-brand-yellow-accent 
+              text-brand-yellow-accent font-semibold rounded-full hover:bg-brand-yellow-accent 
+              hover:text-brand-blue-primary transition-colors duration-300 
               shadow-lg hover:shadow-xl transform hover:-translate-y-1"
           >
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 24 24">
