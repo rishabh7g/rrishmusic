@@ -5,6 +5,7 @@
 
 import { useEffect } from 'react';
 import { useSEO } from '@/hooks/useContent';
+import { getCanonicalURL, getSecureAssetURL } from '@/utils/protocolHandling';
 
 interface SEOHeadProps {
   title?: string;
@@ -12,6 +13,7 @@ interface SEOHeadProps {
   keywords?: string;
   image?: string;
   url?: string;
+  canonical?: string;
   type?: 'website' | 'article' | 'profile';
   twitterCard?: 'summary' | 'summary_large_image' | 'app' | 'player';
   noIndex?: boolean;
@@ -25,6 +27,7 @@ export function SEOHead({
   keywords,
   image,
   url,
+  canonical,
   type = 'website',
   twitterCard = 'summary_large_image',
   noIndex = false,
@@ -43,8 +46,9 @@ export function SEOHead({
     const finalTitle = title ? generatePageTitle(title) : seoData.title;
     const finalDescription = description || seoData.description;
     const finalKeywords = keywords || seoData.keywords;
-    const finalImage = image || seoData.ogImage;
-    const finalUrl = url || seoData.canonicalUrl || window.location.href;
+    const finalImage = getSecureAssetURL(image || seoData.ogImage || '/og-image.jpg');
+    const finalUrl = url || canonical || getCanonicalURL(window.location.pathname);
+    const finalCanonical = canonical || getCanonicalURL(window.location.pathname);
 
     // Set page title
     document.title = finalTitle;
@@ -92,14 +96,14 @@ export function SEOHead({
       { name: 'apple-mobile-web-app-title', content: 'RrishMusic' },
     ];
 
-    // Add canonical link
+    // Add/update canonical link with proper HTTPS URL
     let canonicalLink = document.querySelector('link[rel="canonical"]') as HTMLLinkElement;
     if (!canonicalLink) {
       canonicalLink = document.createElement('link');
       canonicalLink.rel = 'canonical';
       document.head.appendChild(canonicalLink);
     }
-    canonicalLink.href = finalUrl;
+    canonicalLink.href = finalCanonical;
 
     // Add meta tags to head
     metaTags.forEach((tag) => {
@@ -120,13 +124,14 @@ export function SEOHead({
     });
 
     // Add structured data
+    const baseUrl = getCanonicalURL();
     const defaultStructuredData = {
       '@context': 'https://schema.org',
       '@type': 'Person',
       name: 'Rrish',
       jobTitle: 'Music Teacher & Blues Improviser',
       description: finalDescription,
-      url: finalUrl,
+      url: baseUrl,
       image: finalImage,
       sameAs: [
         'https://instagram.com/rrishmusic',
@@ -167,10 +172,10 @@ export function SEOHead({
     const localBusinessData = {
       '@context': 'https://schema.org',
       '@type': 'LocalBusiness',
-      '@id': 'https://www.rrishmusic.com/#business',
+      '@id': `${baseUrl}#business`,
       name: 'RrishMusic',
       description: 'Professional music lessons and blues improvisation instruction in Melbourne',
-      url: 'https://www.rrishmusic.com',
+      url: baseUrl,
       telephone: '',  // Add when available
       address: {
         '@type': 'PostalAddress',
@@ -198,7 +203,7 @@ export function SEOHead({
     localBusinessScript.textContent = JSON.stringify(localBusinessData);
     document.head.appendChild(localBusinessScript);
 
-  }, [seoData, title, description, keywords, image, url, type, twitterCard, noIndex, noFollow, structuredData, generatePageTitle]);
+  }, [seoData, title, description, keywords, image, url, canonical, type, twitterCard, noIndex, noFollow, structuredData, generatePageTitle]);
 
   return null;
 }
