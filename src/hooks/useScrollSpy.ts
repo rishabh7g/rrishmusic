@@ -220,7 +220,11 @@ export const useSmoothScroll = () => {
     }
   }, []);
 
-  return scrollToSection;
+  const smoothScrollTo = useCallback((sectionId: string, offset = 0) => {
+    return scrollToSection(sectionId, offset);
+  }, [scrollToSection]);
+
+  return { scrollToSection, smoothScrollTo };
 };
 
 export default useScrollSpy;
