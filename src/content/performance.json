@@ -1,0 +1,63 @@
+{
+  "hero": {
+    "title": "Live Music That Moves You",
+    "subtitle": "Professional guitar performances and blues entertainment for venues, events, and special occasions across Melbourne",
+    "description": "From intimate acoustic sessions to dynamic blues performances, I bring authentic musical experiences that connect with your audience and create lasting memories.",
+    "ctaText": "Book Your Performance",
+    "ctaLink": "#contact",
+    "backgroundImage": "/images/performance-hero-bg.webp",
+    "backgroundAlt": "Rrish performing live with acoustic guitar in an intimate venue setting",
+    "features": [
+      {
+        "icon": "🎸",
+        "text": "Guitar & Blues Specialist"
+      },
+      {
+        "icon": "🎵",
+        "text": "Custom Setlists"
+      },
+      {
+        "icon": "🎤",
+        "text": "Professional Equipment"
+      }
+    ]
+  },
+  "services": {
+    "venues": {
+      "title": "Venue Performances",
+      "description": "Regular performances at cafes, restaurants, and live music venues featuring guitar and blues repertoire.",
+      "highlights": [
+        "Weekly residencies available",
+        "Acoustic and electric setups",
+        "Crowd-engaging performances",
+        "Professional reliability"
+      ]
+    },
+    "events": {
+      "title": "Special Events",
+      "description": "Professional entertainment for weddings, corporate events, and private celebrations with customized setlists.",
+      "highlights": [
+        "Wedding ceremony & reception music",
+        "Corporate event entertainment",
+        "Private party performances",
+        "Customized song selections"
+      ]
+    },
+    "sessions": {
+      "title": "Session Work",
+      "description": "Studio session guitar work and collaboration with other musicians for recordings and live performances.",
+      "highlights": [
+        "Studio recording sessions",
+        "Live performance backing",
+        "Musical collaboration",
+        "Genre versatility"
+      ]
+    }
+  },
+  "credentials": [
+    "10+ years of live performance experience",
+    "Regular performances across Melbourne venues",
+    "Specialized in blues and acoustic genres",
+    "Professional audio equipment and setup"
+  ]
+}
