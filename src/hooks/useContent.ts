@@ -9,9 +9,10 @@ import lessonContent from '@/content/lessons.json';
 import testimonials from '@/content/testimonials.json';
 import stats from '@/content/stats.json';
 import seoData from '@/content/seo.json';
+import performanceData from '@/content/performance.json';
 
 // Define section keys for type safety
-type SectionKey = 'hero' | 'about' | 'approach' | 'community' | 'contact' | 'lessons' | 'testimonials' | 'stats' | 'seo';
+type SectionKey = 'hero' | 'about' | 'approach' | 'community' | 'contact' | 'lessons' | 'testimonials' | 'stats' | 'seo' | 'performance';
 
 // Content map for centralized access
 const contentMap = {
@@ -23,7 +24,8 @@ const contentMap = {
   lessons: lessonContent,
   testimonials: testimonials,
   stats: stats,
-  seo: seoData
+  seo: seoData,
+  performance: performanceData
 } as const;
 
 /**
@@ -115,7 +117,10 @@ export const useLessonPackages = () => {
         packageInfo: {
           title: lessonContent.title,
           subtitle: lessonContent.subtitle,
-          description: lessonContent.description
+          description: lessonContent.description,
+          sessionLength: 60, // Default session length in minutes
+          instruments: ['Guitar'], // Primary instrument
+          location: 'Melbourne / Online' // Location options
         },
         loading: false,
         error: null
@@ -127,7 +132,10 @@ export const useLessonPackages = () => {
         packageInfo: {
           title: 'Guitar Lessons & Packages',
           subtitle: 'Choose the learning path that works best for your goals and schedule',
-          description: 'Whether you\'re taking your first steps or looking to refine your improvisation skills, these packages are designed to meet you where you are and guide you to where you want to be.'
+          description: 'Whether you\'re taking your first steps or looking to refine your improvisation skills, these packages are designed to meet you where you are and guide you to where you want to be.',
+          sessionLength: 60, // Default session length in minutes
+          instruments: ['Guitar'], // Primary instrument
+          location: 'Melbourne / Online' // Location options
         },
         loading: false,
         error: error instanceof Error ? error.message : 'Unknown error occurred'
@@ -209,7 +217,8 @@ export const rawContent = {
   lessons: lessonContent,
   testimonials: testimonials,
   stats: stats,
-  seo: seoData
+  seo: seoData,
+  performance: performanceData
 } as const;
 
 // Enhanced page content interface
