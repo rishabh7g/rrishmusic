@@ -20,13 +20,13 @@ export const supportsHTTPS = (): boolean => {
  */
 export const getCanonicalURL = (path: string = ''): string => {
   if (typeof window === 'undefined') {
-    return `https://www.rrishmusic.com${path}`;
+    return `http://www.rrishmusic.com${path}`;
   }
 
-  // For production, always use HTTPS
+  // For production, use HTTP since domain doesn't support HTTPS
   if (window.location.hostname === 'www.rrishmusic.com' || 
       window.location.hostname === 'rrishmusic.com') {
-    return `https://www.rrishmusic.com${path}`;
+    return `http://www.rrishmusic.com${path}`;
   }
 
   // For local development
@@ -40,7 +40,7 @@ export const getCanonicalURL = (path: string = ''): string => {
 };
 
 /**
- * Enforce HTTPS redirect if needed
+ * Enforce domain consistency (no HTTPS enforcement since domain doesn't support it)
  */
 export const enforceHTTPS = (): boolean => {
   if (typeof window === 'undefined') return false;
@@ -52,23 +52,15 @@ export const enforceHTTPS = (): boolean => {
     return false;
   }
 
-  // Redirect HTTP to HTTPS in production
-  if (protocol === 'http:' && 
-      (hostname === 'www.rrishmusic.com' || hostname === 'rrishmusic.com')) {
-    const httpsUrl = `https://www.rrishmusic.com${pathname}${search}${hash}`;
-    console.log('[ProtocolHandling] Redirecting to HTTPS:', httpsUrl);
-    window.location.replace(httpsUrl);
-    return true;
-  }
-
-  // Redirect non-www to www for consistency
-  if (protocol === 'https:' && hostname === 'rrishmusic.com') {
-    const wwwUrl = `https://www.rrishmusic.com${pathname}${search}${hash}`;
+  // Redirect non-www to www for consistency (HTTP only since domain doesn't support HTTPS)
+  if (protocol === 'http:' && hostname === 'rrishmusic.com') {
+    const wwwUrl = `http://www.rrishmusic.com${pathname}${search}${hash}`;
     console.log('[ProtocolHandling] Redirecting to www subdomain:', wwwUrl);
     window.location.replace(wwwUrl);
     return true;
   }
 
+  // Don't enforce HTTPS since domain doesn't support it
   return false;
 };
 
