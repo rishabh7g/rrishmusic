@@ -4,6 +4,7 @@ import { Lessons } from '@/components/sections/Lessons';
 import { Approach } from '@/components/sections/Approach';
 import { About } from '@/components/sections/About';
 import { Contact } from '@/components/sections/Contact';
+import { CrossServiceNavigation } from '@/components/CrossServiceNavigation';
 import { performanceMonitor } from '@/utils/performanceMonitor';
 
 /**
@@ -22,6 +23,7 @@ interface TeachingPageProps {
  * Features:
  * - ServicePageLayout with breadcrumb navigation
  * - Teaching-focused sections (Lessons, Approach, About, Contact)
+ * - Cross-service navigation for related services
  * - SEO optimization for teaching services
  * - Performance monitoring
  * - Mobile-first responsive design
@@ -48,15 +50,23 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
       <section className="hero-section bg-gradient-to-br from-brand-orange-warm via-brand-orange-light to-brand-orange-warm text-white py-20">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-6xl font-heading font-bold mb-6 leading-tight">
-              Guitar Lessons for 
-              <span className="block text-brand-yellow-accent">Every Skill Level</span>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6">
+              Professional Guitar Lessons
             </h1>
-            <p className="text-xl md:text-2xl text-white/90 mb-8 max-w-3xl mx-auto leading-relaxed">
-              Professional guitar instruction in Melbourne focusing on blues, music theory, 
-              and improvisation. Personalized lessons that adapt to your musical goals and learning style.
+            <p className="text-xl md:text-2xl lg:text-3xl mb-8 text-orange-100">
+              Master the guitar with personalized instruction tailored to your musical goals
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
+              <button className="bg-white text-brand-orange-warm hover:bg-orange-50 font-semibold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg">
+                Start Your Musical Journey
+              </button>
+              <button className="border-2 border-white text-white hover:bg-white hover:text-brand-orange-warm font-semibold py-4 px-8 rounded-lg text-lg transition-colors">
+                View Lesson Packages
+              </button>
+            </div>
+            
+            {/* Feature highlights */}
+            <div className="grid md:grid-cols-3 gap-6 text-center">
               <div className="flex items-center space-x-2 text-lg">
                 <svg className="w-6 h-6 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
@@ -97,6 +107,28 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
               <div className="w-24 h-1 bg-brand-orange-warm mx-auto rounded-full"></div>
             </div>
             <About />
+          </div>
+        </div>
+      </section>
+
+      {/* Cross-Service Navigation Section */}
+      <section className="py-16 bg-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-6xl mx-auto">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-charcoal mb-4">
+                Expand Your Musical Journey
+              </h2>
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                Take your guitar skills to the next level by exploring our performance and collaboration opportunities.
+              </p>
+            </div>
+            <CrossServiceNavigation 
+              currentService="teaching"
+              variant="card"
+              maxRecommendations={2}
+              showCrossServiceSuggestions={true}
+            />
           </div>
         </div>
       </section>
