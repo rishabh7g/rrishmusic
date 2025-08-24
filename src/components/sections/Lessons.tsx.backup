@@ -1,8 +1,6 @@
 import { motion } from 'framer-motion';
 import { useLessonPackages } from '@/hooks/useContent';
 import { fadeInUp, staggerContainer, scaleIn } from '@/utils/animations';
-import { TeachingInquiryCTA } from '@/components/ui/TeachingInquiryCTA';
-import type { TeachingInquiryData } from '@/components/forms/TeachingInquiryForm';
 
 export function Lessons() {
   const { packages, packageInfo, loading, error } = useLessonPackages();
@@ -82,22 +80,6 @@ export function Lessons() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z" />
         </svg>
       );
-    }
-  };
-
-  /**
-   * Map package data to form package types
-   */
-  const getFormPackageType = (pkg: typeof packages[0]): TeachingInquiryData['packageType'] => {
-    if (pkg.sessions === 1) {
-      // Check if it's a trial lesson based on duration or price
-      return pkg.duration === 30 || pkg.price < singleLessonPrice ? 'trial' : 'single';
-    } else if (pkg.sessions === 4) {
-      return 'foundation';
-    } else if (pkg.sessions === 8) {
-      return 'transformation';
-    } else {
-      return 'single'; // fallback
     }
   };
 
@@ -239,23 +221,23 @@ export function Lessons() {
                   ))}
                 </ul>
 
-                {/* Updated CTA Button - Now uses TeachingInquiryCTA */}
-                <motion.div
+                {/* CTA Button */}
+                <motion.a
+                  href="#contact"
+                  className={`w-full inline-flex items-center justify-center px-6 py-3 rounded-full 
+                    font-semibold transition-all duration-300 shadow-lg hover:shadow-xl
+                    ${pkg.popular 
+                      ? 'bg-brand-yellow-accent text-brand-blue-primary hover:bg-white' 
+                      : 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary'
+                    }`}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <TeachingInquiryCTA
-                    initialPackageType={getFormPackageType(pkg)}
-                    ctaText="Get Started"
-                    variant="compact"
-                    showPricing={false}
-                    className={`w-full 
-                      ${pkg.popular 
-                        ? 'bg-brand-yellow-accent text-brand-blue-primary hover:bg-white' 
-                        : 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary'
-                      } text-center justify-center rounded-full font-semibold shadow-lg hover:shadow-xl`}
-                  />
-                </motion.div>
+                  Get Started
+                  <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                  </svg>
+                </motion.a>
               </div>
             </motion.div>
           ))}
@@ -317,7 +299,7 @@ export function Lessons() {
           </motion.div>
         )}
 
-        {/* Updated Final CTA - Now uses TeachingInquiryCTA */}
+        {/* Final CTA */}
         <motion.div 
           className="text-center mt-16"
           variants={fadeInUp}
@@ -327,12 +309,17 @@ export function Lessons() {
             and find the perfect fit.
           </p>
           
-          <TeachingInquiryCTA
-            ctaText="Book Your First Lesson"
-            variant="default"
-            showPricing={true}
-            className="inline-block"
-          />
+          <a
+            href="#contact"
+            className="inline-flex items-center px-10 py-4 bg-brand-orange-warm text-white 
+              font-bold text-lg rounded-full hover:bg-brand-orange-warm/90 transition-all duration-300 
+              shadow-xl hover:shadow-2xl transform hover:-translate-y-1"
+          >
+            Book Your First Lesson
+            <svg className="w-6 h-6 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            </svg>
+          </a>
         </motion.div>
       </motion.div>
     </div>
