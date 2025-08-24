@@ -8,151 +8,107 @@ import PerformanceHero from '@/components/sections/PerformanceHero';
 import PerformanceGallery from '@/components/sections/PerformanceGallery';
 import { TestimonialsSection, PricingSection, InstagramFeed } from '@/components/sections';
 import { ServiceCard } from '@/components/ui/ServiceCard';
-import { 
-  PrimaryPerformanceCTA, 
-  WeddingInquiryCTA, 
-  CorporateInquiryCTA, 
-  VenueInquiryCTA 
-} from '@/components/ui';
+import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
+import { SmartContactCTA } from '@/components/ui/SmartContactCTA';
 import type { ServiceCardData } from '@/components/ui/ServiceCard';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
 
-interface PerformancePageProps {
-  className?: string;
-}
-
 /**
- * Performance page fallback component for error states
- */
-const PerformanceErrorFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50">
-    <div className="text-center p-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">
-        Performance Page Error
-      </h1>
-      <p className="text-gray-600 mb-6">
-        We're sorry, but there was an error loading the Performance page. Please try refreshing the page.
-      </p>
-      <button
-        onClick={() => window.location.reload()}
-        className="bg-brand-blue-primary text-white px-6 py-3 rounded-lg hover:bg-brand-blue-primary/90 transition-colors"
-      >
-        Refresh Page
-      </button>
-    </div>
-  </div>
-);
-
-/**
- * Loading fallback component for the Performance page
- */
-const PerformanceLoadingFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center">
-    <div className="text-center">
-      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
-      <p className="text-gray-600">Loading Performance Services...</p>
-    </div>
-  </div>
-);
-
-/**
- * Enhanced Performance Services Component with Reusable ServiceCard Components
+ * Performance Services Section
+ * Showcases available performance services using reusable ServiceCard components
  */
 const PerformanceServices: React.FC = () => {
-  const { data: performanceData, loading } = useSectionContent('performance');
-
-  if (loading) {
-    return (
-      <section className="py-16 lg:py-24 bg-white">
-        <div className="container-custom">
-          <div className="animate-pulse space-y-8">
-            <div className="h-8 bg-gray-200 rounded w-64 mx-auto"></div>
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="bg-gray-100 rounded-xl p-8 space-y-4">
-                  <div className="h-6 bg-gray-200 rounded w-3/4"></div>
-                  <div className="h-4 bg-gray-200 rounded"></div>
-                  <div className="h-4 bg-gray-200 rounded w-5/6"></div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-    );
-  }
-
-  // Transform performance data to ServiceCard format
-  const services: ServiceCardData[] = performanceData?.services ? [
-    // Wedding Bands
-    {
-      id: performanceData.services.wedding_bands?.id || 'wedding_bands',
-      title: performanceData.services.wedding_bands?.title || 'Wedding Bands',
-      description: performanceData.services.wedding_bands?.description || 'Professional wedding entertainment services',
-      highlights: performanceData.services.wedding_bands?.highlights || [],
-      icon: performanceData.services.wedding_bands?.icon || '💐',
-      colorScheme: (performanceData.services.wedding_bands?.colorScheme as 'blue' | 'orange' | 'yellow') || 'orange'
-    },
-    // Corporate Events
-    {
-      id: performanceData.services.corporate_events?.id || 'corporate_events',
-      title: performanceData.services.corporate_events?.title || 'Corporate Events',
-      description: performanceData.services.corporate_events?.description || 'Professional corporate event entertainment',
-      highlights: performanceData.services.corporate_events?.highlights || [],
-      icon: performanceData.services.corporate_events?.icon || '🏢',
-      colorScheme: (performanceData.services.corporate_events?.colorScheme as 'blue' | 'orange' | 'yellow') || 'blue'
-    },
-    // Venue Performances
-    {
-      id: performanceData.services.venue_performances?.id || 'venue_performances',
-      title: performanceData.services.venue_performances?.title || 'Venue Performances',
-      description: performanceData.services.venue_performances?.description || 'Regular venue performances and live music',
-      highlights: performanceData.services.venue_performances?.highlights || [],
-      icon: performanceData.services.venue_performances?.icon || '🎸',
-      colorScheme: (performanceData.services.venue_performances?.colorScheme as 'blue' | 'orange' | 'yellow') || 'yellow'
+  const sectionContent = useSectionContent('performance-services', {
+    fallback: {
+      title: 'Performance Services',
+      subtitle: 'Professional guitar performances tailored to your venue and event',
+      cards: []
     }
-  ] : [
-    // Fallback data if no services in content
+  });
+
+  // Default service cards if content fails to load
+  const defaultServiceCards: ServiceCardData[] = [
     {
-      id: 'wedding_bands',
-      title: 'Wedding Bands',
-      description: 'Create unforgettable moments for your special day with professional live music for wedding ceremonies, receptions, and celebrations.',
-      highlights: [
-        'Wedding ceremony acoustic music',
-        'Reception entertainment and dancing',
-        'First dance and special moment songs',
-        'Custom song requests and dedications'
+      id: 'band-performances',
+      title: 'Band Performances',
+      description: 'Full band setup with rhythm section, perfect for venues and large events',
+      features: [
+        'Full band with rhythm section',
+        'Professional sound setup',
+        'Custom setlists',
+        '2-4 hour performances'
       ],
-      icon: '💐',
-      colorScheme: 'orange' as const
+      price: 'From $800',
+      popular: true,
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+      ),
+      ctaText: 'Book Band Performance',
+      analyticsId: 'band_performance_cta'
     },
     {
-      id: 'corporate_events',
-      title: 'Corporate Events',
-      description: 'Enhance your business functions, networking events, conferences, and corporate celebrations with sophisticated live music.',
-      highlights: [
-        'Business function entertainment',
-        'Networking event background music',
-        'Conference opening and closing music',
-        'Professional presentation and setup'
+      id: 'solo-acoustic',
+      title: 'Solo Acoustic Sets',
+      description: 'Intimate acoustic performances ideal for smaller venues and private events',
+      features: [
+        'Solo acoustic guitar',
+        'Intimate atmosphere',
+        'Flexible song selection',
+        '1-3 hour sets'
       ],
-      icon: '🏢',
-      colorScheme: 'blue' as const
+      price: 'From $400',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+        </svg>
+      ),
+      ctaText: 'Book Solo Performance',
+      analyticsId: 'solo_performance_cta'
     },
     {
-      id: 'venue_performances',
-      title: 'Venue Performances',
-      description: 'Regular live music performances for restaurants, bars, clubs, and private venues.',
-      highlights: [
-        'Restaurant and café performances',
-        'Bar and club live music',
-        'Weekly residency opportunities',
-        'Crowd-engaging interactive performances'
+      id: 'event-entertainment',
+      title: 'Event Entertainment',
+      description: 'Specialized entertainment for weddings, corporate events, and celebrations',
+      features: [
+        'Event-specific repertoire',
+        'Professional presentation',
+        'Flexible timing',
+        'Custom arrangements'
       ],
-      icon: '🎸',
-      colorScheme: 'yellow' as const
+      price: 'Custom Quote',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      ),
+      ctaText: 'Plan Event Entertainment',
+      analyticsId: 'event_entertainment_cta'
+    },
+    {
+      id: 'technical-setup',
+      title: 'Technical Setup',
+      description: 'Professional audio equipment and technical support for all performances',
+      features: [
+        'High-quality sound system',
+        'Professional mixing',
+        'Backup equipment',
+        'Technical support'
+      ],
+      price: 'Included',
+      icon: (
+        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+        </svg>
+      ),
+      ctaText: 'Learn About Setup',
+      analyticsId: 'technical_setup_cta'
     }
   ];
+
+  const serviceCards = sectionContent.cards || defaultServiceCards;
 
   return (
     <section 
@@ -166,72 +122,54 @@ const PerformanceServices: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-12"
         >
-          {/* Section Header */}
-          <motion.div
-            className="text-center mb-16"
+          <motion.h2 
+            id="services-title"
             variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
           >
-            <h2 
-              id="services-title"
-              className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
-            >
-              Performance Service Offerings
-            </h2>
-            <p className="text-lg sm:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
-              Professional music services tailored to create the perfect atmosphere for your venue or event. From intimate weddings to corporate gatherings and regular venue performances.
-            </p>
-          </motion.div>
-
-          {/* Services Grid - Responsive Layout */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8">
-            {services.map((service, index) => (
-              <ServiceCard
-                key={service.id}
-                service={service}
-                delay={index * 0.1}
-                className={`
-                  ${index === 0 ? 'md:col-span-2 lg:col-span-1' : ''}
-                  ${index === 2 ? 'md:col-span-2 lg:col-span-1' : ''}
-                `}
-              />
-            ))}
-          </div>
-
-          {/* Additional Service Information */}
-          <motion.div
-            className="mt-16 text-center"
+            {sectionContent.title}
+          </motion.h2>
+          <motion.p 
             variants={fadeInUp}
+            className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto"
           >
-            <div className="bg-gradient-to-r from-neutral-light/50 to-neutral-light/30 rounded-2xl p-8 lg:p-12">
-              <h3 className="text-2xl lg:text-3xl font-heading font-semibold text-neutral-charcoal mb-4">
-                Custom Performance Solutions
-              </h3>
-              <p className="text-lg text-neutral-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-6">
-                Every event is unique, and so is every performance. I work closely with clients to understand your vision, 
-                audience, and requirements to create a tailored musical experience that exceeds expectations.
-              </p>
-              <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🎼</div>
-                  <p className="font-medium text-neutral-charcoal">Custom Setlists</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🔊</div>
-                  <p className="font-medium text-neutral-charcoal">Professional Equipment</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">⏰</div>
-                  <p className="font-medium text-neutral-charcoal">Flexible Scheduling</p>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🤝</div>
-                  <p className="font-medium text-neutral-charcoal">Reliable Service</p>
-                </div>
-              </div>
-            </div>
-          </motion.div>
+            {sectionContent.subtitle}
+          </motion.p>
         </motion.div>
+
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid md:grid-cols-2 lg:grid-cols-2 gap-8 mb-12"
+        >
+          {serviceCards.map((service) => (
+            <motion.div
+              key={service.id}
+              variants={fadeInUp}
+              className="h-full"
+            >
+              <ServiceCard 
+                {...service}
+                className="h-full hover:transform hover:-translate-y-2 transition-all duration-300"
+              />
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Cross-Service Suggestion - Teaching Services */}
+        <CrossServiceSuggestion
+          fromService="performance"
+          pageSection="services"
+          placement="inline"
+          timing="after-engagement"
+          minTimeOnPage={20}
+          minScrollPercentage={40}
+          className="mb-8"
+        />
       </div>
     </section>
   );
@@ -241,14 +179,39 @@ const PerformanceServices: React.FC = () => {
  * Performance Credentials Section
  */
 const PerformanceCredentials: React.FC = () => {
-  const { data: performanceData } = useSectionContent('performance');
+  const sectionContent = useSectionContent('performance-credentials', {
+    fallback: {
+      title: 'Professional Performance Background',
+      subtitle: 'Years of experience delivering memorable musical experiences',
+      highlights: []
+    }
+  });
 
-  const credentials = performanceData?.credentials || [
-    '10+ years of live performance experience',
-    'Regular performances across Melbourne venues',
-    'Specialized in blues and acoustic genres',
-    'Professional audio equipment and setup'
+  // Default credentials if content fails to load
+  const defaultHighlights = [
+    {
+      title: 'Venue Experience',
+      description: 'Regular performances at established Melbourne venues',
+      details: ['Corner Hotel', 'The Tote', 'Local music venues', 'Private events']
+    },
+    {
+      title: 'Professional Equipment',
+      description: 'High-quality instruments and sound systems',
+      details: ['Professional guitars', 'Sound system', 'Backup equipment', 'Technical support']
+    },
+    {
+      title: 'Repertoire Depth',
+      description: 'Extensive song library across multiple genres',
+      details: ['Blues standards', 'Classic rock', 'Contemporary hits', 'Original compositions']
+    },
+    {
+      title: 'Event Adaptability',
+      description: 'Flexible performances tailored to your needs',
+      details: ['Venue-appropriate volume', 'Custom setlists', 'Professional presentation', 'Reliable service']
+    }
   ];
+
+  const highlights = sectionContent.highlights || defaultHighlights;
 
   return (
     <section 
@@ -262,220 +225,177 @@ const PerformanceCredentials: React.FC = () => {
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
+          className="text-center mb-12"
         >
-          <motion.div
-            className="text-center mb-12"
+          <motion.h2 
+            id="credentials-title"
             variants={fadeInUp}
+            className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
           >
-            <h2 
-              id="credentials-title"
-              className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
-            >
-              Professional Experience
-            </h2>
-            <p className="text-lg sm:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
-              Trusted by venues and event organizers across Melbourne for reliable, high-quality musical entertainment
-            </p>
-          </motion.div>
-
-          <motion.div
-            className="grid sm:grid-cols-2 gap-6 lg:gap-8 max-w-4xl mx-auto"
-            variants={staggerContainer}
+            {sectionContent.title}
+          </motion.h2>
+          <motion.p 
+            variants={fadeInUp}
+            className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto"
           >
-            {credentials.map((credential, index) => (
-              <motion.div
-                key={index}
-                className="flex items-start gap-4 bg-white rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-300"
-                variants={fadeInUp}
-              >
-                <div className="flex-shrink-0 w-8 h-8 bg-brand-blue-primary/20 rounded-full flex items-center justify-center">
-                  <span className="text-brand-blue-primary font-bold">✓</span>
-                </div>
-                <p className="text-neutral-charcoal font-medium leading-relaxed">
-                  {credential}
-                </p>
-              </motion.div>
-            ))}
-          </motion.div>
+            {sectionContent.subtitle}
+          </motion.p>
         </motion.div>
+
+        <motion.div
+          variants={staggerContainer}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          className="grid md:grid-cols-2 gap-8 mb-12"
+        >
+          {highlights.map((highlight, index) => (
+            <motion.div
+              key={index}
+              variants={fadeInUp}
+              className="bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-shadow duration-300"
+            >
+              <h3 className="text-xl font-bold text-neutral-charcoal mb-4">
+                {highlight.title}
+              </h3>
+              <p className="text-gray-600 mb-4">
+                {highlight.description}
+              </p>
+              <ul className="space-y-2">
+                {highlight.details.map((detail, detailIndex) => (
+                  <li key={detailIndex} className="flex items-center text-sm text-gray-700">
+                    <svg className="w-4 h-4 text-brand-blue-primary mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                    </svg>
+                    {detail}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+          ))}
+        </motion.div>
+
+        {/* Cross-Service Suggestion - Collaboration Services */}
+        <CrossServiceSuggestion
+          fromService="performance"
+          pageSection="credentials"
+          placement="inline"
+          timing="after-engagement"
+          minTimeOnPage={30}
+          minScrollPercentage={60}
+          className="mb-8"
+        />
       </div>
     </section>
   );
 };
 
 /**
- * Enhanced Performance page component following the multi-service platform architecture
- * 
- * Features:
- * - Complete error boundary and loading state handling
- * - SEO optimization with proper meta tags and structured data
- * - Responsive mobile-first design with Tailwind CSS
- * - Accessibility compliance with ARIA labels and semantic HTML
- * - Reusable ServiceCard components for service offerings
- * - Professional performance hero section
- * - Performance portfolio gallery with lazy loading
- * - Instagram feed with performance-related content filtering
- * - Comprehensive service sections using new ServiceCard component
- * - Client testimonials section with performance-specific feedback
- * - Professional pricing section with transparent package information
- * - Performance inquiry CTA system with event-specific forms
- * - Strategic CTA placement with conversion tracking
+ * Performance Page Component
  */
-export const Performance: React.FC<PerformancePageProps> = ({ 
-  className = '' 
-}) => {
-  // Configure SEO metadata for the Performance page
-  usePageSEO({
-    title: 'Performance Services - Live Music & Events | Rrish Music',
-    description: 'Professional live music performances and event entertainment services by Rrish. Guitar performances, blues sessions, and live music for venues and special occasions in Melbourne.',
-    keywords: 'live music performance, guitar performances, blues music, event entertainment, Melbourne live music, professional musician, venue performances, wedding music, corporate events',
-    type: 'website',
-    twitterCard: 'summary_large_image'
-  });
+export const Performance: React.FC = () => {
+  const seo = usePageSEO('performance');
 
   return (
     <>
-      {/* SEO Head component for meta tags */}
       <SEOHead
-        title="Performance Services - Live Music & Events | Rrish Music"
-        description="Professional live music performances and event entertainment services by Rrish. Guitar performances, blues sessions, and live music for venues and special occasions in Melbourne."
-        keywords="live music performance, guitar performances, blues music, event entertainment, Melbourne live music, professional musician, venue performances, wedding music, corporate events"
-        type="website"
+        title={seo.title}
+        description={seo.description}
+        keywords={seo.keywords}
+        canonical={seo.canonical}
+        ogType="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "MusicGroup",
+          "name": "Rrish Music",
+          "description": seo.description,
+          "url": seo.canonical,
+          "genre": ["Blues", "Rock", "Contemporary"],
+          "member": {
+            "@type": "Person",
+            "name": "Rrish",
+            "role": "Guitarist"
+          }
+        }}
       />
       
-      <ErrorBoundary fallback={<PerformanceErrorFallback />}>
-        <React.Suspense fallback={<PerformanceLoadingFallback />}>
-          <div className={`min-h-screen bg-white ${className}`}>
-            {/* Enhanced Hero Section */}
-            <PerformanceHero />
+      <div className="min-h-screen">
+        <ErrorBoundary>
+          {/* Performance Hero Section */}
+          <PerformanceHero />
+          
+          {/* Performance Gallery Section */}
+          <PerformanceGallery />
 
-            {/* Performance Services Section - Now using reusable ServiceCard components */}
-            <PerformanceServices />
+          {/* Performance Services Section - Now using reusable ServiceCard components */}
+          <PerformanceServices />
 
-            {/* Performance Portfolio Gallery - NEW: Issue #60 Implementation */}
-            <PerformanceGallery />
+          {/* Cross-Service Suggestion Banner - Teaching Focus */}
+          <section className="py-8">
+            <div className="container-custom">
+              <CrossServiceSuggestion
+                fromService="performance"
+                pageSection="portfolio-gallery"
+                placement="banner"
+                timing="after-engagement"
+                minTimeOnPage={45}
+                minScrollPercentage={70}
+                className="max-w-4xl mx-auto"
+              />
+            </div>
+          </section>
 
-            {/* Instagram Performance Content - NEW: Issue #28 Implementation */}
-            <InstagramFeed limit={6} />
+          {/* Performance Credentials Section */}
+          <PerformanceCredentials />
 
-            {/* Performance Credentials Section */}
-            <PerformanceCredentials />
+          {/* Client Testimonials Section - NEW: Issue #61 Implementation */}
+          <TestimonialsSection />
 
-            {/* Client Testimonials Section - NEW: Issue #61 Implementation */}
-            <TestimonialsSection />
+          {/* Performance Pricing Section - NEW: Issue #61 Implementation */}
+          <PricingSection />
 
-            {/* Performance Pricing Section - NEW: Issue #61 Implementation */}
-            <PricingSection />
-
-            {/* Performance Inquiry Call-to-Action - NEW: Issue #29 Implementation */}
-            <motion.section
-              id="contact"
-              className="py-16 lg:py-24 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
-              initial="hidden"
-              whileInView="visible"
-              viewport={{ once: true, margin: "-100px" }}
-              variants={staggerContainer}
-            >
-              <div className="container-custom text-center">
-                <motion.h2 
-                  className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold mb-6"
-                  variants={fadeInUp}
-                >
-                  Ready to Book a Performance?
-                </motion.h2>
-                <motion.p 
-                  className="text-lg sm:text-xl mb-8 text-white/90 max-w-3xl mx-auto leading-relaxed"
-                  variants={fadeInUp}
-                >
-                  Get in touch to discuss your venue or event requirements, check availability, and create a memorable musical experience for your audience
-                </motion.p>
+          {/* Contact Section with Smart CTA */}
+          <motion.section
+            id="contact"
+            className="py-16 lg:py-24 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8 }}
+          >
+            <div className="container-custom text-center">
+              <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                whileInView={{ y: 0, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.2, duration: 0.6 }}
+                className="max-w-3xl mx-auto"
+              >
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold mb-6">
+                  Ready to Book Your Performance?
+                </h2>
+                <p className="text-xl sm:text-2xl text-white/90 mb-8">
+                  Let's discuss your event and create an unforgettable musical experience
+                </p>
                 
-                {/* Primary CTA */}
-                <motion.div
-                  className="mb-8"
-                  variants={fadeInUp}
-                >
-                  <PrimaryPerformanceCTA 
-                    size="large"
-                    className="shadow-xl text-lg px-12 py-5"
-                    trackingLabel="Main Performance CTA"
-                  >
-                    <span>Start Your Inquiry</span>
-                    <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
-                    </svg>
-                  </PrimaryPerformanceCTA>
-                </motion.div>
+                {/* Smart Contact CTA for Performance Service */}
+                <SmartContactCTA
+                  forceServiceType="performance"
+                  variant="prominent"
+                  showServiceInfo={false}
+                  ctaText="Book Performance"
+                  analyticsSource="performance_page_cta"
+                />
+              </motion.div>
+            </div>
+          </motion.section>
 
-                {/* Event-Specific CTAs */}
-                <motion.div
-                  className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8"
-                  variants={fadeInUp}
-                >
-                  <WeddingInquiryCTA 
-                    variant="outline"
-                    size="medium"
-                    className="bg-white/10 border-white text-white hover:bg-white hover:text-brand-blue-primary backdrop-blur-sm"
-                    trackingLabel="Wedding Specific CTA"
-                  />
-                  <CorporateInquiryCTA 
-                    variant="outline"
-                    size="medium"
-                    className="bg-white/10 border-white text-white hover:bg-white hover:text-brand-blue-primary backdrop-blur-sm"
-                    trackingLabel="Corporate Specific CTA"
-                  />
-                  <VenueInquiryCTA 
-                    variant="outline"
-                    size="medium"
-                    className="bg-white/10 border-white text-white hover:bg-white hover:text-brand-blue-primary backdrop-blur-sm"
-                    trackingLabel="Venue Specific CTA"
-                  />
-                </motion.div>
-
-                {/* Alternative Contact Methods */}
-                <motion.div
-                  className="border-t border-white/20 pt-6"
-                  variants={fadeInUp}
-                >
-                  <p className="text-sm text-white/70 mb-4">
-                    Prefer to reach out directly?
-                  </p>
-                  <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                    <a
-                      href="mailto:hello@rrishmusic.com"
-                      className="inline-flex items-center text-white hover:text-brand-yellow-accent transition-colors underline hover:no-underline"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                      </svg>
-                      hello@rrishmusic.com
-                    </a>
-                    <span className="hidden sm:inline text-white/40">•</span>
-                    <a
-                      href="https://instagram.com/rrishmusic"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center text-white hover:text-brand-yellow-accent transition-colors underline hover:no-underline"
-                      aria-label="View Instagram profile for more performance content"
-                    >
-                      <svg className="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
-                      </svg>
-                      @rrishmusic
-                    </a>
-                  </div>
-                </motion.div>
-              </div>
-            </motion.section>
-          </div>
-        </React.Suspense>
-      </ErrorBoundary>
+          {/* Instagram Feed Section */}
+          <InstagramFeed />
+        </ErrorBoundary>
+      </div>
     </>
   );
 };
 
-// Set display name for debugging
-Performance.displayName = 'Performance';
-
-// Default export for route configuration
 export default Performance;

@@ -1,6 +1,6 @@
 import React, { Suspense } from 'react';
-import {
-  Hero,
+import { 
+  Hero, 
   About,
   Approach,
   Lessons,
@@ -10,140 +10,154 @@ import {
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
-import { usePageSEO } from '@/hooks/usePageSEO';
+import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
 
+/**
+ * Section fallback component
+ */
+const SectionFallback: React.FC<{ sectionName: string }> = ({ sectionName }) => (
+  <div className="min-h-[50vh] flex items-center justify-center bg-gray-50">
+    <div className="text-center">
+      <div className="w-8 h-8 border-4 border-brand-blue-primary border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-gray-600">Loading {sectionName} section...</p>
+    </div>
+  </div>
+);
+
+/**
+ * Props interface for Home page
+ */
 interface HomePageProps {
+  /**
+   * Additional CSS classes
+   */
   className?: string;
 }
 
 /**
- * Loading fallback component for sections
- */
-const SectionFallback: React.FC<{ sectionName: string }> = React.memo(
-  ({ sectionName }) => (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
-        <p className="text-gray-600">Loading {sectionName}...</p>
-      </div>
-    </div>
-  )
-);
-
-SectionFallback.displayName = 'SectionFallback';
-
-/**
- * Home page component containing all the main sections
+ * Home Page Component
  * 
- * Features:
- * - Complete teaching platform sections
- * - SEO optimization
- * - Lazy loading for performance
- * - Error boundaries for resilience
- * - Section-based navigation support
+ * Primary landing page focused on guitar lessons and teaching services.
+ * Includes cross-service suggestions for performance and collaboration.
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
-  // Configure SEO metadata for the Home page
-  usePageSEO({
-    title: 'Guitar Lessons & Blues Improvisation | Rrish Music',
-    description: 'Learn guitar and blues improvisation with Rrish in Melbourne. Personalized lessons for all levels. Start your musical journey today!',
-    keywords: 'guitar lessons, blues improvisation, music teacher, Melbourne, guitar instructor, music education',
-    type: 'website',
-    twitterCard: 'summary_large_image'
-  });
-
   return (
     <>
-      {/* SEO Head component for meta tags */}
       <SEOHead
         title="Guitar Lessons & Blues Improvisation | Rrish Music"
         description="Learn guitar and blues improvisation with Rrish in Melbourne. Personalized lessons for all levels. Start your musical journey today!"
         keywords="guitar lessons, blues improvisation, music teacher, Melbourne, guitar instructor, music education"
-        type="website"
+        canonical="https://www.rrishmusic.com/"
+        ogType="website"
       />
+      
+      <div className={`min-h-screen ${className}`}>
+        {/* Hero Section */}
+        <section id="hero" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Hero" />}>
+            <Suspense fallback={<SectionFallback sectionName="Hero" />}>
+              <Hero />
+            </Suspense>
+          </ErrorBoundary>
+        </section>
 
-      <div className={`app-container ${className}`}>
-        <main id="main-content" className="main-content">
-          {/* Hero Section - Load immediately */}
-          <section id="hero" className="app-section">
-            <ErrorBoundary fallback={<SectionFallback sectionName="Hero" />}>
-              <Suspense fallback={<SectionFallback sectionName="Hero" />}>
-                <Hero />
-              </Suspense>
-            </ErrorBoundary>
-          </section>
+        {/* About Section - Lazy loaded */}
+        <section id="about" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="About" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="About" />}
+              rootMargin="200px"
+            >
+              <About />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
 
-          {/* About Section - Lazy loaded */}
-          <section id="about" className="app-section">
-            <ErrorBoundary fallback={<SectionFallback sectionName="About" />}>
-              <LazySection
-                fallback={<SectionFallback sectionName="About" />}
-                rootMargin="200px"
-              >
-                <About />
-              </LazySection>
-            </ErrorBoundary>
-          </section>
-
-          {/* Approach Section - Lazy loaded */}
-          <section id="approach" className="app-section">
-            <ErrorBoundary
+        {/* Approach Section - Lazy loaded */}
+        <section id="approach" className="app-section">
+          <ErrorBoundary
+            fallback={<SectionFallback sectionName="Approach" />}
+          >
+            <LazySection
               fallback={<SectionFallback sectionName="Approach" />}
+              rootMargin="200px"
             >
-              <LazySection
-                fallback={<SectionFallback sectionName="Approach" />}
-                rootMargin="200px"
-              >
-                <Approach />
-              </LazySection>
-            </ErrorBoundary>
-          </section>
+              <Approach />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
 
-          {/* Lessons Section - Lazy loaded */}
-          <section id="lessons" className="app-section">
-            <ErrorBoundary fallback={<SectionFallback sectionName="Lessons" />}>
-              <LazySection
-                fallback={<SectionFallback sectionName="Lessons" />}
-                rootMargin="200px"
-              >
-                <Lessons />
-              </LazySection>
-            </ErrorBoundary>
-          </section>
+        {/* Lessons Section - Lazy loaded */}
+        <section id="lessons" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Lessons" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="Lessons" />}
+              rootMargin="200px"
+            >
+              <Lessons />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
 
-          {/* Community Section - Lazy loaded */}
-          <section id="community" className="app-section">
-            <ErrorBoundary
+        {/* Cross-Service Suggestions Section - After Lessons */}
+        <section className="py-8">
+          <div className="container-custom">
+            {/* Performance Services Suggestion - Inline */}
+            <CrossServiceSuggestion
+              fromService="teaching"
+              pageSection="about-instructor"
+              placement="inline"
+              timing="after-engagement"
+              minTimeOnPage={30}
+              minScrollPercentage={50}
+              className="mb-8"
+            />
+          </div>
+        </section>
+
+        {/* Community Section - Lazy loaded */}
+        <section id="community" className="app-section">
+          <ErrorBoundary
+            fallback={<SectionFallback sectionName="Community" />}
+          >
+            <LazySection
               fallback={<SectionFallback sectionName="Community" />}
+              rootMargin="200px"
             >
-              <LazySection
-                fallback={<SectionFallback sectionName="Community" />}
-                rootMargin="200px"
-              >
-                <Community />
-              </LazySection>
-            </ErrorBoundary>
-          </section>
+              <Community />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
 
-          {/* Contact Section - Lazy loaded */}
-          <section id="contact" className="app-section">
-            <ErrorBoundary fallback={<SectionFallback sectionName="Contact" />}>
-              <LazySection
-                fallback={<SectionFallback sectionName="Contact" />}
-                rootMargin="200px"
-              >
-                <Contact />
-              </LazySection>
-            </ErrorBoundary>
-          </section>
-        </main>
+        {/* Cross-Service Suggestions Banner - Before Contact */}
+        <section className="py-8">
+          <div className="container-custom">
+            <CrossServiceSuggestion
+              fromService="teaching"
+              pageSection="advanced-packages"
+              placement="banner"
+              timing="before-exit"
+              minTimeOnPage={45}
+              minScrollPercentage={70}
+              className="max-w-4xl mx-auto"
+            />
+          </div>
+        </section>
+
+        {/* Contact Section - Lazy loaded */}
+        <section id="contact" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Contact" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="Contact" />}
+              rootMargin="200px"
+            >
+              <Contact />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
       </div>
     </>
   );
 };
 
-// Set display name for debugging
-Home.displayName = 'Home';
-
-// Default export for route configuration
 export default Home;
