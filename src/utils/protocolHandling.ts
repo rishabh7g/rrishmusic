@@ -114,7 +114,7 @@ export const validateURLHandling = (): {
     return { isValid: true, issues, recommendations };
   }
 
-  const { protocol, hostname } = window.location;
+  const { hostname } = window.location;
 
   // Check subdomain consistency
   if (hostname === 'rrishmusic.com') {
