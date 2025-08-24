@@ -14,14 +14,30 @@
     <!-- GitHub Pages SPA routing script -->
     <script type="text/javascript">
       // Single Page Application redirect handling for GitHub Pages
+      // This script processes redirects from 404.html and restores the original URL
       (function(l) {
         if (l.search[1] === '/' ) {
-          var decoded = l.search.slice(1).split('&').map(function(s) { 
-            return s.replace(/~and~/g, '&')
-          }).join('?');
-          window.history.replaceState(null, null,
-            l.pathname.slice(0, -1) + decoded + l.hash
-          );
+          try {
+            var decoded = l.search.slice(1).split('&').map(function(s) { 
+              return s.replace(/~and~/g, '&')
+            }).join('?');
+            
+            // Log the redirect in development
+            if (l.hostname === 'localhost' || l.hostname === '127.0.0.1') {
+              console.log('[GitHub Pages SPA] Processing redirect from 404.html');
+              console.log('[GitHub Pages SPA] Original search:', l.search);
+              console.log('[GitHub Pages SPA] Decoded URL:', decoded);
+            }
+            
+            // Replace the current URL with the original route
+            window.history.replaceState(null, null,
+              l.pathname.slice(0, -1) + decoded + l.hash
+            );
+          } catch (error) {
+            console.warn('[GitHub Pages SPA] Error processing redirect:', error);
+            // If decoding fails, just clear the search params
+            window.history.replaceState(null, null, l.pathname + l.hash);
+          }
         }
       }(window.location))
     </script>
