@@ -35,7 +35,7 @@ export const getCanonicalURL = (path: string = ''): string => {
     return `${window.location.protocol}//${window.location.host}${path}`;
   }
 
-  // For GitHub Pages or other environments
+  // For GitHub Pages or other HTTPS environments, use HTTPS
   return `https://${window.location.host}${path}`;
 };
 
@@ -87,7 +87,7 @@ export const getSecureAssetURL = (assetPath: string): string => {
 export const initProtocolHandling = (): void => {
   if (typeof window === 'undefined') return;
 
-  // Enforce HTTPS redirect
+  // Enforce domain consistency (www subdomain redirect only)
   const redirected = enforceHTTPS();
   
   if (!redirected) {
@@ -116,17 +116,13 @@ export const validateURLHandling = (): {
 
   const { protocol, hostname } = window.location;
 
-  // Check protocol
-  if (hostname !== 'localhost' && hostname !== '127.0.0.1' && protocol !== 'https:') {
-    issues.push('Site not using HTTPS in production');
-    recommendations.push('Enable HTTPS redirect');
-  }
-
   // Check subdomain consistency
   if (hostname === 'rrishmusic.com') {
     issues.push('Using non-www domain');
     recommendations.push('Redirect to www.rrishmusic.com for consistency');
   }
+
+  // Note: HTTPS not enforced since domain doesn't support it
 
   // Check canonical URL
   const expectedCanonical = getCanonicalURL();
