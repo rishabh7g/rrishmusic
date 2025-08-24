@@ -16,7 +16,6 @@
 
 import React from 'react';
 import { SEOHead } from '@/components/common/SEOHead';
-import { usePageSEO } from '@/hooks/usePageSEO';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { CollaborationHero } from '@/components/sections/CollaborationHero';
 import { CollaborationPortfolio } from '@/components/sections/CollaborationPortfolio';
@@ -34,16 +33,14 @@ interface CollaborationPageProps {
 export const Collaboration: React.FC<CollaborationPageProps> = ({ 
   className = '' 
 }) => {
-  const seo = usePageSEO('collaboration');
-
   return (
-    <div className={`collaboration-page min-h-screen bg-white ${className}`}>
+    <>
       <SEOHead
-        title={seo.title || 'Creative Collaboration | Rrish Music'}
-        description={seo.description || 'Partner with Rrish on creative musical projects, recordings, and artistic collaborations. Professional guitar collaboration services in Melbourne.'}
-        keywords={seo.keywords || 'music collaboration, creative projects, recording partnerships, guitar collaboration, Melbourne'}
-        canonical={seo.canonical || 'https://www.rrishmusic.com/collaboration'}
-        ogType="website"
+        title="Creative Collaboration | Professional Music Projects Melbourne | Rrish Music"
+        description="Partner with Rrish on creative musical projects, recordings, and artistic collaborations. Professional guitar collaboration services in Melbourne."
+        keywords="music collaboration, creative projects, recording partnerships, guitar collaboration, Melbourne musician, artistic collaboration"
+        canonical="https://www.rrishmusic.com/collaboration"
+        type="website"
         structuredData={{
           "@context": "https://schema.org",
           "@type": "ProfessionalService",
@@ -58,7 +55,8 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
         }}
       />
       
-      <ErrorBoundary>
+      <div className={`collaboration-page min-h-screen bg-white ${className}`}>
+        <ErrorBoundary>
         {/* Hero Section - Collaboration focus with creative messaging */}
         <CollaborationHero />
         
@@ -98,10 +96,11 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
           </div>
         </section>
         
-        {/* CTA Section - Start Creative Project with appropriate routing */}
-        <CollaborationCTA />
-      </ErrorBoundary>
-    </div>
+          {/* CTA Section - Start Creative Project with appropriate routing */}
+          <CollaborationCTA />
+        </ErrorBoundary>
+      </div>
+    </>
   );
 };
 
