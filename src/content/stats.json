@@ -1,11 +1,18 @@
 {
   "experience": {
-    "playingYears": 5,
-    "teachingYears": 1
+    "playingYears": 10,
+    "teachingYears": 1,
+    "performanceYears": 10
   },
   "students": {
     "total": 2,
     "active": 2
+  },
+  "performance": {
+    "venuePerformances": "50+",
+    "weddingPerformances": "25+",
+    "corporateEvents": "15+",
+    "averagePerformanceRating": 5.0
   },
   "quality": {
     "averageRating": 5.0,
@@ -14,6 +21,7 @@
   },
   "reach": {
     "countries": 1,
-    "city": "Melbourne"
+    "city": "Melbourne",
+    "venues": 10
   }
 }
