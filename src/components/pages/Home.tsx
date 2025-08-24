@@ -7,11 +7,13 @@ import {
   Community,
   Contact,
   ServicesHierarchy,
+  MultiServiceTestimonialsSection
 } from '@/components/sections';
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
 import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
+import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
 /**
  * Section fallback component
@@ -36,16 +38,19 @@ interface HomePageProps {
 }
 
 /**
- * Home Page Component - UPDATED for 80/15/5 Content Allocation Rule
+ * Home Page Component - UPDATED for Multi-Service Platform with Social Proof
  * 
- * Implements strict content allocation:
- * - Performance Services: 80% content focus (hero emphasis, services hierarchy, cross-service suggestions)
- * - Teaching Services: 15% content focus (reduced lessons section, integrated but secondary)
- * - Collaboration Services: 5% content focus (minimal presence, cross-service suggestions only)
+ * Implements strategic testimonial placement:
+ * - Featured testimonials with 60/25/15 service allocation
+ * - Social proof positioned throughout user journey
+ * - Multi-service credibility building
  * 
- * Section ordering prioritizes performance content while maintaining user flow.
+ * Section ordering prioritizes performance content while integrating testimonials.
  */
 export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
+  // Load testimonials for homepage display
+  const { getFeaturedTestimonials, loading: testimonialsLoading } = useMultiServiceTestimonials();
+  
   return (
     <>
       <SEOHead
@@ -83,7 +88,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
       />
       
       <main id="main-content" className={`min-h-screen ${className}`}>
-        {/* Hero Section - Performance-Focused (80% allocation) */}
+        {/* Hero Section - Performance-Focused */}
         <section id="hero" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="Hero" />}>
             <Suspense fallback={<SectionFallback sectionName="Hero" />}>
@@ -92,7 +97,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Services Hierarchy Section - Performance Dominant (80% allocation) */}
+        {/* Services Hierarchy Section - Performance Dominant */}
         <section id="services-hierarchy" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="Services" />}>
             <Suspense fallback={<SectionFallback sectionName="Services" />}>
@@ -101,7 +106,30 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* About Section - Performance Background Focus (80% allocation) */}
+        {/* Multi-Service Social Proof - Strategic Placement After Services */}
+        <section id="homepage-testimonials" className="app-section">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Testimonials" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="Testimonials" />}
+              rootMargin="200px"
+            >
+              {!testimonialsLoading && (
+                <MultiServiceTestimonialsSection
+                  testimonials={getFeaturedTestimonials(6)}
+                  title="Trusted Across All Services"
+                  subtitle="See what clients say about our performance, teaching, and collaboration services"
+                  showFilters={true}
+                  showServiceBreakdown={true}
+                  maxTestimonials={6}
+                  layoutVariant="grid"
+                  className="bg-white"
+                />
+              )}
+            </LazySection>
+          </ErrorBoundary>
+        </section>
+
+        {/* About Section - Performance Background Focus */}
         <section id="about" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="About" />}>
             <LazySection
@@ -113,7 +141,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Performance-Focused Cross-Service Suggestion (80% allocation) */}
+        {/* Performance-Focused Cross-Service Suggestion */}
         <section className="py-12 bg-gradient-to-r from-brand-blue-primary/5 to-brand-yellow-accent/5">
           <div className="container-custom">
             <div className="text-center mb-8">
@@ -138,7 +166,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </div>
         </section>
 
-        {/* Approach Section - Performance-Focused (Adapted for live performance approach) */}
+        {/* Approach Section - Performance-Focused */}
         <section id="approach" className="app-section">
           <ErrorBoundary
             fallback={<SectionFallback sectionName="Approach" />}
@@ -179,24 +207,6 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Performance Testimonials Cross-Service (80% allocation) */}
-        <section className="py-12">
-          <div className="container-custom">
-            <div className="bg-white rounded-2xl p-8 shadow-lg max-w-4xl mx-auto text-center">
-              <div className="mb-6">
-                <svg className="w-12 h-12 text-brand-yellow-accent mx-auto mb-4" fill="currentColor" viewBox="0 0 24 24">
-                  <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h4v10h-10z"/>
-                </svg>
-              </div>
-              <blockquote className="text-xl font-medium text-gray-800 mb-4">
-                "Rrish brings incredible energy and authentic blues expression to every performance. 
-                His ability to connect with the audience makes every show memorable."
-              </blockquote>
-              <cite className="text-gray-600 font-medium">Melbourne Venue Owner</cite>
-            </div>
-          </div>
-        </section>
-
         {/* Community Section - Lazy loaded with performance focus */}
         <section id="community" className="app-section">
           <ErrorBoundary
@@ -211,7 +221,7 @@ export const Home: React.FC<HomePageProps> = ({ className = '' }) => {
           </ErrorBoundary>
         </section>
 
-        {/* Final Performance CTA - Before Contact (80% allocation) */}
+        {/* Final Performance CTA - Before Contact */}
         <section className="py-16 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
           <div className="container-custom text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">

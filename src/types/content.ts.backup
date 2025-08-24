@@ -152,16 +152,13 @@ export interface LessonContent {
   };
 }
 
-// Multi-Service Testimonial Types
+// Testimonial Types
 export interface Testimonial {
   id: string;
   name: string;
   text: string;
   rating: 1 | 2 | 3 | 4 | 5;
   date?: string;
-  service: 'performance' | 'teaching' | 'collaboration';
-  serviceSubType?: string; // e.g., 'wedding', 'corporate', 'venue', 'guitar', 'theory', 'recording', 'session'
-  event?: string;
   instrument?: string;
   level?: 'beginner' | 'intermediate' | 'advanced';
   age?: number;
@@ -169,7 +166,6 @@ export interface Testimonial {
   featured: boolean;
   verified?: boolean;
   avatar?: string;
-  image?: string;
   videoUrl?: string;
   achievements?: string[];
   beforeAfter?: {
@@ -178,50 +174,14 @@ export interface Testimonial {
   };
 }
 
-export interface TestimonialStats {
-  total: number;
-  averageRating: number;
-  byService: {
-    performance: {
-      count: number;
-      percentage: number;
-      averageRating: number;
-    };
-    teaching: {
-      count: number;
-      percentage: number;
-      averageRating: number;
-    };
-    collaboration: {
-      count: number;
-      percentage: number;
-      averageRating: number;
-    };
-  };
-  featured: number;
-  verified: number;
-}
-
 export interface TestimonialCollection {
   featured: Testimonial[];
   all: Testimonial[];
-  byService: {
-    performance: Testimonial[];
-    teaching: Testimonial[];
-    collaboration: Testimonial[];
+  averageRating: number;
+  totalCount: number;
+  categories?: {
+    [key: string]: Testimonial[];
   };
-  stats: TestimonialStats;
-}
-
-export interface TestimonialFilters {
-  service?: 'performance' | 'teaching' | 'collaboration';
-  serviceSubType?: string;
-  featured?: boolean;
-  verified?: boolean;
-  minRating?: number;
-  limit?: number;
-  sortBy?: 'date' | 'rating' | 'name';
-  sortOrder?: 'asc' | 'desc';
 }
 
 // Community Section Types
@@ -443,8 +403,6 @@ export type MediaType = MediaItem['type'];
 export type ContactType = ContactMethod['type'];
 export type SkillLevel = Skill['level'];
 export type AudienceLevel = 'beginner' | 'intermediate' | 'advanced';
-export type ServiceType = Testimonial['service'];
-export type TestimonialRating = Testimonial['rating'];
 
 // Utility types for content operations
 export type DeepPartial<T> = {
