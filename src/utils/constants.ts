@@ -1,12 +1,12 @@
-import type { NavigationItem } from "../types";
+import { NavigationItem } from '@/types';
 
-// Navigation Configuration  
+// Navigation Configuration - organized for user journey: Performances → Teaching → About → Contact
 export const NAVIGATION_ITEMS: NavigationItem[] = [
+  { id: "performances", label: "Performances", href: "#performances" },
   { id: "hero", label: "Home", href: "#hero" },
   { id: "about", label: "About", href: "#about" },
   { id: "approach", label: "Approach", href: "#approach" },
   { id: "lessons", label: "Lessons", href: "#lessons" },
-  { id: "community", label: "Community", href: "#community" },
   { id: "contact", label: "Contact", href: "#contact" },
 ];
 
@@ -24,42 +24,36 @@ export const ANIMATION_DURATION = {
   slow: 0.8,
 };
 
-export const BREAKPOINTS = {
-  sm: 640,
-  md: 768,
-  lg: 1024,
-  xl: 1280,
+export const FADE_IN_CONFIG = {
+  initial: { opacity: 0, y: 20 },
+  animate: { opacity: 1, y: 0 },
+  exit: { opacity: 0, y: -20 },
 };
 
-// Content-related constants (for fallbacks - use content management system for actual data)
-export const CONTENT_CONFIG = {
-  // Image paths
-  IMAGES: {
-    HERO_BACKGROUND: '/images/hero-bg.jpg',
-    ABOUT_IMAGE: '/images/about-rrish.jpg',
-    OG_IMAGE: '/images/og-image.jpg',
-  },
-  
-  // Social media
-  SOCIAL: {
-    INSTAGRAM: 'https://instagram.com/rrishmusic',
-    INSTAGRAM_HANDLE: '@rrishmusic',
-  },
-
-  // SEO defaults
-  SEO: {
-    SITE_NAME: 'RrishMusic',
-    TITLE_TEMPLATE: '%s | RrishMusic - Blues & Music Lessons',
-    DEFAULT_TITLE: 'RrishMusic - Guitar Lessons & Blues Improvisation',
-    DEFAULT_DESCRIPTION: 'Learn guitar and blues improvisation with Rrish in Melbourne. Personalized lessons for all levels.',
-    KEYWORDS: ['guitar lessons', 'blues improvisation', 'music teacher', 'Melbourne'],
-  },
-
-  // Business settings
-  BUSINESS: {
-    CURRENCY: 'AUD',
-    TIMEZONE: 'Australia/Melbourne',
-    LESSON_DURATION: 60, // minutes
-    BOOKING_ADVANCE_DAYS: 14,
-  }
+export const SLIDE_IN_CONFIG = {
+  initial: { opacity: 0, x: -20 },
+  animate: { opacity: 1, x: 0 },
+  exit: { opacity: 0, x: 20 },
 };
+
+// Performance monitoring thresholds
+export const PERFORMANCE_THRESHOLDS = {
+  LCP: 2500,
+  FID: 100,
+  CLS: 0.1,
+  TTFB: 600,
+} as const;
+
+// Cache configuration
+export const CACHE_DURATION = {
+  short: 5 * 60 * 1000, // 5 minutes
+  medium: 30 * 60 * 1000, // 30 minutes  
+  long: 60 * 60 * 1000, // 1 hour
+} as const;
+
+// Error retry configuration
+export const RETRY_CONFIG = {
+  maxAttempts: 3,
+  baseDelay: 1000,
+  maxDelay: 10000,
+} as const;
