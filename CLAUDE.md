@@ -27,29 +27,34 @@ Multi-service musician platform for **Rrish** - Performance | Teaching | Collabo
    - Link PR to the issue
    - Document all changes in PR description
 
-### Enhanced Git Workflow with Quality Gates
+### Systematic Development Workflow - 11 Steps
 
 🚫 **NO DIRECT PUSHES TO MAIN BRANCH**
 
-✅ **Required Workflow with Quality Gates:**
+✅ **Quality-Focused 11-Step Systematic Workflow:**
 
-#### 1. Issue Selection & Branch Creation
-- Pick task from systematic GitHub issue list (Phase.Task.Subtask format)
+#### 1. **Pick Task from GitHub Issues**
+- Select next priority issue from systematic GitHub issue list
+- **Large Task Breakdown**: If issue is complex, break it down into smaller sub-issues first
+- Focus on quality over quantity - prefer smaller, manageable tasks
+
+#### 2. **Work Analysis & Planning**  
+- Read and understand issue acceptance criteria and technical tasks
+- Use guard rails for parallel agents if implementing complex features
+- Plan implementation approach with existing codebase patterns
+
+#### 3. **Create Feature Branch**
 - Create feature branch: `feature/issue-{number}-{short-description}`
 - Switch to clean feature branch from latest main
+- Ensure working directory is clean
 
-#### 2. Pre-Implementation Setup  
-- Update CLAUDE.md with any workflow enhancements needed
-- Use guard rails for parallel agents if implementing complex features
-- Read and understand issue acceptance criteria and technical tasks
+#### 4. **Implement Changes**
+- Follow acceptance criteria precisely
+- Maintain mobile-first responsive design principles
+- Preserve TypeScript type safety throughout
+- Protect existing functionality (especially teaching conversion paths)
 
-#### 3. Implementation Phase
-- Implement changes following acceptance criteria
-- Follow mobile-first responsive design principles
-- Maintain TypeScript type safety throughout
-- Preserve existing functionality (especially teaching conversion paths)
-
-#### 4. **MANDATORY Quality Gates** - Run Before ANY Commit
+#### 5. **Run All Quality Gates** - MANDATORY Before ANY Commit
 ```bash
 # Lint Check
 npm run lint
@@ -132,43 +137,43 @@ Test Analysis:
 - Performance loading patterns
 - Error boundary functionality
 
-#### 5. Commit & Push Changes
+#### 6. **Commit and Push Changes**
 - Only commit if ALL quality gates pass AND test analysis complete
-- Document any test changes in commit message
+- Document any test changes in commit message  
 - Use standardized commit message format
 - Push changes to feature branch
 
-#### 6. Pull Request Creation
+#### 7. **Create PR with Auto-Merge Enabled**
 - Create PR with detailed description
 - Link to GitHub issue: `Closes #[issue_number]`
 - **Enable auto-merge**: `gh pr merge --auto --squash`
 - Include comprehensive testing checklist
 
-#### 7. PR Monitoring & Resolution
+#### 8. **Monitor PR Status Until Merged**
 - **Continuously monitor PR status** until merged
 - Watch for CI/CD failures, merge conflicts, or review requests
 - Fix any issues immediately and push updates
 - **Auto-merge will complete when all checks pass**
 
-#### 8. Post-Merge Cleanup
+#### 9. **Clean Up: Delete Branch**
+- Delete local feature branch after successful merge
 ```bash
-# Switch to main branch
-git checkout main
-
-# Pull latest changes
-git pull origin main  
-
-# Delete local feature branch
 git branch -D feature/issue-{number}-{description}
-
-# Verify main is clean and up-to-date
-git status
 ```
 
-#### 9. Next Task Preparation
+#### 10. **Switch to Main, Pull Latest**
+- Switch to main branch and pull latest changes
+```bash
+git checkout main
+git pull origin main
+git status  # Verify clean state
+```
+
+#### 11. **Pick New Issue from Git - Start Process Again**
 - Return to step 1 with next priority issue
 - Ensure main branch is clean before starting new feature
 - **Never work on multiple features simultaneously**
+- **Repeat process until no GitHub issues remain**
 
 ### Branch Naming Convention
 
