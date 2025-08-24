@@ -158,12 +158,26 @@ Test Analysis:
 - Include comprehensive testing checklist
 - **DO NOT enable auto-merge yet** - wait for all checks to complete first
 
-#### 8. **Monitor PR Status Until All Checks Pass**
-- **Continuously monitor PR status** until all checks complete
-- Watch for CI/CD failures, merge conflicts, or review requests
-- Fix any issues immediately and push updates
-- **Only enable auto-merge AFTER all status checks pass**: `gh pr merge --auto --squash`
-- Verify `"conclusion":"SUCCESS"` for all status checks before auto-merge
+#### 8. **Monitor PR Status with 30-Second Intervals**
+**MANDATORY 3-Check Process:**
+1. **Wait 30 seconds** → Check PR status with `gh pr status`
+2. **Wait 30 seconds** → Check PR status with `gh pr status`  
+3. **Wait 30 seconds** → Check PR status with `gh pr status`
+
+**After 3 checks (90 seconds total), determine outcome:**
+
+**✅ If PR can be merged (all checks pass):**
+- Enable auto-merge: `gh pr merge --auto --squash`
+- Continue to step 9
+
+**❌ If errors found:**
+- Fix issues immediately and push updates
+- **Restart the 3-check process** (wait 30s → check → wait 30s → check → wait 30s → check)
+- Repeat until PR can be merged or all issues resolved
+
+**⏳ If checks still pending after 3 intervals:**
+- Continue monitoring with additional 30-second intervals
+- Do not proceed until definitive result (merge ready OR errors to fix)
 
 #### 9. **Switch to Main, Pull Latest**
 - Switch to main branch and pull latest changes
