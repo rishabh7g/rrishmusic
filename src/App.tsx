@@ -1,12 +1,13 @@
 import React, { Suspense, useEffect, lazy } from 'react'
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { Navigation } from '@/components/layout/Navigation'
+import { ContextAwareHeader } from '@/components/ContextAwareHeader'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
 import { initProtocolHandling, validateURLHandling } from '@/utils/protocolHandling'
 import { performanceMonitor, startPerformanceMonitoring } from '@/utils/performanceMonitor'
 import uiMessages from '@/data/ui/messages.json'
 import "@/index.css"
+import "@/styles/contextualHeaders.css"
 
 // Lazy load page components for code splitting
 const Home = lazy(() => 
@@ -237,12 +238,12 @@ const ResourcePreloader: React.FC = () => {
 };
 
 /**
- * Layout wrapper component that provides consistent navigation
+ * Layout wrapper component with context-aware navigation
  */
 const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <div className="app-container">
-      <Navigation />
+      <ContextAwareHeader />
       {children}
     </div>
   )
@@ -282,6 +283,7 @@ const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, routeName }) => {
  * 
  * Features:
  * - Code splitting for all major routes
+ * - Context-aware navigation that adapts to service context
  * - Comprehensive performance monitoring
  * - Resource preloading for critical assets
  * - Enhanced error boundaries with route-specific handling
