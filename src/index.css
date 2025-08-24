@@ -3,6 +3,7 @@
 @import "./styles/backgroundImages.css";
 @import "./styles/serviceNavigation.css";
 @import "./styles/categoryNavigation.css";
+@import "./styles/serviceSections.css";
 @import "./styles/responsive.css";
 @tailwind base;
 @tailwind components;

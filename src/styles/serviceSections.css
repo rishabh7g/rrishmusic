@@ -1,0 +1,432 @@
+/**
+ * Service Sections Styles
+ * Comprehensive styling for service-specific content sections
+ */
+
+/* Base Service Section Styles */
+.service-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.service-section--teaching {
+  --service-primary: theme('colors.brand.orange-warm');
+  --service-secondary: theme('colors.brand.orange-light');
+  --service-accent: theme('colors.orange.100');
+  --service-text: theme('colors.orange.900');
+}
+
+.service-section--performance {
+  --service-primary: theme('colors.brand.blue-primary');
+  --service-secondary: theme('colors.brand.blue-secondary');
+  --service-accent: theme('colors.blue.100');
+  --service-text: theme('colors.blue.900');
+}
+
+.service-section--collaboration {
+  --service-primary: theme('colors.green.600');
+  --service-secondary: theme('colors.green.500');
+  --service-accent: theme('colors.green.100');
+  --service-text: theme('colors.green.900');
+}
+
+/* Service Section Variants */
+.service-section--featured {
+  border-left: 4px solid var(--service-primary);
+}
+
+.service-section--testimonial {
+  background: linear-gradient(135deg, var(--service-accent) 0%, white 100%);
+}
+
+.service-section--pricing {
+  background: linear-gradient(to right, var(--service-accent), white);
+}
+
+.service-section--portfolio {
+  @apply bg-gray-50;
+}
+
+/* Service Indicator */
+.service-indicator {
+  background-color: var(--service-accent);
+  color: var(--service-text);
+  font-size: 0.875rem;
+  font-weight: 500;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  display: inline-block;
+}
+
+/* Section Headers */
+.section-header {
+  text-align: center;
+}
+
+.section-title {
+  @apply text-3xl md:text-4xl lg:text-5xl font-bold mb-4;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+
+.section-subtitle {
+  @apply text-lg md:text-xl text-gray-600 max-w-3xl mx-auto;
+  line-height: 1.6;
+}
+
+/* Animation Classes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInUp {
+  from {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.8s ease-out;
+}
+
+.animate-slide-in-up {
+  animation: slideInUp 0.6s ease-out;
+}
+
+.animate-scale-in {
+  animation: scaleIn 0.5s ease-out;
+}
+
+/* Stagger animation delays for multiple elements */
+.animate-stagger-1 { animation-delay: 0.1s; }
+.animate-stagger-2 { animation-delay: 0.2s; }
+.animate-stagger-3 { animation-delay: 0.3s; }
+.animate-stagger-4 { animation-delay: 0.4s; }
+
+/* Component-Specific Styles */
+
+/* Package Cards */
+.package-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(8px);
+}
+
+.package-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+.package-card.active {
+  border-color: var(--service-primary);
+  box-shadow: 0 0 0 4px var(--service-accent);
+}
+
+/* Feature Items */
+.feature-item {
+  transition: transform 0.2s ease-in-out;
+}
+
+.feature-item:hover {
+  transform: translateY(-2px);
+}
+
+/* Principle Items */
+.principle-item {
+  @apply flex items-start space-x-4 p-6 rounded-xl;
+  background: linear-gradient(135deg, white 0%, var(--service-accent) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.principle-item:hover {
+  transform: translateX(8px);
+  box-shadow: 0 10px 30px -8px rgba(0, 0, 0, 0.1);
+}
+
+/* Venue Cards */
+.venue-card {
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.venue-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px -12px rgba(0, 0, 0, 0.15);
+}
+
+.venue-card .venue-image img {
+  transition: transform 0.5s ease;
+}
+
+.venue-card:hover .venue-image img {
+  transform: scale(1.05);
+}
+
+/* Service Buttons */
+.service-button, .service-nav-button {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.service-button::before, .service-nav-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, var(--service-primary) 20%, transparent 21%);
+  transition: all 0.4s ease;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+.service-button:hover::before, .service-nav-button:hover::before {
+  width: 300%;
+  height: 300%;
+}
+
+/* Equipment Categories */
+.equipment-category {
+  transition: all 0.3s ease;
+}
+
+.equipment-category:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 15px 35px -8px rgba(0, 0, 0, 0.1);
+}
+
+.equipment-item {
+  transition: all 0.2s ease;
+}
+
+.equipment-item:hover {
+  transform: translateX(4px);
+  background-color: var(--service-accent);
+}
+
+/* Process Steps */
+.process-step .step-indicator {
+  position: relative;
+}
+
+.process-step .step-indicator::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  width: 2px;
+  height: 4rem;
+  background: linear-gradient(to bottom, var(--service-primary), var(--service-accent));
+  transform: translateX(-50%);
+}
+
+.process-step:last-child .step-indicator::after {
+  display: none;
+}
+
+/* Success Stories */
+.story-card {
+  transition: all 0.4s ease;
+}
+
+.story-card:hover {
+  transform: scale(1.02);
+}
+
+.story-card .story-image img {
+  transition: transform 0.5s ease;
+  filter: brightness(0.9);
+}
+
+.story-card:hover .story-image img {
+  transform: scale(1.05);
+  filter: brightness(1);
+}
+
+/* Project Cards */
+.project-card {
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.project-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.15);
+}
+
+.project-card .project-image {
+  position: relative;
+  overflow: hidden;
+}
+
+.project-card .project-image img {
+  transition: transform 0.5s ease;
+}
+
+.project-card:hover .project-image img {
+  transform: scale(1.1);
+}
+
+/* Modal Styles */
+.project-modal-content {
+  animation: scaleIn 0.3s ease-out;
+}
+
+/* Testimonial Cards */
+.testimonial-card {
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.testimonial-card::before {
+  content: '';
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  right: -2px;
+  bottom: -2px;
+  background: linear-gradient(45deg, var(--service-primary), var(--service-secondary), var(--service-primary));
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.testimonial-card:hover::before {
+  opacity: 1;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-4px);
+}
+
+/* Utility Classes */
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.gradient-text {
+  background: linear-gradient(135deg, var(--service-primary) 0%, var(--service-secondary) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 640px) {
+  .service-section {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+  
+  .section-title {
+    @apply text-2xl md:text-3xl;
+  }
+  
+  .section-subtitle {
+    @apply text-base;
+  }
+  
+  .package-card:hover {
+    transform: none;
+  }
+  
+  .venue-card:hover,
+  .project-card:hover {
+    transform: none;
+  }
+}
+
+/* Dark mode support (if needed in future) */
+@media (prefers-color-scheme: dark) {
+  .service-section--testimonial {
+    background: linear-gradient(135deg, rgba(var(--service-accent-rgb), 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .service-section--featured {
+    border-left-width: 6px;
+  }
+  
+  .package-card,
+  .venue-card,
+  .project-card {
+    border: 2px solid var(--service-primary);
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .package-card:hover,
+  .venue-card:hover,
+  .project-card:hover,
+  .story-card:hover,
+  .testimonial-card:hover,
+  .equipment-category:hover {
+    transform: none;
+  }
+  
+  .animate-fade-in,
+  .animate-slide-in-up,
+  .animate-scale-in {
+    animation: none;
+  }
+  
+  .service-button::before,
+  .service-nav-button::before {
+    display: none;
+  }
+}
+
+/* Print styles */
+@media print {
+  .service-section {
+    break-inside: avoid;
+    padding: 1rem 0;
+  }
+  
+  .package-card,
+  .venue-card,
+  .project-card {
+    box-shadow: none;
+    border: 1px solid #ccc;
+  }
+}

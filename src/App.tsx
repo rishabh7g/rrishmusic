@@ -45,6 +45,13 @@ const CategoryDemo = lazy(() =>
   })
 );
 
+const ServiceSectionsDemo = lazy(() => 
+  import('@/components/pages/ServiceSectionsDemo').then(module => {
+    performanceMonitor.mark('service-sections-demo-page-loaded');
+    return { default: module.ServiceSectionsDemo };
+  })
+);
+
 interface LayoutShiftEntry extends PerformanceEntry {
   hadRecentInput: boolean
   value: number
@@ -302,6 +309,7 @@ const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, routeName }) => {
  * - /performance : Performance services page
  * - /collaboration : Collaboration services page
  * - /category-demo : Category navigation system demonstration
+ * - /service-sections-demo : Service-specific content sections demo
  * - /* : Redirects to home
  */
 function App(): React.JSX.Element {
@@ -381,6 +389,18 @@ function App(): React.JSX.Element {
                   <RouteWrapper routeName="category-demo">
                     <Suspense fallback={<AppLoadingFallback pageName="Category Demo" />}>
                       <CategoryDemo />
+                    </Suspense>
+                  </RouteWrapper>
+                } 
+              />
+              
+              {/* Service Sections Demo route */}
+              <Route 
+                path="/service-sections-demo" 
+                element={
+                  <RouteWrapper routeName="service-sections-demo">
+                    <Suspense fallback={<AppLoadingFallback pageName="Service Sections Demo" />}>
+                      <ServiceSectionsDemo />
                     </Suspense>
                   </RouteWrapper>
                 } 
