@@ -95,7 +95,17 @@ export const getSecureAssetURL = (assetPath: string): string => {
 export const initProtocolHandling = (): void => {
   if (typeof window === 'undefined') return;
 
-  // Enforce HTTPS redirect
+  // Skip protocol enforcement in development to prevent infinite redirects
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[ProtocolHandling] Protocol handling initialized (development mode):', {
+      protocol: window.location.protocol,
+      hostname: window.location.hostname,
+      canonical: getCanonicalURL()
+    });
+    return;
+  }
+
+  // Enforce HTTPS redirect only in production
   const redirected = enforceHTTPS();
   
   if (!redirected) {
