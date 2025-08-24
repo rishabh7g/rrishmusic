@@ -3,6 +3,7 @@ import { PerformanceHero, PerformanceGallery, MultiServiceTestimonialsSection, P
 import ErrorBoundary from '@/components/common/ErrorBoundary';
 import { SEOHead } from '@/components/common/SEOHead';
 import { LazySection } from '@/components/common/LazySection';
+import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
 /**
@@ -34,6 +35,7 @@ interface PerformancePageProps {
  * - Performance-focused hero section
  * - Service showcase with portfolio gallery
  * - Multi-service testimonials with performance emphasis
+ * - Cross-service upselling suggestions
  * - Transparent pricing information
  * - Social proof through Instagram feed
  * - Optimized for conversions and user engagement
@@ -104,6 +106,21 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           </ErrorBoundary>
         </section>
 
+        {/* Cross-Service Suggestion - Teaching Skills */}
+        <section className="py-8">
+          <div className="container-custom">
+            <CrossServiceSuggestion
+              fromService="performance"
+              pageSection="portfolio"
+              placement="inline"
+              timing="after-engagement"
+              minTimeOnPage={30}
+              minScrollPercentage={45}
+              className="mb-8"
+            />
+          </div>
+        </section>
+
         {/* Multi-Service Testimonials - Performance Focused */}
         <section id="performance-testimonials" className="app-section">
           <ErrorBoundary fallback={<SectionFallback sectionName="Testimonials" />}>
@@ -141,6 +158,21 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
               <PricingSection />
             </LazySection>
           </ErrorBoundary>
+        </section>
+
+        {/* Cross-Service Suggestion - Collaboration Opportunities */}
+        <section className="py-8">
+          <div className="container-custom">
+            <CrossServiceSuggestion
+              fromService="performance"
+              pageSection="pricing"
+              placement="banner"
+              timing="after-engagement"
+              minTimeOnPage={50}
+              minScrollPercentage={65}
+              className="max-w-4xl mx-auto"
+            />
+          </div>
         </section>
 
         {/* Cross-Service Social Proof Section */}
