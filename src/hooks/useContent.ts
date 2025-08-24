@@ -22,6 +22,7 @@ import approachData from '@/content/approach.json';
 import communityData from '@/content/community.json';
 import contactData from '@/content/contact.json';
 import seoData from '@/content/seo.json';
+import performanceData from '@/content/performance.json';
 
 interface StatsData {
   experience: {
@@ -199,6 +200,8 @@ export function useSectionContent(section: string) {
         return contactData;
       case 'lessons':
         return lessonContent;
+      case 'performance':
+        return performanceData;
       default:
         return null;
     }

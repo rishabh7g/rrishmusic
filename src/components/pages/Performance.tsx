@@ -6,6 +6,7 @@ import { usePageSEO } from '@/hooks/usePageSEO';
 import { useSectionContent } from '@/hooks/useContent';
 import PerformanceHero from '@/components/sections/PerformanceHero';
 import PerformanceGallery from '@/components/sections/PerformanceGallery';
+import { TestimonialsSection, PricingSection } from '@/components/sections';
 import { ServiceCard } from '@/components/ui/ServiceCard';
 import type { ServiceCardData } from '@/components/ui/ServiceCard';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
@@ -308,6 +309,8 @@ const PerformanceCredentials: React.FC = () => {
  * - Professional performance hero section
  * - Performance portfolio gallery with lazy loading
  * - Comprehensive service sections using new ServiceCard component
+ * - Client testimonials section with performance-specific feedback
+ * - Professional pricing section with transparent package information
  * - Strong call-to-action elements
  */
 export const Performance: React.FC<PerformancePageProps> = ({ 
@@ -346,6 +349,12 @@ export const Performance: React.FC<PerformancePageProps> = ({
 
             {/* Performance Credentials Section */}
             <PerformanceCredentials />
+
+            {/* Client Testimonials Section - NEW: Issue #61 Implementation */}
+            <TestimonialsSection />
+
+            {/* Performance Pricing Section - NEW: Issue #61 Implementation */}
+            <PricingSection />
 
             {/* Contact Call-to-Action */}
             <motion.section
