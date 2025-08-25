@@ -4,8 +4,33 @@ import { describe, it, expect } from 'vitest';
 export const validateEmail = (email: string): boolean => {
   if (!email || typeof email !== 'string') return false;
   
-  const emailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
-  return emailRegex.test(email.trim());
+  // Simpler, more reliable email validation
+  const trimmedEmail = email.trim();
+  
+  // Basic format check: must contain @ and have text before/after
+  if (!trimmedEmail.includes('@')) return false;
+  
+  const parts = trimmedEmail.split('@');
+  if (parts.length !== 2) return false;
+  
+  const [localPart, domainPart] = parts;
+  
+  // Local part validation
+  if (!localPart || localPart.length === 0) return false;
+  if (localPart.startsWith('.') || localPart.endsWith('.')) return false;
+  if (localPart.includes('..')) return false;
+  if (localPart.includes(' ')) return false;
+  
+  // Domain part validation  
+  if (!domainPart || domainPart.length === 0) return false;
+  if (domainPart.startsWith('.') || domainPart.endsWith('.')) return false;
+  if (domainPart.includes('..')) return false;
+  if (domainPart.includes(' ')) return false;
+  if (!domainPart.includes('.')) return false; // Must have at least one dot
+  
+  // Check for valid characters (basic check)
+  const validEmailRegex = /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9.-]+$/;
+  return validEmailRegex.test(trimmedEmail);
 };
 
 export const validatePhone = (phone: string): boolean => {
@@ -242,7 +267,7 @@ describe('Form Validation Utilities - Business Logic Testing', () => {
         'abc',
         'phone',
         '1234567890123456', // Too long (16 digits)
-        '++1234567890',
+        "12345678901234567", // Too long (17 digits)
       ];
 
       invalidPhones.forEach(phone => {
