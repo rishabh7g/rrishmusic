@@ -285,6 +285,94 @@ export interface EnhancedStats extends CalculatedStats {
   refresh: () => void;
   clearCache: () => void;
 }
+
+// Performance Data Calculator Types
+export interface PerformanceVenueStats {
+  total: number;
+  byType: {
+    venue: number;
+    wedding: number;
+    corporate: number;
+    private: number;
+    festival?: number;
+  };
+  locations: string[];
+  uniqueLocations: number;
+}
+
+export interface PerformanceEventStats {
+  totalEvents: number;
+  bySubType: Record<string, number>;
+  recentEvents: Array<{
+    event: string;
+    location: string;
+    date: string;
+    type: string;
+  }>;
+  averageRating: number;
+}
+
+export interface PerformancePortfolioStats {
+  totalItems: number;
+  byType: {
+    images: number;
+    videos: number;
+    audio: number;
+  };
+  byPerformanceType: {
+    acoustic: number;
+    band: number;
+    solo: number;
+  };
+  featuredItems: number;
+}
+
+export interface CalculatedPerformanceData {
+  venues: PerformanceVenueStats;
+  events: PerformanceEventStats;
+  portfolio: PerformancePortfolioStats;
+  experience: {
+    yearsActive: number;
+    totalPerformances: string;
+    regularVenues: number;
+    geographicReach: {
+      cities: number;
+      regions: string[];
+      primaryLocation: string;
+    };
+  };
+  services: {
+    eventTypes: string[];
+    specializations: string[];
+    availability: {
+      weekdays: boolean;
+      weekends: boolean;
+      evenings: boolean;
+    };
+  };
+}
+
+export interface PerformanceCacheStatus {
+  cached: boolean;
+  age: number;
+  expires: number;
+}
+
+export interface EnhancedPerformanceData extends CalculatedPerformanceData {
+  original?: Record<string, unknown>; // Original static performance data
+  meta: {
+    isCalculated: boolean;
+    isDynamic: boolean;
+    cacheStatus: PerformanceCacheStatus;
+    lastCalculated: string | null;
+    refreshKey?: number;
+  };
+  loading: boolean;
+  error: string | null;
+  refresh: () => void;
+  clearCache: () => void;
+}
+
 export interface TestimonialCollection {
   featured: Testimonial[];
   all: Testimonial[];

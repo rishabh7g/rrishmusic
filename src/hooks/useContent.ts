@@ -1,8 +1,9 @@
 import { useMemo, useState, useCallback } from 'react';
-import { Testimonial, LessonPackage } from '@/types/content';
+import { Testimonial, LessonPackage, EnhancedPerformanceData } from '@/types/content';
 import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
 import { calculateLessonPackagePricing, calculateTrialLessonPricing, formatPrice, getPricingSummary } from '@/utils/pricingCalculations';
 import { calculateStats, clearStatsCache, getStatsCacheStatus } from '@/utils/statsCalculator';
+import { calculatePerformanceData, clearPerformanceCache, getPerformanceCacheStatus } from '@/utils/performanceCalculator';
 import heroData from '@/content/hero.json';
 import aboutData from '@/content/about.json';
 import approachData from '@/content/approach.json';
@@ -42,6 +43,9 @@ export const useContent = () => {
       
       // Calculate dynamic general stats
       const dynamicStats = calculateStats();
+      
+      // Calculate dynamic performance data
+      const dynamicPerformanceData = calculatePerformanceData();
       
       return {
         ...contentMap,
@@ -85,6 +89,18 @@ export const useContent = () => {
             lastCalculated: new Date().toISOString()
           }
         },
+        performance: {
+          ...performanceData,
+          calculated: dynamicPerformanceData,
+          loading: false,
+          error: null,
+          meta: {
+            isCalculated: true,
+            isDynamic: true,
+            cacheStatus: getPerformanceCacheStatus(),
+            lastCalculated: new Date().toISOString()
+          }
+        },
         loading: false,
         error: null
       };
@@ -101,6 +117,18 @@ export const useContent = () => {
           meta: {
             isCalculated: false,
             cacheStatus: getStatsCacheStatus(),
+            lastCalculated: new Date().toISOString()
+          }
+        },
+        performance: {
+          ...performanceData,
+          calculated: calculatePerformanceData(), // Fallback still works
+          loading: false,
+          error: 'Failed to process some performance data',
+          meta: {
+            isCalculated: false,
+            isDynamic: false,
+            cacheStatus: getPerformanceCacheStatus(),
             lastCalculated: new Date().toISOString()
           }
         },
@@ -275,6 +303,170 @@ export const useStats = (options: {
 };
 
 /**
+ * Enhanced Performance Hook with Dynamic Calculation Support
+ */
+export const usePerformance = (options: {
+  useDynamic?: boolean;
+  forceRefresh?: boolean;
+} = {}): EnhancedPerformanceData => {
+  const { useDynamic = true, forceRefresh = false } = options;
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Refresh function for manual cache clearing
+  const refreshPerformance = useCallback(() => {
+    clearPerformanceCache();
+    setRefreshKey(prev => prev + 1);
+  }, []);
+  
+  return useMemo(() => {
+    try {
+      if (useDynamic) {
+        const calculatedPerformanceData = calculatePerformanceData(forceRefresh);
+        const cacheStatus = getPerformanceCacheStatus();
+        
+        return {
+          // Use dynamic performance data as primary data
+          ...calculatedPerformanceData,
+          
+          // Include original performance data for comparison
+          original: performanceData,
+          
+          // Metadata about the calculation
+          meta: {
+            isCalculated: true,
+            isDynamic: true,
+            cacheStatus,
+            lastCalculated: new Date().toISOString(),
+            refreshKey
+          },
+          
+          // State management
+          loading: false,
+          error: null,
+          
+          // Actions
+          refresh: refreshPerformance,
+          clearCache: clearPerformanceCache
+        };
+      } else {
+        // Fallback to static performance data
+        return {
+          // Convert static data to match calculated structure
+          venues: {
+            total: 25,
+            byType: { venue: 12, wedding: 8, corporate: 6, private: 4 },
+            locations: ['Melbourne, VIC'],
+            uniqueLocations: 1
+          },
+          events: {
+            totalEvents: 150,
+            bySubType: {},
+            recentEvents: [],
+            averageRating: 4.9
+          },
+          portfolio: {
+            totalItems: performanceData.portfolio?.gallery?.length || 8,
+            byType: { images: 6, videos: 1, audio: 1 },
+            byPerformanceType: { acoustic: 4, band: 2, solo: 2 },
+            featuredItems: 3
+          },
+          experience: {
+            yearsActive: 10,
+            totalPerformances: '150+',
+            regularVenues: 8,
+            geographicReach: {
+              cities: 3,
+              regions: ['Melbourne, VIC'],
+              primaryLocation: 'Melbourne, VIC'
+            }
+          },
+          services: {
+            eventTypes: ['Weddings', 'Corporate Events', 'Venues'],
+            specializations: ['Acoustic Performances', 'Blues & Rock'],
+            availability: {
+              weekdays: true,
+              weekends: true,
+              evenings: true
+            }
+          },
+          
+          // Include original performance data for comparison
+          original: performanceData,
+          
+          meta: {
+            isCalculated: false,
+            isDynamic: false,
+            cacheStatus: { cached: false, age: -1, expires: -1 },
+            lastCalculated: null,
+            refreshKey
+          },
+          loading: false,
+          error: null,
+          refresh: refreshPerformance,
+          clearCache: () => {} // No-op for static data
+        };
+      }
+      
+    } catch (error) {
+      console.error('Error in usePerformance hook:', error);
+      
+      // Return fallback data structure on error
+      return {
+        venues: {
+          total: 25,
+          byType: { venue: 12, wedding: 8, corporate: 6, private: 4 },
+          locations: ['Melbourne, VIC'],
+          uniqueLocations: 1
+        },
+        events: {
+          totalEvents: 150,
+          bySubType: {},
+          recentEvents: [],
+          averageRating: 4.9
+        },
+        portfolio: {
+          totalItems: 8,
+          byType: { images: 6, videos: 1, audio: 1 },
+          byPerformanceType: { acoustic: 4, band: 2, solo: 2 },
+          featuredItems: 3
+        },
+        experience: {
+          yearsActive: 10,
+          totalPerformances: '150+',
+          regularVenues: 8,
+          geographicReach: {
+            cities: 3,
+            regions: ['Melbourne, VIC'],
+            primaryLocation: 'Melbourne, VIC'
+          }
+        },
+        services: {
+          eventTypes: ['Weddings', 'Corporate Events', 'Venues'],
+          specializations: ['Acoustic Performances', 'Blues & Rock'],
+          availability: {
+            weekdays: true,
+            weekends: true,
+            evenings: true
+          }
+        },
+        original: performanceData,
+        meta: {
+          isCalculated: false,
+          isDynamic: false,
+          cacheStatus: { cached: false, age: -1, expires: -1 },
+          lastCalculated: null,
+          refreshKey
+        },
+        loading: false,
+        error: 'Failed to calculate dynamic performance data',
+        refresh: refreshPerformance,
+        clearCache: clearPerformanceCache
+      };
+    }
+  }, [useDynamic, forceRefresh, refreshKey, refreshPerformance]);
+};
+
+/**
  * Hook for SEO content
  */
 export const useSEO = () => {
@@ -283,13 +475,6 @@ export const useSEO = () => {
     loading: false,
     error: null
   }), []);
-};
-
-/**
- * Hook for performance content
- */
-export const usePerformance = () => {
-  return useMemo(() => performanceData, []);
 };
 
 // Alias for section content access
