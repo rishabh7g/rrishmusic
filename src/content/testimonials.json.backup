@@ -221,5 +221,28 @@
       "featured": false,
       "verified": true
     }
-  ]
+  ],
+  "stats": {
+    "total": 16,
+    "averageRating": 5.0,
+    "byService": {
+      "performance": {
+        "count": 8,
+        "percentage": 50,
+        "averageRating": 5.0
+      },
+      "teaching": {
+        "count": 5,
+        "percentage": 31,
+        "averageRating": 5.0
+      },
+      "collaboration": {
+        "count": 3,
+        "percentage": 19,
+        "averageRating": 5.0
+      }
+    },
+    "featured": 11,
+    "verified": 16
+  }
 }
