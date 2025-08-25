@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
-import { Testimonial } from '@/types/content';
+import { Testimonial, LessonPackage } from '@/types/content';
 import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
+import { calculateLessonPackagePricing, calculateTrialLessonPricing, formatPrice, getPricingSummary } from '@/utils/pricingCalculations';
 import heroData from '@/content/hero.json';
 import aboutData from '@/content/about.json';
 import approachData from '@/content/approach.json';
@@ -148,7 +149,7 @@ export const useLessons = () => {
 };
 
 /**
- * Hook for lesson packages with structured data
+ * Hook for lesson packages with dynamic pricing calculations
  */
 export const useLessonPackages = () => {
   return useMemo(() => {
@@ -157,8 +158,23 @@ export const useLessonPackages = () => {
         throw new Error('Lesson packages data not found');
       }
 
+      // Calculate pricing for each package dynamically
+      const packagesWithPricing = lessonContent.packages.map((pkg: LessonPackage) => {
+        const pricing = calculateLessonPackagePricing(pkg);
+        
+        return {
+          ...pkg,
+          pricing,
+          formattedPrice: formatPrice(pricing.totalPrice),
+          pricingSummary: getPricingSummary(pricing)
+        };
+      });
+
+      // Calculate trial lesson pricing
+      const trialPricing = calculateTrialLessonPricing();
+
       return {
-        packages: lessonContent.packages,
+        packages: packagesWithPricing,
         packageInfo: {
           title: lessonContent.title,
           subtitle: lessonContent.subtitle,
@@ -166,6 +182,11 @@ export const useLessonPackages = () => {
           sessionLength: 60, // Default session length in minutes
           instruments: ['Guitar'], // Primary instrument
           location: 'Melbourne / Online' // Location options
+        },
+        trialLesson: {
+          ...lessonContent.additionalInfo.trialLesson,
+          pricing: trialPricing,
+          formattedPrice: formatPrice(trialPricing.totalPrice)
         },
         loading: false,
         error: null
@@ -182,6 +203,7 @@ export const useLessonPackages = () => {
           instruments: ['Guitar'],
           location: 'Melbourne / Online'
         },
+        trialLesson: null,
         loading: false,
         error: error instanceof Error ? error.message : 'Unknown error'
       };
