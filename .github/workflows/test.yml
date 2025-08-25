@@ -34,15 +34,150 @@ jobs:
       - name: Run linting
         run: npm run lint
 
-      - name: Run unit tests
-        run: npm run test -- --run
+      - name: Run unit tests with coverage
+        run: npm run test:coverage
 
       - name: Build project
         run: npm run build
+
+      - name: Upload coverage reports to Codecov
+        uses: codecov/codecov-action@v4
+        if: always()
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          directory: ./coverage/
+          flags: unittests
+          name: codecov-umbrella
+          fail_ci_if_error: false
 
       - name: Upload test results
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: test-results
+          path: |
+            coverage/
+            test-results/
+
+      - name: Comment PR with coverage
+        uses: marocchino/sticky-pull-request-comment@v2
+        if: github.event_name == 'pull_request'
+        with:
+          recreate: true
+          path: coverage/coverage-summary.md
+
+  quality-gates:
+    runs-on: ubuntu-latest
+    name: Quality Gates
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Download coverage reports
+        uses: actions/download-artifact@v4
+        with:
+          name: test-results
           path: coverage/
+
+      - name: Check coverage thresholds
+        run: |
+          echo "Checking coverage thresholds..."
+          if [ -f coverage/coverage-summary.json ]; then
+            node -e "
+              const fs = require('fs');
+              const summary = JSON.parse(fs.readFileSync('coverage/coverage-summary.json'));
+              const total = summary.total;
+              
+              const thresholds = {
+                statements: 80,
+                branches: 75,
+                functions: 80,
+                lines: 80
+              };
+              
+              let passed = true;
+              Object.keys(thresholds).forEach(key => {
+                const actual = total[key].pct;
+                const threshold = thresholds[key];
+                if (actual < threshold) {
+                  console.error(\`❌ \${key}: \${actual}% < \${threshold}%\`);
+                  passed = false;
+                } else {
+                  console.log(\`✅ \${key}: \${actual}% >= \${threshold}%\`);
+                }
+              });
+              
+              if (!passed) {
+                console.error('Coverage thresholds not met!');
+                process.exit(1);
+              }
+              console.log('All coverage thresholds passed!');
+            "
+          else
+            echo "No coverage summary found, skipping coverage check"
+          fi
+
+      - name: Check build size
+        run: |
+          npm run build
+          echo "Checking bundle size..."
+          if [ -f dist/assets/index-*.js ]; then
+            SIZE=$(du -h dist/assets/index-*.js | cut -f1)
+            echo "Bundle size: $SIZE"
+            # Add bundle size check logic here if needed
+          fi
+
+      - name: Security audit
+        run: npm audit --audit-level=moderate
+
+  performance-test:
+    runs-on: ubuntu-latest
+    name: Performance Tests
+    needs: test
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build
+
+      - name: Start preview server
+        run: npm run preview &
+        env:
+          PORT: 4173
+
+      - name: Wait for server to start
+        run: npx wait-on http://localhost:4173 --timeout 30000
+
+      - name: Run Lighthouse CI
+        run: |
+          npm install -g @lhci/cli
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
+
+      - name: Upload Lighthouse results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: lighthouse-results
+          path: .lighthouseci/
