@@ -1,4 +1,7 @@
 {
+  "_note": "This file now serves as fallback data only. Stats are dynamically calculated from actual content data.",
+  "_migration": "Static stats moved to dynamic calculation in utils/statsCalculator.ts",
+  "_usage": "Use the useStats() hook to get dynamically calculated statistics",
   "experience": {
     "playingYears": 10,
     "teachingYears": 3,

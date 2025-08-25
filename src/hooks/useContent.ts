@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Testimonial, LessonPackage } from '@/types/content';
 import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
 import { calculateLessonPackagePricing, calculateTrialLessonPricing, formatPrice, getPricingSummary } from '@/utils/pricingCalculations';
+import { calculateStats, clearStatsCache, getStatsCacheStatus } from '@/utils/statsCalculator';
 import heroData from '@/content/hero.json';
 import aboutData from '@/content/about.json';
 import approachData from '@/content/approach.json';
@@ -12,9 +13,6 @@ import testimonials from '@/content/testimonials.json';
 import stats from '@/content/stats.json';
 import seoData from '@/content/seo.json';
 import performanceData from '@/content/performance.json';
-
-// Define section keys for type safety
-type SectionKey = 'hero' | 'about' | 'approach' | 'community' | 'contact' | 'lessons' | 'testimonials' | 'stats' | 'seo' | 'performance';
 
 // Content map for centralized access
 const contentMap = {
@@ -31,195 +29,249 @@ const contentMap = {
 } as const;
 
 /**
- * Enhanced content hook with loading states and error handling
+ * Enhanced content hook with testimonial stats integration and dynamic calculations
  */
-export const useSectionContent = (section: SectionKey) => {
+export const useContent = () => {
   return useMemo(() => {
     try {
-      const data = contentMap[section];
-      if (!data) {
-        throw new Error(`Content for section "${section}" not found`);
-      }
+      const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
+      const lessons: LessonPackage[] = lessonContent?.packages || [];
+      
+      // Calculate dynamic testimonial stats
+      const testimonialStats = calculateTestimonialStats(testimonialsList);
+      
+      // Calculate dynamic general stats
+      const dynamicStats = calculateStats();
       
       return {
-        data,
+        ...contentMap,
+        testimonials: {
+          ...testimonials,
+          testimonials: testimonialsList,
+          stats: testimonialStats,
+          meta: {
+            total: testimonialsList.length,
+            featured: testimonialsList.filter(t => t.featured).length,
+            byService: {
+              performance: testimonialsList.filter(t => t.service === 'performance').length,
+              teaching: testimonialsList.filter(t => t.service === 'teaching').length,
+              collaboration: testimonialsList.filter(t => t.service === 'collaboration').length
+            }
+          }
+        },
+        lessons: {
+          ...lessonContent,
+          packages: lessons.map(pkg => ({
+            ...pkg,
+            pricing: calculateLessonPackagePricing(pkg),
+            trialPricing: calculateTrialLessonPricing(pkg)
+          })),
+          meta: {
+            totalPackages: lessons.length,
+            pricing: {
+              range: getPricingSummary(lessons),
+              formatter: formatPrice
+            }
+          }
+        },
+        stats: {
+          ...stats,
+          calculated: dynamicStats,
+          loading: false,
+          error: null,
+          meta: {
+            isCalculated: true,
+            cacheStatus: getStatsCacheStatus(),
+            lastCalculated: new Date().toISOString()
+          }
+        },
         loading: false,
         error: null
       };
+      
     } catch (error) {
-      console.error(`Error loading content for section "${section}":`, error);
+      console.error('Error processing content with dynamic calculations:', error);
       return {
-        data: null,
+        ...contentMap,
+        stats: {
+          ...stats,
+          calculated: calculateStats(), // Fallback still works
+          loading: false,
+          error: 'Failed to process some dynamic content',
+          meta: {
+            isCalculated: false,
+            cacheStatus: getStatsCacheStatus(),
+            lastCalculated: new Date().toISOString()
+          }
+        },
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to process some content'
       };
     }
-  }, [section]);
+  }, []);
 };
 
-/**
- * Hook for getting content by key path
- */
-export const useContent = <T = unknown>(path?: string): T | null => {
+// Legacy hooks for backward compatibility
+export const useHero = () => {
+  return useMemo(() => heroData, []);
+};
+
+export const useAbout = () => {
+  return useMemo(() => aboutData, []);
+};
+
+export const useApproach = () => {
+  return useMemo(() => approachData, []);
+};
+
+export const useLessons = () => {
   return useMemo(() => {
-    if (!path) return null;
-    
-    try {
-      const keys = path.split('.');
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      let current: any = contentMap;
-      
-      for (const key of keys) {
-        if (current && typeof current === 'object' && key in current) {
-          current = current[key];
-        } else {
-          console.warn(`Content path "${path}" not found`);
-          return null;
+    const lessons: LessonPackage[] = lessonContent?.packages || [];
+    return {
+      ...lessonContent,
+      packages: lessons.map(pkg => ({
+        ...pkg,
+        pricing: calculateLessonPackagePricing(pkg),
+        trialPricing: calculateTrialLessonPricing(pkg)
+      })),
+      meta: {
+        totalPackages: lessons.length,
+        pricing: {
+          range: getPricingSummary(lessons),
+          formatter: formatPrice
         }
       }
-      
-      return current as T;
-    } catch (error) {
-      console.error(`Error accessing content path "${path}":`, error);
-      return null;
-    }
-  }, [path]);
+    };
+  }, []);
 };
 
-/**
- * Utility functions for content manipulation
- */
-export const pluralize = (word: string, count: number) => {
-  if (count === 1) return word;
-  
-  // Simple pluralization rules
-  if (word.endsWith('y')) {
-    return word.slice(0, -1) + 'ies';
-  } else if (word.endsWith('s') || word.endsWith('sh') || word.endsWith('ch') || word.endsWith('x') || word.endsWith('z')) {
-    return word + 'es';
-  } else {
-    return word + 's';
-  }
+// Alias for backward compatibility
+export const useLessonPackages = useLessons;
+
+export const useCommunity = () => {
+  return useMemo(() => communityData, []);
 };
 
-/**
- * Pluralization with count display
- */
-export const pluralizeWithCount = (count: number, word: string) => {
-  return `${count} ${pluralize(word, count)}`;
+export const useContact = () => {
+  return useMemo(() => contactData, []);
 };
 
-/**
- * Hook for testimonials content with dynamic statistics
- */
 export const useTestimonials = () => {
   return useMemo(() => {
     try {
-      const testimonialsArray = testimonials.testimonials as Testimonial[];
-      const dynamicStats = calculateTestimonialStats(testimonialsArray);
+      const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
+      const testimonialStats = calculateTestimonialStats(testimonialsList);
       
       return {
-        data: {
-          ...testimonials,
-          stats: dynamicStats
+        ...testimonials,
+        testimonials: testimonialsList,
+        stats: testimonialStats,
+        meta: {
+          total: testimonialsList.length,
+          featured: testimonialsList.filter(t => t.featured).length,
+          byService: {
+            performance: testimonialsList.filter(t => t.service === 'performance').length,
+            teaching: testimonialsList.filter(t => t.service === 'teaching').length,
+            collaboration: testimonialsList.filter(t => t.service === 'collaboration').length
+          }
         },
         loading: false,
         error: null
       };
+      
     } catch (error) {
       console.error('Error processing testimonials with dynamic stats:', error);
       return {
-        data: testimonials,
+        ...testimonials,
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to process testimonial statistics'
       };
     }
   }, []);
 };
 
 /**
- * Hook for lessons content
+ * Enhanced Stats Hook with Dynamic Calculation Support
  */
-export const useLessons = () => {
-  return useMemo(() => ({
-    data: lessonContent,
-    loading: false,
-    error: null
-  }), []);
-};
-
-/**
- * Hook for lesson packages with dynamic pricing calculations
- */
-export const useLessonPackages = () => {
+export const useStats = (options: {
+  useDynamic?: boolean;
+  forceRefresh?: boolean;
+} = {}) => {
+  const { useDynamic = true, forceRefresh = false } = options;
+  const [refreshKey, setRefreshKey] = useState(0);
+  
+  // Refresh function for manual cache clearing
+  const refreshStats = useCallback(() => {
+    clearStatsCache();
+    setRefreshKey(prev => prev + 1);
+  }, []);
+  
   return useMemo(() => {
     try {
-      if (!lessonContent || !lessonContent.packages) {
-        throw new Error('Lesson packages data not found');
-      }
-
-      // Calculate pricing for each package dynamically
-      const packagesWithPricing = lessonContent.packages.map((pkg: LessonPackage) => {
-        const pricing = calculateLessonPackagePricing(pkg);
+      if (useDynamic) {
+        const calculatedStats = calculateStats(forceRefresh);
+        const cacheStatus = getStatsCacheStatus();
         
         return {
-          ...pkg,
-          pricing,
-          formattedPrice: formatPrice(pricing.totalPrice),
-          pricingSummary: getPricingSummary(pricing)
+          // Use dynamic stats as primary data
+          ...calculatedStats,
+          
+          // Include original stats for comparison
+          original: stats,
+          
+          // Metadata about the calculation
+          meta: {
+            isCalculated: true,
+            isDynamic: true,
+            cacheStatus,
+            lastCalculated: new Date().toISOString(),
+            refreshKey
+          },
+          
+          // State management
+          loading: false,
+          error: null,
+          
+          // Actions
+          refresh: refreshStats,
+          clearCache: clearStatsCache
         };
-      });
-
-      // Calculate trial lesson pricing
-      const trialPricing = calculateTrialLessonPricing();
-
-      return {
-        packages: packagesWithPricing,
-        packageInfo: {
-          title: lessonContent.title,
-          subtitle: lessonContent.subtitle,
-          description: lessonContent.description,
-          sessionLength: 60, // Default session length in minutes
-          instruments: ['Guitar'], // Primary instrument
-          location: 'Melbourne / Online' // Location options
-        },
-        trialLesson: {
-          ...lessonContent.additionalInfo.trialLesson,
-          pricing: trialPricing,
-          formattedPrice: formatPrice(trialPricing.totalPrice)
-        },
-        loading: false,
-        error: null
-      };
+      } else {
+        // Fallback to static stats
+        return {
+          ...stats,
+          meta: {
+            isCalculated: false,
+            isDynamic: false,
+            cacheStatus: { cached: false, age: -1, expires: -1 },
+            lastCalculated: null,
+            refreshKey
+          },
+          loading: false,
+          error: null,
+          refresh: refreshStats,
+          clearCache: () => {} // No-op for static stats
+        };
+      }
+      
     } catch (error) {
-      console.error('Error loading lesson packages:', error);
+      console.error('Error in useStats hook:', error);
       return {
-        packages: [],
-        packageInfo: {
-          title: 'Guitar Lessons',
-          subtitle: 'Learn with a Professional',
-          description: 'Personalized guitar lessons',
-          sessionLength: 60,
-          instruments: ['Guitar'],
-          location: 'Melbourne / Online'
+        ...stats,
+        meta: {
+          isCalculated: false,
+          isDynamic: false,
+          cacheStatus: { cached: false, age: -1, expires: -1 },
+          lastCalculated: null,
+          refreshKey
         },
-        trialLesson: null,
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
+        error: 'Failed to calculate dynamic statistics',
+        refresh: refreshStats,
+        clearCache: clearStatsCache
       };
     }
-  }, []);
-};
-
-/**
- * Hook for stats content
- */
-export const useStats = () => {
-  return useMemo(() => ({
-    ...stats,
-    loading: false,
-    error: null
-  }), []);
+  }, [useDynamic, forceRefresh, refreshKey, refreshStats]);
 };
 
 /**
@@ -237,9 +289,13 @@ export const useSEO = () => {
  * Hook for performance content
  */
 export const usePerformance = () => {
-  return useMemo(() => ({
-    data: performanceData,
-    loading: false,
-    error: null
-  }), []);
+  return useMemo(() => performanceData, []);
 };
+
+// Alias for section content access
+export const useSectionContent = (section: string) => {
+  const content = useContent();
+  return content[section as keyof typeof content];
+};
+
+export default useContent;
