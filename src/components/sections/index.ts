@@ -43,3 +43,6 @@ export {
   CollaborationServices,
   CollaborationSuccessStories
 } from './CollaborationSections';
+
+// Social Components
+export { default as SocialProof } from '../social/SocialProof';
