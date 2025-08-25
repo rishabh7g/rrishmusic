@@ -234,7 +234,7 @@ describe('Teaching Page Component', () => {
         </TestWrapper>
       );
       
-      const heading = screen.getByRole('heading', { level: 1 });
+      const heading = screen.getAllByRole('heading', { level: 1 })[0];
       expect(heading).toBeInTheDocument();
       expect(heading).toHaveTextContent(/Guitar Lessons/);
     });
