@@ -1,228 +1,205 @@
-import React, { Suspense, useEffect, lazy } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
-import { ContextAwareHeader } from '@/components/ContextAwareHeader'
-import ErrorBoundary from '@/components/common/ErrorBoundary'
-import { AnalyticsDebugPanel } from "@/components/debug/AnalyticsDebugPanel"
-import { initProtocolHandling, validateURLHandling } from '@/utils/protocolHandling'
-import { performanceMonitor, startPerformanceMonitoring } from '@/utils/performanceMonitor'
-import uiMessages from '@/data/ui/messages.json'
-import "@/index.css"
-import "@/styles/contextualHeaders.css"
+import { Suspense, lazy, useEffect } from 'react';
+import { Routes, Route, useLocation } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
+import { motion, AnimatePresence } from 'framer-motion';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import Navigation from './components/layout/Navigation';
+import { usePageSEO } from './hooks/usePageSEO';
 
-// Lazy load page components for code splitting
-const Home = lazy(() => 
-  import('@/components/pages/Home').then(module => {
-    performanceMonitor.mark('home-page-loaded');
-    return { default: module.Home };
-  })
-);
+// Lazy load components for better performance
+const Home = lazy(() => import('./components/pages/Home').then(module => ({ default: module.Home })));
+const Teaching = lazy(() => import('./components/pages/Teaching'));
+const Performance = lazy(() => import('./components/pages/Performance'));
+const Collaboration = lazy(() => import('./components/pages/Collaboration'));
 
-const Teaching = lazy(() => 
-  import('@/components/pages/Teaching').then(module => {
-    performanceMonitor.mark('teaching-page-loaded');
-    return { default: module.Teaching };
-  })
-);
-
-const Performance = lazy(() => 
-  import('@/components/pages/Performance').then(module => {
-    performanceMonitor.mark('performance-page-loaded');
-    return { default: module.Performance };
-  })
-);
-
-const Collaboration = lazy(() => 
-  import('@/components/pages/Collaboration').then(module => {
-    performanceMonitor.mark('collaboration-page-loaded');
-    return { default: module.Collaboration };
-  })
-);
-
-const CategoryDemo = lazy(() => 
-  import('@/components/pages/CategoryDemo').then(module => {
-    performanceMonitor.mark('category-demo-page-loaded');
-    return { default: module.CategoryDemo };
-  })
-);
-
-const ServiceSectionsDemo = lazy(() => 
-  import('@/components/pages/ServiceSectionsDemo').then(module => {
-    performanceMonitor.mark('service-sections-demo-page-loaded');
-    return { default: module.ServiceSectionsDemo };
-  })
-);
-
-interface LayoutShiftEntry extends PerformanceEntry {
-  hadRecentInput: boolean
-  value: number
-}
-
-/**
- * Enhanced loading fallback component with performance hints
- */
-const AppLoadingFallback: React.FC<{ pageName?: string }> = ({ pageName }) => {
-  useEffect(() => {
-    if (pageName) {
-      performanceMonitor.mark(`${pageName}-loading-start`);
-    }
-  }, [pageName]);
-
-  return (
-    <div className="min-h-screen flex items-center justify-center">
-      <div className="text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-brand-blue-primary mx-auto mb-4"></div>
-        <p className="text-gray-600">
-          {pageName ? `Loading ${pageName}...` : uiMessages.loading.default}
-        </p>
-        {process.env.NODE_ENV === 'development' && (
-          <p className="text-xs text-gray-400 mt-2">Code splitting in progress...</p>
-        )}
-      </div>
-    </div>
-  )
-}
-
-/**
- * Global error fallback component
- */
-const AppErrorFallback: React.FC = () => (
-  <div className="min-h-screen flex items-center justify-center bg-gray-50">
-    <div className="text-center p-8">
-      <h1 className="text-2xl font-bold text-gray-800 mb-4">
-        {uiMessages.errors.generic.title}
-      </h1>
-      <p className="text-gray-600 mb-6">
-        {uiMessages.errors.generic.message}
-      </p>
-      <button
-        onClick={() => window.location.reload()}
-        className="bg-brand-blue-primary text-white px-6 py-3 rounded-lg hover:bg-brand-blue-dark transition-colors"
-      >
-        {uiMessages.errors.generic.actionText}
-      </button>
-    </div>
+// Simple loading spinner
+const Spinner = () => (
+  <div className="flex items-center justify-center min-h-screen">
+    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
   </div>
-)
+);
 
-/**
- * Enhanced Performance monitoring component
- */
-const PerformanceMonitor: React.FC = () => {
-  React.useEffect(() => {
-    // Initialize comprehensive performance monitoring
-    const monitor = startPerformanceMonitoring({
-      enableConsoleLogging: process.env.NODE_ENV === 'development',
-      enableAnalytics: process.env.NODE_ENV === 'production',
-      threshold: {
-        fcp: 1500, // Stricter FCP threshold for better UX
-        lcp: 2000, // Stricter LCP threshold
-        fid: 100,
-        cls: 0.1,
-        pageLoad: 2000 // Target: under 2 seconds
-      }
-    });
+// Page transition variants
+const pageTransition = {
+  initial: { opacity: 0, y: 20 },
+  in: { opacity: 1, y: 0 },
+  out: { opacity: 0, y: -20 }
+};
 
-    // Legacy observer for development logging compatibility
-    if (process.env.NODE_ENV === 'development') {
-      const observer = new PerformanceObserver(list => {
-        for (const entry of list.getEntries()) {
-          if (entry.entryType === 'largest-contentful-paint') {
-            console.log(uiMessages.performance.monitoring.lcp, entry.startTime)
-          }
-          if (entry.entryType === 'first-input') {
-            console.log(uiMessages.performance.monitoring.fid, (entry as PerformanceEventTiming).processingStart - entry.startTime)
-          }
-          if (entry.entryType === 'layout-shift') {
-            const layoutShiftEntry = entry as LayoutShiftEntry
-            if (!layoutShiftEntry.hadRecentInput) {
-              console.log(uiMessages.performance.monitoring.cls, layoutShiftEntry.value)
-            }
-          }
-        }
-      })
+const pageVariants = {
+  initial: pageTransition.initial,
+  animate: pageTransition.in,
+  exit: pageTransition.out
+};
 
-      try {
-        observer.observe({
-          entryTypes: [
-            'largest-contentful-paint',
-            'first-input',
-            'layout-shift',
-          ],
-        })
-      } catch (error) {
-        console.warn(uiMessages.performance.monitoring.unsupported, error)
-      }
+const pageTransitions = {
+  type: "tween",
+  ease: "easeInOut",
+  duration: 0.3
+};
 
-      // Log performance recommendations after page load
-      setTimeout(() => {
-        const recommendations = monitor.getRecommendations();
-        if (recommendations.length > 0) {
-          console.group('[Performance Recommendations]');
-          recommendations.forEach(rec => console.log(`• ${rec}`));
-          console.groupEnd();
-        }
-      }, 5000);
-
-      return () => {
-        observer.disconnect()
-        monitor.cleanup()
-      }
-    }
-
-    return () => monitor.cleanup()
-  }, [])
-
-  return null
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <motion.div
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      variants={pageVariants}
+      transition={pageTransitions}
+      className="min-h-screen"
+    >
+      {children}
+    </motion.div>
+  );
 }
 
-/**
- * Protocol handling component - ensures proper HTTPS enforcement
- */
-const ProtocolHandler: React.FC = () => {
-  useEffect(() => {
-    // Initialize protocol handling on app startup
-    initProtocolHandling()
+function AppContent() {
+  const location = useLocation();
+  const { seoData } = usePageSEO();
+  
+  return (
+    <>
+      <Helmet
+        titleTemplate={seoData.titleTemplate}
+        defaultTitle={seoData.defaultTitle}
+      >
+        <html lang="en" />
+        <meta charSet="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta name="theme-color" content="#1e40af" />
+        
+        {/* Base SEO */}
+        <title>{seoData.title}</title>
+        <meta name="description" content={seoData.description} />
+        <link rel="canonical" href={seoData.canonicalUrl} />
+        
+        {/* Open Graph */}
+        <meta property="og:type" content={seoData.openGraph.type} />
+        <meta property="og:title" content={seoData.openGraph.title} />
+        <meta property="og:description" content={seoData.openGraph.description} />
+        <meta property="og:url" content={seoData.openGraph.url} />
+        <meta property="og:image" content={seoData.openGraph.image} />
+        <meta property="og:image:alt" content={seoData.openGraph.imageAlt} />
+        <meta property="og:site_name" content={seoData.openGraph.siteName} />
+        
+        {/* Twitter Card */}
+        <meta name="twitter:card" content={seoData.twitter.card} />
+        <meta name="twitter:title" content={seoData.twitter.title} />
+        <meta name="twitter:description" content={seoData.twitter.description} />
+        <meta name="twitter:image" content={seoData.twitter.image} />
+        <meta name="twitter:image:alt" content={seoData.twitter.imageAlt} />
+        
+        {/* Additional Meta Tags */}
+        <meta name="robots" content={seoData.robots} />
+        <meta name="author" content={seoData.author} />
+        
+        {/* Service-specific keywords */}
+        <meta name="keywords" content={seoData.keywords} />
+        
+        {/* Local SEO - Melbourne based */}
+        <meta property="business:contact_data:locality" content="Melbourne" />
+        <meta property="business:contact_data:region" content="Victoria" />
+        <meta property="business:contact_data:country_name" content="Australia" />
+        
+        {/* Favicon */}
+        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+        <link rel="manifest" href="/site.webmanifest" />
+        
+        {/* Structured Data */}
+        <script type="application/ld+json">
+          {JSON.stringify(seoData.structuredData)}
+        </script>
+        
+        {/* Breadcrumb Structured Data */}
+        {seoData.breadcrumbData && (
+          <script type="application/ld+json">
+            {JSON.stringify(seoData.breadcrumbData)}
+          </script>
+        )}
+      </Helmet>
 
-    // Validate URL handling in development
-    if (process.env.NODE_ENV === 'development') {
-      const validation = validateURLHandling()
-      if (!validation.isValid) {
-        console.warn('[ProtocolHandling] URL validation issues:', validation.issues)
-        console.info('[ProtocolHandling] Recommendations:', validation.recommendations)
-      }
-    }
-  }, [])
-
-  return null
+      <div className="min-h-screen bg-gray-50 relative overflow-x-hidden">
+        <Navigation />
+        
+        <main className="main-content">
+          <ErrorBoundary>
+            <AnimatePresence mode="wait">
+              <Routes location={location} key={location.pathname}>
+                <Route 
+                  path="/" 
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Home />
+                      </Suspense>
+                    </PageWrapper>
+                  } 
+                />
+                <Route 
+                  path="/teaching" 
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Teaching />
+                      </Suspense>
+                    </PageWrapper>
+                  } 
+                />
+                <Route 
+                  path="/performance" 
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Performance />
+                      </Suspense>
+                    </PageWrapper>
+                  } 
+                />
+                <Route 
+                  path="/collaboration" 
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Collaboration />
+                      </Suspense>
+                    </PageWrapper>
+                  } 
+                />
+              </Routes>
+            </AnimatePresence>
+          </ErrorBoundary>
+        </main>
+      </div>
+    </>
+  );
 }
 
-/**
- * Preloader component for critical resources
- */
-const ResourcePreloader: React.FC = () => {
+function App(): React.JSX.Element {
   useEffect(() => {
-    // Preload critical CSS and fonts
-    const criticalResources = [
-      // Add critical resources here
-      'https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap',
-      'https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600&display=swap'
+    // Resource hints and preloading
+    const criticalStylesheets = [
+      'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap'
     ];
 
-    criticalResources.forEach(href => {
+    criticalStylesheets.forEach(href => {
       const link = document.createElement('link');
       link.rel = 'preload';
       link.as = 'style';
       link.href = href;
-      link.onload = () => {
-        link.rel = 'stylesheet';
+      link.onload = function() {
+        this.onload = null;
+        this.rel = 'stylesheet';
       };
       document.head.appendChild(link);
     });
 
     // Preload hero images for faster LCP
     const heroImages = [
-      '/images/hero-bg.jpg',
-      '/images/performance-hero.jpg'
+      '/images/performance-hero-bg.webp',
+      '/images/services/performance-bg.webp'
     ];
 
     heroImages.forEach(src => {
@@ -236,192 +213,34 @@ const ResourcePreloader: React.FC = () => {
     // DNS prefetch for external domains
     const externalDomains = [
       'https://www.googletagmanager.com',
-      'https://www.google-analytics.com'
+      'https://www.google-analytics.com',
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com'
     ];
 
-    externalDomains.forEach(href => {
+    externalDomains.forEach(domain => {
       const link = document.createElement('link');
       link.rel = 'dns-prefetch';
-      link.href = href;
+      link.href = domain;
       document.head.appendChild(link);
     });
 
+    // Preconnect to high-priority external origins
+    const preconnectDomains = [
+      'https://fonts.googleapis.com',
+      'https://fonts.gstatic.com'
+    ];
+
+    preconnectDomains.forEach(domain => {
+      const link = document.createElement('link');
+      link.rel = 'preconnect';
+      link.href = domain;
+      link.crossOrigin = 'anonymous';
+      document.head.appendChild(link);
+    });
   }, []);
 
-  return null;
-};
-
-/**
- * Layout wrapper component with context-aware navigation
- */
-const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  return (
-    <div className="app-container">
-      <ContextAwareHeader />
-      {children}
-    </div>
-  )
+  return <AppContent />;
 }
 
-/**
- * Route wrapper with performance tracking
- */
-interface RouteWrapperProps {
-  children: React.ReactNode;
-  routeName: string;
-}
-
-const RouteWrapper: React.FC<RouteWrapperProps> = ({ children, routeName }) => {
-  useEffect(() => {
-    performanceMonitor.mark(`${routeName}-route-start`);
-    
-    return () => {
-      performanceMonitor.measure(`${routeName}-route-total`);
-    };
-  }, [routeName]);
-
-  return (
-    <ErrorBoundary 
-      fallback={<AppErrorFallback />}
-      onError={(error, errorInfo) => {
-        console.error(`[${routeName} Route Error]`, error, errorInfo);
-      }}
-    >
-      {children}
-    </ErrorBoundary>
-  );
-};
-
-/**
- * Main App component with React Router configuration and performance optimizations
- * 
- * Features:
- * - Code splitting for all major routes
- * - Context-aware navigation that adapts to service context
- * - Comprehensive performance monitoring
- * - Resource preloading for critical assets
- * - Enhanced error boundaries with route-specific handling
- * - DNS prefetching for external resources
- * 
- * Routes:
- * - / : Home page with dual-service homepage
- * - /teaching : Teaching services page with lessons and approach
- * - /performance : Performance services page
- * - /collaboration : Collaboration services page
- * - /category-demo : Category navigation system demonstration
- * - /service-sections-demo : Service-specific content sections demo
- * - /* : Redirects to home
- */
-function App(): React.JSX.Element {
-  useEffect(() => {
-    performanceMonitor.mark('app-start');
-    
-    // Mark app as fully loaded after all initial effects
-    const loadTimeout = setTimeout(() => {
-      performanceMonitor.measure('app-initialization');
-    }, 100);
-
-    return () => clearTimeout(loadTimeout);
-  }, []);
-
-  return (
-    <ErrorBoundary fallback={<AppErrorFallback />}>
-      <PerformanceMonitor />
-      <ProtocolHandler />
-      <ResourcePreloader />
-      
-      <Router>
-        <AppLayout>
-          <Suspense fallback={<AppLoadingFallback />}>
-            <Routes>
-              {/* Home route - Dual-service homepage */}
-              <Route 
-                path="/" 
-                element={
-                  <RouteWrapper routeName="home">
-                    <Suspense fallback={<AppLoadingFallback pageName="Home" />}>
-                      <Home />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Teaching route - Teaching services page */}
-              <Route 
-                path="/teaching" 
-                element={
-                  <RouteWrapper routeName="teaching">
-                    <Suspense fallback={<AppLoadingFallback pageName="Teaching" />}>
-                      <Teaching />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Performance route - Performance services page */}
-              <Route 
-                path="/performance" 
-                element={
-                  <RouteWrapper routeName="performance">
-                    <Suspense fallback={<AppLoadingFallback pageName="Performance" />}>
-                      <Performance />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Collaboration route - Collaboration services page */}
-              <Route 
-                path="/collaboration" 
-                element={
-                  <RouteWrapper routeName="collaboration">
-                    <Suspense fallback={<AppLoadingFallback pageName="Collaboration" />}>
-                      <Collaboration />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Category Navigation Demo route */}
-              <Route 
-                path="/category-demo" 
-                element={
-                  <RouteWrapper routeName="category-demo">
-                    <Suspense fallback={<AppLoadingFallback pageName="Category Demo" />}>
-                      <CategoryDemo />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Service Sections Demo route */}
-              <Route 
-                path="/service-sections-demo" 
-                element={
-                  <RouteWrapper routeName="service-sections-demo">
-                    <Suspense fallback={<AppLoadingFallback pageName="Service Sections Demo" />}>
-                      <ServiceSectionsDemo />
-                    </Suspense>
-                  </RouteWrapper>
-                } 
-              />
-              
-              {/* Legacy and alternative routes for backward compatibility */}
-              <Route path="/home" element={<Navigate to="/" replace />} />
-              <Route path="/lessons" element={<Navigate to="/teaching" replace />} />
-              <Route path="/performances" element={<Navigate to="/performance" replace />} />
-              
-              {/* Catch-all route - Redirect to home */}
-              <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-          </Suspense>
-        </AppLayout>
-      </Router>
-
-      {/* Analytics Debug Panel - Development Only */}
-      <AnalyticsDebugPanel />
-    </ErrorBoundary>
-  )
-}
-
-export default App
+export default App;
