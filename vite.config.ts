@@ -12,7 +12,8 @@ export default defineConfig({
       "@/hooks": path.resolve(__dirname, "./src/hooks"),
       "@/utils": path.resolve(__dirname, "./src/utils"),
       "@/types": path.resolve(__dirname, "./src/types"),
-      "@/content": path.resolve(__dirname, "./src/content")
+      "@/content": path.resolve(__dirname, "./src/content"),
+      "@/test": path.resolve(__dirname, "./src/test")
     }
   },
   build: {
@@ -29,8 +30,31 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "jsdom",
-    // Remove the setupFiles reference since the file doesn't exist
-    // setupFiles: "./src/test/setup.ts",
+    setupFiles: ["./src/test/setup.ts"],
+    css: true,
+    coverage: {
+      provider: 'v8',
+      reporter: ['text', 'json', 'html'],
+      exclude: [
+        'node_modules/',
+        'src/test/',
+        '**/*.d.ts',
+        'dist/',
+        'build/',
+        'coverage/',
+        'public/',
+        '*.config.js',
+        '*.config.ts',
+      ],
+      thresholds: {
+        global: {
+          branches: 70,
+          functions: 70,
+          lines: 70,
+          statements: 70,
+        },
+      },
+    },
   },
   // GitHub Pages preview configuration
   preview: {
