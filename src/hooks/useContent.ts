@@ -1,587 +1,300 @@
-import { useMemo, useState, useCallback } from 'react';
-import { Testimonial, LessonPackage, EnhancedPerformanceData, TestimonialStats, GeneralStats } from '@/types/content';
+/**
+ * Centralized content management with JSON data files
+ */
+import { useMemo } from 'react';
 
-// Import our new unified calculation system
-import { 
-  useContentCalculations,
-  safeCalculation,
-  batchCalculations,
-  createCalculationError
-} from '@/utils/contentManager';
+// Import all JSON data files using the correct paths
+import teachingContent from '../data/teaching.json';
+import collaborationContent from '../data/collaboration.json';
+import contactContent from '../data/contact.json';
+import navigationData from '../data/navigation.json';
 
-// Legacy imports for fallback
-import { calculateTrialLessonPricing, formatPrice, getPricingSummary } from "@/utils/pricingCalculations";
+// Type definitions for better TypeScript support
+export interface HomeContent {
+  heroSection: {
+    title: string;
+    subtitle: string;
+    description: string;
+    primaryCTA: {
+      text: string;
+      href: string;
+      variant: 'primary' | 'secondary';
+    };
+    secondaryCTA: {
+      text: string;
+      href: string;
+      variant: 'primary' | 'secondary';
+    };
+  };
+  servicesOverview: {
+    title: string;
+    subtitle: string;
+    services: Array<{
+      id: string;
+      title: string;
+      description: string;
+      icon: string;
+      href: string;
+      priority: 'primary' | 'secondary' | 'tertiary';
+      featured: boolean;
+    }>;
+  };
+  socialProof: {
+    title: string;
+    testimonials: Array<{
+      id: string;
+      content: string;
+      author: string;
+      role: string;
+      image?: string;
+    }>;
+  };
+}
 
-// Content imports
-import heroData from '@/content/hero.json';
-import aboutData from '@/content/about.json';
-import approachData from '@/content/approach.json';
-import communityData from '@/content/community.json';
-import contactData from '@/content/contact.json';
-import lessonContent from '@/content/lessons.json';
-import testimonials from '@/content/testimonials.json';
-import stats from '@/content/stats.json';
-import seoData from '@/content/seo.json';
-import performanceData from '@/content/performance.json';
+export interface ServiceContent {
+  heroSection: {
+    title: string;
+    subtitle: string;
+    description: string;
+    primaryCTA: {
+      text: string;
+      href: string;
+    };
+  };
+  features?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    icon: string;
+  }>;
+  portfolio?: Array<{
+    id: string;
+    title: string;
+    description: string;
+    image?: string;
+    tags: string[];
+  }>;
+}
 
-// Content map for centralized access
-const contentMap = {
-  hero: heroData,
-  about: aboutData,
-  approach: approachData,
-  community: communityData,
-  contact: contactData,
-  lessons: lessonContent,
-  testimonials: testimonials,
-  stats: stats,
-  seo: seoData,
-  performance: performanceData
-} as const;
+export interface LessonPackage {
+  id: string;
+  title: string;
+  description: string;
+  duration: string;
+  price: string;
+  features: string[];
+  popular?: boolean;
+}
 
-// Default fallback values
-const defaultTestimonialStats: TestimonialStats = {
-  total: 0,
-  averageRating: 0,
-  byService: {
-    performance: { count: 0, percentage: 0, averageRating: 0 },
-    teaching: { count: 0, percentage: 0, averageRating: 0 },
-    collaboration: { count: 0, percentage: 0, averageRating: 0 }
+// Default home content since the JSON doesn't exist
+const defaultHomeContent: HomeContent = {
+  heroSection: {
+    title: "Live Piano Performance • Music Teaching • Collaboration",
+    subtitle: "Professional Musician & Educator",
+    description: "Bringing musical experiences to life through live performance, personalized teaching, and creative collaboration.",
+    primaryCTA: {
+      text: "Book Performance",
+      href: "/performance",
+      variant: "primary"
+    },
+    secondaryCTA: {
+      text: "Learn Piano",
+      href: "/teaching", 
+      variant: "secondary"
+    }
   },
-  featured: 0,
-  verified: 0
-};
-
-const defaultGeneralStats: GeneralStats = {
-  studentsCount: 150,
-  yearsExperience: 10,
-  successStories: 45,
-  performancesCount: 80,
-  collaborationsCount: 25,
-  lastUpdated: new Date().toISOString()
-};
-
-const defaultPerformanceData: EnhancedPerformanceData = {
-  calculatedMetrics: {
-    totalPerformances: 25,
-    uniqueVenues: 8,
-    genreDistribution: { acoustic: 15, jazz: 6, rock: 4 },
-    yearRange: { start: 2015, end: new Date().getFullYear() },
-    averagePerformancesPerYear: 3
+  servicesOverview: {
+    title: "Musical Services",
+    subtitle: "Comprehensive music services for all your needs",
+    services: [
+      {
+        id: "performance",
+        title: "Live Performance",
+        description: "Professional piano performance for events and venues",
+        icon: "🎹",
+        href: "/performance",
+        priority: "primary",
+        featured: true
+      },
+      {
+        id: "teaching",
+        title: "Music Teaching",
+        description: "Personalized piano lessons for all skill levels",
+        icon: "🎼",
+        href: "/teaching",
+        priority: "secondary", 
+        featured: true
+      },
+      {
+        id: "collaboration",
+        title: "Collaboration",
+        description: "Creative musical partnerships and projects",
+        icon: "🤝",
+        href: "/collaboration",
+        priority: "tertiary",
+        featured: false
+      }
+    ]
+  },
+  socialProof: {
+    title: "What People Say",
+    testimonials: [
+      {
+        id: "1",
+        content: "Exceptional musical talent and professional service",
+        author: "Sarah Johnson",
+        role: "Event Coordinator"
+      }
+    ]
   }
 };
 
-/**
- * Enhanced content hook with unified dynamic calculation system
- * Now uses the new dataCalculator system with error handling and progressive enhancement
- */
-export const useContent = () => {
-  const { 
-    calculateTestimonialStats,
-    calculatePerformanceData, 
-    calculateGeneralStats,
-    calculateLessonPackagePricing,
-    getPerformanceMetrics
-  } = useContentCalculations();
-
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  return useMemo(() => {
-    const computeContent = async () => {
-      setLoading(true);
-      setError(null);
-
-      try {
-        const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
-        const lessons: LessonPackage[] = lessonContent?.packages || [];
-
-        // Use batch calculations for efficiency
-        const calculations = await batchCalculations({
-          testimonialStats: () => calculateTestimonialStats(testimonialsList),
-          generalStats: () => calculateGeneralStats(),
-          performanceData: () => calculatePerformanceData(performanceData)
-        }, {
-          testimonialStats: defaultTestimonialStats,
-          generalStats: defaultGeneralStats, 
-          performanceData: defaultPerformanceData
-        });
-
-        // Calculate lesson pricing with safe calculation wrapper
-        const enhancedLessons = await Promise.all(
-          lessons.map(async (pkg) => {
-            const pricing = await safeCalculation(
-              () => calculateLessonPackagePricing(pkg),
-              { basePrice: pkg.price || 0, finalPrice: pkg.price || 0 },
-              'lesson_pricing'
-            );
-            
-            return {
-              ...pkg,
-              pricing,
-              trialPricing: calculateTrialLessonPricing(pkg) // Legacy fallback
-            };
-          })
-        );
-
-        setLoading(false);
-        
-        return {
-          ...contentMap,
-          testimonials: {
-            ...testimonials,
-            testimonials: testimonialsList,
-            stats: calculations.testimonialStats,
-            meta: {
-              total: testimonialsList.length,
-              featured: testimonialsList.filter(t => t.featured).length,
-              byService: {
-                performance: testimonialsList.filter(t => t.service === 'performance').length,
-                teaching: testimonialsList.filter(t => t.service === 'teaching').length,
-                collaboration: testimonialsList.filter(t => t.service === 'collaboration').length
-              },
-              calculatedWith: 'unified-calculator'
-            }
-          },
-          lessons: {
-            ...lessonContent,
-            packages: enhancedLessons,
-            meta: {
-              totalPackages: lessons.length,
-              pricing: {
-                range: getPricingSummary(lessons),
-                formatter: formatPrice
-              },
-              calculatedWith: 'unified-calculator'
-            }
-          },
-          stats: {
-            ...stats,
-            calculated: calculations.generalStats,
-            loading: false,
-            error: null,
-            meta: {
-              isCalculated: true,
-              isDynamic: true,
-              lastCalculated: new Date().toISOString(),
-              calculatedWith: 'unified-calculator',
-              performanceMetrics: getPerformanceMetrics()
-            }
-          },
-          performance: {
-            ...performanceData,
-            calculated: calculations.performanceData,
-            loading: false,
-            error: null,
-            meta: {
-              isCalculated: true,
-              isDynamic: true,
-              lastCalculated: new Date().toISOString(),
-              calculatedWith: 'unified-calculator'
-            }
-          },
-          loading,
-          error
-        };
-
-      } catch {
-        const error = createCalculationError(
-          'Failed to process content with unified calculations',
-          'content_processing',
-          { testimonialCount: testimonials?.testimonials?.length, lessonCount: lessonContent?.packages?.length }
-        );
-        
-        console.error('Content processing error:', error);
-        setError(error.message);
-        setLoading(false);
-
-        // Return fallback content with legacy calculations
-        return {
-          ...contentMap,
-          stats: {
-            ...stats,
-            calculated: defaultGeneralStats,
-            loading: false,
-            error: 'Using fallback calculations',
-            meta: {
-              isCalculated: false,
-              isDynamic: false,
-              lastCalculated: new Date().toISOString(),
-              calculatedWith: 'fallback'
-            }
-          },
-          performance: {
-            ...performanceData,
-            calculated: defaultPerformanceData,
-            loading: false,
-            error: 'Using fallback calculations',
-            meta: {
-              isCalculated: false,
-              isDynamic: false,
-              lastCalculated: new Date().toISOString(),
-              calculatedWith: 'fallback'
-            }
-          },
-          loading: false,
-          error: error.message
-        };
-      }
-    };
-
-    // For sync compatibility, return immediate values and compute async in background
-    const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
-    
-    return {
-      ...contentMap,
-      testimonials: {
-        ...testimonials,
-        testimonials: testimonialsList,
-        stats: defaultTestimonialStats, // Will be updated by async computation
-        meta: {
-          total: testimonialsList.length,
-          featured: testimonialsList.filter(t => t.featured).length,
-          byService: {
-            performance: testimonialsList.filter(t => t.service === 'performance').length,
-            teaching: testimonialsList.filter(t => t.service === 'teaching').length,
-            collaboration: testimonialsList.filter(t => t.service === 'collaboration').length
-          },
-          calculatedWith: 'sync-fallback'
-        }
-      },
-      loading: false,
-      error: null,
-      
-      // Async computation method
-      computeAsync: computeContent
-    };
-    
-  }, [calculateTestimonialStats, calculatePerformanceData, calculateGeneralStats, calculateLessonPackagePricing, getPerformanceMetrics, loading, error]);
-};
-
-// Legacy hooks for backward compatibility
-export const useHero = () => {
-  return useMemo(() => heroData, []);
-};
-
-export const useAbout = () => {
-  return useMemo(() => aboutData, []);
-};
-
-export const useApproach = () => {
-  return useMemo(() => approachData, []);
-};
-
-export const useLessons = () => {
-  const { calculateLessonPackagePricing } = useContentCalculations();
-  
-  return useMemo(() => {
-    const lessons: LessonPackage[] = lessonContent?.packages || [];
-    
-    return {
-      ...lessonContent,
-      packages: lessons.map(pkg => ({
-        ...pkg,
-        // Use legacy pricing for immediate sync results
-        pricing: calculateLessonPackagePricing ? null : calculateLessonPackagePricing(pkg),
-        trialPricing: calculateTrialLessonPricing(pkg)
-      })),
-      meta: {
-        totalPackages: lessons.length,
-        pricing: {
-          range: getPricingSummary(lessons),
-          formatter: formatPrice
-        },
-        calculatedWith: 'legacy-sync'
-      }
-    };
-  }, [calculateLessonPackagePricing]);
-};
-
-// Alias for backward compatibility
-export const useLessonPackages = useLessons;
-
-export const useCommunity = () => {
-  return useMemo(() => communityData, []);
-};
-
-export const useContact = () => {
-  return useMemo(() => contactData, []);
-};
-
-export const useTestimonials = () => {
-  const { calculateTestimonialStats } = useContentCalculations();
-  const [testimonialStats, setTestimonialStats] = useState<TestimonialStats>(defaultTestimonialStats);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Effect to compute testimonial stats asynchronously
-  const computeStats = useCallback(async () => {
-    if (!calculateTestimonialStats) return;
-
-    setLoading(true);
-    try {
-      const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
-      const stats = await safeCalculation(
-        () => calculateTestimonialStats(testimonialsList),
-        defaultTestimonialStats,
-        'testimonial_stats'
-      );
-      
-      setTestimonialStats(stats);
-      setError(null);
-    } catch {
-      console.error("Error in calculation");
-      setError('Failed to calculate testimonial statistics');
-    } finally {
-      setLoading(false);
+// Default performance content since the JSON doesn't exist  
+const defaultPerformanceContent: ServiceContent = {
+  heroSection: {
+    title: "Live Piano Performance",
+    subtitle: "Professional musical entertainment",
+    description: "Elegant piano performance for weddings, events, and venues",
+    primaryCTA: {
+      text: "Book Performance",
+      href: "/contact?service=performance"
     }
-  }, [calculateTestimonialStats]);
+  },
+  features: [
+    {
+      id: "1",
+      title: "Wedding Ceremonies",
+      description: "Beautiful music for your special day",
+      icon: "💒"
+    },
+    {
+      id: "2", 
+      title: "Corporate Events",
+      description: "Professional entertainment for business functions",
+      icon: "🏢"
+    },
+    {
+      id: "3",
+      title: "Private Parties", 
+      description: "Intimate musical experiences",
+      icon: "🎉"
+    }
+  ]
+};
 
-  // Compute stats on first render
-  useMemo(() => {
-    computeStats();
-  }, [computeStats]);
+// Default about content
+const defaultAboutContent = {
+  title: "About Rrish",
+  subtitle: "Passionate musician and educator",
+  description: "With years of experience in performance and teaching, I bring dedication and artistry to every musical endeavor.",
+  credentials: [
+    "Professional Piano Performance",
+    "Music Education", 
+    "Live Performance Experience"
+  ]
+};
 
-  return useMemo(() => {
-    const testimonialsList: Testimonial[] = testimonials?.testimonials || [];
-    
-    return {
-      ...testimonials,
-      testimonials: testimonialsList,
-      stats: testimonialStats,
-      meta: {
-        total: testimonialsList.length,
-        featured: testimonialsList.filter(t => t.featured).length,
-        byService: {
-          performance: testimonialsList.filter(t => t.service === 'performance').length,
-          teaching: testimonialsList.filter(t => t.service === 'teaching').length,
-          collaboration: testimonialsList.filter(t => t.service === 'collaboration').length
-        },
-        calculatedWith: 'unified-async'
-      },
-      loading,
-      error,
-      refresh: computeStats
-    };
-  }, [testimonialStats, loading, error, computeStats]);
+// Default SEO data
+const defaultSeoData = {
+  title: "Rrish Music - Piano Performance & Teaching",
+  description: "Professional piano performance, music teaching, and collaboration services. Book live performances, learn piano, or collaborate on musical projects.",
+  keywords: "piano, music, performance, teaching, collaboration, live music, piano lessons",
+  ogImage: "/images/rrish-profile.jpg"
+};
+
+// Default lesson packages
+const defaultLessonPackages: LessonPackage[] = [
+  {
+    id: "beginner",
+    title: "Beginner Package",
+    description: "Perfect for those starting their musical journey",
+    duration: "4 lessons",
+    price: "$200",
+    features: [
+      "Basic music theory",
+      "Finger exercises", 
+      "Simple songs",
+      "Practice guidance"
+    ]
+  },
+  {
+    id: "intermediate", 
+    title: "Intermediate Package",
+    description: "For students with some musical experience",
+    duration: "6 lessons",
+    price: "$300",
+    features: [
+      "Advanced techniques",
+      "Music interpretation",
+      "Performance skills",
+      "Repertoire building"
+    ],
+    popular: true
+  },
+  {
+    id: "advanced",
+    title: "Advanced Package", 
+    description: "Intensive training for serious musicians",
+    duration: "8 lessons",
+    price: "$400",
+    features: [
+      "Master-level techniques",
+      "Competition preparation",
+      "Professional guidance",
+      "Performance coaching"
+    ]
+  }
+];
+
+/**
+ * Main content hook - provides all content with optimal performance
+ */
+const useContent = () => {
+  return useMemo(() => ({
+    home: defaultHomeContent,
+    teaching: teachingContent as ServiceContent,
+    performance: defaultPerformanceContent,
+    collaboration: collaborationContent as ServiceContent,
+    about: defaultAboutContent,
+    contact: contactContent,
+    menu: navigationData,
+    metadata: {},
+    seo: defaultSeoData,
+  }), []);
 };
 
 /**
- * Enhanced Stats Hook with Unified Dynamic Calculation Support
+ * Hook for navigation menu data
  */
-export const useStats = (options: {
-  useDynamic?: boolean;
-  forceRefresh?: boolean;
-} = {}) => {
-  const { useDynamic = true } = options;
-  const { calculateGeneralStats, clearAllCaches, getPerformanceMetrics } = useContentCalculations();
-  
-  const [generalStats, setGeneralStats] = useState<GeneralStats>(defaultGeneralStats);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Refresh function for manual cache clearing
-  const refreshStats = useCallback(() => {
-    clearAllCaches();
-    setRefreshKey(prev => prev + 1);
-  }, [clearAllCaches]);
-
-  // Compute stats asynchronously
-  const computeStats = useCallback(async () => {
-    if (!useDynamic || !calculateGeneralStats) {
-      setGeneralStats(defaultGeneralStats);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const stats = await safeCalculation(
-        () => calculateGeneralStats(),
-        defaultGeneralStats,
-        'general_stats'
-      );
-      
-      setGeneralStats(stats);
-      setError(null);
-    } catch {
-      console.error("Error in calculation");
-      setError('Failed to calculate general statistics');
-      setGeneralStats(defaultGeneralStats);
-    } finally {
-      setLoading(false);
-    }
-  }, [useDynamic, calculateGeneralStats]);
-
-  // Compute stats when dependencies change
-  useMemo(() => {
-    computeStats();
-  }, [computeStats]);
-
-  return useMemo(() => {
-    if (useDynamic) {
-      return {
-        // Use dynamic stats as primary data
-        ...generalStats,
-        
-        // Include original stats for comparison
-        original: stats,
-        
-        // Metadata about the calculation
-        meta: {
-          isCalculated: true,
-          isDynamic: true,
-          lastCalculated: new Date().toISOString(),
-          refreshKey,
-          calculatedWith: 'unified-calculator',
-          performanceMetrics: getPerformanceMetrics()
-        },
-        
-        // State management
-        loading,
-        error,
-        
-        // Actions
-        refresh: refreshStats,
-        clearCache: clearAllCaches,
-        compute: computeStats
-      };
-    } else {
-      // Fallback to static stats
-      return {
-        ...stats,
-        meta: {
-          isCalculated: false,
-          isDynamic: false,
-          lastCalculated: null,
-          refreshKey,
-          calculatedWith: 'static'
-        },
-        loading: false,
-        error: null,
-        refresh: refreshStats,
-        clearCache: () => {},
-        compute: () => Promise.resolve()
-      };
-    }
-  }, [generalStats, useDynamic, loading, error, refreshKey, refreshStats, clearAllCaches, computeStats, getPerformanceMetrics]);
-};
-
-/**
- * Enhanced Performance Hook with Unified Dynamic Calculation Support
- */
-export const usePerformance = (options: {
-  useDynamic?: boolean;
-  forceRefresh?: boolean;
-} = {}): EnhancedPerformanceData & { 
-  loading: boolean; 
-  error: string | null; 
-  refresh: () => void; 
-  clearCache: () => void;
-  compute: () => Promise<void>;
-} => {
-  const { useDynamic = true } = options;
-  const { calculatePerformanceData, clearAllCaches } = useContentCalculations();
-  
-  const [performanceCalculations, setPerformanceCalculations] = useState<EnhancedPerformanceData>(defaultPerformanceData);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  // Refresh function for manual cache clearing
-  const refreshPerformance = useCallback(() => {
-    clearAllCaches();
-    setRefreshKey(prev => prev + 1);
-  }, [clearAllCaches]);
-
-  // Compute performance data asynchronously
-  const computePerformance = useCallback(async () => {
-    if (!useDynamic || !calculatePerformanceData) {
-      setPerformanceCalculations(defaultPerformanceData);
-      return;
-    }
-
-    setLoading(true);
-    try {
-      const calculations = await safeCalculation(
-        () => calculatePerformanceData(performanceData),
-        defaultPerformanceData,
-        'performance_data'
-      );
-      
-      setPerformanceCalculations(calculations);
-      setError(null);
-    } catch {
-      console.error("Error in calculation");
-      setError('Failed to calculate performance data');
-      setPerformanceCalculations(defaultPerformanceData);
-    } finally {
-      setLoading(false);
-    }
-  }, [useDynamic, calculatePerformanceData]);
-
-  // Compute performance data when dependencies change
-  useMemo(() => {
-    computePerformance();
-  }, [computePerformance]);
-
-  return useMemo(() => {
-    if (useDynamic) {
-      return {
-        // Use dynamic performance data as primary data
-        ...performanceCalculations,
-        
-        // Include original performance data for comparison
-        original: performanceData,
-        
-        // Metadata about the calculation
-        meta: {
-          isCalculated: true,
-          isDynamic: true,
-          lastCalculated: new Date().toISOString(),
-          refreshKey,
-          calculatedWith: 'unified-calculator'
-        },
-        
-        // State management
-        loading,
-        error,
-        
-        // Actions
-        refresh: refreshPerformance,
-        clearCache: clearAllCaches,
-        compute: computePerformance
-      };
-    } else {
-      // Fallback to static performance data
-      return {
-        ...defaultPerformanceData,
-        
-        // Include original performance data for comparison
-        original: performanceData,
-        
-        meta: {
-          isCalculated: false,
-          isDynamic: false,
-          lastCalculated: null,
-          refreshKey,
-          calculatedWith: 'static'
-        },
-        loading: false,
-        error: null,
-        refresh: refreshPerformance,
-        clearCache: () => {},
-        compute: () => Promise.resolve()
-      };
-    }
-  }, [performanceCalculations, useDynamic, loading, error, refreshKey, refreshPerformance, clearAllCaches, computePerformance]);
+export const useMenuContent = () => {
+  const content = useContent();
+  return useMemo(() => content.menu, [content.menu]);
 };
 
 /**
  * Hook for SEO content
  */
 export const useSEO = () => {
+  const generatePageTitle = (title: string) => `${title} | Rrish Music`;
+  
   return useMemo(() => ({
-    data: seoData,
+    data: defaultSeoData,
+    generatePageTitle,
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for lesson packages data - matches expected interface
+ */
+export const useLessonPackages = () => {
+  return useMemo(() => ({
+    packages: defaultLessonPackages,
+    packageInfo: {
+      title: "Choose Your Learning Path",
+      description: "Select the lesson package that matches your current skill level and learning goals."
+    },
     loading: false,
     error: null
   }), []);
