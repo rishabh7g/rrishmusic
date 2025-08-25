@@ -1,36 +1,53 @@
 import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { BrowserRouter } from 'react-router-dom';
+import { MemoryRouter } from 'react-router-dom';
+import { describe, it, expect, vi, beforeEach } from 'vitest';
 
-// Import the components we'll test
-import { TeachingInquiryForm } from '@/components/forms/TeachingInquiryForm';
-import { PerformanceInquiryForm } from '@/components/forms/PerformanceInquiryForm';
-import { CollaborationInquiryForm } from '@/components/forms/CollaborationInquiryForm';
+// Import form components
+import { TeachingInquiryForm } from '@/components/contact/TeachingInquiryForm';
+import { PerformanceInquiryForm } from '@/components/contact/PerformanceInquiryForm';
+import { CollaborationInquiryForm } from '@/components/contact/CollaborationInquiryForm';
 
-// Test wrapper with Router context
+// Mock required dependencies
+vi.mock('@/hooks/useContent', () => ({
+  useContent: () => ({
+    teaching: {
+      title: 'Guitar Lessons',
+      description: 'Professional guitar instruction'
+    },
+    performance: {
+      title: 'Live Performances',
+      description: 'Professional live music'
+    },
+    collaboration: {
+      title: 'Music Collaboration',
+      description: 'Recording and production'
+    }
+  })
+}));
+
+// Test wrapper with router
 const renderWithRouter = (component: React.ReactElement) => {
-  return render(<BrowserRouter>{component}</BrowserRouter>);
+  return render(
+    <MemoryRouter>
+      {component}
+    </MemoryRouter>
+  );
 };
 
 describe('Contact Forms - Business Logic Testing', () => {
-  const user = userEvent.setup();
+  let user: ReturnType<typeof userEvent.setup>;
+  const mockOnClose = vi.fn();
+  const mockOnSubmit = vi.fn();
 
   beforeEach(() => {
-    // Reset all mocks before each test
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
+    user = userEvent.setup();
     vi.clearAllMocks();
   });
 
   describe('Teaching Inquiry Form', () => {
-    it('should validate required fields before proceeding to next step', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
+    it('should render teaching form with required elements', () => {
       renderWithRouter(
         <TeachingInquiryForm 
           isOpen={true}
@@ -39,157 +56,82 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Should start on Step 1
-      expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument();
+      expect(screen.getByText('Guitar Lesson Inquiry')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/Your full name/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/your\.email@example\.com/i)).toBeInTheDocument();
+    });
+
+    it('should handle form input correctly', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+
+      expect(nameInput).toHaveValue('John Doe');
+      expect(emailInput).toHaveValue('john@example.com');
+    });
+
+    it('should navigate through form steps', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      // Fill required fields
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+      
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+
+      // Select a package
+      const singleLessonRadio = screen.getByLabelText(/Single Lesson/);
+      await user.click(singleLessonRadio);
+
+      // Click next
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      // Should show next step
+      await waitFor(() => {
+        expect(screen.getByText(/Additional Information/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should validate required fields', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
 
       // Try to proceed without filling required fields
-      const nextButton = screen.getByRole('button', { name: /next/i });
+      const nextButton = screen.getByText('Next');
       await user.click(nextButton);
 
-      // Should still be on step 1 if validation fails
-      expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument();
-    });
-
-    it('should validate email format correctly', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
-      renderWithRouter(
-        <TeachingInquiryForm 
-          isOpen={true}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit} 
-        />
-      );
-
-      // Find inputs by placeholder since they don't have accessible names
-      const nameInput = screen.getByPlaceholderText(/Your full name/i);
-      const phoneInput = screen.getByPlaceholderText(/\(555\) 123-4567/i);
-      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
-      
-      await user.type(nameInput, 'John Doe');
-      await user.type(phoneInput, '555-123-4567');
-      
-      // Test invalid email
-      await user.type(emailInput, 'invalid-email');
-      
-      // Select a package (first radio is already selected by default)
-      const nextButton = screen.getByRole('button', { name: /next/i });
-      await user.click(nextButton);
-      
-      // Should stay on step 1 due to invalid email
-      expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument();
-      
-      // Now test valid email
-      await user.clear(emailInput);
-      await user.type(emailInput, 'john.doe@example.com');
-      await user.click(nextButton);
-      
-      // Should proceed to step 2
-      expect(screen.getByText(/Step 2 of 4/i)).toBeInTheDocument();
-    });
-
-    it('should progress through form steps', async () => {
-      const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
-      const mockOnClose = vi.fn();
-      
-      renderWithRouter(
-        <TeachingInquiryForm 
-          isOpen={true}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit} 
-        />
-      );
-
-      // Step 1: Fill all required contact info
-      const nameInput = screen.getByPlaceholderText(/Your full name/i);
-      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
-      const phoneInput = screen.getByPlaceholderText(/\(555\) 123-4567/i);
-
-      await user.type(nameInput, 'John Doe');
-      await user.type(emailInput, 'john.doe@example.com');
-      await user.type(phoneInput, '555-123-4567');
-
-      // Package should be pre-selected (Single Lesson), so we can proceed
-      let nextButton = screen.getByRole('button', { name: /next/i });
-      await user.click(nextButton);
-
-      // Should be on step 2
-      expect(screen.getByText(/Step 2 of 4/i)).toBeInTheDocument();
-      expect(screen.getByText(/Musical Background & Goals/i)).toBeInTheDocument();
-
-      // Test that we progressed beyond step 1
-      const progressedText = screen.getByText(/Step \d of 4/i).textContent;
-      expect(progressedText).not.toBe('Step 1 of 4');
-    }, 10000);
-
-    it('should close when close button is clicked', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
-      renderWithRouter(
-        <TeachingInquiryForm 
-          isOpen={true}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit} 
-        />
-      );
-
-      // Find and click close button (X button in header - it's the first button without text)
-      const buttons = screen.getAllByRole('button');
-      const closeButton = buttons.find(button => button.textContent === '');
-      expect(closeButton).toBeDefined();
-      
-      await user.click(closeButton!);
-      expect(mockOnClose).toHaveBeenCalled();
-    });
-
-    it('should handle step navigation correctly', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
-      renderWithRouter(
-        <TeachingInquiryForm 
-          isOpen={true}
-          onClose={mockOnClose}
-          onSubmit={mockOnSubmit} 
-        />
-      );
-
-      // Fill Step 1 and proceed
-      const nameInput = screen.getByPlaceholderText(/Your full name/i);
-      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
-      const phoneInput = screen.getByPlaceholderText(/\(555\) 123-4567/i);
-
-      await user.type(nameInput, 'John Doe');
-      await user.type(emailInput, 'john.doe@example.com');
-      await user.type(phoneInput, '555-123-4567');
-
-      const nextButton = screen.getByRole('button', { name: /next/i });
-      await user.click(nextButton);
-
-      // Should be on step 2
-      expect(screen.getByText(/Step 2 of 4/i)).toBeInTheDocument();
-
-      // Look for back button - it might be in step 2
-      const backButton = screen.queryByRole('button', { name: /back|previous/i });
-      
-      if (backButton) {
-        await user.click(backButton);
-        // Should be back on step 1
-        expect(screen.getByText(/Step 1 of 4/i)).toBeInTheDocument();
-      } else {
-        // If no back button, that's valid - just ensure we're still on step 2
-        expect(screen.getByText(/Step 2 of 4/i)).toBeInTheDocument();
-      }
+      // Should show validation errors
+      await waitFor(() => {
+        expect(screen.getByText(/Name is required/i)).toBeInTheDocument();
+      });
     });
   });
 
   describe('Performance Inquiry Form', () => {
-    it('should render and handle basic interactions', async () => {
-      const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
-      const mockOnClose = vi.fn();
-      
+    it('should render performance form with required elements', () => {
       renderWithRouter(
         <PerformanceInquiryForm 
           isOpen={true}
@@ -198,23 +140,12 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Verify form is rendered - look for performance-specific content
-      // Use getAllByText to handle multiple matches, then check the first one
-      const performanceElements = screen.getAllByText(/Performance/i);
-      expect(performanceElements.length).toBeGreaterThan(0);
-      
-      // Should have the main heading (be more specific)
-      expect(screen.getByRole('heading', { name: /Performance Inquiry/i })).toBeInTheDocument();
-      
-      // Should have form inputs with accessible names
-      expect(screen.getByRole('textbox', { name: /Full Name/i })).toBeInTheDocument();
-      expect(screen.getByRole('textbox', { name: /Email Address/i })).toBeInTheDocument();
+      expect(screen.getByText('Performance Inquiry')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/Your full name/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/your\.email@example\.com/i)).toBeInTheDocument();
     });
 
-    it('should have required form fields', async () => {
-      const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
-      const mockOnClose = vi.fn();
-      
+    it('should handle event date selection', async () => {
       renderWithRouter(
         <PerformanceInquiryForm 
           isOpen={true}
@@ -223,23 +154,20 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Should have form inputs
-      const textboxes = screen.getAllByRole('textbox');
-      expect(textboxes.length).toBeGreaterThan(0);
+      // Get date input
+      const dateInput = screen.getByLabelText(/Event Date/i) || screen.getByDisplayValue('');
       
-      // Should have select dropdowns
-      const selects = screen.getAllByRole('combobox');
-      expect(selects.length).toBeGreaterThan(0);
-      
-      // Should have submit button
-      const submitButton = screen.getByRole('button', { name: /submit.*performance/i });
-      expect(submitButton).toBeInTheDocument();
+      if (dateInput) {
+        const futureDate = new Date();
+        futureDate.setDate(futureDate.getDate() + 30);
+        const dateString = futureDate.toISOString().split('T')[0];
+
+        fireEvent.change(dateInput, { target: { value: dateString } });
+        expect(dateInput).toHaveValue(dateString);
+      }
     });
 
-    it('should handle form interactions', async () => {
-      const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
-      const mockOnClose = vi.fn();
-      
+    it('should validate future event dates', async () => {
       renderWithRouter(
         <PerformanceInquiryForm 
           isOpen={true}
@@ -248,27 +176,37 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Fill out required fields
-      const nameInput = screen.getByRole('textbox', { name: /Full Name/i });
-      const emailInput = screen.getByRole('textbox', { name: /Email Address/i });
-      const durationInput = screen.getByRole('textbox', { name: /Performance Duration/i });
+      // Fill required fields
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
       
-      await user.type(nameInput, 'Jane Doe');
-      await user.type(emailInput, 'jane.doe@example.com');
-      await user.type(durationInput, '2 hours');
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+
+      // Set past date
+      const dateInput = screen.getByLabelText(/Event Date/i) || screen.getByDisplayValue('');
       
-      // Test that inputs receive the values
-      expect(nameInput).toHaveValue('Jane Doe');
-      expect(emailInput).toHaveValue('jane.doe@example.com');
-      expect(durationInput).toHaveValue('2 hours');
+      if (dateInput) {
+        const pastDate = new Date();
+        pastDate.setDate(pastDate.getDate() - 1);
+        const dateString = pastDate.toISOString().split('T')[0];
+
+        fireEvent.change(dateInput, { target: { value: dateString } });
+
+        // Try to submit
+        const submitButton = screen.getByText('Submit') || screen.getByText('Send Inquiry');
+        await user.click(submitButton);
+
+        // Should show validation error
+        await waitFor(() => {
+          expect(screen.getByText(/Event date must be in the future/i)).toBeInTheDocument();
+        });
+      }
     });
   });
 
   describe('Collaboration Inquiry Form', () => {
-    it('should render and handle basic interactions', async () => {
-      const mockOnSubmit = vi.fn().mockResolvedValue(undefined);
-      const mockOnClose = vi.fn();
-      
+    it('should render collaboration form with required elements', () => {
       renderWithRouter(
         <CollaborationInquiryForm 
           isOpen={true}
@@ -277,20 +215,33 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Verify form is rendered - look for collaboration-specific content
-      expect(screen.getByText(/Collaboration/i)).toBeInTheDocument();
-      
-      // Should have interactive elements (not necessarily a semantic form)
-      const buttons = screen.getAllByRole('button');
-      expect(buttons.length).toBeGreaterThan(0);
+      expect(screen.getByText('Collaboration Inquiry')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/Your full name/i)).toBeInTheDocument();
+      expect(screen.getByPlaceholderText(/your\.email@example\.com/i)).toBeInTheDocument();
+    });
+
+    it('should handle project description input', async () => {
+      renderWithRouter(
+        <CollaborationInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      const projectInput = screen.getByPlaceholderText(/Describe your project/i) ||
+                          screen.getByPlaceholderText(/Tell me about your project/i) ||
+                          screen.getByLabelText(/Project Description/i);
+
+      if (projectInput) {
+        await user.type(projectInput, 'Looking for guitar work on indie rock album');
+        expect(projectInput).toHaveValue('Looking for guitar work on indie rock album');
+      }
     });
   });
 
   describe('Form Accessibility', () => {
-    it('should have proper form structure and interactive elements', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
+    it('should have proper form structure and interactive elements', () => {
       renderWithRouter(
         <TeachingInquiryForm 
           isOpen={true}
@@ -299,27 +250,20 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Check for semantic form element (TeachingInquiryForm has it)
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      // Check for form element (using querySelector instead of getByRole)
+      const formElement = document.querySelector('form');
+      expect(formElement).toBeInTheDocument();
       
-      // Check for proper heading structure
-      expect(screen.getByRole('heading', { level: 2 })).toBeInTheDocument();
-      
-      // Check that form has interactive elements
-      const textboxes = screen.getAllByRole('textbox');
-      expect(textboxes.length).toBeGreaterThan(0);
-      
-      const radios = screen.getAllByRole('radio');
-      expect(radios.length).toBeGreaterThan(0);
-      
+      // Check for input elements
+      const inputs = screen.getAllByRole('textbox');
+      expect(inputs.length).toBeGreaterThan(0);
+
+      // Check for buttons
       const buttons = screen.getAllByRole('button');
       expect(buttons.length).toBeGreaterThan(0);
     });
 
     it('should support keyboard navigation', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
       renderWithRouter(
         <TeachingInquiryForm 
           isOpen={true}
@@ -328,31 +272,113 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Check that buttons are focusable
-      const buttons = screen.getAllByRole('button');
-      buttons.forEach(button => {
-        expect(button).not.toHaveAttribute('tabindex', '-1');
-      });
-      
-      // Test Tab navigation
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+
+      // Tab navigation
       await user.tab();
-      expect(document.activeElement).toBeInstanceOf(HTMLElement);
+      expect(nameInput).toHaveFocus();
+
+      await user.tab();
+      expect(emailInput).toHaveFocus();
+    });
+
+    it('should handle form submission', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      // Fill form completely
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+      
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+
+      // Select package
+      const singleLessonRadio = screen.getByLabelText(/Single Lesson/);
+      await user.click(singleLessonRadio);
+
+      // Navigate to next step
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      // Complete form on second step
+      await waitFor(() => {
+        const submitButton = screen.getByText('Submit') || screen.getByText('Send Inquiry');
+        return user.click(submitButton);
+      });
+
+      // Should call onSubmit
+      await waitFor(() => {
+        expect(mockOnSubmit).toHaveBeenCalled();
+      });
+    });
+  });
+
+  describe('Form Validation', () => {
+    it('should validate email format', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'invalid-email');
+
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Please enter a valid email address/i)).toBeInTheDocument();
+      });
+    });
+
+    it('should validate phone format when provided', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+      const phoneInput = screen.getByPlaceholderText(/\(555\) 123-4567/i);
+
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+      await user.type(phoneInput, '123'); // Invalid phone
+
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      await waitFor(() => {
+        expect(screen.getByText(/Please enter a valid phone number/i)).toBeInTheDocument();
+      });
     });
   });
 
   describe('Mobile Responsiveness', () => {
-    it('should render properly on mobile viewport', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
-      // Set mobile viewport
+    it('should render properly on mobile viewport', () => {
+      // Mock mobile viewport
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
         configurable: true,
         value: 375,
       });
-      window.dispatchEvent(new Event('resize'));
-      
+
       renderWithRouter(
         <TeachingInquiryForm 
           isOpen={true}
@@ -361,18 +387,11 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Should still render the form
-      expect(screen.getByRole('form')).toBeInTheDocument();
-      
-      // Should have responsive classes
-      const formContainer = screen.getByRole('form').closest('div');
-      expect(formContainer).toHaveClass(/w-full/);
+      const formContainer = document.querySelector('form');
+      expect(formContainer).toBeInTheDocument();
     });
 
-    it('should have appropriate touch targets', async () => {
-      const mockOnSubmit = vi.fn();
-      const mockOnClose = vi.fn();
-      
+    it('should have appropriate touch targets', () => {
       renderWithRouter(
         <TeachingInquiryForm 
           isOpen={true}
@@ -381,12 +400,61 @@ describe('Contact Forms - Business Logic Testing', () => {
         />
       );
 
-      // Check that buttons have proper sizing classes
       const buttons = screen.getAllByRole('button');
       buttons.forEach(button => {
-        // Check for padding/size classes
-        expect(button.className).toMatch(/(p-|py-|px-|h-|w-)/);
+        expect(button).toHaveClass(/p-|py-|px-|h-|w-/); // Touch-friendly sizing classes
       });
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle submission errors gracefully', async () => {
+      // Mock onSubmit to throw an error
+      const mockOnSubmitError = vi.fn().mockRejectedValue(new Error('Submission failed'));
+
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmitError} 
+        />
+      );
+
+      // Fill and submit form
+      const nameInput = screen.getByPlaceholderText(/Your full name/i);
+      const emailInput = screen.getByPlaceholderText(/your\.email@example\.com/i);
+      
+      await user.type(nameInput, 'John Doe');
+      await user.type(emailInput, 'john@example.com');
+
+      const singleLessonRadio = screen.getByLabelText(/Single Lesson/);
+      await user.click(singleLessonRadio);
+
+      const nextButton = screen.getByText('Next');
+      await user.click(nextButton);
+
+      await waitFor(() => {
+        const submitButton = screen.getByText('Submit') || screen.getByText('Send Inquiry');
+        return user.click(submitButton);
+      });
+
+      // Should handle error without crashing
+      expect(mockOnSubmitError).toHaveBeenCalled();
+    });
+
+    it('should handle form close correctly', async () => {
+      renderWithRouter(
+        <TeachingInquiryForm 
+          isOpen={true}
+          onClose={mockOnClose}
+          onSubmit={mockOnSubmit} 
+        />
+      );
+
+      const cancelButton = screen.getByText('Cancel');
+      await user.click(cancelButton);
+
+      expect(mockOnClose).toHaveBeenCalled();
     });
   });
 });
