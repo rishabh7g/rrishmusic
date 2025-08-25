@@ -7,6 +7,7 @@
       "id": "single-lesson",
       "name": "Single Lesson",
       "description": "Perfect for trying out my teaching style or addressing specific musical challenges.",
+      "price": 50,
       "sessions": 1,
       "duration": 60,
       "features": [
@@ -18,14 +19,8 @@
       ],
       "popular": false,
       "recommended": false,
-      "targetAudience": [
-        "beginner",
-        "intermediate",
-        "advanced"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["beginner", "intermediate", "advanced"],
+      "instruments": ["guitar"],
       "included": [
         "60-minute one-on-one lesson",
         "Personalized practice materials",
@@ -35,8 +30,9 @@
     },
     {
       "id": "foundation-package",
-      "name": "Foundation Package",
+      "name": "Foundation Package", 
       "description": "Build solid foundations with consistent weekly lessons. Ideal for establishing good practice habits and seeing meaningful progress.",
+      "discount": 5,
       "sessions": 4,
       "duration": 60,
       "features": [
@@ -48,17 +44,12 @@
       ],
       "popular": true,
       "recommended": true,
-      "targetAudience": [
-        "beginner",
-        "intermediate"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["beginner", "intermediate"],
+      "instruments": ["guitar"],
       "included": [
         "4 x 60-minute one-on-one lessons",
         "Personalized curriculum development",
-        "Weekly practice materials and exercises",
+        "Weekly practice materials and exercises", 
         "Progress tracking and feedback",
         "Between-lesson support via email/message",
         "Flexible rescheduling within the package period"
@@ -68,6 +59,7 @@
       "id": "transformation-intensive",
       "name": "Transformation Intensive",
       "description": "The most comprehensive package for serious students. Experience significant improvement in technique, theory, and expressive improvisation.",
+      "discount": 10,
       "sessions": 8,
       "duration": 60,
       "features": [
@@ -80,13 +72,8 @@
       ],
       "popular": false,
       "recommended": false,
-      "targetAudience": [
-        "intermediate",
-        "advanced"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["intermediate", "advanced"],
+      "instruments": ["guitar"],
       "included": [
         "8 x 60-minute one-on-one lessons",
         "Comprehensive curriculum across multiple sessions",
@@ -104,28 +91,17 @@
     "cancellationPolicy": "24 hours notice required for cancellations. Less than 24 hours notice may result in full session charge.",
     "reschedulePolicy": "Free rescheduling with 24+ hours notice. Package students get flexible rescheduling throughout their package period.",
     "location": "Melbourne, Victoria, Australia",
-    "instruments": [
-      "Guitar",
-      "Electric Guitar",
-      "Acoustic Guitar"
-    ],
+    "instruments": ["Guitar", "Electric Guitar", "Acoustic Guitar"],
     "trialLesson": {
       "available": true,
       "duration": 30,
+      "price": 45,
       "description": "A shorter introductory lesson to experience my teaching style and discuss your goals"
     },
     "onlineLessons": {
       "available": true,
-      "platforms": [
-        "Zoom",
-        "Skype",
-        "Google Meet"
-      ],
-      "requirements": [
-        "Reliable internet connection",
-        "Your own guitar",
-        "Quiet practice space"
-      ]
+      "platforms": ["Zoom", "Skype", "Google Meet"],
+      "requirements": ["Reliable internet connection", "Your own guitar", "Quiet practice space"]
     },
     "materials": [
       "Personalized practice exercises",

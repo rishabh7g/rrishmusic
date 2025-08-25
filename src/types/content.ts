@@ -89,8 +89,6 @@ export interface LessonPackage {
   id: string;
   name: string;
   description: string;
-  price: number;
-  originalPrice?: number;
   sessions: number; // 0 for unlimited
   duration?: number; // minutes per session
   validity?: number; // days
@@ -103,9 +101,7 @@ export interface LessonPackage {
   included?: string[];
   notIncluded?: string[];
   prerequisites?: string[];
-  discount?: number;
 }
-
 export interface LessonSchedule {
   timeSlots?: string[];
   daysAvailable?: string[];
