@@ -646,3 +646,12 @@ export interface SiteData {
   media?: MediaItem[];
   blog?: BlogPost[];
 }
+// General Statistics Types for Data Calculator
+export interface GeneralStats {
+  studentsCount: number;
+  yearsExperience: number;
+  successStories: number;
+  performancesCount: number;
+  collaborationsCount: number;
+  lastUpdated: string;
+}
