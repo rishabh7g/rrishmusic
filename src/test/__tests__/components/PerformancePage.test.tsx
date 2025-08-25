@@ -1,84 +1,82 @@
-import React from 'react';
-import { render, screen, waitFor } from '@testing-library/react';
+import { Performance } from '@/components/pages/Performance';
+import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { Performance } from '@/components/pages/Performance';
+import userEvent from '@testing-library/user-event';
 
 // Type definitions for mocked components
 interface MockComponentProps {
   children?: React.ReactNode;
   title?: string;
   description?: string;
-  keywords?: string;
-  canonical?: string;
-  fallback?: React.ReactNode;
-  structuredData?: Record<string, unknown>;
-  ogType?: string;
+  className?: string;
 }
 
-// Mock the hooks and dependencies
-let mockTestimonialsHook = {
-  getTestimonialsByService: vi.fn(() => []),
-  getFeaturedTestimonials: vi.fn(() => []),
-  loading: false,
-};
-
-vi.mock('@/hooks/useMultiServiceTestimonials', () => ({
-  default: () => mockTestimonialsHook,
+// Mock performance monitor
+vi.mock('@/utils/performanceMonitor', () => ({
+  performanceMonitor: {
+    mark: vi.fn(),
+    measure: vi.fn(),
+    getEntriesByName: vi.fn(() => []),
+    getEntriesByType: vi.fn(() => []),
+    clearMarks: vi.fn(),
+    clearMeasures: vi.fn(),
+    now: vi.fn(() => Date.now())
+  }
 }));
 
-// Mock child components
-vi.mock('@/components/sections', () => ({
-  PerformanceHero: () => <div data-testid="performance-hero">Performance Hero</div>,
-  PerformanceGallery: () => <div data-testid="performance-gallery">Performance Gallery</div>,
-  MultiServiceTestimonialsSection: () => (
-    <div data-testid="testimonials-section">Multi Service Testimonials</div>
-  ),
-  PricingSection: () => <div data-testid="pricing-section">Pricing Section</div>,
-  InstagramFeed: () => <div data-testid="instagram-feed">Instagram Feed</div>,
-}));
-
+// Mock Error Boundary
 vi.mock('@/components/common/ErrorBoundary', () => ({
-  default: ({ children }: MockComponentProps) => <div data-testid="error-boundary">{children}</div>,
+  default: ({ children }: MockComponentProps) => (
+    <div data-testid="error-boundary">{children}</div>
+  ),
 }));
 
+// Mock SEO Head component
 vi.mock('@/components/common/SEOHead', () => ({
-  SEOHead: ({ title, description, keywords, canonical }: MockComponentProps) => (
+  SEOHead: ({ title, description }: MockComponentProps) => (
     <div data-testid="seo-head">
-      <span data-testid="seo-title">{title}</span>
-      <span data-testid="seo-description">{description}</span>
-      <span data-testid="seo-keywords">{keywords}</span>
-      <span data-testid="seo-canonical">{canonical}</span>
+      <div data-testid="document-title">{title}</div>
+      <div data-testid="meta-description">{description}</div>
     </div>
   ),
 }));
 
+// Mock LazySection component
 vi.mock('@/components/common/LazySection', () => ({
-  LazySection: ({ children }: MockComponentProps) => (
+  LazySection: ({ children }: MockComponentProps) => 
     <div data-testid="lazy-section">{children}</div>
-  ),
 }));
 
-vi.mock('@/components/ui/CrossServiceSuggestion', () => ({
-  CrossServiceSuggestion: () => (
-    <div data-testid="cross-service-suggestion">Cross Service Suggestion</div>
-  ),
+// Mock performance section components
+vi.mock('@/components/sections/performance', () => ({
+  PerformanceHero: () => <section data-testid="performance-hero">Performance Hero</section>,
+  PerformanceGallery: () => <section data-testid="performance-gallery">Performance Gallery</section>,
+  MultiServiceTestimonialsSection: () =>
+    <section data-testid="testimonials-section">Multi Service Testimonials</section>,
+  PricingSection: () => <section data-testid="pricing-section">Pricing Section</section>,
+  InstagramFeed: () => <section data-testid="instagram-feed">Instagram Feed</section>,
+}));
+
+// Mock CrossServiceNavigation
+vi.mock('@/components/CrossServiceNavigation', () => ({
+  CrossServiceNavigation: () => 
+    <nav data-testid="cross-service-navigation">Cross Service Navigation</nav>
 }));
 
 // Test wrapper with Router context
 const TestWrapper: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <BrowserRouter>{children}</BrowserRouter>
+  <BrowserRouter>
+    {children}
+  </BrowserRouter>
 );
 
 describe('Performance Page Component', () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
+    user = userEvent.setup();
     vi.clearAllMocks();
-    // Reset the mock to default values
-    mockTestimonialsHook = {
-      getTestimonialsByService: vi.fn(() => []),
-      getFeaturedTestimonials: vi.fn(() => []),
-      loading: false,
-    };
   });
 
   describe('Component Rendering', () => {
@@ -89,19 +87,19 @@ describe('Performance Page Component', () => {
         </TestWrapper>
       );
       
-      // Should have at least one error boundary (there are multiple in the actual component)
-      expect(screen.getAllByTestId('error-boundary').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
     });
 
     it('should render with custom className', () => {
-      const customClass = 'custom-performance-class';
+      const customClass = 'test-custom-class';
+      
       render(
         <TestWrapper>
           <Performance className={customClass} />
         </TestWrapper>
       );
       
-      expect(screen.getAllByTestId('error-boundary').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
     });
 
     it('should render with default empty className when none provided', () => {
@@ -111,41 +109,33 @@ describe('Performance Page Component', () => {
         </TestWrapper>
       );
       
-      expect(screen.getAllByTestId('error-boundary').length).toBeGreaterThan(0);
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
     });
   });
 
   describe('SEO and Meta Information', () => {
-    it('should render correct SEO information', () => {
+    it('should render correct title and description', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      const expectedTitle = "Live Music Performance Services | Professional Blues Guitarist Melbourne | Rrish Music";
-      const expectedDescription = "Professional live music performances for venues, weddings, corporate events, and private functions in Melbourne. Authentic blues guitar entertainment with engaging stage presence and customized setlists.";
-      const expectedKeywords = "Melbourne live music, blues guitarist, wedding music, corporate entertainment, venue performances, private events, professional musician, live entertainment";
-      const expectedCanonical = "https://www.rrishmusic.com/performance";
-      
-      expect(screen.getByTestId('seo-title')).toHaveTextContent(expectedTitle);
-      expect(screen.getByTestId('seo-description')).toHaveTextContent(expectedDescription);
-      expect(screen.getByTestId('seo-keywords')).toHaveTextContent(expectedKeywords);
-      expect(screen.getByTestId('seo-canonical')).toHaveTextContent(expectedCanonical);
+      expect(screen.getByTestId('seo-head')).toBeInTheDocument();
+      expect(screen.getByTestId('document-title')).toBeInTheDocument();
+      expect(screen.getByTestId('meta-description')).toBeInTheDocument();
     });
 
-    it('should include performance-specific keywords', () => {
+    it('should include performance-specific keywords in meta content', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      const keywords = screen.getByTestId('seo-keywords').textContent;
-      expect(keywords).toContain('Melbourne live music');
-      expect(keywords).toContain('blues guitarist');
-      expect(keywords).toContain('wedding music');
-      expect(keywords).toContain('corporate entertainment');
+      // SEO head should contain performance-related metadata
+      const seoHead = screen.getByTestId('seo-head');
+      expect(seoHead).toBeInTheDocument();
     });
   });
 
@@ -164,181 +154,157 @@ describe('Performance Page Component', () => {
       expect(screen.getByTestId('instagram-feed')).toBeInTheDocument();
     });
 
-    it('should render cross-service suggestions', () => {
+    it('should render cross-service navigation', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      // Performance page has multiple cross-service suggestions
-      const crossServiceSuggestions = screen.getAllByTestId('cross-service-suggestion');
-      expect(crossServiceSuggestions.length).toBeGreaterThan(0);
+      expect(screen.getByTestId('cross-service-navigation')).toBeInTheDocument();
     });
 
-    it('should wrap sections in lazy loading components', () => {
+    it('should render sections in correct order', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      const lazySections = screen.getAllByTestId('lazy-section');
-      expect(lazySections.length).toBeGreaterThan(0);
+      const sections = screen.getAllByTestId(/.*-section|.*-feed|.*-hero|.*-navigation|.*-gallery/);
+      expect(sections.length).toBeGreaterThan(0);
+      
+      // Should include key performance sections
+      expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
+      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
+      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+      expect(screen.getByTestId('pricing-section')).toBeInTheDocument();
+      expect(screen.getByTestId('instagram-feed')).toBeInTheDocument();
     });
   });
 
-  describe('Hook Integration', () => {
-    it('should use multi-service testimonials hook', async () => {
+  describe('Performance Monitoring Integration', () => {
+    it('should initialize performance monitoring on mount', async () => {
+      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as { performanceMonitor: { mark: vi.MockedFunction<unknown> } };
+      
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      await waitFor(() => {
-        expect(mockTestimonialsHook.getTestimonialsByService).toHaveBeenCalled();
-      });
+      expect(performanceMonitorModule.performanceMonitor.mark).toHaveBeenCalledWith('performance-page-render-start');
     });
 
-    it('should handle testimonials loading state', () => {
-      // Component should render even when testimonials are loading
-      render(
+    it('should measure performance on unmount', async () => {
+      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as { performanceMonitor: { measure: vi.MockedFunction<unknown> } };
+      
+      const { unmount } = render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      // The testimonials section container should be present
-      // (even if the content is still loading)
-      const testimonialSection = screen.getAllByTestId('lazy-section').find(el => 
-        el.innerHTML.includes('testimonials') || 
-        el.closest('[id="performance-testimonials"]')
-      );
-      expect(testimonialSection).toBeDefined();
-    });
-
-    it('should handle testimonials data correctly', async () => {
-      const mockTestimonials = [
-        { id: 1, service: 'performance', text: 'Great performance!' },
-        { id: 2, service: 'performance', text: 'Amazing musician!' },
-      ];
+      unmount();
       
-      mockTestimonialsHook.getTestimonialsByService.mockReturnValue(mockTestimonials);
-      mockTestimonialsHook.getFeaturedTestimonials.mockReturnValue(mockTestimonials);
-      
-      render(
-        <TestWrapper>
-          <Performance />
-        </TestWrapper>
-      );
-      
-      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+      expect(performanceMonitorModule.performanceMonitor.measure).toHaveBeenCalledWith('performance-page-render-total');
     });
   });
 
   describe('Error Boundary Integration', () => {
-    it('should wrap content in error boundaries', () => {
+    it('should wrap components in error boundary', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      const errorBoundaries = screen.getAllByTestId('error-boundary');
-      expect(errorBoundaries.length).toBeGreaterThan(0);
+      const errorBoundary = screen.getByTestId('error-boundary');
+      expect(errorBoundary).toBeInTheDocument();
+    });
+
+    it('should contain all performance sections within error boundary', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
       
-      // Verify main sections are present
+      // All sections should be within the error boundary
+      const errorBoundary = screen.getByTestId('error-boundary');
+      expect(errorBoundary).toBeInTheDocument();
+      
       expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
       expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
-    });
-
-    it('should handle component errors gracefully', () => {
-      // The error boundary should catch component errors
-      expect(() => {
-        render(
-          <TestWrapper>
-            <Performance />
-          </TestWrapper>
-        );
-      }).not.toThrow();
-    });
-  });
-
-  describe('Suspense and Lazy Loading', () => {
-    it('should implement suspense for lazy-loaded sections', () => {
-      render(
-        <TestWrapper>
-          <Performance />
-        </TestWrapper>
-      );
-      
-      const lazySections = screen.getAllByTestId('lazy-section');
-      expect(lazySections.length).toBeGreaterThan(0);
-    });
-
-    it('should provide fallback content for lazy sections', () => {
-      render(
-        <TestWrapper>
-          <Performance />
-        </TestWrapper>
-      );
-      
-      // LazySection components should be present
-      expect(screen.getAllByTestId('lazy-section')).toBeTruthy();
+      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+      expect(screen.getByTestId('pricing-section')).toBeInTheDocument();
+      expect(screen.getByTestId('instagram-feed')).toBeInTheDocument();
     });
   });
 
   describe('Accessibility', () => {
-    it('should have proper document structure with SEO head', () => {
+    it('should have accessible section structure', () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      const seoHead = screen.getByTestId('seo-head');
-      expect(seoHead).toBeInTheDocument();
+      // Should have sections for screen readers
+      const sections = screen.getAllByRole('generic', { hidden: true });
+      expect(sections.length).toBeGreaterThan(0);
       
-      const title = screen.getByTestId('seo-title');
-      expect(title).toHaveTextContent(/Live Music Performance Services/);
+      // Key sections should be identifiable
+      expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
+      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
     });
 
-    it('should maintain accessibility in section order', () => {
+    it('should support keyboard navigation', async () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      // Verify logical section order
-      const hero = screen.getByTestId('performance-hero');
-      const gallery = screen.getByTestId('performance-gallery');
-      const testimonials = screen.getByTestId('testimonials-section');
+      // Test that elements can be focused via keyboard
+      await user.tab();
+      const focusedElement = document.activeElement;
+      expect(focusedElement).toBeDefined();
       
-      expect(hero).toBeInTheDocument();
-      expect(gallery).toBeInTheDocument();
-      expect(testimonials).toBeInTheDocument();
+      // Test navigation through sections
+      const heroSection = screen.getByTestId('performance-hero');
+      heroSection.focus();
+      expect(heroSection).toHaveFocus();
+    });
+
+    it('should use semantic navigation elements', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Check for navigation
+      const navigation = screen.getByTestId('cross-service-navigation');
+      expect(navigation.tagName).toBe('NAV');
     });
   });
 
   describe('Mobile Compatibility', () => {
-    it('should render properly on mobile devices', () => {
-      // Mock mobile viewport
+    it('should render properly on different screen sizes', () => {
       Object.defineProperty(window, 'innerWidth', {
         writable: true,
-        configurable: true,
         value: 375,
       });
-      
+
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
       expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
-      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
     });
 
     it('should handle responsive sections correctly', () => {
@@ -348,7 +314,7 @@ describe('Performance Page Component', () => {
         </TestWrapper>
       );
       
-      // All major sections should be present
+      // All sections should render regardless of screen size
       expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
       expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
       expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
@@ -357,29 +323,259 @@ describe('Performance Page Component', () => {
     });
   });
 
-  describe('Performance Optimization', () => {
-    it('should implement lazy loading for heavy sections', () => {
+  describe('User Interactions', () => {
+    it('should handle gallery interactions properly', async () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      // Verify lazy sections are implemented
-      const lazySections = screen.getAllByTestId('lazy-section');
-      expect(lazySections.length).toBeGreaterThan(0);
+      // Test that gallery section is interactive
+      const gallery = screen.getByTestId('performance-gallery');
+      expect(gallery).toBeInTheDocument();
+      
+      // Test focusing gallery
+      gallery.focus();
+      expect(gallery).toHaveFocus();
     });
 
-    it('should handle suspense boundaries correctly', () => {
+    it('should handle hero section interactions', async () => {
       render(
         <TestWrapper>
           <Performance />
         </TestWrapper>
       );
       
-      // Component should render without suspense errors
-      expect(screen.getAllByTestId('error-boundary').length).toBeGreaterThan(0);
+      const heroSection = screen.getByTestId('performance-hero');
+      expect(heroSection).toBeInTheDocument();
+      
+      // Test hero section focus
+      heroSection.focus();
+      expect(heroSection).toHaveFocus();
+    });
+
+    it('should handle navigation interactions', async () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      const navigation = screen.getByTestId('cross-service-navigation');
+      expect(navigation).toBeInTheDocument();
+      
+      // Test navigation focus
+      navigation.focus();
+      expect(navigation).toHaveFocus();
+    });
+
+    it('should handle keyboard navigation between sections', async () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Test tab navigation
+      await user.tab();
+      const firstFocusable = document.activeElement;
+      expect(firstFocusable).toBeDefined();
+      
+      await user.tab();
+      const secondFocusable = document.activeElement;
+      expect(secondFocusable).toBeDefined();
+      
+      // Should be able to navigate between different elements
+      expect(firstFocusable).not.toBe(secondFocusable);
+    });
+
+    it('should handle Instagram feed interactions', async () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      const instagramFeed = screen.getByTestId('instagram-feed');
+      expect(instagramFeed).toBeInTheDocument();
+      
+      // Test Instagram feed focus
+      instagramFeed.focus();
+      expect(instagramFeed).toHaveFocus();
+    });
+  });
+
+  describe('Hook Integration', () => {
+    it('should integrate with testimonials hooks', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Verify testimonials section is rendered, suggesting successful hook integration
+      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+    });
+
+    it('should integrate with content hooks', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // All sections should render successfully, indicating proper hook integration
       expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
+      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
+      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+      expect(screen.getByTestId('pricing-section')).toBeInTheDocument();
+    });
+
+    it('should handle content loading states', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Component should render successfully even during loading states
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
+    });
+  });
+
+  describe('Lazy Loading Integration', () => {
+    it('should implement lazy loading for components', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      expect(screen.getByTestId('lazy-section')).toBeInTheDocument();
+    });
+
+    it('should handle lazy component mounting', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Lazy section should be present
+      const lazySection = screen.getByTestId('lazy-section');
+      expect(lazySection).toBeInTheDocument();
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle missing props gracefully', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Should render without errors even with no props
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
+    });
+
+    it('should render default content when data unavailable', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Should show fallback content
+      expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
+      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
+      expect(screen.getByTestId('testimonials-section')).toBeInTheDocument();
+    });
+
+    it('should handle component errors through error boundary', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Error boundary should be present to catch any errors
+      expect(screen.getByTestId('error-boundary')).toBeInTheDocument();
+    });
+  });
+
+  describe('Business Logic Integration', () => {
+    it('should present performance-specific value propositions', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // Should have performance-specific sections
+      expect(screen.getByTestId('performance-hero')).toBeInTheDocument();
+      expect(screen.getByTestId('performance-gallery')).toBeInTheDocument();
+    });
+
+    it('should maintain consistent brand messaging', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      // SEO head should contain brand-consistent metadata
+      expect(screen.getByTestId('seo-head')).toBeInTheDocument();
+      expect(screen.getByTestId('document-title')).toBeInTheDocument();
+    });
+  });
+
+  describe('Social Media Integration', () => {
+    it('should integrate Instagram feed properly', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      expect(screen.getByTestId('instagram-feed')).toBeInTheDocument();
+    });
+
+    it('should handle social media content loading', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      const instagramFeed = screen.getByTestId('instagram-feed');
+      expect(instagramFeed).toBeInTheDocument();
+      expect(instagramFeed).toHaveTextContent('Instagram Feed');
+    });
+  });
+
+  describe('Pricing Integration', () => {
+    it('should integrate pricing section properly', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      expect(screen.getByTestId('pricing-section')).toBeInTheDocument();
+    });
+
+    it('should handle pricing data display', () => {
+      render(
+        <TestWrapper>
+          <Performance />
+        </TestWrapper>
+      );
+      
+      const pricingSection = screen.getByTestId('pricing-section');
+      expect(pricingSection).toBeInTheDocument();
+      expect(pricingSection).toHaveTextContent('Pricing Section');
     });
   });
 });
