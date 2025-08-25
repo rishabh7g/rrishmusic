@@ -207,19 +207,3 @@ export const VALIDATION_MESSAGES = {
   confirmPassword: 'Passwords do not match'
 } as const;
 
-export default {
-  ValidationSeverity,
-  ValidationContext,
-  ValidationRule,
-  ValidationResult,
-  FormValidationState,
-  ServiceFieldRequirements,
-  ProgressiveValidationConfig,
-  AccessibleValidationError,
-  FormValidationConfig,
-  UseValidationOptions,
-  BuiltInValidationType,
-  FieldValidationConfig,
-  SERVICE_VALIDATION_PATTERNS,
-  VALIDATION_MESSAGES
-};

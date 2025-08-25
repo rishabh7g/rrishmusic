@@ -279,7 +279,7 @@ describe('Service Pages Integration Tests', () => {
 
   describe('Hook Integration Across Services', () => {
     it('should integrate performance monitoring in Teaching page', async () => {
-      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as any;
+      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as { performanceMonitor: { mark: vi.MockedFunction<unknown> } };
       
       render(
         <TestWrapper>
@@ -292,7 +292,7 @@ describe('Service Pages Integration Tests', () => {
     });
 
     it('should integrate testimonials hook in Performance page', async () => {
-      const testimonialsHookModule = await vi.importMock('@/hooks/useMultiServiceTestimonials') as any;
+      const testimonialsHookModule = await vi.importMock('@/hooks/useMultiServiceTestimonials') as { useMultiServiceTestimonials: vi.MockedFunction<unknown> };
       
       render(
         <TestWrapper>
