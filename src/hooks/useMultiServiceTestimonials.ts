@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Testimonial, TestimonialFilters, TestimonialStats, ServiceType } from '@/types/content';
+import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
 
 // Import testimonials and service configuration
 import testimonialsData from '@/content/testimonials.json';
@@ -28,7 +29,7 @@ interface UseMultiServiceTestimonialsResult {
  * Features:
  * - Loads testimonials from testimonials.json
  * - Provides filtering by service, sub-type, rating, etc.
- * - Calculates statistics across all services
+ * - Calculates statistics dynamically in real-time
  * - Implements 60/25/15 service allocation
  * - Handles loading and error states
  * - Optimized performance with memoization
@@ -36,108 +37,122 @@ interface UseMultiServiceTestimonialsResult {
 export function useMultiServiceTestimonials(
   defaultFilters: TestimonialFilters = {}
 ): UseMultiServiceTestimonialsResult {
-  const [data, setData] = useState<TestimonialData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load testimonials data
+  // Process testimonials data with dynamic stats calculation
+  const data = useMemo((): TestimonialData => {
+    try {
+      const testimonials = testimonialsData.testimonials as Testimonial[];
+      
+      // Calculate stats dynamically from testimonials array
+      const stats = calculateTestimonialStats(testimonials);
+      
+      return {
+        testimonials,
+        stats
+      };
+    } catch (err) {
+      console.error('Error processing testimonials data:', err);
+      throw err;
+    }
+  }, []);
+
+  // Initialize loading state
   useEffect(() => {
-    const loadTestimonials = async () => {
+    const initializeData = async () => {
       try {
         setLoading(true);
         setError(null);
 
         // Validate data structure
-        if (!testimonialsData.testimonials || !Array.isArray(testimonialsData.testimonials)) {
+        if (!data.testimonials || !Array.isArray(data.testimonials)) {
           throw new Error('Invalid testimonials data structure');
         }
 
-        const testimonials: Testimonial[] = testimonialsData.testimonials;
-        
-        // Calculate statistics
-        const stats = calculateTestimonialStats(testimonials);
+        // Validate service configuration
+        if (!serviceConfig.services) {
+          throw new Error('Invalid service configuration');
+        }
 
-        setData({
-          testimonials,
-          stats
-        });
+        setLoading(false);
       } catch (err) {
-        console.error('Error loading testimonials:', err);
+        console.error('Failed to load testimonials:', err);
         setError(err instanceof Error ? err.message : 'Unknown error occurred');
-      } finally {
         setLoading(false);
       }
     };
 
-    loadTestimonials();
-  }, []);
+    initializeData();
+  }, [data]);
 
-  // Filter testimonials based on provided filters
+  // Filter testimonials based on criteria
   const filterTestimonials = useMemo(() => {
     return (filters: TestimonialFilters): Testimonial[] => {
-      if (!data) return [];
+      if (!data?.testimonials) return [];
 
-      let filtered = data.testimonials.filter(testimonial => {
-        // Service filter
-        if (filters.service && testimonial.service !== filters.service) {
-          return false;
-        }
+      let filtered = [...data.testimonials];
 
-        // Sub-type filter
-        if (filters.serviceSubType && testimonial.serviceSubType !== filters.serviceSubType) {
-          return false;
-        }
+      // Apply service filter
+      if (filters.service) {
+        filtered = filtered.filter(testimonial => testimonial.service === filters.service);
+      }
 
-        // Featured filter
-        if (filters.featured !== undefined && testimonial.featured !== filters.featured) {
-          return false;
-        }
+      // Apply service sub-type filter
+      if (filters.serviceSubType) {
+        filtered = filtered.filter(testimonial => testimonial.serviceSubType === filters.serviceSubType);
+      }
 
-        // Verified filter
-        if (filters.verified !== undefined && testimonial.verified !== filters.verified) {
-          return false;
-        }
+      // Apply featured filter
+      if (typeof filters.featured === 'boolean') {
+        filtered = filtered.filter(testimonial => testimonial.featured === filters.featured);
+      }
 
-        // Rating filter
-        if (filters.minRating && testimonial.rating < filters.minRating) {
-          return false;
-        }
+      // Apply verified filter
+      if (typeof filters.verified === 'boolean') {
+        filtered = filtered.filter(testimonial => testimonial.verified === filters.verified);
+      }
 
-        return true;
-      });
+      // Apply minimum rating filter
+      if (filters.minRating) {
+        filtered = filtered.filter(testimonial => testimonial.rating >= filters.minRating!);
+      }
 
-      // Sort testimonials
+      // Apply sorting
       const sortBy = filters.sortBy || 'date';
       const sortOrder = filters.sortOrder || 'desc';
 
       filtered.sort((a, b) => {
-        // First, prioritize featured testimonials
-        if (a.featured !== b.featured) {
-          return a.featured ? -1 : 1;
-        }
-
-        let comparison = 0;
+        let aVal: string | number;
+        let bVal: string | number;
 
         switch (sortBy) {
+          case 'date':
+            aVal = new Date(a.date || '1970-01-01').getTime();
+            bVal = new Date(b.date || '1970-01-01').getTime();
+            break;
           case 'rating':
-            comparison = a.rating - b.rating;
+            aVal = a.rating;
+            bVal = b.rating;
             break;
           case 'name':
-            comparison = a.name.localeCompare(b.name);
+            aVal = a.name.toLowerCase();
+            bVal = b.name.toLowerCase();
             break;
-          case 'date':
           default:
-            if (a.date && b.date) {
-              comparison = new Date(a.date).getTime() - new Date(b.date).getTime();
-            }
-            break;
+            aVal = 0;
+            bVal = 0;
         }
 
-        return sortOrder === 'desc' ? -comparison : comparison;
+        if (sortOrder === 'asc') {
+          return aVal > bVal ? 1 : -1;
+        } else {
+          return aVal < bVal ? 1 : -1;
+        }
       });
 
       // Apply limit
-      if (filters.limit) {
+      if (filters.limit && filters.limit > 0) {
         filtered = filtered.slice(0, filters.limit);
       }
 
@@ -145,7 +160,7 @@ export function useMultiServiceTestimonials(
     };
   }, [data]);
 
-  // Get testimonials by service
+  // Get testimonials by specific service
   const getTestimonialsByService = useMemo(() => {
     return (service: ServiceType): Testimonial[] => {
       return filterTestimonials({ service });
@@ -154,41 +169,39 @@ export function useMultiServiceTestimonials(
 
   // Get featured testimonials with service allocation
   const getFeaturedTestimonials = useMemo(() => {
-    return (limit: number = 9): Testimonial[] => {
-      if (!data) return [];
-
-      // Apply service allocation from configuration
-      const performanceSlots = Math.ceil(limit * (serviceConfig.serviceAllocation.performance.percentage / 100));
-      const teachingSlots = Math.ceil(limit * (serviceConfig.serviceAllocation.teaching.percentage / 100));
-      const collaborationSlots = Math.floor(limit * (serviceConfig.serviceAllocation.collaboration.percentage / 100));
+    return (limit = 10): Testimonial[] => {
+      // Implement 60/25/15 service allocation for featured testimonials
+      const performanceLimit = Math.ceil(limit * 0.6);
+      const teachingLimit = Math.ceil(limit * 0.25);
+      const collaborationLimit = Math.ceil(limit * 0.15);
 
       const performanceTestimonials = filterTestimonials({
         service: 'performance',
         featured: true,
-        limit: performanceSlots,
-        sortBy: 'rating',
+        limit: performanceLimit,
+        sortBy: 'date',
         sortOrder: 'desc'
       });
 
       const teachingTestimonials = filterTestimonials({
         service: 'teaching',
         featured: true,
-        limit: teachingSlots,
-        sortBy: 'rating',
+        limit: teachingLimit,
+        sortBy: 'date',
         sortOrder: 'desc'
       });
 
       const collaborationTestimonials = filterTestimonials({
         service: 'collaboration',
         featured: true,
-        limit: collaborationSlots,
-        sortBy: 'rating',
+        limit: collaborationLimit,
+        sortBy: 'date',
         sortOrder: 'desc'
       });
 
       return [...performanceTestimonials, ...teachingTestimonials, ...collaborationTestimonials];
     };
-  }, [filterTestimonials, data]);
+  }, [filterTestimonials]);
 
   // Get statistics for a specific service
   const getServiceStats = useMemo(() => {
@@ -228,57 +241,6 @@ export function useMultiServiceTestimonials(
     getTestimonialsByService,
     getFeaturedTestimonials,
     getServiceStats
-  };
-}
-
-/**
- * Helper function to calculate testimonial statistics
- */
-function calculateTestimonialStats(testimonials: Testimonial[]): TestimonialStats {
-  const total = testimonials.length;
-  
-  if (total === 0) {
-    return {
-      total: 0,
-      averageRating: 0,
-      byService: {
-        performance: { count: 0, percentage: 0, averageRating: 0 },
-        teaching: { count: 0, percentage: 0, averageRating: 0 },
-        collaboration: { count: 0, percentage: 0, averageRating: 0 }
-      },
-      featured: 0,
-      verified: 0
-    };
-  }
-
-  const totalRating = testimonials.reduce((sum, t) => sum + t.rating, 0);
-  const averageRating = Math.round((totalRating / total) * 10) / 10;
-
-  // Calculate service-specific stats
-  const performanceTestimonials = testimonials.filter(t => t.service === 'performance');
-  const teachingTestimonials = testimonials.filter(t => t.service === 'teaching');
-  const collaborationTestimonials = testimonials.filter(t => t.service === 'collaboration');
-
-  const calculateServiceStats = (serviceTestimonials: Testimonial[]) => {
-    const count = serviceTestimonials.length;
-    const percentage = count > 0 ? Math.round((count / total) * 100) : 0;
-    const avgRating = count > 0 
-      ? Math.round((serviceTestimonials.reduce((sum, t) => sum + t.rating, 0) / count) * 10) / 10
-      : 0;
-
-    return { count, percentage, averageRating: avgRating };
-  };
-
-  return {
-    total,
-    averageRating,
-    byService: {
-      performance: calculateServiceStats(performanceTestimonials),
-      teaching: calculateServiceStats(teachingTestimonials),
-      collaboration: calculateServiceStats(collaborationTestimonials)
-    },
-    featured: testimonials.filter(t => t.featured).length,
-    verified: testimonials.filter(t => t.verified).length
   };
 }
 

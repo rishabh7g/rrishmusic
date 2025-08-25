@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
-import { PageContent } from '@/types/content';
+import { Testimonial } from '@/types/content';
+import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
 import heroData from '@/content/hero.json';
 import aboutData from '@/content/about.json';
 import approachData from '@/content/approach.json';
@@ -49,28 +50,55 @@ export const useSectionContent = (section: SectionKey) => {
       return {
         data: null,
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }, [section]);
 };
 
 /**
- * Specialized hook for hero content with enhanced type safety
+ * Hook for getting content by key path
  */
-export const useHeroContent = () => {
-  return useMemo(() => ({
-    data: heroData,
-    loading: false,
-    error: null
-  }), []);
+export const useContent = <T = unknown>(path?: string): T | null => {
+  return useMemo(() => {
+    if (!path) return null;
+    
+    try {
+      const keys = path.split('.');
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      let current: any = contentMap;
+      
+      for (const key of keys) {
+        if (current && typeof current === 'object' && key in current) {
+          current = current[key];
+        } else {
+          console.warn(`Content path "${path}" not found`);
+          return null;
+        }
+      }
+      
+      return current as T;
+    } catch (error) {
+      console.error(`Error accessing content path "${path}":`, error);
+      return null;
+    }
+  }, [path]);
 };
 
 /**
- * Pluralization helper function
+ * Utility functions for content manipulation
  */
 export const pluralize = (word: string, count: number) => {
-  return count === 1 ? word : `${word}s`;
+  if (count === 1) return word;
+  
+  // Simple pluralization rules
+  if (word.endsWith('y')) {
+    return word.slice(0, -1) + 'ies';
+  } else if (word.endsWith('s') || word.endsWith('sh') || word.endsWith('ch') || word.endsWith('x') || word.endsWith('z')) {
+    return word + 'es';
+  } else {
+    return word + 's';
+  }
 };
 
 /**
@@ -81,14 +109,31 @@ export const pluralizeWithCount = (count: number, word: string) => {
 };
 
 /**
- * Hook for testimonials content
+ * Hook for testimonials content with dynamic statistics
  */
 export const useTestimonials = () => {
-  return useMemo(() => ({
-    data: testimonials,
-    loading: false,
-    error: null
-  }), []);
+  return useMemo(() => {
+    try {
+      const testimonialsArray = testimonials.testimonials as Testimonial[];
+      const dynamicStats = calculateTestimonialStats(testimonialsArray);
+      
+      return {
+        data: {
+          ...testimonials,
+          stats: dynamicStats
+        },
+        loading: false,
+        error: null
+      };
+    } catch (error) {
+      console.error('Error processing testimonials with dynamic stats:', error);
+      return {
+        data: testimonials,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Unknown error'
+      };
+    }
+  }, []);
 };
 
 /**
@@ -130,263 +175,49 @@ export const useLessonPackages = () => {
       return {
         packages: [],
         packageInfo: {
-          title: 'Guitar Lessons & Packages',
-          subtitle: 'Choose the learning path that works best for your goals and schedule',
-          description: 'Whether you\'re taking your first steps or looking to refine your improvisation skills, these packages are designed to meet you where you are and guide you to where you want to be.',
-          sessionLength: 60, // Default session length in minutes
-          instruments: ['Guitar'], // Primary instrument
-          location: 'Melbourne / Online' // Location options
+          title: 'Guitar Lessons',
+          subtitle: 'Learn with a Professional',
+          description: 'Personalized guitar lessons',
+          sessionLength: 60,
+          instruments: ['Guitar'],
+          location: 'Melbourne / Online'
         },
         loading: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Unknown error'
       };
     }
   }, []);
 };
 
 /**
- * Hook for SEO data
+ * Hook for stats content
  */
-export const useSEO = () => {
+export const useStats = () => {
   return useMemo(() => ({
-    data: seoData,
-    generatePageTitle: (title: string) => {
-      const siteName = seoData.siteName || 'RrishMusic';
-      return title ? `${title} | ${siteName}` : seoData.title || siteName;
-    },
+    ...stats,
     loading: false,
     error: null
   }), []);
 };
 
 /**
- * Hook for stats with computed values for different contexts
+ * Hook for SEO content
  */
-export const useStats = () => {
+export const useSEO = () => {
   return useMemo(() => ({
-    data: stats,
-    // Computed values for different contexts
-    socialProof: {
-      // Properties expected by Contact component
-      students: stats.students.total,
-      performances: parseInt(stats.performance.venuePerformances.replace('+', '')), // Convert "50+" to 50
-      experience: stats.experience.teachingYears,
-      satisfaction: Math.round(stats.quality.averageRating * 20), // Convert 5.0 rating to 100% satisfaction
-      
-      // Legacy properties for backward compatibility
-      studentsCount: stats.students.total,
-      yearsTeaching: stats.experience.teachingYears,
-      averageRating: stats.quality.averageRating,
-      successStories: stats.quality.successStories
-    },
-    heroStats: {
-      studentsCount: stats.students.total,
-      yearsExperience: stats.experience.playingYears,
-      successStories: stats.quality.successStories
-    },
-    aboutStats: [
-      {
-        number: stats.experience.performanceYears.toString() + "+",
-        label: `${pluralizeWithCount(stats.experience.performanceYears, "Year")} Performing`
-      },
-      {
-        number: stats.experience.teachingYears.toString(),
-        label: `${pluralizeWithCount(stats.experience.teachingYears, "Year")} Teaching`
-      },
-      {
-        number: stats.students.total.toString(),
-        label: `Happy ${pluralizeWithCount(stats.students.total, "Student")}`
-      }    ],
-    communityStats: {
-      totalStudents: stats.students.total,
-      activeMembers: stats.students.active,
-      successStories: stats.quality.successStories,
-      averageRating: stats.quality.averageRating,
-      countriesRepresented: stats.reach.countries
-    }
-  }), []);
-};
-
-// Export content data for direct access when needed
-export const rawContent = {
-  hero: heroData,
-  about: aboutData,
-  approach: approachData,
-  community: communityData,
-  contact: contactData,
-  lessons: lessonContent,
-  testimonials: testimonials,
-  stats: stats,
-  seo: seoData,
-  performance: performanceData
-} as const;
-
-// Enhanced page content interface
-export interface EnhancedPageContent extends PageContent {
-  meta?: {
-    lastUpdated?: string;
-    version?: string;
-    author?: string;
-  };
-}
-
-/**
- * Navigation utility for multi-service platform
- */
-export const useNavigation = () => {
-  return useMemo(() => ({
-    primarySections: [
-      { id: 'hero', label: 'Home', path: '/' },
-      { id: 'performances', label: 'Performances', path: '/performances' },
-      { id: 'lessons', label: 'Lessons', path: '/lessons' },
-      { id: 'about', label: 'About', path: '/about' },
-      { id: 'contact', label: 'Contact', path: '/contact' }
-    ],
-    serviceSections: {
-      performance: ['hero', 'performances', 'about', 'contact'],
-      teaching: ['hero', 'lessons', 'approach', 'community', 'contact'],
-      collaboration: ['hero', 'about', 'contact']
-    }
+    data: seoData,
+    loading: false,
+    error: null
   }), []);
 };
 
 /**
- * Content validation utility
+ * Hook for performance content
  */
-export const validateContent = (content: Record<string, unknown>, section: string): boolean => {
-  if (!content) {
-    console.error(`Content validation failed: ${section} content is null or undefined`);
-    return false;
-  }
-  
-  // Add specific validation rules based on content structure
-  if (section === 'hero' && !content.title) {
-    console.error(`Content validation failed: ${section} missing required title`);
-    return false;
-  }
-  
-  return true;
-};
-
-/**
- * Content transformation utility for different contexts
- */
-export const useContentTransformer = () => {
+export const usePerformance = () => {
   return useMemo(() => ({
-    transformForSEO: (content: Record<string, unknown>) => ({
-      ...content,
-      meta: {
-        ...((content.meta as Record<string, unknown>) || {}),
-        generatedAt: new Date().toISOString()
-      }
-    }),
-    transformForMobile: (content: Record<string, unknown>) => ({
-      ...content,
-      // Mobile-specific transformations
-      title: (content.shortTitle as string) || (content.title as string),
-      description: (content.shortDescription as string) || (content.description as string)
-    }),
-    transformForAccessibility: (content: Record<string, unknown>) => ({
-      ...content,
-      // Accessibility enhancements
-      ariaLabels: (content.ariaLabels as Record<string, string>) || {},
-      altTexts: (content.altTexts as Record<string, string>) || {}
-    })
-  }), []);
-};
-
-/**
- * Performance monitoring for content loading
- */
-export const useContentPerformance = (section: string) => {
-  return useMemo(() => {
-    const startTime = performance.now();
-    
-    return {
-      measureLoadTime: () => {
-        const endTime = performance.now();
-        const loadTime = endTime - startTime;
-        console.log(`Content loading time for ${section}: ${loadTime}ms`);
-        return loadTime;
-      }
-    };
-  }, [section]);
-};
-
-/**
- * Content caching utility
- */
-export const useContentCache = () => {
-  return useMemo(() => ({
-    getCached: (key: string) => {
-      try {
-        const cached = sessionStorage.getItem(`content_${key}`);
-        return cached ? JSON.parse(cached) : null;
-      } catch {
-        return null;
-      }
-    },
-    setCached: (key: string, data: Record<string, unknown>) => {
-      try {
-        sessionStorage.setItem(`content_${key}`, JSON.stringify(data));
-      } catch (error) {
-        console.warn('Failed to cache content:', error);
-      }
-    },
-    clearCache: () => {
-      try {
-        Object.keys(sessionStorage)
-          .filter(key => key.startsWith('content_'))
-          .forEach(key => sessionStorage.removeItem(key));
-      } catch (error) {
-        console.warn('Failed to clear content cache:', error);
-      }
-    }
-  }), []);
-};
-
-/**
- * Multi-language content support (future enhancement)
- */
-export const useInternationalization = () => {
-  return useMemo(() => ({
-    currentLanguage: 'en',
-    supportedLanguages: ['en'],
-    translate: (key: string) => {
-      // Future implementation for multi-language support
-      return key;
-    }
-  }), []);
-};
-
-/**
- * Enhanced error boundary integration
- */
-export const useContentErrorBoundary = () => {
-  return useMemo(() => ({
-    handleContentError: (error: Error) => {
-      console.error('Content error:', error);
-      // Could integrate with error reporting service
-    },
-    getErrorFallback: () => ({
-      title: 'Content Temporarily Unavailable',
-      description: 'Please refresh the page or try again later.',
-      showRetry: true
-    })
-  }), []);
-};
-
-/**
- * Content analytics integration
- */
-export const useContentAnalytics = () => {
-  return useMemo(() => ({
-    trackContentView: (section: string) => {
-      // Future implementation for analytics tracking
-      console.log(`Content view tracked: ${section}`);
-    },
-    trackContentInteraction: (section: string, action: string) => {
-      console.log(`Content interaction tracked: ${section} - ${action}`);
-    }
+    data: performanceData,
+    loading: false,
+    error: null
   }), []);
 };
