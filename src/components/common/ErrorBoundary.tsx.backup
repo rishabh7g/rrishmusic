@@ -288,6 +288,117 @@ Thank you!`);
 /**
  * Simple error boundary wrapper for smaller components
  * Enhanced with consistent styling and recovery options
-*/
+ */
+interface SimpleErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: string;
+  showRetry?: boolean;
+}
+
+export const SimpleErrorBoundary = ({ 
+  children, 
+  fallback = 'Something went wrong',
+  showRetry = true 
+}: SimpleErrorBoundaryProps) {
+  return (
+    <ErrorBoundary
+      fallback={
+        <div className="p-4 bg-red-50 border border-red-200 rounded-lg">
+          <div className="flex items-center justify-between">
+            <p className="text-red-600 text-sm font-medium">{fallback}</p>
+            {showRetry && (
+              <button
+                onClick={() => window.location.reload()}
+                className="text-xs bg-red-100 text-red-700 px-2 py-1 rounded hover:bg-red-200 transition-colors"
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        </div>
+      }
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
 
 export default ErrorBoundary;
+/**
+ * Specialized Error Boundary for Calculation Failures
+ * Handles errors from the unified data calculation system
+ */
+interface CalculationErrorBoundaryProps {
+  children: ReactNode;
+  fallback?: ReactNode;
+  onCalculationError?: (error: Error) => void;
+}
+
+export const CalculationErrorBoundary = ({ 
+  children, 
+  fallback,
+  onCalculationError 
+}: CalculationErrorBoundaryProps) {
+  return (
+    <ErrorBoundary
+      onError={(error, errorInfo) => {
+        // Check if this is a calculation error
+        const isCalculationError = 
+          error.name === 'CalculationError' ||
+          error.message.includes('calculation') ||
+          error.message.includes('calculator') ||
+          errorInfo.componentStack.includes('useContent') ||
+          errorInfo.componentStack.includes('Calculator');
+
+        if (isCalculationError && onCalculationError) {
+          onCalculationError(error);
+        }
+
+        console.error('Calculation Error Boundary caught error:', {
+          error: error.message,
+          stack: error.stack,
+          isCalculationError,
+          componentStack: errorInfo.componentStack
+        });
+      }}
+      fallback={fallback || (
+        <div className="p-4 bg-yellow-50 border border-yellow-200 rounded-lg">
+          <div className="flex items-start space-x-3">
+            <div className="text-yellow-500 mt-0.5">⚠️</div>
+            <div>
+              <h3 className="text-yellow-800 font-medium">Data Calculation Issue</h3>
+              <p className="text-yellow-700 text-sm mt-1">
+                We're experiencing issues with dynamic data calculations. 
+                The page will continue to work with fallback data.
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 text-xs bg-yellow-100 text-yellow-800 px-2 py-1 rounded hover:bg-yellow-200 transition-colors"
+              >
+                Refresh to Try Again
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    >
+      {children}
+    </ErrorBoundary>
+  );
+}
+
+/**
+ * HOC (Higher-Order Component) to wrap components with calculation error handling
+ */
+export const withCalculationErrorBoundary = <P extends object>(
+  Component: React.ComponentType<P>,
+  fallback?: ReactNode
+) {
+  return function WrappedComponent(props: P) {
+    return (
+      <CalculationErrorBoundary fallback={fallback}>
+        <Component {...props} />
+      </CalculationErrorBoundary>
+    );
+  };
+}
