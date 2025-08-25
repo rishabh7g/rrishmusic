@@ -1,6 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { Routes, Route, useLocation } from 'react-router-dom';
-import { Helmet } from 'react-helmet-async';
 import { motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Navigation from './components/layout/Navigation';
@@ -57,70 +56,43 @@ function AppContent() {
   const location = useLocation();
   const { seoData } = usePageSEO();
   
+  // Update document head with SEO data
+  useEffect(() => {
+    if (seoData.title) {
+      document.title = seoData.title;
+    }
+    
+    // Update meta description
+    let metaDescription = document.querySelector('meta[name="description"]');
+    if (!metaDescription) {
+      metaDescription = document.createElement('meta');
+      metaDescription.setAttribute('name', 'description');
+      document.head.appendChild(metaDescription);
+    }
+    metaDescription.setAttribute('content', seoData.description);
+    
+    // Update canonical link
+    let canonicalLink = document.querySelector('link[rel="canonical"]');
+    if (!canonicalLink) {
+      canonicalLink = document.createElement('link');
+      canonicalLink.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonicalLink);
+    }
+    canonicalLink.setAttribute('href', seoData.canonicalUrl);
+    
+    // Update keywords
+    let metaKeywords = document.querySelector('meta[name="keywords"]');
+    if (!metaKeywords) {
+      metaKeywords = document.createElement('meta');
+      metaKeywords.setAttribute('name', 'keywords');
+      document.head.appendChild(metaKeywords);
+    }
+    metaKeywords.setAttribute('content', seoData.keywords);
+    
+  }, [seoData]);
+  
   return (
     <>
-      <Helmet
-        titleTemplate={seoData.titleTemplate}
-        defaultTitle={seoData.defaultTitle}
-      >
-        <html lang="en" />
-        <meta charSet="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="theme-color" content="#1e40af" />
-        
-        {/* Base SEO */}
-        <title>{seoData.title}</title>
-        <meta name="description" content={seoData.description} />
-        <link rel="canonical" href={seoData.canonicalUrl} />
-        
-        {/* Open Graph */}
-        <meta property="og:type" content={seoData.openGraph.type} />
-        <meta property="og:title" content={seoData.openGraph.title} />
-        <meta property="og:description" content={seoData.openGraph.description} />
-        <meta property="og:url" content={seoData.openGraph.url} />
-        <meta property="og:image" content={seoData.openGraph.image} />
-        <meta property="og:image:alt" content={seoData.openGraph.imageAlt} />
-        <meta property="og:site_name" content={seoData.openGraph.siteName} />
-        
-        {/* Twitter Card */}
-        <meta name="twitter:card" content={seoData.twitter.card} />
-        <meta name="twitter:title" content={seoData.twitter.title} />
-        <meta name="twitter:description" content={seoData.twitter.description} />
-        <meta name="twitter:image" content={seoData.twitter.image} />
-        <meta name="twitter:image:alt" content={seoData.twitter.imageAlt} />
-        
-        {/* Additional Meta Tags */}
-        <meta name="robots" content={seoData.robots} />
-        <meta name="author" content={seoData.author} />
-        
-        {/* Service-specific keywords */}
-        <meta name="keywords" content={seoData.keywords} />
-        
-        {/* Local SEO - Melbourne based */}
-        <meta property="business:contact_data:locality" content="Melbourne" />
-        <meta property="business:contact_data:region" content="Victoria" />
-        <meta property="business:contact_data:country_name" content="Australia" />
-        
-        {/* Favicon */}
-        <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-        <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-        <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-        <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
-        <link rel="manifest" href="/site.webmanifest" />
-        
-        {/* Structured Data */}
-        <script type="application/ld+json">
-          {JSON.stringify(seoData.structuredData)}
-        </script>
-        
-        {/* Breadcrumb Structured Data */}
-        {seoData.breadcrumbData && (
-          <script type="application/ld+json">
-            {JSON.stringify(seoData.breadcrumbData)}
-          </script>
-        )}
-      </Helmet>
-
       <div className="min-h-screen bg-gray-50 relative overflow-x-hidden">
         <Navigation />
         

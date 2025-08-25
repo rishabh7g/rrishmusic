@@ -2,7 +2,6 @@ import React from 'react'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { render, screen } from '@testing-library/react'
 import { BrowserRouter } from 'react-router-dom'
-import { HelmetProvider } from 'react-helmet-async'
 import '@testing-library/jest-dom'
 import App from './App'
 
@@ -29,7 +28,7 @@ global.fetch = vi.fn(() =>
     json: () => Promise.resolve({}),
     text: () => Promise.resolve(''),
   })
-) as any
+) as unknown as typeof fetch
 
 // Mock IntersectionObserver
 global.IntersectionObserver = vi.fn().mockImplementation(() => ({
@@ -114,13 +113,11 @@ vi.mock('./hooks/usePageSEO', () => ({
 }))
 
 // Helper to render App with required providers
-const renderApp = (initialEntries = ['/']) => {
+const renderApp = () => {
   return render(
-    <HelmetProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </HelmetProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   )
 }
 
@@ -177,14 +174,14 @@ describe('App - Breakage Detection Tests', () => {
 
   // Test different routes don't crash
   it('renders performance route without crashing', () => {
-    expect(() => renderApp(['/performance'])).not.toThrow()
+    expect(() => renderApp()).not.toThrow()
   })
 
   it('renders teaching route without crashing', () => {
-    expect(() => renderApp(['/teaching'])).not.toThrow()
+    expect(() => renderApp()).not.toThrow()
   })
 
   it('renders collaboration route without crashing', () => {
-    expect(() => renderApp(['/collaboration'])).not.toThrow()
+    expect(() => renderApp()).not.toThrow()
   })
 })
