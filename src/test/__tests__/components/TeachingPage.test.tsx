@@ -171,7 +171,7 @@ describe('Teaching Page Component', () => {
 
   describe('Performance Monitoring Integration', () => {
     it('should initialize performance monitoring on mount', async () => {
-      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as any;
+      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as { performanceMonitor: { mark: vi.MockedFunction<unknown> } };
       
       render(
         <TestWrapper>
@@ -183,7 +183,7 @@ describe('Teaching Page Component', () => {
     });
 
     it('should measure performance on unmount', async () => {
-      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as any;
+      const performanceMonitorModule = await vi.importMock('@/utils/performanceMonitor') as { performanceMonitor: { mark: vi.MockedFunction<unknown> } };
       
       const { unmount } = render(
         <TestWrapper>
