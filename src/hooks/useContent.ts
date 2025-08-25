@@ -580,11 +580,17 @@ export const usePerformance = (options: {
  * Hook for SEO content
  */
 export const useSEO = () => {
+  const generatePageTitle = useCallback((title: string) => {
+    const siteName = seoData?.siteName || "Rrish Music";
+    return title ? `${title} | ${siteName}` : siteName;
+  }, []);
+
   return useMemo(() => ({
     data: seoData,
+    generatePageTitle,
     loading: false,
     error: null
-  }), []);
+  }), [generatePageTitle]);
 };
 
 // Alias for section content access

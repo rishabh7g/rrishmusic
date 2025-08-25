@@ -1,7 +1,7 @@
 /**
  * Hook for managing page-specific SEO dynamically
  */
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 
 interface SEOHeadProps {
   title?: string;
@@ -16,18 +16,45 @@ interface SEOHeadProps {
   structuredData?: Record<string, unknown>;
 }
 
+interface SEOData {
+  title?: string;
+  description?: string;
+  keywords?: string;
+  image?: string;
+  url?: string;
+  type?: string;
+  twitterCard?: string;
+  noIndex?: boolean;
+  noFollow?: boolean;
+  structuredData?: Record<string, unknown>;
+}
+
 export function usePageSEO({
   title,
   description,
   keywords,
   image,
   url,
-  type,
-  twitterCard,
-  noIndex,
-  noFollow,
+  type = 'website',
+  twitterCard = 'summary_large_image',
+  noIndex = false,
+  noFollow = false,
   structuredData,
-}: SEOHeadProps): void {
+}: SEOHeadProps = {}): { seoData: SEOData } {
+  
+  const seoData = useMemo(() => ({
+    title,
+    description,
+    keywords,
+    image,
+    url,
+    type,
+    twitterCard,
+    noIndex,
+    noFollow,
+    structuredData,
+  }), [title, description, keywords, image, url, type, twitterCard, noIndex, noFollow, structuredData]);
+
   useEffect(() => {
     // This effect will trigger SEO updates when the component using this hook mounts
     const seoElement = document.createElement('div');
@@ -44,4 +71,6 @@ export function usePageSEO({
       }
     };
   }, [title, description, keywords, image, url, type, twitterCard, noIndex, noFollow, structuredData]);
+
+  return { seoData };
 }
