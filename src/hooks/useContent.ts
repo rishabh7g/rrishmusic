@@ -249,7 +249,7 @@ const defaultLessonPackages: LessonPackage[] = [
 /**
  * Main content hook - provides all content with optimal performance
  */
-const useContent = () => {
+export const useContent = () => {
   return useMemo(() => ({
     home: defaultHomeContent,
     teaching: teachingContent as ServiceContent,
@@ -306,4 +306,5 @@ export const useSectionContent = (section: string) => {
   return content[section as keyof typeof content];
 };
 
+// Default export for backward compatibility
 export default useContent;
