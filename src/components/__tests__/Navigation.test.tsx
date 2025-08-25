@@ -25,10 +25,10 @@ vi.mock('react-router-dom', async () => {
 });
 
 // Mock hooks
-vi.mock('@/hooks/useScrollSpy', () => ({
-  useScrollSpy: () => ({ activeSection: 'home' }),
+vi.mock("@/hooks/useScrollSpy", () => ({
+  useScrollSpy: () => ({ activeSection: "home" }),
+  useSmoothScroll: () => ({ smoothScrollTo: vi.fn() }),
 }));
-
 vi.mock('@/hooks/useResponsive', () => ({
   useResponsive: () => ({ 
     isMobile: false,
