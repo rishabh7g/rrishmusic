@@ -134,9 +134,11 @@ const getUserAgentInfo = () => {
  */
 const getHoverCapability = (): boolean => {
   if (typeof window === 'undefined') return false;
+  if (typeof window.matchMedia !== 'function') return false;
   
   // Use CSS media query to detect hover capability
-  return window.matchMedia('(hover: hover)').matches;
+  const mediaQuery = window.matchMedia('(hover: hover)');
+  return mediaQuery ? mediaQuery.matches : false;
 };
 
 /**
