@@ -191,7 +191,7 @@ describe('pricingCalculations', () => {
     test('should handle different currencies', () => {
       // The actual formatting may vary based on locale, let's test the real behavior
       const result = formatPrice(50, 'USD');
-      expect(['$50', 'US$50', 'USD 50'].includes(result)).toBe(true);
+      expect(result).toBe("USD 50"); // Actual format in this environment
     });
   });
 
