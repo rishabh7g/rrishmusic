@@ -109,12 +109,17 @@ describe('themeHelpers', () => {
     });
 
     it('should handle localStorage errors gracefully', () => {
+      // Suppress console warnings for this test
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      
       mockLocalStorage.setItem.mockImplementation(() => {
         throw new Error('Storage error');
       });
       
       // Should not throw error
       expect(() => saveThemeToStorage('dark')).not.toThrow();
+      
+      consoleSpy.mockRestore();
     });
   });
 
@@ -283,11 +288,16 @@ describe('themeHelpers', () => {
     });
 
     it('should handle errors gracefully', () => {
+      // Suppress console warnings for this test
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      
       mockLocalStorage.getItem.mockImplementation(() => {
         throw new Error('Storage error');
       });
       
       expect(() => preventFOUC()).not.toThrow();
+      
+      consoleSpy.mockRestore();
     });
   });
 });
