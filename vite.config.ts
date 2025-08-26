@@ -32,6 +32,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: true,
+    exclude: ['**/tests/e2e/**', '**/node_modules/**', '**/dist/**', '**/cypress/**', '**/coverage/**', '**/.{idea,git,cache,output,temp}/**'],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],
