@@ -17,14 +17,14 @@ interface ServiceItem {
 }
 
 /**
- * Services Hierarchy Component - UPDATED for 80/15/5 Content Allocation Rule
+ * Services Hierarchy Component - UPDATED for 50/50 Screen Split Layout
  * 
- * Implements 80/15/5 content allocation:
- * - Performance Services: 80% content allocation (expanded content, multiple service types, detailed descriptions)
- * - Teaching Services: 15% content allocation (concise but compelling content)
- * - Collaboration Services: 5% content allocation (minimal but present content)
+ * Implements 50/50 screen split for main services:
+ * - Performance Services: 50% screen width (left side, comprehensive content)
+ * - Teaching Services: 50% screen width (right side, substantial content)
+ * - Collaboration Services: Centered below (compact presentation)
  * 
- * Visual hierarchy maintained with performance services taking dominant space.
+ * Equal visual prominence for Performance and Teaching services.
  */
 export function ServicesHierarchy() {
   const services: ServiceItem[] = [
@@ -42,9 +42,9 @@ export function ServicesHierarchy() {
       )
     },
     {
-      title: "Guitar Lessons",
-      description: "Structured guitar lessons focused on blues and improvisation techniques for developing musicians.",
-      ctaText: "Start Learning",
+      title: "Guitar Lessons & Music Education",
+      description: "Comprehensive guitar instruction focused on blues fundamentals, improvisation techniques, and musical expression. Learn authentic blues scales, chord progressions, fingerpicking patterns, and stage performance skills from a working professional musician. Suitable for beginners through advanced players seeking to develop their blues and improvisation abilities through structured, personalized lessons.",
+      ctaText: "Start Learning Today",
       ctaLink: "#lessons",
       prominence: 'secondary',
       icon: (
@@ -136,38 +136,41 @@ export function ServicesHierarchy() {
           </div>
         </motion.div>
 
-        {/* Services Grid with 80/15/5 Layout */}
-        <div className="grid lg:grid-cols-12 gap-8">
-          {/* Primary Service - Performance (80% content allocation) */}
+        {/* Services Grid with 50/50 Split Layout for Performance and Lessons */}
+        <div className="grid lg:grid-cols-2 gap-8 mb-12">
+          {/* Primary Service - Performance (50% screen split) */}
           <motion.div 
-            className="lg:col-span-8"
+            className="h-full"
             variants={fadeInUp}
           >
             <ServiceCard 
               service={services[0]} 
-              size="large"
+              size="split-large"
             />
           </motion.div>
 
-          {/* Secondary and Tertiary Services (20% combined) */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Secondary Service - Teaching (15% allocation) */}
-            <motion.div variants={fadeInUp}>
-              <ServiceCard 
-                service={services[1]} 
-                size="medium"
-              />
-            </motion.div>
-
-            {/* Tertiary Service - Collaboration (5% allocation) */}
-            <motion.div variants={fadeInUp}>
-              <ServiceCard 
-                service={services[2]} 
-                size="small"
-              />
-            </motion.div>
-          </div>
+          {/* Secondary Service - Teaching/Lessons (50% screen split) */}
+          <motion.div 
+            className="h-full"
+            variants={fadeInUp}
+          >
+            <ServiceCard 
+              service={services[1]} 
+              size="split-large"
+            />
+          </motion.div>
         </div>
+
+        {/* Tertiary Service - Collaboration (Full width, smaller) */}
+        <motion.div 
+          className="max-w-md mx-auto"
+          variants={fadeInUp}
+        >
+          <ServiceCard 
+            service={services[2]} 
+            size="small"
+          />
+        </motion.div>
 
         {/* Performance-Focused Value Proposition (Additional 80% content) */}
         <motion.div 
@@ -235,7 +238,7 @@ export function ServicesHierarchy() {
  */
 interface ServiceCardProps {
   service: ServiceItem;
-  size: 'large' | 'medium' | 'small';
+  size: 'large' | 'medium' | 'small' | 'split-large';
 }
 
 const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
@@ -246,6 +249,13 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
       title: "text-3xl md:text-4xl font-heading font-bold text-brand-blue-primary mb-6 group-hover:text-brand-blue-secondary transition-colors duration-300",
       description: "text-lg text-gray-600 mb-8 leading-relaxed",
       cta: "inline-flex items-center px-8 py-4 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 text-lg"
+    },
+    'split-large': {
+      container: "h-full bg-white rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 p-8 md:p-10 group border border-brand-blue-primary/10 min-h-[400px] flex flex-col",
+      icon: "w-14 h-14 md:w-16 md:h-16 text-brand-blue-primary mb-4 group-hover:text-brand-yellow-accent transition-colors duration-300",
+      title: "text-2xl md:text-3xl font-heading font-bold text-brand-blue-primary mb-4 group-hover:text-brand-blue-secondary transition-colors duration-300",
+      description: "text-base md:text-lg text-gray-600 mb-6 leading-relaxed flex-grow",
+      cta: "inline-flex items-center px-6 py-3 bg-brand-blue-primary text-white font-semibold rounded-full hover:bg-brand-yellow-accent hover:text-brand-blue-primary transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1 mt-auto"
     },
     medium: {
       container: "h-full bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 group",
@@ -269,7 +279,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
     <motion.div 
       className={classes.container}
       variants={scaleIn}
-      whileHover={{ scale: size === 'large' ? 1.02 : 1.03 }}
+      whileHover={{ scale: size === 'large' || size === 'split-large' ? 1.02 : 1.03 }}
       onClick={() => {
         // Analytics tracking for service hierarchy engagement
         if (typeof window !== 'undefined' && window.gtag) {
@@ -278,7 +288,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
             event_label: service.title,
             service_prominence: service.prominence,
             card_size: size,
-            content_allocation: size === 'large' ? '80%' : size === 'medium' ? '15%' : '5%'
+            content_allocation: size === 'large' ? '80%' : size === 'split-large' ? '50%' : size === 'medium' ? '15%' : '5%'
           });
         }
       }}
@@ -311,7 +321,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
               event_label: `${service.title} - ${service.ctaText}`,
               service_prominence: service.prominence,
               destination: service.ctaLink,
-              content_allocation: size === 'large' ? '80%' : size === 'medium' ? '15%' : '5%'
+              content_allocation: size === 'large' ? '80%' : size === 'split-large' ? '50%' : size === 'medium' ? '15%' : '5%'
             });
           }
         }}
