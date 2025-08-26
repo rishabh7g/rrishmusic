@@ -459,7 +459,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       {/* Skip to content link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focusable absolute top-4 left-4 bg-brand-blue-primary text-white px-4 py-2 rounded-md shadow-lg z-50"
+        className="sr-only focusable absolute top-4 left-4 bg-theme-primary text-white px-4 py-2 rounded-md shadow-lg z-50 transition-theme-colors"
       >
         Skip to main content
       </a>
