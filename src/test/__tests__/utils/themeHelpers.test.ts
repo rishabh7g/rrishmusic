@@ -1,39 +1,63 @@
 /**
- * Theme Helpers Unit Tests
- * 
- * Tests for theme detection, storage, and utility functions.
+ * Unit tests for theme helper functions
+ * Tests theme detection, localStorage operations, and document manipulation
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import {
+import { 
   getSystemTheme,
   saveThemeToStorage,
   loadThemeFromStorage,
   resolveActiveTheme,
   createSystemThemeListener,
   applyThemeToDocument,
+  preventFOUC,
   toggleTheme,
   getNextThemeMode,
   isValidThemeMode,
   getThemeModeLabel,
   getThemeModeIcon,
-  preventFOUC,
 } from '../../../utils/themeHelpers';
-import { THEME_STORAGE_KEY } from '../../../styles/themes';
+import { THEME_STORAGE_KEY, DEFAULT_THEME_MODE } from '../../../styles/themes';
+
+// Mock matchMedia
+const mockMatchMedia = (matches: boolean) => ({
+  matches,
+  addEventListener: vi.fn(),
+  removeEventListener: vi.fn(),
+  addListener: vi.fn(),
+  removeListener: vi.fn(),
+  dispatchEvent: vi.fn(),
+});
 
 describe('themeHelpers', () => {
-  const mockLocalStorage = {
-    getItem: vi.fn(),
-    setItem: vi.fn(),
-    removeItem: vi.fn(),
-  };
-
   beforeEach(() => {
-    vi.clearAllMocks();
-    Object.defineProperty(window, 'localStorage', {
-      value: mockLocalStorage,
+    // Reset DOM
+    Object.defineProperty(global, 'window', {
+      value: {
+        matchMedia: vi.fn(),
+        localStorage: {
+          getItem: vi.fn(),
+          setItem: vi.fn(),
+          removeItem: vi.fn(),
+        },
+      },
       writable: true,
     });
+
+    Object.defineProperty(global, 'document', {
+      value: {
+        documentElement: {
+          style: { setProperty: vi.fn() },
+          classList: { add: vi.fn(), remove: vi.fn() },
+          setAttribute: vi.fn(),
+        },
+      },
+      writable: true,
+    });
+
+    // Clear all mocks
+    vi.clearAllMocks();
   });
 
   afterEach(() => {
@@ -42,43 +66,28 @@ describe('themeHelpers', () => {
 
   describe('getSystemTheme', () => {
     it('should return "dark" when system prefers dark mode', () => {
-      const mockMatchMedia = vi.fn(() => ({
-        matches: true,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      }));
-      Object.defineProperty(window, 'matchMedia', {
-        value: mockMatchMedia,
-        writable: true,
-      });
-
+      window.matchMedia = vi.fn(() => mockMatchMedia(true));
+      
       const result = getSystemTheme();
+      
       expect(result).toBe('dark');
-      expect(mockMatchMedia).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
+      expect(window.matchMedia).toHaveBeenCalledWith('(prefers-color-scheme: dark)');
     });
 
     it('should return "light" when system prefers light mode', () => {
-      const mockMatchMedia = vi.fn(() => ({
-        matches: false,
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      }));
-      Object.defineProperty(window, 'matchMedia', {
-        value: mockMatchMedia,
-        writable: true,
-      });
-
+      window.matchMedia = vi.fn(() => mockMatchMedia(false));
+      
       const result = getSystemTheme();
+      
       expect(result).toBe('light');
     });
 
     it('should return "light" when matchMedia is not supported', () => {
-      Object.defineProperty(window, 'matchMedia', {
-        value: undefined,
-        writable: true,
-      });
-
+      // Remove matchMedia
+      delete (window as any).matchMedia;
+      
       const result = getSystemTheme();
+      
       expect(result).toBe('light');
     });
   });
@@ -86,40 +95,42 @@ describe('themeHelpers', () => {
   describe('localStorage operations', () => {
     it('should save theme to localStorage', () => {
       saveThemeToStorage('dark');
-      expect(mockLocalStorage.setItem).toHaveBeenCalledWith(THEME_STORAGE_KEY, 'dark');
+      
+      expect(window.localStorage.setItem).toHaveBeenCalledWith(THEME_STORAGE_KEY, 'dark');
     });
 
     it('should load theme from localStorage', () => {
-      mockLocalStorage.getItem.mockReturnValue('dark');
+      window.localStorage.getItem = vi.fn(() => 'dark');
+      
       const result = loadThemeFromStorage();
+      
       expect(result).toBe('dark');
-      expect(mockLocalStorage.getItem).toHaveBeenCalledWith(THEME_STORAGE_KEY);
+      expect(window.localStorage.getItem).toHaveBeenCalledWith(THEME_STORAGE_KEY);
     });
 
     it('should return default theme when localStorage is empty', () => {
-      mockLocalStorage.getItem.mockReturnValue(null);
+      window.localStorage.getItem = vi.fn(() => null);
+      
       const result = loadThemeFromStorage();
-      expect(result).toBe('system');
+      
+      expect(result).toBe(DEFAULT_THEME_MODE);
     });
 
     it('should return default theme when invalid theme in storage', () => {
-      mockLocalStorage.getItem.mockReturnValue('invalid');
+      window.localStorage.getItem = vi.fn(() => 'invalid-theme');
+      
       const result = loadThemeFromStorage();
-      expect(result).toBe('system');
+      
+      expect(result).toBe(DEFAULT_THEME_MODE);
     });
 
     it('should handle localStorage errors gracefully', () => {
-      // Suppress console warnings for this test
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
-      mockLocalStorage.setItem.mockImplementation(() => {
-        throw new Error('Storage error');
+      window.localStorage.setItem = vi.fn(() => {
+        throw new Error('localStorage error');
       });
       
-      // Should not throw error
+      // Should not throw
       expect(() => saveThemeToStorage('dark')).not.toThrow();
-      
-      consoleSpy.mockRestore();
     });
   });
 
@@ -135,55 +146,40 @@ describe('themeHelpers', () => {
     });
 
     it('should return system preference for system mode', () => {
-      const mockMatchMedia = vi.fn(() => ({
-        matches: true, // System prefers dark
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      }));
-      Object.defineProperty(window, 'matchMedia', {
-        value: mockMatchMedia,
-        writable: true,
-      });
-
+      window.matchMedia = vi.fn(() => mockMatchMedia(true));
+      
       const result = resolveActiveTheme('system');
+      
       expect(result).toBe('dark');
     });
   });
 
   describe('createSystemThemeListener', () => {
     it('should create a working listener', () => {
+      const mockMediaQuery = {
+        ...mockMatchMedia(false),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+      };
+      window.matchMedia = vi.fn(() => mockMediaQuery);
+      
       const callback = vi.fn();
-      const mockAddEventListener = vi.fn();
-      const mockRemoveEventListener = vi.fn();
-      
-      const mockMatchMedia = vi.fn(() => ({
-        matches: false,
-        addEventListener: mockAddEventListener,
-        removeEventListener: mockRemoveEventListener,
-      }));
-      
-      Object.defineProperty(window, 'matchMedia', {
-        value: mockMatchMedia,
-        writable: true,
-      });
-
       const cleanup = createSystemThemeListener(callback);
-      expect(mockAddEventListener).toHaveBeenCalled();
       
+      expect(mockMediaQuery.addEventListener).toHaveBeenCalledWith('change', expect.any(Function));
+      
+      // Test cleanup
       cleanup();
-      expect(mockRemoveEventListener).toHaveBeenCalled();
+      expect(mockMediaQuery.removeEventListener).toHaveBeenCalledWith('change', expect.any(Function));
     });
 
     it('should return no-op when matchMedia is not supported', () => {
-      Object.defineProperty(window, 'matchMedia', {
-        value: undefined,
-        writable: true,
-      });
-
+      delete (window as any).matchMedia;
+      
       const callback = vi.fn();
       const cleanup = createSystemThemeListener(callback);
       
-      // Should not throw and return a function
+      // Should return a no-op function
       expect(typeof cleanup).toBe('function');
       expect(() => cleanup()).not.toThrow();
     });
@@ -191,25 +187,21 @@ describe('themeHelpers', () => {
 
   describe('toggleTheme', () => {
     it('should toggle from light to dark', () => {
-      expect(toggleTheme('light')).toBe('dark');
+      const result = toggleTheme('light');
+      expect(result).toBe('dark');
     });
 
     it('should toggle from dark to light', () => {
-      expect(toggleTheme('dark')).toBe('light');
+      const result = toggleTheme('dark');
+      expect(result).toBe('light');
     });
 
     it('should handle system mode by toggling opposite of system preference', () => {
-      const mockMatchMedia = vi.fn(() => ({
-        matches: true, // System prefers dark
-        addEventListener: vi.fn(),
-        removeEventListener: vi.fn(),
-      }));
-      Object.defineProperty(window, 'matchMedia', {
-        value: mockMatchMedia,
-        writable: true,
-      });
-
-      expect(toggleTheme('system')).toBe('light'); // Opposite of dark system
+      window.matchMedia = vi.fn(() => mockMatchMedia(true)); // System prefers dark
+      
+      const result = toggleTheme('system');
+      
+      expect(result).toBe('light'); // Should toggle to light (opposite of dark)
     });
   });
 
@@ -227,8 +219,8 @@ describe('themeHelpers', () => {
       expect(isValidThemeMode('dark')).toBe(true);
       expect(isValidThemeMode('system')).toBe(true);
       expect(isValidThemeMode('invalid')).toBe(false);
-      expect(isValidThemeMode(123)).toBe(false);
       expect(isValidThemeMode(null)).toBe(false);
+      expect(isValidThemeMode(123)).toBe(false);
     });
 
     it('should return correct labels', () => {
@@ -246,12 +238,13 @@ describe('themeHelpers', () => {
 
   describe('applyThemeToDocument', () => {
     beforeEach(() => {
-      // Mock document.documentElement
-      Object.defineProperty(document, 'documentElement', {
+      Object.defineProperty(global, 'document', {
         value: {
-          style: { setProperty: vi.fn() },
-          classList: { add: vi.fn(), remove: vi.fn() },
-          setAttribute: vi.fn(),
+          documentElement: {
+            style: { setProperty: vi.fn() },
+            classList: { add: vi.fn(), remove: vi.fn() },
+            setAttribute: vi.fn(),
+          },
         },
         writable: true,
       });
@@ -260,27 +253,31 @@ describe('themeHelpers', () => {
     it('should apply theme styles to document', () => {
       applyThemeToDocument('dark');
       
-      expect(document.documentElement.style.setProperty).toHaveBeenCalledTimes(22); // Number of CSS properties
+      // 22 color properties + 6 transition properties = 28 total properties
+      expect(document.documentElement.style.setProperty).toHaveBeenCalledTimes(28);
       expect(document.documentElement.classList.remove).toHaveBeenCalledWith('theme-light', 'theme-dark');
       expect(document.documentElement.classList.add).toHaveBeenCalledWith('theme-dark');
+      expect(document.documentElement.classList.add).toHaveBeenCalledWith('dark');
       expect(document.documentElement.setAttribute).toHaveBeenCalledWith('data-theme', 'dark');
     });
   });
 
   describe('preventFOUC', () => {
     beforeEach(() => {
-      Object.defineProperty(document, 'documentElement', {
+      Object.defineProperty(global, 'document', {
         value: {
-          style: { setProperty: vi.fn() },
-          classList: { add: vi.fn(), remove: vi.fn() },
-          setAttribute: vi.fn(),
+          documentElement: {
+            style: { setProperty: vi.fn() },
+            classList: { add: vi.fn(), remove: vi.fn() },
+            setAttribute: vi.fn(),
+          },
         },
         writable: true,
       });
     });
 
     it('should apply theme immediately and add theme-loaded class', () => {
-      mockLocalStorage.getItem.mockReturnValue('dark');
+      window.localStorage.getItem = vi.fn(() => 'dark');
       
       preventFOUC();
       
@@ -288,16 +285,12 @@ describe('themeHelpers', () => {
     });
 
     it('should handle errors gracefully', () => {
-      // Suppress console warnings for this test
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-      
-      mockLocalStorage.getItem.mockImplementation(() => {
-        throw new Error('Storage error');
+      window.localStorage.getItem = vi.fn(() => {
+        throw new Error('localStorage error');
       });
       
+      // Should not throw and should apply light theme as fallback
       expect(() => preventFOUC()).not.toThrow();
-      
-      consoleSpy.mockRestore();
     });
   });
 });

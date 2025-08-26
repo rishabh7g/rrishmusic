@@ -8,21 +8,21 @@ export function About() {
 
   if (loading) {
     return (
-      <div className="section bg-white">
+      <div className="section bg-theme-bg theme-transition duration-theme-normal">
         <div className="container-custom">
           <div className="animate-pulse">
-            <div className="h-12 bg-gray-300 rounded mb-8 mx-auto max-w-md"></div>
+            <div className="h-12 bg-theme-bg-secondary rounded mb-8 mx-auto max-w-md theme-transition duration-theme-fast"></div>
             <div className="grid md:grid-cols-2 gap-12">
               <div>
-                <div className="h-6 bg-gray-300 rounded mb-4"></div>
-                <div className="h-6 bg-gray-300 rounded mb-4"></div>
-                <div className="h-6 bg-gray-300 rounded mb-6"></div>
+                <div className="h-6 bg-theme-bg-secondary rounded mb-4 theme-transition duration-theme-fast"></div>
+                <div className="h-6 bg-theme-bg-secondary rounded mb-4 theme-transition duration-theme-fast"></div>
+                <div className="h-6 bg-theme-bg-secondary rounded mb-6 theme-transition duration-theme-fast"></div>
               </div>
               <div>
-                <div className="h-8 bg-gray-300 rounded mb-4"></div>
+                <div className="h-8 bg-theme-bg-secondary rounded mb-4 theme-transition duration-theme-fast"></div>
                 <div className="grid grid-cols-2 gap-4">
                   {[...Array(6)].map((_, i) => (
-                    <div key={i} className="h-8 bg-gray-300 rounded"></div>
+                    <div key={i} className="h-8 bg-theme-bg-secondary rounded theme-transition duration-theme-fast"></div>
                   ))}
                 </div>
               </div>
@@ -35,12 +35,12 @@ export function About() {
 
   if (error || !about) {
     return (
-      <div className="section bg-white">
+      <div className="section bg-theme-bg theme-transition duration-theme-normal">
         <div className="container-custom text-center">
-          <h2 className="text-4xl font-heading font-bold text-neutral-charcoal">
+          <h2 className="text-4xl font-heading font-bold text-theme-text theme-transition duration-theme-normal">
             About the Artist
           </h2>
-          <p className="text-lg text-neutral-charcoal mt-4">
+          <p className="text-lg text-theme-text-secondary mt-4 theme-transition duration-theme-normal">
             Content temporarily unavailable. Please try again later.
           </p>
         </div>
@@ -49,9 +49,9 @@ export function About() {
   }
 
   return (
-    <div className="section bg-white relative">
-      {/* Background decoration */}
-      <div className="absolute top-0 right-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-brand-blue-primary/5 rounded-full -translate-y-12 sm:-translate-y-24 lg:-translate-y-32 translate-x-12 sm:translate-x-24 lg:translate-x-32 hidden sm:block"></div>
+    <div className="section bg-theme-bg relative theme-transition duration-theme-normal">
+      {/* Background decoration with theme-aware colors */}
+      <div className="absolute top-0 right-0 w-24 h-24 sm:w-48 sm:h-48 lg:w-64 lg:h-64 bg-theme-primary/5 rounded-full -translate-y-12 sm:-translate-y-24 lg:-translate-y-32 translate-x-12 sm:translate-x-24 lg:translate-x-32 hidden sm:block theme-transition duration-theme-normal"></div>
       
       <motion.div 
         className="container-custom relative z-10"
@@ -64,10 +64,10 @@ export function About() {
           className="text-center mb-16"
           variants={fadeInUp}
         >
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neutral-charcoal mb-4">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-theme-text mb-4 theme-transition duration-theme-normal">
             {about.title || "About the Artist"}
           </h2>
-          <div className="w-24 h-1 bg-brand-blue-primary mx-auto rounded-full"></div>
+          <div className="w-24 h-1 bg-theme-primary mx-auto rounded-full theme-transition duration-theme-normal"></div>
         </motion.div>
 
         <div className="grid md:grid-cols-12 gap-16 items-center">
@@ -78,18 +78,18 @@ export function About() {
           >
             {/* Performance-focused content */}
             <motion.div 
-              className="bg-gradient-to-br from-brand-blue-primary/5 to-brand-yellow-accent/5 rounded-2xl p-8 mb-8"
+              className="bg-gradient-to-br from-theme-primary/5 to-theme-accent/5 rounded-2xl p-8 mb-8 theme-transition duration-theme-normal"
               variants={fadeInUp}
             >
-              <h3 className="text-2xl font-heading font-bold text-brand-blue-primary mb-4">
+              <h3 className="text-2xl font-heading font-bold text-theme-primary mb-4 theme-transition duration-theme-normal">
                 Live Performance Background
               </h3>
-              <p className="text-lg text-neutral-charcoal leading-relaxed mb-4">
+              <p className="text-lg text-theme-text-secondary leading-relaxed mb-4 theme-transition duration-theme-normal">
                 I'm Rrish, a professional Melbourne musician with extensive experience performing across the city's vibrant music scene. 
                 My specialization in blues guitar and improvisation has led to regular performances at established venues, 
                 private events, and collaborations with fellow musicians.
               </p>
-              <p className="text-lg text-neutral-charcoal leading-relaxed">
+              <p className="text-lg text-theme-text-secondary leading-relaxed theme-transition duration-theme-normal">
                 From intimate acoustic sessions to full band performances, I bring authentic blues expression and engaging 
                 stage presence to every show. My approach combines technical skill with emotional connection, 
                 creating memorable experiences that resonate with audiences.
@@ -101,23 +101,23 @@ export function About() {
               className="grid md:grid-cols-2 gap-6"
               variants={fadeInUp}
             >
-              <div className="bg-white rounded-xl p-6 shadow-md border border-brand-blue-primary/10">
-                <div className="w-12 h-12 bg-brand-blue-primary rounded-full flex items-center justify-center mb-4">
+              <div className="bg-theme-bg-secondary rounded-xl p-6 shadow-theme border border-theme-border theme-transition duration-theme-normal">
+                <div className="w-12 h-12 bg-theme-primary rounded-full flex items-center justify-center mb-4 theme-transition duration-theme-normal">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 </div>
-                <h4 className="font-bold text-brand-blue-primary mb-2">Venue Experience</h4>
-                <p className="text-sm text-gray-600">Regular performances at Melbourne's established music venues and events</p>
+                <h4 className="font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">Venue Experience</h4>
+                <p className="text-sm text-theme-text-muted theme-transition duration-theme-normal">Regular performances at Melbourne's established music venues and events</p>
               </div>
-              <div className="bg-white rounded-xl p-6 shadow-md border border-brand-blue-primary/10">
-                <div className="w-12 h-12 bg-brand-blue-primary rounded-full flex items-center justify-center mb-4">
+              <div className="bg-theme-bg-secondary rounded-xl p-6 shadow-theme border border-theme-border theme-transition duration-theme-normal">
+                <div className="w-12 h-12 bg-theme-primary rounded-full flex items-center justify-center mb-4 theme-transition duration-theme-normal">
                   <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
                   </svg>
                 </div>
-                <h4 className="font-bold text-brand-blue-primary mb-2">Musical Style</h4>
-                <p className="text-sm text-gray-600">Blues-focused with strong improvisation and authentic expression</p>
+                <h4 className="font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">Musical Style</h4>
+                <p className="text-sm text-theme-text-muted theme-transition duration-theme-normal">Blues-focused with strong improvisation and authentic expression</p>
               </div>
             </motion.div>
 
@@ -125,7 +125,7 @@ export function About() {
             {about?.content && (
               <motion.div variants={fadeInUp}>
                 {about.content.slice(0, 1).map((paragraph, index) => (
-                  <p key={index} className="text-base text-neutral-charcoal leading-relaxed">
+                  <p key={index} className="text-base text-theme-text-secondary leading-relaxed theme-transition duration-theme-normal">
                     {paragraph}
                   </p>
                 ))}
@@ -138,9 +138,9 @@ export function About() {
             >
               <a
                 href="/performance"
-                className="inline-flex items-center px-8 py-3 bg-brand-blue-primary text-white 
-                  font-semibold rounded-full hover:bg-brand-blue-secondary transition-all duration-300 
-                  shadow-lg hover:shadow-xl transform hover:-translate-y-1"
+                className="inline-flex items-center px-8 py-3 bg-theme-primary text-white 
+                  font-semibold rounded-full hover:bg-theme-primary-hover transition-theme duration-theme-fast 
+                  shadow-theme-lg hover:shadow-theme-xl transform hover:-translate-y-1"
               >
                 Book Performance
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -149,9 +149,9 @@ export function About() {
               </a>
               <a
                 href="#lessons"
-                className="inline-flex items-center px-6 py-3 bg-transparent border border-brand-blue-primary 
-                  text-brand-blue-primary font-semibold rounded-full hover:bg-brand-blue-primary 
-                  hover:text-white transition-all duration-300"
+                className="inline-flex items-center px-6 py-3 bg-transparent border border-theme-primary 
+                  text-theme-primary font-semibold rounded-full hover:bg-theme-primary 
+                  hover:text-white transition-theme duration-theme-fast"
               >
                 Guitar Lessons
               </a>
@@ -163,8 +163,8 @@ export function About() {
             className="md:col-span-4"
             variants={slideInRight}
           >
-            <div className="bg-neutral-gray-light rounded-2xl p-6">
-              <h3 className="text-xl font-heading font-bold text-neutral-charcoal mb-6 text-center">
+            <div className="bg-theme-bg-secondary rounded-2xl p-6 theme-transition duration-theme-normal">
+              <h3 className="text-xl font-heading font-bold text-theme-text mb-6 text-center theme-transition duration-theme-normal">
                 Skills & Expertise
               </h3>
               
@@ -178,12 +178,12 @@ export function About() {
                 ]).slice(0, 4).map((skill, index) => (
                   <motion.div
                     key={skill.name}
-                    className="bg-white rounded-lg p-3 text-center shadow-sm hover:shadow-md 
-                      transition-shadow duration-300"
+                    className="bg-theme-bg rounded-lg p-3 text-center shadow-theme hover:shadow-theme-md 
+                      transition-theme duration-theme-fast border border-theme-border"
                     variants={fadeInUp}
                     custom={index}
                   >
-                    <p className="font-medium text-neutral-charcoal text-sm">
+                    <p className="font-medium text-theme-text text-sm theme-transition duration-theme-normal">
                       {skill.name}
                     </p>
                   </motion.div>
@@ -203,10 +203,10 @@ export function About() {
             variants={fadeInUp}
             custom={0}
           >
-            <div className="text-4xl md:text-5xl font-heading font-bold text-brand-blue-primary mb-2">
+            <div className="text-4xl md:text-5xl font-heading font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">
               100+
             </div>
-            <div className="text-lg text-neutral-charcoal font-medium">
+            <div className="text-lg text-theme-text-secondary font-medium theme-transition duration-theme-normal">
               Live Performances
             </div>
           </motion.div>
@@ -216,10 +216,10 @@ export function About() {
             variants={fadeInUp}
             custom={1}
           >
-            <div className="text-4xl md:text-5xl font-heading font-bold text-brand-blue-primary mb-2">
+            <div className="text-4xl md:text-5xl font-heading font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">
               5+
             </div>
-            <div className="text-lg text-neutral-charcoal font-medium">
+            <div className="text-lg text-theme-text-secondary font-medium theme-transition duration-theme-normal">
               Years Professional Experience
             </div>
           </motion.div>
@@ -230,10 +230,10 @@ export function About() {
               variants={fadeInUp}
               custom={2}
             >
-              <div className="text-4xl md:text-5xl font-heading font-bold text-brand-blue-primary mb-2">
+              <div className="text-4xl md:text-5xl font-heading font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">
                 {aboutStats[2].number}
               </div>
-              <div className="text-lg text-neutral-charcoal font-medium">
+              <div className="text-lg text-theme-text-secondary font-medium theme-transition duration-theme-normal">
                 {aboutStats[2].label}
               </div>
             </motion.div>
@@ -243,10 +243,10 @@ export function About() {
               variants={fadeInUp}
               custom={2}
             >
-              <div className="text-4xl md:text-5xl font-heading font-bold text-brand-blue-primary mb-2">
+              <div className="text-4xl md:text-5xl font-heading font-bold text-theme-primary mb-2 theme-transition duration-theme-normal">
                 50+
               </div>
-              <div className="text-lg text-neutral-charcoal font-medium">
+              <div className="text-lg text-theme-text-secondary font-medium theme-transition duration-theme-normal">
                 Guitar Students Taught
               </div>
             </motion.div>

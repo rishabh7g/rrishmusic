@@ -15,8 +15,8 @@ const Collaboration = lazy(() => import('./components/pages/Collaboration'));
 // Simple loading spinner with theme awareness
 const Spinner = () => {
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
-      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 dark:border-blue-400"></div>
+    <div className="flex items-center justify-center min-h-screen bg-theme-bg transition-theme duration-theme-normal">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-theme-primary"></div>
     </div>
   );
 };
@@ -96,7 +96,7 @@ function AppContent() {
   
   return (
     <>
-      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 relative overflow-x-hidden transition-colors duration-200">
+      <div className="min-h-screen bg-theme-bg text-theme-text relative overflow-x-hidden transition-theme duration-theme-normal theme-transition">
         <Navigation />
         
         <main className="main-content">
