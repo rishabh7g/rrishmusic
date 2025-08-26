@@ -14,6 +14,41 @@
   --scroll-offset: 80px;
 }
 
+/* Base Theme Variables (initialized by theme context) */
+:root {
+  /* These will be overridden by theme context */
+  --color-primary: #3B82F6;
+  --color-primary-hover: #2563EB;
+  --color-primary-active: #1D4ED8;
+  --color-secondary: #6B7280;
+  --color-secondary-hover: #4B5563;
+  --color-secondary-active: #374151;
+  --color-background: #FFFFFF;
+  --color-background-secondary: #F9FAFB;
+  --color-background-tertiary: #F3F4F6;
+  --color-text: #111827;
+  --color-text-secondary: #374151;
+  --color-text-muted: #6B7280;
+  --color-border: #D1D5DB;
+  --color-border-hover: #9CA3AF;
+  --color-divider: #E5E7EB;
+  --color-success: #10B981;
+  --color-warning: #F59E0B;
+  --color-error: #EF4444;
+  --color-info: #3B82F6;
+  --color-accent: #8B5CF6;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  
+  /* Transition variables */
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 300ms;
+  --transition-duration-slow: 500ms;
+  --transition-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-easing-emphasized: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --transition-easing-decelerated: cubic-bezier(0.0, 0.0, 0.2, 1);
+}
+
 /* Smooth scrolling */
 html {
   scroll-behavior: smooth;
@@ -35,9 +70,11 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   line-height: 1.6;
-  color: #333;
-  background-color: #ffffff;
+  color: var(--color-text);
+  background-color: var(--color-background);
   overflow-x: hidden; /* Prevent horizontal scrolling */
+  transition: background-color var(--transition-duration-normal) var(--transition-easing-standard),
+              color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 /* Typography */
@@ -46,6 +83,8 @@ h1, h2, h3, h4, h5, h6 {
   font-weight: 700;
   line-height: 1.2;
   margin-bottom: 0.5em;
+  color: var(--color-text);
+  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 h1 {
@@ -63,12 +102,19 @@ h3 {
 p {
   margin-bottom: 1em;
   font-size: clamp(1rem, 2vw, 1.125rem);
+  color: var(--color-text-secondary);
+  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 /* Links */
 a {
   color: inherit;
   text-decoration: none;
+  transition: color var(--transition-duration-fast) var(--transition-easing-standard);
+}
+
+a:hover {
+  color: var(--color-primary);
 }
 
 button {
@@ -78,10 +124,11 @@ button {
   background: transparent;
   padding: 0;
   outline: none;
+  transition: all var(--transition-duration-fast) var(--transition-easing-standard);
 }
 
 button:focus-visible {
-  outline: 2px solid #007acc;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -103,13 +150,14 @@ button:focus-visible {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: #000;
-  color: white;
+  background: var(--color-text);
+  color: var(--color-background);
   padding: 8px;
   text-decoration: none;
   border-radius: 4px;
   z-index: 1000;
-  transition: top 0.3s;
+  transition: top 0.3s, background-color var(--transition-duration-normal) var(--transition-easing-standard),
+              color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 .skip-link:focus {
@@ -118,7 +166,7 @@ button:focus-visible {
 
 /* Focus indicators for better accessibility */
 *:focus-visible {
-  outline: 2px solid #007acc;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 4px;
 }
@@ -173,9 +221,10 @@ button:focus-visible {
 
 /* Loading states */
 .skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background: linear-gradient(90deg, var(--color-background-secondary) 25%, var(--color-background-tertiary) 50%, var(--color-background-secondary) 75%);
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
+  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 @keyframes skeleton-loading {
@@ -194,16 +243,37 @@ button:focus-visible {
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--color-background-secondary);
+  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--color-border);
   border-radius: 4px;
+  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--color-border-hover);
+}
+
+/* Theme transition utility classes */
+.theme-transition {
+  transition: background-color var(--transition-duration-normal) var(--transition-easing-standard),
+              border-color var(--transition-duration-normal) var(--transition-easing-standard),
+              color var(--transition-duration-normal) var(--transition-easing-standard),
+              fill var(--transition-duration-normal) var(--transition-easing-standard),
+              stroke var(--transition-duration-normal) var(--transition-easing-standard),
+              box-shadow var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+.theme-transition-fast {
+  transition: background-color var(--transition-duration-fast) var(--transition-easing-standard),
+              border-color var(--transition-duration-fast) var(--transition-easing-standard),
+              color var(--transition-duration-fast) var(--transition-easing-standard),
+              fill var(--transition-duration-fast) var(--transition-easing-standard),
+              stroke var(--transition-duration-fast) var(--transition-easing-standard),
+              box-shadow var(--transition-duration-fast) var(--transition-easing-standard);
 }
 
 /* Print styles */
@@ -211,9 +281,18 @@ button:focus-visible {
   body {
     font-size: 12pt;
     line-height: 1.4;
+    color: black !important;
+    background: white !important;
   }
   
   .no-print {
     display: none !important;
+  }
+  
+  /* Ensure theme colors don't interfere with print */
+  * {
+    background: white !important;
+    color: black !important;
+    border-color: black !important;
   }
 }

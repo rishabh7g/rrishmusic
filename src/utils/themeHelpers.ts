@@ -14,6 +14,7 @@ import {
   createCSSCustomProperties,
   lightThemeColors,
   darkThemeColors,
+  themeTransitions,
 } from '../styles/themes';
 
 /**
@@ -115,6 +116,20 @@ export const createSystemThemeListener = (
 };
 
 /**
+ * Creates CSS custom properties for theme transitions
+ */
+export const createTransitionCustomProperties = (): Record<string, string> => {
+  return {
+    '--transition-duration-fast': themeTransitions.duration.fast,
+    '--transition-duration-normal': themeTransitions.duration.normal,
+    '--transition-duration-slow': themeTransitions.duration.slow,
+    '--transition-easing-standard': themeTransitions.easing.standard,
+    '--transition-easing-emphasized': themeTransitions.easing.emphasized,
+    '--transition-easing-decelerated': themeTransitions.easing.decelerated,
+  };
+};
+
+/**
  * Applies theme colors to CSS custom properties
  */
 export const applyThemeToDocument = (activeTheme: ActiveTheme): void => {
@@ -123,11 +138,19 @@ export const applyThemeToDocument = (activeTheme: ActiveTheme): void => {
   }
 
   const colors = activeTheme === 'dark' ? darkThemeColors : lightThemeColors;
-  const customProperties = createCSSCustomProperties(colors);
+  const colorCustomProperties = createCSSCustomProperties(colors);
+  const transitionCustomProperties = createTransitionCustomProperties();
 
   // Apply custom properties to document root
   const root = document.documentElement;
-  Object.entries(customProperties).forEach(([property, value]) => {
+  
+  // Apply color custom properties
+  Object.entries(colorCustomProperties).forEach(([property, value]) => {
+    root.style.setProperty(property, value);
+  });
+
+  // Apply transition custom properties
+  Object.entries(transitionCustomProperties).forEach(([property, value]) => {
     root.style.setProperty(property, value);
   });
 
@@ -137,6 +160,13 @@ export const applyThemeToDocument = (activeTheme: ActiveTheme): void => {
 
   // Update data attribute for additional CSS targeting
   root.setAttribute('data-theme', activeTheme);
+
+  // Add dark class for Tailwind CSS dark mode
+  if (activeTheme === 'dark') {
+    root.classList.add('dark');
+  } else {
+    root.classList.remove('dark');
+  }
 };
 
 /**
