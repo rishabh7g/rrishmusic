@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate, Location } from "react-router-dom";
 import { NAVIGATION_ITEMS } from "@/utils/constants";
 import { useSmoothScroll, useScrollSpy } from "@/hooks/useScrollSpy";
 import { useDeviceDetection } from "@/hooks/useDeviceDetection";
+import ThemeToggle from "@/components/ThemeToggle";
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing
@@ -484,36 +485,40 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
             {device.isDesktop && (
               <div className="desktop-only flex items-center space-x-2">
                 {desktopNavItems}
+                <ThemeToggle size="md" variant="ghost" className="ml-4" />
               </div>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Navigation Controls */}
             {!device.isDesktop && (
-              <motion.button
-                onClick={toggleMenu}
-                className="mobile-only touch-target-comfortable relative z-50 text-gray-700 dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary transition-colors duration-200"
-                aria-expanded={isMenuOpen}
-                aria-controls="mobile-menu"
-                aria-label="Toggle navigation menu"
-                whileTap={{ scale: 0.95 }}
-                disabled={isAnimating}
-              >
-                <motion.div
-                  animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
-                  transition={{ duration: 0.2 }}
-                  className="w-6 h-6"
+              <div className="flex items-center space-x-2">
+                <ThemeToggle size="sm" variant="ghost" />
+                <motion.button
+                  onClick={toggleMenu}
+                  className="mobile-only touch-target-comfortable relative z-50 text-gray-700 dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary transition-colors duration-200"
+                  aria-expanded={isMenuOpen}
+                  aria-controls="mobile-menu"
+                  aria-label="Toggle navigation menu"
+                  whileTap={{ scale: 0.95 }}
+                  disabled={isAnimating}
                 >
-                  {isMenuOpen ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  )}
-                </motion.div>
-              </motion.button>
+                  <motion.div
+                    animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
+                    transition={{ duration: 0.2 }}
+                    className="w-6 h-6"
+                  >
+                    {isMenuOpen ? (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                    )}
+                  </motion.div>
+                </motion.button>
+              </div>
             )}
           </div>
         </div>
