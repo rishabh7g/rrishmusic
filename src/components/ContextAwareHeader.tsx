@@ -5,6 +5,7 @@ import { useServiceContext } from '@/hooks/useServiceContext';
 import { useSmoothScroll } from '@/hooks/useScrollSpy';
 import { useDeviceDetection } from '@/hooks/useDeviceDetection';
 import { ServiceNavigationItem, ServiceCTA } from '@/types/serviceContext';
+import ThemeToggle from './ThemeToggle';
 
 /**
  * Props for ContextAwareHeader component
@@ -164,6 +165,7 @@ const ContextualCTA: React.FC<{
  * - Service-specific CTAs and navigation items
  * - Mobile-optimized responsive design
  * - Accessibility compliant with WCAG standards
+ * - Integrated theme toggle functionality
  */
 export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ className = '' }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -314,9 +316,16 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
               </nav>
             )}
 
-            {/* Desktop CTAs */}
+            {/* Desktop CTAs and Theme Toggle */}
             {device.isDesktop && (
               <div className="hidden md:flex items-center space-x-3">
+                {/* Theme Toggle - positioned before CTAs */}
+                <ThemeToggle 
+                  size="md"
+                  variant="ghost"
+                  className="mr-2"
+                />
+
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentService}
@@ -343,31 +352,39 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
               </div>
             )}
 
-            {/* Mobile Menu Button */}
+            {/* Mobile Menu Button with Theme Toggle */}
             {!device.isDesktop && (
-              <button
-                onClick={toggleMenu}
-                className="md:hidden p-2 rounded-lg transition-colors duration-200"
-                style={{ color: currentServiceData.primaryColor }}
-                aria-expanded={isMenuOpen}
-                aria-controls="mobile-menu"
-                aria-label="Toggle navigation menu"
-              >
-                <motion.div
-                  animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
-                  transition={{ duration: 0.2 }}
+              <div className="md:hidden flex items-center space-x-2">
+                {/* Theme Toggle for Mobile - positioned before hamburger menu */}
+                <ThemeToggle 
+                  size="sm"
+                  variant="ghost"
+                />
+                
+                <button
+                  onClick={toggleMenu}
+                  className="p-2 rounded-lg transition-colors duration-200"
+                  style={{ color: currentServiceData.primaryColor }}
+                  aria-expanded={isMenuOpen}
+                  aria-controls="mobile-menu"
+                  aria-label="Toggle navigation menu"
                 >
-                  {isMenuOpen ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                  ) : (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                  )}
-                </motion.div>
-              </button>
+                  <motion.div
+                    animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
+                    transition={{ duration: 0.2 }}
+                  >
+                    {isMenuOpen ? (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    ) : (
+                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      </svg>
+                    )}
+                  </motion.div>
+                </button>
+              </div>
             )}
           </div>
         </div>
