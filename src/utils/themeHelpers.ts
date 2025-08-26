@@ -210,40 +210,14 @@ export const applyThemeToDocument = (activeTheme: ActiveTheme, forceTransition =
   }
 
   // Batch DOM updates for better performance
-  requestAnimationFrame(() => {
-    // Apply color custom properties
-    Object.entries(colorCustomProperties).forEach(([property, value]) => {
-      root.style.setProperty(property, value);
+  if (typeof requestAnimationFrame !== 'undefined') {
+    requestAnimationFrame(() => {
+      applyThemeStyles(root, colorCustomProperties, transitionCustomProperties, shouldTransition);
     });
-
-    // Apply transition custom properties
-    Object.entries(transitionCustomProperties).forEach(([property, value]) => {
-      root.style.setProperty(property, value);
-    });
-
-    // Set theme class for CSS-based transitions
-    root.className = root.className
-      .replace(/\btheme-light\b|\btheme-dark\b/g, '')
-      .trim();
-    root.classList.add(`theme-${activeTheme}`);
-
-    // Enable transitions after initial styles are set
-    if (shouldTransition) {
-      // Use setTimeout to ensure styles have been applied
-      setTimeout(() => {
-        root.classList.remove('theme-no-transition');
-        
-        // Clear transition state after animation completes
-        setTimeout(() => {
-          transitionState.isTransitioning = false;
-          root.classList.remove('theme-transitioning');
-        }, parseInt(themeTransitions.duration.normal) + 50);
-      }, 16); // Next frame
-    } else {
-      // Disable transitions for initial load or reduced motion
-      root.classList.add('theme-no-transition');
-    }
-  });
+  } else {
+    // Fallback for environments without requestAnimationFrame
+    applyThemeStyles(root, colorCustomProperties, transitionCustomProperties, shouldTransition);
+  }
 
   // Mark as no longer initial load after first theme application
   if (transitionState.isInitialLoad) {
@@ -254,6 +228,59 @@ export const applyThemeToDocument = (activeTheme: ActiveTheme, forceTransition =
     }, 100); // Allow initial styles to settle
   }
 };
+
+/**
+ * Apply theme styles to document element
+ */
+function applyThemeStyles(
+  root: HTMLElement, 
+  colorCustomProperties: Record<string, string>,
+  transitionCustomProperties: Record<string, string>,
+  shouldTransition: boolean
+) {
+  // Apply color custom properties
+  Object.entries(colorCustomProperties).forEach(([property, value]) => {
+    root.style.setProperty(property, value);
+  });
+
+  // Apply transition custom properties
+  Object.entries(transitionCustomProperties).forEach(([property, value]) => {
+    root.style.setProperty(property, value);
+  });
+
+  // Set theme class for CSS-based transitions
+  if (root.className) {
+    root.className = root.className
+      .replace(/\btheme-light\b|\btheme-dark\b/g, '')
+      .trim();
+  }
+  root.classList.add(`theme-${getActiveThemeFromProperties(colorCustomProperties)}`);
+
+  // Enable transitions after initial styles are set
+  if (shouldTransition) {
+    // Use setTimeout to ensure styles have been applied
+    setTimeout(() => {
+      root.classList.remove('theme-no-transition');
+      
+      // Clear transition state after animation completes
+      setTimeout(() => {
+        transitionState.isTransitioning = false;
+        root.classList.remove('theme-transitioning');
+      }, parseInt(themeTransitions.duration.normal) + 50);
+    }, 16); // Next frame
+  } else {
+    // Disable transitions for initial load or reduced motion
+    root.classList.add('theme-no-transition');
+  }
+}
+
+/**
+ * Determine active theme from CSS properties
+ */
+function getActiveThemeFromProperties(properties: Record<string, string>): ActiveTheme {
+  const primaryColor = properties['--color-primary'];
+  return primaryColor === '#3b82f6' ? 'light' : 'dark';
+}
 
 /**
  * Saves theme preference to localStorage
@@ -321,18 +348,25 @@ export const preventFOUC = (): void => {
     applyThemeToDocument(activeTheme, false);
     
     // Remove loading class and enable transitions after initial render
-    requestAnimationFrame(() => {
-      root.classList.remove('theme-loading');
-      
-      // Set up motion preference detection
-      createMotionPreferenceListener((reducedMotion) => {
-        if (reducedMotion) {
-          root.classList.add('theme-no-transition');
-        } else {
-          root.classList.remove('theme-no-transition');
-        }
+    if (typeof requestAnimationFrame !== 'undefined') {
+      requestAnimationFrame(() => {
+        root.classList.remove('theme-loading');
+        
+        // Set up motion preference detection
+        createMotionPreferenceListener((reducedMotion) => {
+          if (reducedMotion) {
+            root.classList.add('theme-no-transition');
+          } else {
+            root.classList.remove('theme-no-transition');
+          }
+        });
       });
-    });
+    } else {
+      // Fallback for environments without requestAnimationFrame
+      setTimeout(() => {
+        root.classList.remove('theme-loading');
+      }, 0);
+    }
   } catch (error) {
     console.warn('Failed to prevent FOUC:', error);
     // Apply light theme as fallback
