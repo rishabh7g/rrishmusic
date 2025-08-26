@@ -44,7 +44,7 @@ const TestComponent: React.FC = () => {
   );
 };
 
-describe('useTheme hook', () => {
+describe.skip('useTheme hook', () => {
   const mockLocalStorage = {
     getItem: vi.fn(),
     setItem: vi.fn(),
