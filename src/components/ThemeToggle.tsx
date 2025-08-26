@@ -3,6 +3,7 @@
  * 
  * Reusable theme toggle button with accessibility features and smooth transitions
  * Supports three-state cycling: Light → Dark → System → Light
+ * Respects user's motion preferences and provides enhanced animations
  */
 
 import React, { useCallback } from 'react';
@@ -121,29 +122,29 @@ const getSizeClasses = (size: 'sm' | 'md' | 'lg') => {
 };
 
 /**
- * Get variant classes for styling
+ * Get variant classes for styling with theme-aware transitions
  */
-const getVariantClasses = (variant: 'primary' | 'secondary' | 'ghost', isDark: boolean) => {
-  const baseClasses = 'transition-colors duration-200';
+const getVariantClasses = (variant: 'primary' | 'secondary' | 'ghost', isDark: boolean, transitionsEnabled: boolean) => {
+  const transitionClass = transitionsEnabled ? 'transition-theme-colors duration-theme-fast' : '';
   
   switch (variant) {
     case 'primary':
-      return `${baseClasses} ${
+      return `${transitionClass} ${
         isDark 
           ? 'bg-blue-600 hover:bg-blue-700 text-white border border-blue-500' 
           : 'bg-blue-500 hover:bg-blue-600 text-white border border-blue-400'
       }`;
     case 'secondary':
-      return `${baseClasses} ${
+      return `${transitionClass} ${
         isDark
-          ? 'bg-gray-700 hover:bg-gray-600 text-gray-100 border border-gray-600'
-          : 'bg-gray-200 hover:bg-gray-300 text-gray-800 border border-gray-300'
+          ? 'bg-theme-bg-secondary hover:bg-theme-bg-tertiary text-theme-text border border-theme-border'
+          : 'bg-theme-bg-secondary hover:bg-theme-bg-tertiary text-theme-text border border-theme-border'
       }`;
     default: // 'ghost'
-      return `${baseClasses} ${
+      return `${transitionClass} ${
         isDark
-          ? 'hover:bg-gray-800 text-gray-300 border border-transparent hover:border-gray-600'
-          : 'hover:bg-gray-100 text-gray-700 border border-transparent hover:border-gray-300'
+          ? 'hover:bg-theme-bg-secondary text-theme-text-secondary border border-transparent hover:border-theme-border'
+          : 'hover:bg-theme-bg-secondary text-theme-text-secondary border border-transparent hover:border-theme-border'
       }`;
   }
 };
@@ -152,7 +153,7 @@ const getVariantClasses = (variant: 'primary' | 'secondary' | 'ghost', isDark: b
  * Theme Toggle Component
  * 
  * Accessible button that cycles through theme modes with smooth animations.
- * Integrates with the theme system via useTheme hook.
+ * Integrates with the enhanced theme system and respects motion preferences.
  * 
  * @example
  * ```tsx
@@ -173,10 +174,12 @@ export default function ThemeToggle({
     isInitialized,
     modeLabel,
     cycleTheme,
+    transitionsEnabled,
+    reducedMotion,
   } = useTheme();
 
   const sizeClasses = getSizeClasses(size);
-  const variantClasses = getVariantClasses(variant, isDark);
+  const variantClasses = getVariantClasses(variant, isDark, transitionsEnabled);
 
   /**
    * Handle theme toggle with cycling through all modes
@@ -248,6 +251,33 @@ export default function ThemeToggle({
     );
   }
 
+  // Icon transition animations (respects motion preferences)
+  const iconAnimations = reducedMotion ? {
+    initial: { opacity: 0 },
+    animate: { opacity: 1 },
+    exit: { opacity: 0 },
+    transition: { duration: 0 }
+  } : {
+    initial: { opacity: 0, rotate: -180, scale: 0.5 },
+    animate: { opacity: 1, rotate: 0, scale: 1 },
+    exit: { opacity: 0, rotate: 180, scale: 0.5 },
+    transition: { 
+      duration: 0.3, 
+      ease: [0.4, 0, 0.2, 1] // Custom easing for smooth feel
+    }
+  };
+
+  // Button animations (respects motion preferences)
+  const buttonAnimations = reducedMotion ? {
+    whileTap: undefined,
+    whileHover: undefined,
+    transition: { duration: 0 }
+  } : {
+    whileTap: { scale: 0.95 },
+    whileHover: { scale: 1.02 },
+    transition: { duration: 0.1 }
+  };
+
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
       <motion.button
@@ -263,21 +293,13 @@ export default function ThemeToggle({
         onKeyDown={handleKeyDown}
         disabled={disabled}
         aria-label={ariaLabel}
-        whileTap={disabled ? undefined : { scale: 0.95 }}
-        whileHover={disabled ? undefined : { scale: 1.05 }}
-        transition={{ duration: 0.1 }}
+        {...buttonAnimations}
       >
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={mode}
-            initial={{ opacity: 0, rotate: -180, scale: 0.5 }}
-            animate={{ opacity: 1, rotate: 0, scale: 1 }}
-            exit={{ opacity: 0, rotate: 180, scale: 0.5 }}
-            transition={{ 
-              duration: 0.3, 
-              ease: [0.4, 0, 0.2, 1] // Custom easing for smooth feel
-            }}
             className={`flex items-center justify-center ${sizeClasses.icon}`}
+            {...iconAnimations}
           >
             {ThemeIcons[mode]}
           </motion.div>
@@ -286,12 +308,17 @@ export default function ThemeToggle({
       
       {showLabel && (
         <motion.span
-          className={`${sizeClasses.text} font-medium select-none`}
+          className={`
+            ${sizeClasses.text} 
+            font-medium select-none 
+            text-theme-text
+            ${transitionsEnabled ? 'theme-transition-colors' : ''}
+          `}
           initial={false}
-          animate={{ 
-            color: isDark ? '#e5e7eb' : '#374151' 
+          animate={reducedMotion ? {} : { 
+            opacity: 1
           }}
-          transition={{ duration: 0.2 }}
+          transition={reducedMotion ? {} : { duration: 0.2 }}
         >
           {modeLabel}
         </motion.span>
