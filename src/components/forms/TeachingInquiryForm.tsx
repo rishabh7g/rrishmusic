@@ -306,10 +306,11 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
+                    <label htmlFor="name" className="block text-sm font-medium text-neutral-charcoal mb-2">
                       Full Name <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="name"
                       type="text"
                       value={formData.name}
                       onChange={(e) => updateField('name', e.target.value)}
@@ -324,10 +325,11 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
+                    <label htmlFor="email" className="block text-sm font-medium text-neutral-charcoal mb-2">
                       Email Address <span className="text-red-500">*</span>
                     </label>
                     <input
+                      id="email"
                       type="email"
                       value={formData.email}
                       onChange={(e) => updateField('email', e.target.value)}
@@ -342,11 +344,12 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                   </div>
 
                   <div>
-                    <label className="block text-sm font-medium text-neutral-charcoal mb-2">
+                    <label htmlFor="phone" className="block text-sm font-medium text-neutral-charcoal mb-2">
                       Phone Number (Optional)
                     </label>
                     <input
                       type="tel"
+                      id="phone"
                       value={formData.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
                       className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200"

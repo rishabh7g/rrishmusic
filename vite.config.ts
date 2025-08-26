@@ -32,6 +32,7 @@ export default defineConfig({
     environment: "jsdom",
     setupFiles: ["./src/test/setup.ts"],
     css: true,
+    exclude: ['**/tests/e2e/**', '**/node_modules/**', '**/dist/**', '**/cypress/**', '**/coverage/**', '**/.{idea,git,cache,output,temp}/**'],
     // Test execution configuration
     reporter: process.env.CI ? ['verbose', 'junit'] : ['verbose'],
     outputFile: process.env.CI ? {
