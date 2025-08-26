@@ -3,13 +3,12 @@
  * Provides production-ready error handling with fallback UI
  * Enhanced with SPA routing support and GitHub Pages compatibility
  */
-
 import { Component, ErrorInfo, ReactNode } from 'react';
 import { safeNavigate } from '@/utils/routing';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  fallback?: ReactNode | ((props: { error: Error; resetError: () => void }) => ReactNode);
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
@@ -59,6 +58,18 @@ class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  public componentDidUpdate(prevProps: Props): void {
+    // Reset error boundary when children change
+    if (this.state.hasError && prevProps.children !== this.props.children) {
+      this.setState({
+        hasError: false,
+        error: null,
+        errorInfo: null,
+        retryCount: 0,
+      });
+    }
+  }
+
   private logErrorToService(error: Error, errorInfo: ErrorInfo): void {
     // Placeholder for error logging service integration
     // e.g., Sentry, LogRocket, or custom analytics
@@ -92,6 +103,15 @@ class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
       retryCount: newRetryCount,
+    });
+  };
+
+  private resetError = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      retryCount: 0,
     });
   };
 
@@ -169,7 +189,7 @@ ${errorDetails.stack}
 Please help resolve this issue.
 
 Thank you!`);
-
+    
     const mailtoLink = `mailto:hello@rrishmusic.com?subject=${subject}&body=${body}`;
     
     try {
@@ -182,20 +202,27 @@ Thank you!`);
   };
 
   public render(): ReactNode {
-    if (this.state.hasError) {
-      // Custom fallback UI
+    if (this.state.hasError && this.state.error) {
+      // Custom fallback UI with error and resetError props
       if (this.props.fallback) {
+        if (typeof this.props.fallback === 'function') {
+          return this.props.fallback({ error: this.state.error, resetError: this.resetError });
+        }
         return this.props.fallback;
       }
 
       // Enhanced fallback UI with multiple recovery options
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div 
+          className="min-h-screen flex items-center justify-center bg-gray-50" 
+          role="alert"
+          aria-live="assertive"
+        >
           <div className="max-w-md mx-auto text-center p-6">
             <div className="text-6xl mb-4">🎵</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Oops! Something went wrong
-            </h1>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+              Something went wrong
+            </h2>
             <p className="text-gray-600 mb-6">
               We encountered an unexpected error. Don't worry - we have several recovery options to get you back to enjoying RrishMusic.
             </p>
@@ -243,7 +270,7 @@ Thank you!`);
 
             {/* User-friendly error explanation */}
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-              <p className="font-medium mb-1">What happened?</p>
+              <h3 className="font-medium mb-1">What happened?</h3>
               <p className="text-blue-600">
                 A technical issue occurred while loading the page. This is rare and we're constantly working to prevent these errors.
               </p>
@@ -276,6 +303,13 @@ Thank you!`);
                 </div>
               </details>
             )}
+
+            {/* Production error details - only show contact info */}
+            {process.env.NODE_ENV === 'production' && (
+              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+                <p>If the problem persists, please contact support or refresh the page.</p>
+              </div>
+            )}
           </div>
         </div>
       );
@@ -289,5 +323,4 @@ Thank you!`);
  * Simple error boundary wrapper for smaller components
  * Enhanced with consistent styling and recovery options
 */
-
 export default ErrorBoundary;
