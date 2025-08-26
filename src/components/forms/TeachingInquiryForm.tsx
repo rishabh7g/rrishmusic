@@ -239,7 +239,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
           initial={{ scale: 0.95, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.95, opacity: 0 }}
-          className="bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          className="bg-theme-bg rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
           onClick={(e) => e.stopPropagation()}
         >
           <form onSubmit={handleSubmit} className="p-8">
@@ -249,16 +249,16 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                 <h2 className="text-2xl font-bold text-neutral-charcoal">
                   Guitar Lesson Inquiry
                 </h2>
-                <p className="text-gray-600 mt-1">
+                <p className="text-theme-text-secondary mt-1">
                   Let's start your musical journey together
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleClose}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                className="p-2 hover:bg-theme-bg-secondary rounded-lg transition-theme-colors"
               >
-                <svg className="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-6 h-6 text-theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>
@@ -270,17 +270,17 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                 {[...Array(totalSteps)].map((_, index) => (
                   <div
                     key={index}
-                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-colors duration-200 ${
+                    className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-theme-colors ${
                       index + 1 <= currentStep 
                         ? 'bg-brand-orange-warm text-white' 
-                        : 'bg-gray-200 text-gray-500'
+                        : 'bg-theme-bg-tertiary text-theme-text-muted'
                     }`}
                   >
                     {index + 1}
                   </div>
                 ))}
               </div>
-              <p className="text-sm text-gray-600 text-center">
+              <p className="text-sm text-theme-text-secondary text-center">
                 Step {currentStep} of {totalSteps}
               </p>
             </div>
@@ -300,7 +300,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <h3 className="text-lg font-semibold text-neutral-charcoal mb-4">
                       Contact Information & Package Selection
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-theme-text-secondary mb-6">
                       Let's start with your contact details and lesson preferences.
                     </p>
                   </div>
@@ -314,8 +314,8 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       type="text"
                       value={formData.name}
                       onChange={(e) => updateField('name', e.target.value)}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 ${
-                        errors.name ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors ${
+                        errors.name ? 'border-red-500' : 'border-theme-border'
                       }`}
                       placeholder="Your full name"
                     />
@@ -333,8 +333,8 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       type="email"
                       value={formData.email}
                       onChange={(e) => updateField('email', e.target.value)}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 ${
-                        errors.email ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors ${
+                        errors.email ? 'border-red-500' : 'border-theme-border'
                       }`}
                       placeholder="your.email@example.com"
                     />
@@ -352,7 +352,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       id="phone"
                       value={formData.phone}
                       onChange={(e) => updateField('phone', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors"
                       placeholder="(555) 123-4567"
                     />
                   </div>
@@ -378,14 +378,14 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                             <div className={`w-full p-4 rounded-lg border-2 transition-all duration-200 ${
                               formData.packageType === key
                                 ? 'border-brand-orange-warm bg-brand-orange-warm/10'
-                                : 'border-gray-300 hover:border-brand-orange-warm/50'
+                                : 'border-theme-border hover:border-brand-orange-warm/50'
                             }`}>
                               <div className="flex items-center justify-between">
                                 <div>
                                   <h4 className="font-semibold text-neutral-charcoal">
                                     {pkg.name}
                                   </h4>
-                                  <p className="text-sm text-gray-600 mt-1">
+                                  <p className="text-sm text-theme-text-secondary mt-1">
                                     {pkg.description}
                                   </p>
                                 </div>
@@ -394,7 +394,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                                     {pkg.price}
                                   </div>
                                   {pkg.originalPrice && (
-                                    <div className="text-sm text-gray-500 line-through">
+                                    <div className="text-sm text-theme-text-muted line-through">
                                       {pkg.originalPrice}
                                     </div>
                                   )}
@@ -416,7 +416,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       <h4 className="font-semibold text-brand-orange-warm mb-2">
                         Selected: {selectedPackage.name}
                       </h4>
-                      <p className="text-sm text-gray-700">
+                      <p className="text-sm text-theme-text-secondary">
                         {selectedPackage.sessions} session{selectedPackage.sessions > 1 ? 's' : ''} • {selectedPackage.price}
                       </p>
                     </div>
@@ -437,7 +437,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <h3 className="text-lg font-semibold text-neutral-charcoal mb-4">
                       Musical Background & Goals
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-theme-text-secondary mb-6">
                       Help me understand your musical journey and what you'd like to achieve.
                     </p>
                   </div>
@@ -449,7 +449,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <select
                       value={formData.experienceLevel}
                       onChange={(e) => updateField('experienceLevel', e.target.value as TeachingInquiryData['experienceLevel'])}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors"
                     >
                       <option value="complete-beginner">Complete beginner - never played guitar</option>
                       <option value="some-basics">Some basics - know a few chords</option>
@@ -466,8 +466,8 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       value={formData.musicalGoals}
                       onChange={(e) => updateField('musicalGoals', e.target.value)}
                       rows={4}
-                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 resize-none ${
-                        errors.musicalGoals ? 'border-red-500' : 'border-gray-300'
+                      className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors resize-none ${
+                        errors.musicalGoals ? 'border-red-500' : 'border-theme-border'
                       }`}
                       placeholder="What would you like to achieve? (e.g., learn to play your favorite songs, improve improvisation, prepare for performances, etc.)"
                     />
@@ -484,7 +484,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       value={formData.previousExperience}
                       onChange={(e) => updateField('previousExperience', e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 resize-none"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors resize-none"
                       placeholder="Tell me about any previous lessons, instruments you've played, or musical experiences..."
                     />
                   </div>
@@ -497,7 +497,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       value={formData.specificInterests}
                       onChange={(e) => updateField('specificInterests', e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 resize-none"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors resize-none"
                       placeholder="Any specific styles, songs, techniques, or areas you're particularly interested in?"
                     />
                   </div>
@@ -517,7 +517,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <h3 className="text-lg font-semibold text-neutral-charcoal mb-4">
                       Schedule & Format Preferences
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-theme-text-secondary mb-6">
                       Let's find the best time and format for your lessons.
                     </p>
                   </div>
@@ -543,7 +543,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                           />
                           <div>
                             <span className="font-medium">{option.label}</span>
-                            <p className="text-sm text-gray-600">{option.description}</p>
+                            <p className="text-sm text-theme-text-secondary">{option.description}</p>
                           </div>
                         </label>
                       ))}
@@ -557,7 +557,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <select
                       value={formData.preferredSchedule}
                       onChange={(e) => updateField('preferredSchedule', e.target.value as TeachingInquiryData['preferredSchedule'])}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors"
                     >
                       <option value="weekday-mornings">Weekday mornings (9 AM - 12 PM)</option>
                       <option value="weekday-afternoons">Weekday afternoons (12 PM - 5 PM)</option>
@@ -575,7 +575,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       value={formData.scheduleDetails}
                       onChange={(e) => updateField('scheduleDetails', e.target.value)}
                       rows={2}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 resize-none"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors resize-none"
                       placeholder="Any specific days, times, or scheduling preferences? (e.g., Tuesday evenings, every other week, etc.)"
                     />
                   </div>
@@ -595,7 +595,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                     <h3 className="text-lg font-semibold text-neutral-charcoal mb-4">
                       Final Details
                     </h3>
-                    <p className="text-gray-600 mb-6">
+                    <p className="text-theme-text-secondary mb-6">
                       Last few details to ensure we're perfectly matched for your learning journey.
                     </p>
                   </div>
@@ -608,7 +608,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       value={formData.additionalInfo}
                       onChange={(e) => updateField('additionalInfo', e.target.value)}
                       rows={3}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200 resize-none"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors resize-none"
                       placeholder="Anything else you'd like me to know? Questions about my teaching style, equipment needed, etc."
                     />
                   </div>
@@ -646,7 +646,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                       type="text"
                       value={formData.bestTimeToContact}
                       onChange={(e) => updateField('bestTimeToContact', e.target.value)}
-                      className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-colors duration-200"
+                      className="w-full px-4 py-3 border border-theme-border rounded-lg focus:ring-2 focus:ring-brand-orange-warm/20 focus:border-brand-orange-warm transition-theme-colors"
                       placeholder="e.g., weekday afternoons, weekends, anytime"
                     />
                   </div>
@@ -661,7 +661,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                         <span className="text-neutral-charcoal font-medium">{selectedPackage.name}</span>
                         <span className="text-brand-orange-warm font-bold">{selectedPackage.price}</span>
                       </div>
-                      <div className="text-sm text-gray-600">
+                      <div className="text-sm text-theme-text-secondary">
                         {selectedPackage.sessions} session{selectedPackage.sessions > 1 ? 's' : ''} • 
                         {selectedPackage.sessions > 1 ? ' $50 per lesson' : ' 60 minutes'}
                       </div>
@@ -677,13 +677,13 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
             </AnimatePresence>
 
             {/* Form Navigation */}
-            <div className="flex items-center justify-between mt-8 pt-6 border-t border-gray-200">
+            <div className="flex items-center justify-between mt-8 pt-6 border-t border-theme-divider">
               <div>
                 {currentStep > 1 && (
                   <button
                     type="button"
                     onClick={handlePreviousStep}
-                    className="flex items-center gap-2 px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+                    className="flex items-center gap-2 px-6 py-2 text-theme-text-secondary hover:text-theme-text transition-theme-colors"
                   >
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -697,7 +697,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                 <button
                   type="button"
                   onClick={handleClose}
-                  className="px-6 py-2 text-gray-600 hover:text-gray-800 transition-colors duration-200"
+                  className="px-6 py-2 text-theme-text-secondary hover:text-theme-text transition-theme-colors"
                 >
                   Cancel
                 </button>
@@ -706,7 +706,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                   <button
                     type="button"
                     onClick={handleNextStep}
-                    className="flex items-center gap-2 px-6 py-2 bg-brand-orange-warm text-white rounded-lg hover:bg-brand-orange-warm/90 transition-colors duration-200"
+                    className="flex items-center gap-2 px-6 py-2 bg-brand-orange-warm text-white rounded-lg hover:bg-brand-orange-warm/90 transition-theme-colors"
                   >
                     Next
                     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -717,7 +717,7 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = ({
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="flex items-center gap-2 px-6 py-2 bg-brand-orange-warm text-white rounded-lg hover:bg-brand-orange-warm/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
+                    className="flex items-center gap-2 px-6 py-2 bg-brand-orange-warm text-white rounded-lg hover:bg-brand-orange-warm/90 disabled:opacity-50 disabled:cursor-not-allowed transition-theme-colors"
                   >
                     {isSubmitting ? (
                       <>

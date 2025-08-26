@@ -214,16 +214,16 @@ Thank you!`);
       // Enhanced fallback UI with multiple recovery options
       return (
         <div 
-          className="min-h-screen flex items-center justify-center bg-gray-50" 
+          className="min-h-screen flex items-center justify-center bg-theme-bg transition-theme-colors" 
           role="alert"
           aria-live="assertive"
         >
           <div className="max-w-md mx-auto text-center p-6">
             <div className="text-6xl mb-4">🎵</div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="text-2xl font-bold text-theme-text mb-2 transition-theme-colors">
               Something went wrong
             </h2>
-            <p className="text-gray-600 mb-6">
+            <p className="text-theme-text-secondary mb-6 transition-theme-colors">
               We encountered an unexpected error. Don't worry - we have several recovery options to get you back to enjoying RrishMusic.
             </p>
             
@@ -232,12 +232,12 @@ Thank you!`);
               {this.state.retryCount < this.maxRetries ? (
                 <button
                   onClick={this.handleRetry}
-                  className="w-full bg-brand-blue-primary text-white px-6 py-3 rounded-lg hover:bg-brand-blue-secondary transition-colors font-semibold"
+                  className="w-full bg-theme-primary text-white px-6 py-3 rounded-lg hover:bg-theme-primary/90 transition-theme-colors font-semibold"
                 >
                   Try Again {this.state.retryCount > 0 && `(${this.state.retryCount}/${this.maxRetries})`}
                 </button>
               ) : (
-                <div className="text-sm text-gray-500 p-2 bg-gray-100 rounded">
+                <div className="text-sm text-theme-text-muted p-2 bg-theme-bg-secondary rounded transition-theme-colors">
                   Max retries reached. Please try other options below.
                 </div>
               )}
@@ -245,23 +245,23 @@ Thank you!`);
               {/* Safe navigation options */}
               <button
                 onClick={this.handleGoHome}
-                className="w-full bg-brand-blue-secondary text-white px-6 py-3 rounded-lg hover:bg-brand-blue-primary transition-colors font-semibold"
+                className="w-full bg-theme-secondary text-white px-6 py-3 rounded-lg hover:bg-theme-secondary/90 transition-theme-colors font-semibold"
               >
                 Go to Homepage
               </button>
               
               <button
                 onClick={this.handleSafeRefresh}
-                className="w-full bg-gray-200 text-gray-800 px-6 py-3 rounded-lg hover:bg-gray-300 transition-colors font-semibold"
+                className="w-full bg-theme-bg-tertiary text-theme-text px-6 py-3 rounded-lg hover:bg-theme-bg-tertiary/80 transition-theme-colors font-semibold"
               >
                 Safe Refresh
               </button>
 
               {/* Additional options */}
-              <div className="pt-2 border-t border-gray-200">
+              <div className="pt-2 border-t border-theme-divider transition-theme-colors">
                 <button
                   onClick={this.handleReportProblem}
-                  className="w-full bg-gray-100 text-gray-600 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors font-medium text-sm"
+                  className="w-full bg-theme-bg-secondary text-theme-text-secondary px-6 py-3 rounded-lg hover:bg-theme-bg-tertiary transition-theme-colors font-medium text-sm"
                 >
                   Report this Problem
                 </button>
@@ -269,9 +269,9 @@ Thank you!`);
             </div>
 
             {/* User-friendly error explanation */}
-            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
+            <div className="mt-6 p-4 bg-theme-info/10 border border-theme-info/20 rounded-lg text-sm text-theme-info transition-theme-colors">
               <h3 className="font-medium mb-1">What happened?</h3>
-              <p className="text-blue-600">
+              <p className="text-theme-info/80">
                 A technical issue occurred while loading the page. This is rare and we're constantly working to prevent these errors.
               </p>
             </div>
@@ -279,23 +279,23 @@ Thank you!`);
             {/* Development error details */}
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-sm text-gray-500 hover:text-gray-700">
+                <summary className="cursor-pointer text-sm text-theme-text-muted hover:text-theme-text-secondary transition-theme-colors">
                   View Error Details (Development)
                 </summary>
-                <div className="mt-2 p-4 bg-red-50 border border-red-200 rounded text-xs font-mono overflow-auto max-h-32">
-                  <div className="text-red-700 font-semibold mb-2">
+                <div className="mt-2 p-4 bg-theme-error/10 border border-theme-error/20 rounded text-xs font-mono overflow-auto max-h-32 transition-theme-colors">
+                  <div className="text-theme-error font-semibold mb-2 transition-theme-colors">
                     {this.state.error.name}: {this.state.error.message}
                   </div>
-                  <pre className="whitespace-pre-wrap text-red-600 text-xs">
+                  <pre className="whitespace-pre-wrap text-theme-error/80 text-xs transition-theme-colors">
                     {this.state.error.stack}
                   </pre>
                   {this.state.errorInfo && (
-                    <pre className="mt-2 text-blue-600 text-xs">
+                    <pre className="mt-2 text-theme-info/80 text-xs transition-theme-colors">
                       Component Stack:
                       {this.state.errorInfo.componentStack}
                     </pre>
                   )}
-                  <div className="mt-2 text-gray-600 text-xs">
+                  <div className="mt-2 text-theme-text-muted text-xs transition-theme-colors">
                     <p>Retry Count: {this.state.retryCount}</p>
                     <p>URL: {window.location.href}</p>
                     <p>Time: {new Date().toISOString()}</p>
@@ -306,7 +306,7 @@ Thank you!`);
 
             {/* Production error details - only show contact info */}
             {process.env.NODE_ENV === 'production' && (
-              <div className="mt-6 p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm text-gray-600">
+              <div className="mt-6 p-4 bg-theme-bg-secondary border border-theme-border rounded-lg text-sm text-theme-text-secondary transition-theme-colors">
                 <p>If the problem persists, please contact support or refresh the page.</p>
               </div>
             )}

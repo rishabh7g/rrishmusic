@@ -49,20 +49,20 @@ const getNavigationItemStyles = (
       case 'primary':
         return `${mobileBase} font-semibold text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-primary dark:bg-brand-blue-secondary border border-brand-blue-primary/20 dark:border-brand-blue-secondary/20 shadow-lg"
-            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-brand-blue-primary/10 dark:hover:bg-brand-blue-secondary/10 hover:border hover:border-brand-blue-primary/20 dark:hover:border-brand-blue-secondary/20 active:bg-brand-blue-primary/20 dark:active:bg-brand-blue-secondary/20"
+            ? "text-white bg-theme-primary border border-theme-primary/20 shadow-lg"
+            : "text-theme-text hover:text-theme-primary hover:bg-theme-primary/10 hover:border hover:border-theme-primary/20 active:bg-theme-primary/20"
         }`;
       case 'secondary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-secondary dark:bg-brand-blue-primary border border-brand-blue-secondary/20 dark:border-brand-blue-primary/20 shadow-lg"
-            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary hover:bg-brand-blue-secondary/10 dark:hover:bg-brand-blue-primary/10 active:bg-brand-blue-secondary/15 dark:active:bg-brand-blue-primary/15"
+            ? "text-white bg-theme-secondary border border-theme-secondary/20 shadow-lg"
+            : "text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/10 active:bg-theme-secondary/15"
         }`;
       case 'tertiary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-primary dark:bg-brand-blue-secondary border border-brand-blue-primary/20 dark:border-brand-blue-secondary/20 shadow-lg"
-            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700"
+            ? "text-white bg-theme-primary border border-theme-primary/20 shadow-lg"
+            : "text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary active:bg-theme-bg-tertiary"
         }`;
     }
   }
@@ -74,20 +74,20 @@ const getNavigationItemStyles = (
     case 'primary':
       return `${desktopBase} font-bold text-lg ${
         isActive
-          ? "text-brand-blue-primary dark:text-brand-blue-secondary"
-          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:scale-105 hover:bg-brand-blue-primary/5 dark:hover:bg-brand-blue-secondary/5"
+          ? "text-theme-primary"
+          : "text-theme-text hover:text-theme-primary hover:scale-105 hover:bg-theme-primary/5"
       }`;
     case 'secondary':
       return `${desktopBase} font-semibold ${
         isActive
-          ? "text-brand-blue-secondary dark:text-brand-blue-primary"
-          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary hover:bg-brand-blue-secondary/5 dark:hover:bg-brand-blue-primary/5"
+          ? "text-theme-secondary"
+          : "text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/5"
       }`;
     case 'tertiary':
       return `${desktopBase} font-medium ${
         isActive
-          ? "text-brand-blue-primary dark:text-brand-blue-secondary"
-          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-gray-50 dark:hover:bg-gray-800"
+          ? "text-theme-primary"
+          : "text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary"
       }`;
   }
 };
@@ -108,15 +108,15 @@ const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) =
     }
   }
 
-  // Desktop active indicator with dark mode support
+  // Desktop active indicator with theme support
   const baseClasses = "absolute -bottom-1 left-2 right-2 h-0.5 rounded-full";
   switch (type) {
     case 'primary':
-      return `${baseClasses} bg-brand-blue-primary dark:bg-brand-blue-secondary`;
+      return `${baseClasses} bg-theme-primary`;
     case 'secondary':
-      return `${baseClasses} bg-brand-blue-secondary dark:bg-brand-blue-primary`;
+      return `${baseClasses} bg-theme-secondary`;
     case 'tertiary':
-      return `${baseClasses} bg-brand-blue-primary dark:bg-brand-blue-secondary`;
+      return `${baseClasses} bg-theme-primary`;
   }
 };
 
@@ -459,14 +459,14 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       {/* Skip to content link for accessibility */}
       <a
         href="#main-content"
-        className="sr-only focusable absolute top-4 left-4 bg-brand-blue-primary text-white px-4 py-2 rounded-md shadow-lg z-50"
+        className="sr-only focusable absolute top-4 left-4 bg-theme-primary text-white px-4 py-2 rounded-md shadow-lg z-50 transition-theme-colors"
       >
         Skip to main content
       </a>
 
       <nav
         id="main-navigation"
-        className="nav-mobile backdrop-blur-optimized bg-white/95 dark:bg-gray-900/95 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200"
+        className="nav-mobile backdrop-blur-optimized bg-theme-bg/95 border-b border-theme-border transition-colors duration-200"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -475,7 +475,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary dark:text-brand-blue-secondary hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary transition-colors duration-200 touch-target"
+              className="flex items-center space-x-2 text-xl font-bold text-theme-primary hover:text-theme-primary-hover transition-colors duration-200 touch-target"
               aria-label="Rrish Music - Home"
             >
               <span>Rrish</span>
@@ -495,7 +495,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
                 <ThemeToggle size="sm" variant="ghost" />
                 <motion.button
                   onClick={toggleMenu}
-                  className="mobile-only touch-target-comfortable relative z-50 text-gray-700 dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary transition-colors duration-200"
+                  className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200"
                   aria-expanded={isMenuOpen}
                   aria-controls="mobile-menu"
                   aria-label="Toggle navigation menu"
@@ -533,7 +533,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="nav-mobile-menu open bg-white/98 dark:bg-gray-900/98 backdrop-blur-optimized border-t border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-200"
+                className="nav-mobile-menu open bg-theme-bg/98 backdrop-blur-optimized border-t border-theme-border shadow-lg transition-colors duration-200"
               >
                 <div className="container-responsive py-6 space-y-2">
                   {mobileNavItems}
