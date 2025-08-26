@@ -4,6 +4,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import ErrorBoundary from './components/common/ErrorBoundary';
 import Navigation from './components/layout/Navigation';
 import { usePageSEO } from './hooks/usePageSEO';
+import { ThemeProvider } from './contexts/ThemeContext';
 
 // Lazy load components for better performance
 const Home = lazy(() => import('./components/pages/Home').then(module => ({ default: module.Home })));
@@ -11,12 +12,14 @@ const Teaching = lazy(() => import('./components/pages/Teaching'));
 const Performance = lazy(() => import('./components/pages/Performance'));
 const Collaboration = lazy(() => import('./components/pages/Collaboration'));
 
-// Simple loading spinner
-const Spinner = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-  </div>
-);
+// Simple loading spinner with theme awareness
+const Spinner = () => {
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+      <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600 dark:border-blue-400"></div>
+    </div>
+  );
+};
 
 // Page transition variants
 const pageTransition = {
@@ -93,7 +96,7 @@ function AppContent() {
   
   return (
     <>
-      <div className="min-h-screen bg-gray-50 relative overflow-x-hidden">
+      <div className="min-h-screen bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 relative overflow-x-hidden transition-colors duration-200">
         <Navigation />
         
         <main className="main-content">
@@ -212,7 +215,11 @@ function App(): React.JSX.Element {
     });
   }, []);
 
-  return <AppContent />;
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
+  );
 }
 
 export default App;

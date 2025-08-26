@@ -48,45 +48,45 @@ const getNavigationItemStyles = (
       case 'primary':
         return `${mobileBase} font-semibold text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-primary border border-brand-blue-primary/20 shadow-lg"
-            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-brand-blue-primary/10 hover:border hover:border-brand-blue-primary/20 active:bg-brand-blue-primary/20"
+            ? "text-white bg-brand-blue-primary dark:bg-brand-blue-secondary border border-brand-blue-primary/20 dark:border-brand-blue-secondary/20 shadow-lg"
+            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-brand-blue-primary/10 dark:hover:bg-brand-blue-secondary/10 hover:border hover:border-brand-blue-primary/20 dark:hover:border-brand-blue-secondary/20 active:bg-brand-blue-primary/20 dark:active:bg-brand-blue-secondary/20"
         }`;
       case 'secondary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-secondary border border-brand-blue-secondary/20 shadow-lg"
-            : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/10 active:bg-brand-blue-secondary/15"
+            ? "text-white bg-brand-blue-secondary dark:bg-brand-blue-primary border border-brand-blue-secondary/20 dark:border-brand-blue-primary/20 shadow-lg"
+            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary hover:bg-brand-blue-secondary/10 dark:hover:bg-brand-blue-primary/10 active:bg-brand-blue-secondary/15 dark:active:bg-brand-blue-primary/15"
         }`;
       case 'tertiary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-brand-blue-primary border border-brand-blue-primary/20 shadow-lg"
-            : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50 active:bg-gray-100"
+            ? "text-white bg-brand-blue-primary dark:bg-brand-blue-secondary border border-brand-blue-primary/20 dark:border-brand-blue-secondary/20 shadow-lg"
+            : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-gray-50 dark:hover:bg-gray-800 active:bg-gray-100 dark:active:bg-gray-700"
         }`;
     }
   }
   
-  // Desktop styles with visual hierarchy
+  // Desktop styles with visual hierarchy and dark mode support
   const desktopBase = `${baseClasses} relative touch-target px-4 py-2 rounded-lg`;
   
   switch (type) {
     case 'primary':
       return `${desktopBase} font-bold text-lg ${
         isActive
-          ? "text-brand-blue-primary"
-          : "text-neutral-charcoal hover:text-brand-blue-primary hover:scale-105 hover:bg-brand-blue-primary/5"
+          ? "text-brand-blue-primary dark:text-brand-blue-secondary"
+          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:scale-105 hover:bg-brand-blue-primary/5 dark:hover:bg-brand-blue-secondary/5"
       }`;
     case 'secondary':
       return `${desktopBase} font-semibold ${
         isActive
-          ? "text-brand-blue-secondary"
-          : "text-neutral-charcoal hover:text-brand-blue-secondary hover:bg-brand-blue-secondary/5"
+          ? "text-brand-blue-secondary dark:text-brand-blue-primary"
+          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary hover:bg-brand-blue-secondary/5 dark:hover:bg-brand-blue-primary/5"
       }`;
     case 'tertiary':
       return `${desktopBase} font-medium ${
         isActive
-          ? "text-brand-blue-primary"
-          : "text-neutral-charcoal hover:text-brand-blue-primary hover:bg-gray-50"
+          ? "text-brand-blue-primary dark:text-brand-blue-secondary"
+          : "text-neutral-charcoal dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary hover:bg-gray-50 dark:hover:bg-gray-800"
       }`;
   }
 };
@@ -107,15 +107,15 @@ const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) =
     }
   }
 
-  // Desktop active indicator
+  // Desktop active indicator with dark mode support
   const baseClasses = "absolute -bottom-1 left-2 right-2 h-0.5 rounded-full";
   switch (type) {
     case 'primary':
-      return `${baseClasses} bg-brand-blue-primary`;
+      return `${baseClasses} bg-brand-blue-primary dark:bg-brand-blue-secondary`;
     case 'secondary':
-      return `${baseClasses} bg-brand-blue-secondary`;
+      return `${baseClasses} bg-brand-blue-secondary dark:bg-brand-blue-primary`;
     case 'tertiary':
-      return `${baseClasses} bg-brand-blue-primary`;
+      return `${baseClasses} bg-brand-blue-primary dark:bg-brand-blue-secondary`;
   }
 };
 
@@ -302,7 +302,7 @@ const NavigationItem = React.memo<{
 NavigationItem.displayName = 'NavigationItem';
 
 /**
- * Main Navigation Component with Responsive Design
+ * Main Navigation Component with Responsive Design and Dark Mode Support
  */
 export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiveSection }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -465,7 +465,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
 
       <nav
         id="main-navigation"
-        className="nav-mobile backdrop-blur-optimized"
+        className="nav-mobile backdrop-blur-optimized bg-white/95 dark:bg-gray-900/95 border-b border-gray-200 dark:border-gray-700 transition-colors duration-200"
         role="navigation"
         aria-label="Main navigation"
       >
@@ -474,7 +474,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
             {/* Logo */}
             <Link
               to="/"
-              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200 touch-target"
+              className="flex items-center space-x-2 text-xl font-bold text-brand-blue-primary dark:text-brand-blue-secondary hover:text-brand-blue-secondary dark:hover:text-brand-blue-primary transition-colors duration-200 touch-target"
               aria-label="Rrish Music - Home"
             >
               <span>Rrish</span>
@@ -491,7 +491,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
             {!device.isDesktop && (
               <motion.button
                 onClick={toggleMenu}
-                className="mobile-only touch-target-comfortable relative z-50"
+                className="mobile-only touch-target-comfortable relative z-50 text-gray-700 dark:text-gray-200 hover:text-brand-blue-primary dark:hover:text-brand-blue-secondary transition-colors duration-200"
                 aria-expanded={isMenuOpen}
                 aria-controls="mobile-menu"
                 aria-label="Toggle navigation menu"
@@ -528,7 +528,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
                 initial="hidden"
                 animate="visible"
                 exit="hidden"
-                className="nav-mobile-menu open bg-white/98 backdrop-blur-optimized border-t border-gray-200 shadow-lg"
+                className="nav-mobile-menu open bg-white/98 dark:bg-gray-900/98 backdrop-blur-optimized border-t border-gray-200 dark:border-gray-700 shadow-lg transition-colors duration-200"
               >
                 <div className="container-responsive py-6 space-y-2">
                   {mobileNavItems}
