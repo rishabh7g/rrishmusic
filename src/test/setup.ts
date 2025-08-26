@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { cleanup } from '@testing-library/react';
 import { afterEach, beforeEach, vi } from 'vitest';
+import React from 'react';
 
 // Mock window.scrollTo
 Object.defineProperty(window, 'scrollTo', {
@@ -37,24 +38,68 @@ global.ResizeObserver = vi.fn().mockImplementation(() => ({
   disconnect: vi.fn(),
 }));
 
-// Mock framer-motion for tests
+// Helper function to strip Framer Motion props
+/* eslint-disable @typescript-eslint/no-unused-vars */
+const stripMotionProps = (props: Record<string, unknown>) => {
+  // Destructure Framer Motion props to exclude them from clean props
+  const {
+    animate,
+    initial,
+    exit,
+    transition,
+    variants,
+    layoutId,
+    whileHover,
+    whileTap,
+    whileInView,
+    whileFocus,
+    whileDrag,
+    onViewportEnter,
+    onViewportLeave,
+    onAnimationStart,
+    onAnimationComplete,
+    onUpdate,
+    onDrag,
+    onDragStart,
+    onDragEnd,
+    drag,
+    dragConstraints,
+    dragElastic,
+    dragMomentum,
+    ...cleanProps
+  } = props;
+  return cleanProps;
+};
+/* eslint-enable @typescript-eslint/no-unused-vars */
+
+// Create motion component factory
+const createMotionComponent = (element: string) => React.forwardRef<HTMLElement, Record<string, unknown>>(
+  ({ children, ...props }, ref) => {
+    const cleanProps = stripMotionProps(props);
+    return React.createElement(element, { ...cleanProps, ref }, children);
+  }
+);
+
+// Mock framer-motion with proper DOM prop stripping
 vi.mock('framer-motion', () => ({
   motion: {
-    div: 'div',
-    section: 'section',
-    h1: 'h1',
-    h2: 'h2',
-    h3: 'h3',
-    p: 'p',
-    button: 'button',
-    form: 'form',
-    input: 'input',
-    textarea: 'textarea',
-    nav: 'nav',
-    ul: 'ul',
-    li: 'li',
-    a: 'a',
-    img: 'img',
+    div: createMotionComponent('div'),
+    section: createMotionComponent('section'),
+    h1: createMotionComponent('h1'),
+    h2: createMotionComponent('h2'),
+    h3: createMotionComponent('h3'),
+    p: createMotionComponent('p'),
+    button: createMotionComponent('button'),
+    form: createMotionComponent('form'),
+    input: createMotionComponent('input'),
+    textarea: createMotionComponent('textarea'),
+    nav: createMotionComponent('nav'),
+    ul: createMotionComponent('ul'),
+    li: createMotionComponent('li'),
+    a: createMotionComponent('a'),
+    img: createMotionComponent('img'),
+    span: createMotionComponent('span'),
+    label: createMotionComponent('label'),
   },
   AnimatePresence: ({ children }: { children: React.ReactNode }) => children,
   useAnimation: () => ({
@@ -62,7 +107,7 @@ vi.mock('framer-motion', () => ({
     stop: vi.fn(),
     set: vi.fn(),
   }),
-  useInView: () => true,
+  useInView: () => [true, vi.fn()],
 }));
 
 // Cleanup after each test
