@@ -1,7 +1,7 @@
-import { describe, it, expect } from 'vitest'
+import { describe, it, expect } from 'vitest';
 
-describe('RrishMusic Tests', () => {
-  it('should always pass', () => {
-    expect(true).toBe(true)
-  })
-})
+describe('simple Tests', () => {
+  it('should pass basic test', () => {
+    expect(true).toBe(true);
+  });
+});
