@@ -246,12 +246,30 @@ const defaultLessonPackages: LessonPackage[] = [
   }
 ];
 
+// Default hero content that matches what Hero component expects
+const defaultHeroContent = {
+  title: "Professional Piano Performance & Teaching",
+  subtitle: "Live Music • Personalized Lessons • Creative Collaboration",
+  description: "Experience the joy of music through live piano performance and personalized piano lessons. Perfect for events, learning, and creative projects.",
+  primaryCTA: {
+    text: "Book Performance",
+    href: "/performance",
+    variant: "primary" as const
+  },
+  secondaryCTA: {
+    text: "Start Piano Lessons", 
+    href: "/teaching",
+    variant: "secondary" as const
+  }
+};
+
 /**
  * Main content hook - provides all content with optimal performance
  */
 export const useContent = () => {
   return useMemo(() => ({
     home: defaultHomeContent,
+    hero: defaultHeroContent, // Add hero section for Hero component
     teaching: teachingContent as ServiceContent,
     performance: defaultPerformanceContent,
     collaboration: collaborationContent as ServiceContent,
@@ -300,10 +318,14 @@ export const useLessonPackages = () => {
   }), []);
 };
 
-// Alias for section content access
+// Enhanced section content access with expected interface
 export const useSectionContent = (section: string) => {
   const content = useContent();
-  return content[section as keyof typeof content];
+  return useMemo(() => ({
+    data: content[section as keyof typeof content],
+    loading: false,
+    error: null
+  }), [content, section]);
 };
 
 // Default export for backward compatibility
