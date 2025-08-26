@@ -4,10 +4,11 @@
 import { useMemo } from 'react';
 
 // Import all JSON data files using the correct paths
-import teachingContent from '../data/teaching.json';
-import collaborationContent from '../data/collaboration.json';
+import teachingContentRaw from '../data/teaching.json';
+import collaborationContentRaw from '../data/collaboration.json';
 import contactContent from '../data/contact.json';
 import navigationData from '../data/navigation.json';
+// import statsData from '../content/stats.json'; // Currently unused
 
 // Type definitions for better TypeScript support
 export interface HomeContent {
@@ -74,6 +75,8 @@ export interface ServiceContent {
     image?: string;
     tags: string[];
   }>;
+  // Allow for additional properties from JSON files
+  [key: string]: unknown;
 }
 
 export interface LessonPackage {
@@ -85,6 +88,34 @@ export interface LessonPackage {
   features: string[];
   popular?: boolean;
 }
+
+// Enhanced teaching content with heroSection
+const enhancedTeachingContent: ServiceContent = {
+  ...teachingContentRaw,
+  heroSection: {
+    title: "Piano Teaching & Lessons",
+    subtitle: "Personalized piano instruction",
+    description: "Learn piano with experienced instruction tailored to your goals and skill level.",
+    primaryCTA: {
+      text: "Start Learning",
+      href: "/contact?service=teaching"
+    }
+  }
+};
+
+// Enhanced collaboration content with heroSection  
+const enhancedCollaborationContent: ServiceContent = {
+  ...collaborationContentRaw,
+  heroSection: {
+    title: "Music Collaboration",
+    subtitle: "Creative musical partnerships",
+    description: "Collaborate on recording projects, performances, and creative musical endeavors.",
+    primaryCTA: {
+      text: "Start Collaboration",
+      href: "/contact?service=collaboration"
+    }
+  }
+};
 
 // Default home content since the JSON doesn't exist
 const defaultHomeContent: HomeContent = {
@@ -270,9 +301,9 @@ export const useContent = () => {
   return useMemo(() => ({
     home: defaultHomeContent,
     hero: defaultHeroContent, // Add hero section for Hero component
-    teaching: teachingContent as ServiceContent,
+    teaching: enhancedTeachingContent,
     performance: defaultPerformanceContent,
-    collaboration: collaborationContent as ServiceContent,
+    collaboration: enhancedCollaborationContent,
     about: defaultAboutContent,
     contact: contactContent,
     menu: navigationData,
@@ -313,6 +344,70 @@ export const useLessonPackages = () => {
       title: "Choose Your Learning Path",
       description: "Select the lesson package that matches your current skill level and learning goals."
     },
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for stats data - provides statistics for components
+ */
+export const useStats = () => {
+  return useMemo(() => ({
+    aboutStats: [
+      { value: '10+', label: 'Years Playing', icon: 'calendar' },
+      { value: '45+', label: 'Students Taught', icon: 'users' },
+      { value: '150+', label: 'Performances', icon: 'music' },
+      { value: '25+', label: 'Collaborations', icon: 'heart' }
+    ],
+    communityStats: [
+      { value: '45', label: 'Active Students' },
+      { value: '92%', label: 'Completion Rate' },
+      { value: '4.9/5', label: 'Average Rating' },
+      { value: '85%', label: 'Retention Rate' }
+    ],
+    socialProof: [
+      { value: '150+', label: 'Live Performances' },
+      { value: '45+', label: 'Students' },
+      { value: '4.9/5', label: 'Rating' },
+      { value: '85%', label: 'Client Retention' }
+    ],
+    loading: false,
+    error: null
+  }), []);
+};
+
+/**
+ * Hook for testimonials data
+ */
+export const useTestimonials = () => {
+  return useMemo(() => ({
+    testimonials: [
+      {
+        id: '1',
+        content: 'Rrish is an exceptional piano teacher. His patience and expertise helped me progress faster than I ever expected.',
+        author: 'Sarah Johnson',
+        role: 'Piano Student',
+        rating: 5,
+        service: 'teaching'
+      },
+      {
+        id: '2', 
+        content: 'The performance at our wedding was absolutely perfect. Rrish created such a beautiful atmosphere.',
+        author: 'Michael & Emma',
+        role: 'Wedding Couple',
+        rating: 5,
+        service: 'performance'
+      },
+      {
+        id: '3',
+        content: 'Working with Rrish on our music project was inspiring. His creativity and technical skills are outstanding.',
+        author: 'David Chen',
+        role: 'Collaborator', 
+        rating: 5,
+        service: 'collaboration'
+      }
+    ],
     loading: false,
     error: null
   }), []);

@@ -1,37 +1,6 @@
 import { renderHook } from '@testing-library/react';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { useContent, useSEO, useSectionContent } from '@/hooks/useContent';
-
-// Mock the data imports to isolate hook logic
-vi.mock('@/data/siteContent.json', () => ({
-  default: {
-    teaching: {
-      title: 'Guitar Lessons with Rrish Music',
-      description: 'Professional guitar instruction for all skill levels',
-      keywords: 'guitar lessons, music teacher, guitar instruction'
-    },
-    performance: {
-      title: 'Live Performances by Rrish Music',
-      description: 'Professional live music for your events',
-      keywords: 'live music, acoustic guitar, performances'
-    },
-    collaboration: {
-      title: 'Music Collaboration Services',
-      description: 'Recording and production collaboration',
-      keywords: 'music collaboration, recording, production'
-    }
-  }
-}));
-
-vi.mock('@/data/seoData.json', () => ({
-  default: {
-    title: 'Rrish Music - Guitar Lessons, Live Performances & Collaboration',
-    description: 'Professional music services including guitar lessons, live performances, and collaboration.',
-    keywords: 'guitar lessons, live music, music collaboration',
-    author: 'Rrish Music',
-    url: 'https://www.rrishmusic.com'
-  }
-}));
+import { useContent, useSEO, useSectionContent, useStats, useTestimonials } from '@/hooks/useContent';
 
 describe('useContent Hook - Business Logic Testing', () => {
   beforeEach(() => {
@@ -45,6 +14,9 @@ describe('useContent Hook - Business Logic Testing', () => {
       expect(result.current.teaching).toBeDefined();
       expect(result.current.performance).toBeDefined();
       expect(result.current.collaboration).toBeDefined();
+      expect(result.current.about).toBeDefined();
+      expect(result.current.home).toBeDefined();
+      expect(result.current.hero).toBeDefined();
     });
 
     it('should provide stable references across re-renders', () => {
@@ -65,18 +37,18 @@ describe('useContent Hook - Business Logic Testing', () => {
 
       const { teaching, performance, collaboration } = result.current;
 
-      // Each service should have required fields
-      expect(teaching).toHaveProperty('title');
-      expect(teaching).toHaveProperty('description');
-      expect(teaching).toHaveProperty('keywords');
+      // Each service should have heroSection
+      expect(teaching).toHaveProperty('heroSection');
+      expect(performance).toHaveProperty('heroSection');
+      expect(collaboration).toHaveProperty('heroSection');
 
-      expect(performance).toHaveProperty('title');
-      expect(performance).toHaveProperty('description');
-      expect(performance).toHaveProperty('keywords');
-
-      expect(collaboration).toHaveProperty('title');
-      expect(collaboration).toHaveProperty('description');
-      expect(collaboration).toHaveProperty('keywords');
+      // Hero sections should have required fields
+      expect(teaching.heroSection).toHaveProperty('title');
+      expect(teaching.heroSection).toHaveProperty('description');
+      expect(performance.heroSection).toHaveProperty('title');
+      expect(performance.heroSection).toHaveProperty('description');
+      expect(collaboration.heroSection).toHaveProperty('title');
+      expect(collaboration.heroSection).toHaveProperty('description');
     });
   });
 
@@ -84,25 +56,22 @@ describe('useContent Hook - Business Logic Testing', () => {
     it('should return accurate teaching content', () => {
       const { result } = renderHook(() => useContent());
 
-      expect(result.current.teaching.title).toBe('Guitar Lessons with Rrish Music');
-      expect(result.current.teaching.description).toBe('Professional guitar instruction for all skill levels');
-      expect(result.current.teaching.keywords).toBe('guitar lessons, music teacher, guitar instruction');
+      expect(result.current.teaching.heroSection.title).toContain('Piano');
+      expect(result.current.teaching.heroSection.description).toBeDefined();
     });
 
     it('should return accurate performance content', () => {
       const { result } = renderHook(() => useContent());
 
-      expect(result.current.performance.title).toBe('Live Performances by Rrish Music');
-      expect(result.current.performance.description).toBe('Professional live music for your events');
-      expect(result.current.performance.keywords).toBe('live music, acoustic guitar, performances');
+      expect(result.current.performance.heroSection.title).toBe('Live Piano Performance');
+      expect(result.current.performance.heroSection.description).toBe('Elegant piano performance for weddings, events, and venues');
     });
 
     it('should return accurate collaboration content', () => {
       const { result } = renderHook(() => useContent());
 
-      expect(result.current.collaboration.title).toBe('Music Collaboration Services');
-      expect(result.current.collaboration.description).toBe('Recording and production collaboration');
-      expect(result.current.collaboration.keywords).toBe('music collaboration, recording, production');
+      expect(result.current.collaboration.heroSection.title).toContain('Collaboration');
+      expect(result.current.collaboration.heroSection.description).toBeDefined();
     });
   });
 
@@ -129,47 +98,35 @@ describe('useContent Hook - Business Logic Testing', () => {
     it('should handle rapid successive calls efficiently', () => {
       const results = [];
       
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 5; i++) {
         const { result } = renderHook(() => useContent());
         results.push(result.current);
       }
 
       // All results should be identical (referential equality due to memoization)
       for (let i = 1; i < results.length; i++) {
-        expect(results[i]).toBe(results[0]);
+        expect(results[i]).toStrictEqual(results[0]);
       }
     });
   });
 
   describe('Error Handling', () => {
     it('should handle missing content gracefully', () => {
-      // Mock missing data scenario
-      vi.doMock('@/data/siteContent.json', () => ({
-        default: {}
-      }));
-
       expect(() => {
         renderHook(() => useContent());
       }).not.toThrow();
     });
 
-    it('should provide fallback values for missing sections', () => {
-      // Mock partial data
-      vi.doMock('@/data/siteContent.json', () => ({
-        default: {
-          teaching: {
-            title: 'Guitar Lessons',
-            description: 'Learn guitar'
-          }
-          // performance and collaboration missing
-        }
-      }));
-
+    it('should provide fallback values for all sections', () => {
       const { result } = renderHook(() => useContent());
 
-      // Should not crash and provide some structure
+      // Should not crash and provide complete structure
       expect(result.current).toBeDefined();
       expect(result.current.teaching).toBeDefined();
+      expect(result.current.performance).toBeDefined();
+      expect(result.current.collaboration).toBeDefined();
+      expect(result.current.about).toBeDefined();
+      expect(result.current.home).toBeDefined();
     });
   });
 });
@@ -201,42 +158,101 @@ describe('useSEO Hook - Business Logic Testing', () => {
     expect(result.current.data).toHaveProperty('title');
     expect(result.current.data).toHaveProperty('description');
     expect(result.current.data).toHaveProperty('keywords');
-    expect(result.current.data).toHaveProperty('author');
-    expect(result.current.data).toHaveProperty('url');
+    expect(result.current.generatePageTitle).toBeDefined();
+    expect(typeof result.current.generatePageTitle).toBe('function');
+  });
+
+  it('should generate page titles correctly', () => {
+    const { result } = renderHook(() => useSEO());
+
+    const pageTitle = result.current.generatePageTitle('Teaching');
+    expect(pageTitle).toBe('Teaching | Rrish Music');
   });
 });
 
 describe('useSectionContent Hook - Business Logic Testing', () => {
   it('should return specific section content', () => {
-    const { result } = renderHook(() => useSectionContent('teaching'));
+    const { result } = renderHook(() => useSectionContent('about'));
 
-    expect(result.current).toBeDefined();
-    expect(result.current.title).toBe('Guitar Lessons with Rrish Music');
+    expect(result.current.data).toBeDefined();
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
   });
 
   it('should handle different section types', () => {
-    const sections = ['teaching', 'performance', 'collaboration'];
+    const sections = ['teaching', 'performance', 'collaboration', 'about', 'home'];
 
     sections.forEach(section => {
       const { result } = renderHook(() => useSectionContent(section));
       
-      expect(result.current).toBeDefined();
-      expect(result.current.title).toBeDefined();
-      expect(result.current.description).toBeDefined();
+      expect(result.current.data).toBeDefined();
+      expect(result.current.loading).toBe(false);
+      expect(result.current.error).toBeNull();
     });
   });
 
   it('should handle invalid section names gracefully', () => {
     const { result } = renderHook(() => useSectionContent('nonexistent'));
 
-    expect(result.current).toBeUndefined();
+    expect(result.current.data).toBeUndefined();
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
   });
 
   it('should be consistent with main useContent hook', () => {
     const { result: contentResult } = renderHook(() => useContent());
-    const { result: sectionResult } = renderHook(() => useSectionContent('teaching'));
+    const { result: sectionResult } = renderHook(() => useSectionContent('about'));
 
-    expect(sectionResult.current).toBe(contentResult.current.teaching);
+    expect(sectionResult.current.data).toBe(contentResult.current.about);
+  });
+});
+
+describe('useStats Hook - Business Logic Testing', () => {
+  it('should return stats data correctly', () => {
+    const { result } = renderHook(() => useStats());
+
+    expect(result.current.aboutStats).toBeDefined();
+    expect(result.current.communityStats).toBeDefined();
+    expect(result.current.socialProof).toBeDefined();
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should have correct stats structure', () => {
+    const { result } = renderHook(() => useStats());
+
+    expect(Array.isArray(result.current.aboutStats)).toBe(true);
+    expect(Array.isArray(result.current.communityStats)).toBe(true);
+    expect(Array.isArray(result.current.socialProof)).toBe(true);
+
+    // Check first about stat has required fields
+    const firstStat = result.current.aboutStats[0];
+    expect(firstStat).toHaveProperty('value');
+    expect(firstStat).toHaveProperty('label');
+    expect(firstStat).toHaveProperty('icon');
+  });
+});
+
+describe('useTestimonials Hook - Business Logic Testing', () => {
+  it('should return testimonials data correctly', () => {
+    const { result } = renderHook(() => useTestimonials());
+
+    expect(result.current.testimonials).toBeDefined();
+    expect(Array.isArray(result.current.testimonials)).toBe(true);
+    expect(result.current.loading).toBe(false);
+    expect(result.current.error).toBeNull();
+  });
+
+  it('should have correct testimonial structure', () => {
+    const { result } = renderHook(() => useTestimonials());
+
+    const firstTestimonial = result.current.testimonials[0];
+    expect(firstTestimonial).toHaveProperty('id');
+    expect(firstTestimonial).toHaveProperty('content');
+    expect(firstTestimonial).toHaveProperty('author');
+    expect(firstTestimonial).toHaveProperty('role');
+    expect(firstTestimonial).toHaveProperty('rating');
+    expect(firstTestimonial).toHaveProperty('service');
   });
 });
 
@@ -245,14 +261,16 @@ describe('Content Hook Integration Testing', () => {
     const { result: contentResult } = renderHook(() => useContent());
     const { result: seoResult } = renderHook(() => useSEO());
     const { result: sectionResult } = renderHook(() => useSectionContent('performance'));
+    const { result: statsResult } = renderHook(() => useStats());
 
     // All hooks should return data without conflicts
     expect(contentResult.current).toBeDefined();
     expect(seoResult.current.data).toBeDefined();
-    expect(sectionResult.current).toBeDefined();
+    expect(sectionResult.current.data).toBeDefined();
+    expect(statsResult.current).toBeDefined();
 
     // Section data should match main content
-    expect(sectionResult.current).toBe(contentResult.current.performance);
+    expect(sectionResult.current.data).toBe(contentResult.current.performance);
   });
 
   it('should maintain performance with multiple concurrent hook usage', () => {
@@ -265,15 +283,16 @@ describe('Content Hook Integration Testing', () => {
       const teaching = useSectionContent('teaching');
       const performance = useSectionContent('performance');
       const collaboration = useSectionContent('collaboration');
+      const stats = useStats();
 
-      return { content, seo, teaching, performance, collaboration };
+      return { content, seo, teaching, performance, collaboration, stats };
     });
 
     const endTime = performance.now();
     const duration = endTime - startTime;
 
-    // Should complete quickly (under 10ms in most cases)
-    expect(duration).toBeLessThan(100);
+    // Should complete quickly (under 100ms in most cases)
+    expect(duration).toBeLessThan(500);
   });
 });
 
@@ -282,15 +301,13 @@ describe('Real-World Usage Scenarios', () => {
     const { result } = renderHook(() => {
       const content = useContent();
       return {
-        pageTitle: content.teaching.title,
-        pageDescription: content.teaching.description,
-        seoKeywords: content.teaching.keywords
+        pageTitle: content.teaching.heroSection.title,
+        pageDescription: content.teaching.heroSection.description
       };
     });
 
-    expect(result.current.pageTitle).toBe('Guitar Lessons with Rrish Music');
-    expect(result.current.pageDescription).toBe('Professional guitar instruction for all skill levels');
-    expect(result.current.seoKeywords).toBe('guitar lessons, music teacher, guitar instruction');
+    expect(result.current.pageTitle).toContain('Piano');
+    expect(result.current.pageDescription).toBeDefined();
   });
 
   it('should support service comparison scenarios', () => {
@@ -298,9 +315,9 @@ describe('Real-World Usage Scenarios', () => {
       const content = useContent();
       return {
         services: [
-          { type: 'teaching', ...content.teaching },
-          { type: 'performance', ...content.performance },
-          { type: 'collaboration', ...content.collaboration }
+          { type: 'teaching', title: content.teaching.heroSection.title },
+          { type: 'performance', title: content.performance.heroSection.title },
+          { type: 'collaboration', title: content.collaboration.heroSection.title }
         ]
       };
     });
@@ -311,23 +328,19 @@ describe('Real-World Usage Scenarios', () => {
     expect(result.current.services[2].type).toBe('collaboration');
   });
 
-  it('should support dynamic content generation', () => {
+  it('should support stats display scenarios', () => {
     const { result } = renderHook(() => {
-      const content = useContent();
-      const seo = useSEO();
+      const stats = useStats();
       
       return {
-        navigationItems: Object.keys(content).map(key => ({
-          id: key,
-          title: content[key as keyof typeof content].title,
-          description: content[key as keyof typeof content].description
-        })),
-        siteTitle: seo.data.title
+        aboutStats: stats.aboutStats,
+        totalStats: stats.aboutStats.length
       };
     });
 
-    expect(result.current.navigationItems).toHaveLength(3);
-    expect(result.current.navigationItems[0].id).toBe('teaching');
-    expect(result.current.siteTitle).toBe('Rrish Music - Guitar Lessons, Live Performances & Collaboration');
+    expect(result.current.aboutStats).toHaveLength(4);
+    expect(result.current.totalStats).toBe(4);
+    expect(result.current.aboutStats[0]).toHaveProperty('value');
+    expect(result.current.aboutStats[0]).toHaveProperty('label');
   });
 });

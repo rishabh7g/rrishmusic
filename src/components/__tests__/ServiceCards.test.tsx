@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { BrowserRouter } from 'react-router-dom';
@@ -306,7 +306,7 @@ describe('ServiceCard Component - Business Logic Testing', () => {
         <ServiceCard service={stableService} />
       );
 
-      const initialElement = screen.getByText('Stable Service');
+      screen.getByText('Stable Service');
       
       // Re-render with same props
       rerender(

@@ -9,7 +9,7 @@ import { safeNavigate } from '@/utils/routing';
 
 interface Props {
   children: ReactNode;
-  fallback?: ReactNode;
+  fallback?: ReactNode | ((props: { error: Error; resetError: () => void }) => ReactNode);
   onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
@@ -59,6 +59,18 @@ class ErrorBoundary extends Component<Props, State> {
     }
   }
 
+  public componentDidUpdate(prevProps: Props): void {
+    // Reset error boundary when children change
+    if (this.state.hasError && prevProps.children !== this.props.children) {
+      this.setState({
+        hasError: false,
+        error: null,
+        errorInfo: null,
+        retryCount: 0,
+      });
+    }
+  }
+
   private logErrorToService(error: Error, errorInfo: ErrorInfo): void {
     // Placeholder for error logging service integration
     // e.g., Sentry, LogRocket, or custom analytics
@@ -92,6 +104,15 @@ class ErrorBoundary extends Component<Props, State> {
       error: null,
       errorInfo: null,
       retryCount: newRetryCount,
+    });
+  };
+
+  private resetError = (): void => {
+    this.setState({
+      hasError: false,
+      error: null,
+      errorInfo: null,
+      retryCount: 0,
     });
   };
 
@@ -182,18 +203,21 @@ Thank you!`);
   };
 
   public render(): ReactNode {
-    if (this.state.hasError) {
-      // Custom fallback UI
+    if (this.state.hasError && this.state.error) {
+      // Custom fallback UI with error and resetError props
       if (this.props.fallback) {
+        if (typeof this.props.fallback === 'function') {
+          return this.props.fallback({ error: this.state.error, resetError: this.resetError });
+        }
         return this.props.fallback;
       }
 
       // Enhanced fallback UI with multiple recovery options
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50" role="alert">
           <div className="max-w-md mx-auto text-center p-6">
             <div className="text-6xl mb-4">🎵</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2" role="heading" aria-level={1}>
               Oops! Something went wrong
             </h1>
             <p className="text-gray-600 mb-6">
@@ -243,7 +267,7 @@ Thank you!`);
 
             {/* User-friendly error explanation */}
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg text-sm text-blue-800">
-              <p className="font-medium mb-1">What happened?</p>
+              <p className="font-medium mb-1" role="heading" aria-level={2}>What happened?</p>
               <p className="text-blue-600">
                 A technical issue occurred while loading the page. This is rare and we're constantly working to prevent these errors.
               </p>

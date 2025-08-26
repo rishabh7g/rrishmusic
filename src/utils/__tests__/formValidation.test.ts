@@ -282,8 +282,8 @@ describe('Form Validation Utilities - Business Logic Testing', () => {
       expect(validateRequired('  Valid  ')).toBe(true);
       expect(validateRequired('')).toBe(false);
       expect(validateRequired('   ')).toBe(false);
-      expect(validateRequired(null as any)).toBe(false);
-      expect(validateRequired(undefined as any)).toBe(false);
+      expect(validateRequired(null as unknown)).toBe(false);
+      expect(validateRequired(undefined as unknown)).toBe(false);
     });
   });
 
@@ -293,7 +293,7 @@ describe('Form Validation Utilities - Business Logic Testing', () => {
       expect(validateMinLength('Hi', 3)).toBe(false);
       expect(validateMinLength('  Hi  ', 2)).toBe(true);
       expect(validateMinLength('', 1)).toBe(false);
-      expect(validateMinLength(null as any, 1)).toBe(false);
+      expect(validateMinLength(null as unknown, 1)).toBe(false);
     });
 
     it('should validate maximum length correctly', () => {
@@ -301,7 +301,7 @@ describe('Form Validation Utilities - Business Logic Testing', () => {
       expect(validateMaxLength('This is too long', 5)).toBe(false);
       expect(validateMaxLength('  Hi  ', 2)).toBe(true);
       expect(validateMaxLength('', 5)).toBe(true);
-      expect(validateMaxLength(null as any, 5)).toBe(true); // Optional field
+      expect(validateMaxLength(null as unknown, 5)).toBe(true); // Optional field
     });
   });
 

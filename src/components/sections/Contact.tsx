@@ -234,9 +234,9 @@ export function Contact() {
                   <div>
                     <h4 className="font-semibold text-lg">Follow</h4>
                     <div className="flex space-x-4">
-                      {contact.social.instagram && (
+                      {contact.social?.instagram && (
                         <a 
-                          href={contact.social.instagram}
+                          href={contact.social?.instagram}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
@@ -244,9 +244,9 @@ export function Contact() {
                           Instagram
                         </a>
                       )}
-                      {contact.social.youtube && (
+                      {contact.social?.youtube && (
                         <a 
-                          href={contact.social.youtube}
+                          href={contact.social?.youtube}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
@@ -254,9 +254,9 @@ export function Contact() {
                           YouTube
                         </a>
                       )}
-                      {contact.social.linkedin && (
+                      {contact.social?.linkedin && (
                         <a 
-                          href={contact.social.linkedin}
+                          href={contact.social?.linkedin}
                           target="_blank"
                           rel="noopener noreferrer"
                           className="text-brand-yellow-accent hover:text-white transition-colors duration-300"
