@@ -31,15 +31,25 @@ const mockMatchMedia = (matches: boolean) => ({
 });
 
 describe('themeHelpers', () => {
+  // Storage mocks
+  let mockStorage: { [key: string]: string } = {};
+  
   beforeEach(() => {
+    // Clear storage
+    mockStorage = {};
+    
     // Reset DOM
     Object.defineProperty(global, 'window', {
       value: {
         matchMedia: vi.fn(),
         localStorage: {
-          getItem: vi.fn(),
-          setItem: vi.fn(),
-          removeItem: vi.fn(),
+          getItem: vi.fn((key: string) => mockStorage[key] || null),
+          setItem: vi.fn((key: string, value: string) => {
+            mockStorage[key] = value;
+          }),
+          removeItem: vi.fn((key: string) => {
+            delete mockStorage[key];
+          }),
         },
       },
       writable: true,
@@ -96,28 +106,25 @@ describe('themeHelpers', () => {
     it('should save theme to localStorage', () => {
       saveThemeToStorage('dark');
       
-      expect(window.localStorage.setItem).toHaveBeenCalledWith(THEME_STORAGE_KEY, 'dark');
+      expect(mockStorage[THEME_STORAGE_KEY]).toBe('dark');
     });
 
     it('should load theme from localStorage', () => {
-      window.localStorage.getItem = vi.fn(() => 'dark');
+      mockStorage[THEME_STORAGE_KEY] = 'dark';
       
       const result = loadThemeFromStorage();
       
       expect(result).toBe('dark');
-      expect(window.localStorage.getItem).toHaveBeenCalledWith(THEME_STORAGE_KEY);
     });
 
     it('should return default theme when localStorage is empty', () => {
-      window.localStorage.getItem = vi.fn(() => null);
-      
       const result = loadThemeFromStorage();
       
       expect(result).toBe(DEFAULT_THEME_MODE);
     });
 
     it('should return default theme when invalid theme in storage', () => {
-      window.localStorage.getItem = vi.fn(() => 'invalid-theme');
+      mockStorage[THEME_STORAGE_KEY] = 'invalid-theme';
       
       const result = loadThemeFromStorage();
       
@@ -277,7 +284,7 @@ describe('themeHelpers', () => {
     });
 
     it('should apply theme immediately and add theme-loaded class', () => {
-      window.localStorage.getItem = vi.fn(() => 'dark');
+      mockStorage[THEME_STORAGE_KEY] = 'dark';
       
       preventFOUC();
       
