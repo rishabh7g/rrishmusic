@@ -18,9 +18,11 @@ import {
   loadThemeFromStorage,
   resolveActiveTheme,
   createSystemThemeListener,
+  createMotionPreferenceListener,
   applyThemeToDocument,
   toggleTheme as toggleThemeHelper,
   getNextThemeMode,
+  getMotionPreference,
 } from '../utils/themeHelpers';
 
 /**
@@ -36,6 +38,9 @@ export interface ThemeContextValue {
   /** System's preferred theme */
   systemTheme: ActiveTheme;
   
+  /** Whether user prefers reduced motion */
+  reducedMotion: boolean;
+  
   /** Complete theme configuration object */
   themeConfig: ThemeConfig;
   
@@ -50,6 +55,9 @@ export interface ThemeContextValue {
   
   /** Cycle through all theme modes (light → dark → system) */
   cycleTheme: () => void;
+  
+  /** Force a theme transition (useful for testing) */
+  forceTransition: () => void;
 }
 
 /**
@@ -74,8 +82,9 @@ export interface ThemeProviderProps {
 /**
  * Theme provider component
  * 
- * Manages theme state, system preference detection, and localStorage persistence.
- * Automatically applies theme changes to the document and provides theme context.
+ * Manages theme state, system preference detection, localStorage persistence,
+ * and motion preference detection. Automatically applies theme changes to the
+ * document and provides theme context with enhanced transition animations.
  */
 export function ThemeProvider({
   children,
@@ -90,6 +99,10 @@ export function ThemeProvider({
   
   const [systemTheme, setSystemTheme] = useState<ActiveTheme>(() => {
     return getSystemTheme();
+  });
+  
+  const [reducedMotion, setReducedMotion] = useState<boolean>(() => {
+    return getMotionPreference();
   });
   
   const [isInitialized, setIsInitialized] = useState(false);
@@ -124,28 +137,57 @@ export function ThemeProvider({
     setTheme(nextMode);
   };
 
+  /**
+   * Forces a theme transition (useful for testing or manual triggers)
+   */
+  const forceTransition = () => {
+    applyThemeToDocument(activeTheme, true);
+  };
+
   // Apply theme to document when active theme changes
   useEffect(() => {
-    applyThemeToDocument(activeTheme);
-  }, [activeTheme]);
+    if (isInitialized) {
+      applyThemeToDocument(activeTheme, false);
+    }
+  }, [activeTheme, isInitialized]);
 
   // Set up system theme listener
   useEffect(() => {
     const cleanup = createSystemThemeListener((newSystemTheme) => {
       setSystemTheme(newSystemTheme);
+      
+      // If in system mode, this will trigger a theme change
+      if (mode === 'system') {
+        // The activeTheme will automatically update due to resolveActiveTheme
+        // No need to manually call setTheme here
+      }
     });
 
-    // Mark as initialized after setting up listeners
-    setIsInitialized(true);
+    return cleanup;
+  }, [mode]);
+
+  // Set up motion preference listener
+  useEffect(() => {
+    const cleanup = createMotionPreferenceListener((newReducedMotion) => {
+      setReducedMotion(newReducedMotion);
+    });
 
     return cleanup;
   }, []);
 
-  // Apply theme immediately on mount to prevent FOUC
+  // Initialize theme system
   useEffect(() => {
+    // Apply theme immediately on mount to prevent FOUC
     if (preventFOUC) {
-      applyThemeToDocument(activeTheme);
+      applyThemeToDocument(activeTheme, false);
     }
+
+    // Mark as initialized after initial theme application
+    const initTimer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 50); // Small delay to ensure styles are applied
+
+    return () => clearTimeout(initTimer);
   }, [preventFOUC, activeTheme]);
 
   // Context value
@@ -153,11 +195,13 @@ export function ThemeProvider({
     mode,
     activeTheme,
     systemTheme,
+    reducedMotion,
     themeConfig,
     isInitialized,
     setTheme,
     toggleTheme,
     cycleTheme,
+    forceTransition,
   };
 
   return (

@@ -1,31 +1,30 @@
 /**
- * Theme Management Hook
+ * Theme Hook
  * 
- * Provides convenient access to theme state and controls with additional
- * utilities for theme-aware component development.
+ * Custom hook that provides convenient access to theme state and controls.
+ * Wraps the ThemeContext with additional derived values and utility functions.
  */
 
-import { useCallback, useMemo } from 'react';
-import { useThemeContext, type ThemeContextValue } from '../contexts/ThemeContext';
-import { 
-  type ThemeMode, 
-  type ActiveTheme,
-  type ThemeColors,
-  lightThemeColors,
-  darkThemeColors,
-} from '../styles/themes';
-import {
-  getThemeModeLabel,
-  getThemeModeIcon,
-  isValidThemeMode,
-} from '../utils/themeHelpers';
+import { useMemo } from 'react';
+import { useThemeContext } from '../contexts/ThemeContext';
+import { getThemeModeLabel } from '../utils/themeHelpers';
+import type { ThemeMode, ThemeConfig } from '../styles/themes';
 
 /**
- * Extended theme hook interface with additional utilities
+ * Enhanced theme hook return type
  */
-export interface UseThemeReturn extends ThemeContextValue {
-  /** Quick access to current theme colors */
-  colors: ThemeColors;
+export interface UseThemeReturn {
+  /** Current theme mode (light, dark, or system) */
+  mode: ThemeMode;
+  
+  /** Currently active theme (light or dark) */
+  activeTheme: 'light' | 'dark';
+  
+  /** System's preferred theme */
+  systemTheme: 'light' | 'dark';
+  
+  /** Whether user prefers reduced motion */
+  reducedMotion: boolean;
   
   /** Whether the current theme is dark */
   isDark: boolean;
@@ -33,208 +32,247 @@ export interface UseThemeReturn extends ThemeContextValue {
   /** Whether the current theme is light */
   isLight: boolean;
   
-  /** Whether system theme is being used */
+  /** Whether using system theme mode */
   isSystemMode: boolean;
+  
+  /** Whether theme system has been initialized */
+  isInitialized: boolean;
   
   /** Human-readable label for current theme mode */
   modeLabel: string;
   
-  /** Emoji icon for current theme mode */
-  modeIcon: string;
+  /** Complete theme configuration object */
+  themeConfig: ThemeConfig;
   
-  /** Set theme with validation */
-  setThemeSafe: (mode: unknown) => boolean;
+  /** Set theme mode */
+  setTheme: (mode: ThemeMode) => void;
   
-  /** Get colors for specific theme */
-  getThemeColors: (theme: ActiveTheme) => ThemeColors;
+  /** Toggle between light and dark themes */
+  toggleTheme: () => void;
   
-  /** Check if theme matches system preference */
-  matchesSystem: boolean;
+  /** Cycle through all theme modes (light → dark → system) */
+  cycleTheme: () => void;
+  
+  /** Force a theme transition (useful for testing) */
+  forceTransition: () => void;
+  
+  /** Check if transitions are enabled (respects reduced motion) */
+  transitionsEnabled: boolean;
+  
+  /** Get the opposite theme */
+  oppositeTheme: 'light' | 'dark';
 }
 
 /**
- * Theme management hook
+ * Custom theme hook with enhanced functionality
  * 
- * Provides comprehensive theme state access and controls with additional
- * utilities for theme-aware development. Extends the base theme context
- * with computed properties and helper methods.
- * 
- * @returns Extended theme interface with state, controls, and utilities
+ * Provides comprehensive theme state management and utility functions
+ * including motion preference detection and transition controls.
  * 
  * @example
  * ```tsx
- * import { useTheme } from '@/hooks/useTheme';
- * 
- * const MyComponent = () => {
+ * function MyComponent() {
  *   const { 
- *     activeTheme, 
- *     colors, 
  *     isDark, 
- *     toggleTheme,
- *     modeLabel 
+ *     cycleTheme, 
+ *     transitionsEnabled, 
+ *     reducedMotion 
  *   } = useTheme();
- * 
+ *   
  *   return (
- *     <div style={{ backgroundColor: colors.background }}>
- *       <h1 style={{ color: colors.text }}>
- *         Current theme: {modeLabel}
- *       </h1>
- *       <button onClick={toggleTheme}>
- *         Switch to {isDark ? 'light' : 'dark'} theme
+ *     <div className={`${isDark ? 'dark-theme' : 'light-theme'} ${
+ *       transitionsEnabled ? 'theme-transition' : ''
+ *     }`}>
+ *       <button onClick={cycleTheme}>
+ *         Toggle Theme
  *       </button>
+ *       {reducedMotion && <p>Reduced motion detected</p>}
  *     </div>
  *   );
- * };
+ * }
  * ```
  */
-export const useTheme = (): UseThemeReturn => {
-  const themeContext = useThemeContext();
-  
-  const {
-    mode,
-    activeTheme,
-    systemTheme,
-    themeConfig,
-    isInitialized,
-    setTheme,
-    toggleTheme,
-    cycleTheme,
-  } = themeContext;
+export function useTheme(): UseThemeReturn {
+  const context = useThemeContext();
 
-  // Computed properties
-  const colors = useMemo(() => themeConfig.colors, [themeConfig.colors]);
-  const isDark = activeTheme === 'dark';
-  const isLight = activeTheme === 'light';
-  const isSystemMode = mode === 'system';
-  const modeLabel = getThemeModeLabel(mode);
-  const modeIcon = getThemeModeIcon(mode);
-  const matchesSystem = activeTheme === systemTheme;
+  // Memoize derived values for performance
+  const derivedValues = useMemo(() => {
+    const isDark = context.activeTheme === 'dark';
+    const isLight = context.activeTheme === 'light';
+    const isSystemMode = context.mode === 'system';
+    const modeLabel = getThemeModeLabel(context.mode);
+    const transitionsEnabled = context.isInitialized && !context.reducedMotion;
+    const oppositeTheme = isDark ? 'light' : 'dark';
 
-  // Helper methods
-  const setThemeSafe = useCallback((unknownMode: unknown): boolean => {
-    if (isValidThemeMode(unknownMode)) {
-      setTheme(unknownMode);
-      return true;
+    return {
+      isDark,
+      isLight,
+      isSystemMode,
+      modeLabel,
+      transitionsEnabled,
+      oppositeTheme,
+    };
+  }, [
+    context.activeTheme, 
+    context.mode, 
+    context.isInitialized, 
+    context.reducedMotion
+  ]);
+
+  return {
+    // Core context values
+    mode: context.mode,
+    activeTheme: context.activeTheme,
+    systemTheme: context.systemTheme,
+    reducedMotion: context.reducedMotion,
+    isInitialized: context.isInitialized,
+    themeConfig: context.themeConfig,
+    
+    // Theme controls
+    setTheme: context.setTheme,
+    toggleTheme: context.toggleTheme,
+    cycleTheme: context.cycleTheme,
+    forceTransition: context.forceTransition,
+    
+    // Derived values
+    ...derivedValues,
+  } as const;
+}
+
+/**
+ * Hook for theme-aware CSS classes
+ * 
+ * Returns commonly used CSS class combinations based on current theme state.
+ * Useful for conditional styling without repeating theme logic.
+ * 
+ * @example
+ * ```tsx
+ * function MyComponent() {
+ *   const classes = useThemeClasses();
+ *   
+ *   return (
+ *     <div className={classes.background}>
+ *       <h1 className={classes.text}>Title</h1>
+ *       <button className={classes.button}>Action</button>
+ *     </div>
+ *   );
+ * }
+ * ```
+ */
+export function useThemeClasses() {
+  const { isDark, transitionsEnabled } = useTheme();
+
+  return useMemo(() => {
+    const transition = transitionsEnabled ? 'theme-transition' : '';
+    const transitionFast = transitionsEnabled ? 'theme-transition-fast' : '';
+
+    return {
+      // Background classes
+      background: `bg-theme-bg ${transition}`,
+      backgroundSecondary: `bg-theme-bg-secondary ${transition}`,
+      backgroundTertiary: `bg-theme-bg-tertiary ${transition}`,
+      
+      // Text classes
+      text: `text-theme-text ${transition}`,
+      textSecondary: `text-theme-text-secondary ${transition}`,
+      textMuted: `text-theme-text-muted ${transition}`,
+      
+      // Border classes
+      border: `border-theme-border ${transition}`,
+      borderHover: `hover:border-theme-border-hover ${transitionFast}`,
+      
+      // Button classes
+      button: `bg-theme-primary text-white hover:bg-theme-primary-hover ${transitionFast}`,
+      buttonSecondary: `bg-theme-bg-secondary text-theme-text border border-theme-border hover:bg-theme-bg-tertiary ${transitionFast}`,
+      
+      // Card classes
+      card: `bg-theme-bg-secondary border border-theme-border shadow-theme ${transition}`,
+      
+      // Utility classes
+      transition,
+      transitionFast,
+      transitionColors: transitionsEnabled ? 'theme-transition-colors' : '',
+      transitionShadows: transitionsEnabled ? 'theme-transition-shadows' : '',
+      
+      // Theme mode indicators
+      themeMode: isDark ? 'theme-dark' : 'theme-light',
+    };
+  }, [isDark, transitionsEnabled]);
+}
+
+/**
+ * Hook for theme-aware animations
+ * 
+ * Provides animation configurations that respect user's motion preferences.
+ * 
+ * @example
+ * ```tsx
+ * function AnimatedComponent() {
+ *   const animations = useThemeAnimations();
+ *   
+ *   return (
+ *     <motion.div
+ *       variants={animations.fadeIn}
+ *       initial="hidden"
+ *       animate="visible"
+ *     >
+ *       Content
+ *     </motion.div>
+ *   );
+ * }
+ * ```
+ */
+export function useThemeAnimations() {
+  const { reducedMotion, transitionsEnabled } = useTheme();
+
+  return useMemo(() => {
+    if (reducedMotion || !transitionsEnabled) {
+      // Return minimal animations for reduced motion
+      return {
+        fadeIn: {
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { duration: 0 } }
+        },
+        slideIn: {
+          hidden: { opacity: 0 },
+          visible: { opacity: 1, transition: { duration: 0 } }
+        },
+        scale: {
+          hover: { scale: 1 },
+          tap: { scale: 1 }
+        }
+      };
     }
-    console.warn('Invalid theme mode provided:', unknownMode);
-    return false;
-  }, [setTheme]);
 
-  const getThemeColors = useCallback((theme: ActiveTheme): ThemeColors => {
-    return theme === 'dark' ? darkThemeColors : lightThemeColors;
-  }, []);
-
-  return {
-    // Base context values
-    mode,
-    activeTheme,
-    systemTheme,
-    themeConfig,
-    isInitialized,
-    setTheme,
-    toggleTheme,
-    cycleTheme,
-    
-    // Extended properties
-    colors,
-    isDark,
-    isLight,
-    isSystemMode,
-    modeLabel,
-    modeIcon,
-    matchesSystem,
-    
-    // Helper methods
-    setThemeSafe,
-    getThemeColors,
-  };
-};
-
-/**
- * Simplified theme hook that only returns essential theme information
- * Useful for components that only need basic theme access
- */
-export const useThemeColors = (): ThemeColors => {
-  const { colors } = useTheme();
-  return colors;
-};
-
-/**
- * Hook for theme mode information only
- * Useful for theme switcher components
- */
-export const useThemeMode = () => {
-  const { 
-    mode, 
-    activeTheme, 
-    systemTheme, 
-    isSystemMode, 
-    modeLabel, 
-    modeIcon,
-    matchesSystem,
-    setTheme,
-    toggleTheme,
-    cycleTheme,
-  } = useTheme();
-
-  return {
-    mode,
-    activeTheme,
-    systemTheme,
-    isSystemMode,
-    modeLabel,
-    modeIcon,
-    matchesSystem,
-    setTheme,
-    toggleTheme,
-    cycleTheme,
-  };
-};
-
-/**
- * Hook for theme state information only
- * Useful for conditional rendering based on theme
- */
-export const useThemeState = () => {
-  const { 
-    activeTheme, 
-    isDark, 
-    isLight, 
-    isSystemMode, 
-    isInitialized,
-    matchesSystem,
-  } = useTheme();
-
-  return {
-    activeTheme,
-    isDark,
-    isLight,
-    isSystemMode,
-    isInitialized,
-    matchesSystem,
-  };
-};
-
-/**
- * Theme detection hook for SSR-safe theme access
- * Returns theme information with SSR-safe defaults
- */
-export const useThemeDetection = () => {
-  const { 
-    mode, 
-    activeTheme, 
-    systemTheme, 
-    isInitialized,
-  } = useTheme();
-
-  // Provide SSR-safe defaults before initialization
-  return {
-    mode: isInitialized ? mode : 'light' as ThemeMode,
-    activeTheme: isInitialized ? activeTheme : 'light' as ActiveTheme,
-    systemTheme: isInitialized ? systemTheme : 'light' as ActiveTheme,
-    isInitialized,
-    isSSR: !isInitialized,
-  };
-};
+    // Full animations for users who don't prefer reduced motion
+    return {
+      fadeIn: {
+        hidden: { opacity: 0 },
+        visible: { 
+          opacity: 1, 
+          transition: { 
+            duration: 0.3, 
+            ease: [0.4, 0, 0.2, 1] 
+          } 
+        }
+      },
+      slideIn: {
+        hidden: { opacity: 0, y: 20 },
+        visible: { 
+          opacity: 1, 
+          y: 0, 
+          transition: { 
+            duration: 0.4, 
+            ease: [0.4, 0, 0.2, 1] 
+          } 
+        }
+      },
+      scale: {
+        hover: { scale: 1.02, transition: { duration: 0.2 } },
+        tap: { scale: 0.98, transition: { duration: 0.1 } }
+      }
+    };
+  }, [reducedMotion, transitionsEnabled]);
+}
 
 export default useTheme;

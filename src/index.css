@@ -1,60 +1,12 @@
-/* Import Google Fonts */
-@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&family=Open+Sans:wght@300;400;600&family=Dancing+Script:wght@400&display=swap");
-@import "./styles/backgroundImages.css";
-@import "./styles/serviceNavigation.css";
-@import "./styles/categoryNavigation.css";
-@import "./styles/serviceSections.css";
-@import "./styles/responsive.css";
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Custom CSS Variables */
-:root {
-  --scroll-offset: 80px;
-}
-
-/* Base Theme Variables (initialized by theme context) */
-:root {
-  /* These will be overridden by theme context */
-  --color-primary: #3B82F6;
-  --color-primary-hover: #2563EB;
-  --color-primary-active: #1D4ED8;
-  --color-secondary: #6B7280;
-  --color-secondary-hover: #4B5563;
-  --color-secondary-active: #374151;
-  --color-background: #FFFFFF;
-  --color-background-secondary: #F9FAFB;
-  --color-background-tertiary: #F3F4F6;
-  --color-text: #111827;
-  --color-text-secondary: #374151;
-  --color-text-muted: #6B7280;
-  --color-border: #D1D5DB;
-  --color-border-hover: #9CA3AF;
-  --color-divider: #E5E7EB;
-  --color-success: #10B981;
-  --color-warning: #F59E0B;
-  --color-error: #EF4444;
-  --color-info: #3B82F6;
-  --color-accent: #8B5CF6;
-  --color-shadow: rgba(0, 0, 0, 0.1);
-  --color-overlay: rgba(0, 0, 0, 0.5);
-  
-  /* Transition variables */
-  --transition-duration-fast: 150ms;
-  --transition-duration-normal: 300ms;
-  --transition-duration-slow: 500ms;
-  --transition-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
-  --transition-easing-emphasized: cubic-bezier(0.0, 0.0, 0.2, 1);
-  --transition-easing-decelerated: cubic-bezier(0.0, 0.0, 0.2, 1);
-}
-
-/* Smooth scrolling */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Base styles - Mobile First */
+/* CSS Reset and base styles */
 *,
 *::before,
 *::after {
@@ -63,180 +15,328 @@ html {
   padding: 0;
 }
 
+html {
+  height: 100%;
+  overflow-x: hidden;
+}
+
 body {
-  font-family: 'Montserrat', 'Open Sans', -apple-system, BlinkMacSystemFont,
-    'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans',
-    'Droid Sans', 'Helvetica Neue', sans-serif;
+  min-height: 100vh;
+  overflow-x: hidden;
+  font-family: 'Open Sans', sans-serif;
+  line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  line-height: 1.6;
-  color: var(--color-text);
+}
+
+/* Theme system CSS custom properties */
+:root {
+  /* Default light theme colors */
+  --color-primary: #3b82f6;
+  --color-primary-hover: #2563eb;
+  --color-primary-active: #1d4ed8;
+  --color-secondary: #6b7280;
+  --color-secondary-hover: #4b5563;
+  --color-secondary-active: #374151;
+  --color-background: #ffffff;
+  --color-background-secondary: #f8fafc;
+  --color-background-tertiary: #f1f5f9;
+  --color-text: #111827;
+  --color-text-secondary: #4b5563;
+  --color-text-muted: #6b7280;
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+  --color-divider: #f3f4f6;
+  --color-success: #10b981;
+  --color-warning: #f59e0b;
+  --color-error: #ef4444;
+  --color-info: #3b82f6;
+  --color-accent: #f59e0b;
+  --color-shadow: rgba(0, 0, 0, 0.1);
+  --color-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Transition system */
+  --transition-duration-fast: 150ms;
+  --transition-duration-normal: 300ms;
+  --transition-duration-slow: 500ms;
+  --transition-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
+  --transition-easing-emphasized: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --transition-easing-decelerated: cubic-bezier(0.0, 0.0, 0.2, 1);
+
+  /* Enhanced transition properties for theme switching */
+  --transition-theme-colors: 
+    background-color var(--transition-duration-normal) var(--transition-easing-standard),
+    border-color var(--transition-duration-normal) var(--transition-easing-standard),
+    color var(--transition-duration-normal) var(--transition-easing-standard);
+  --transition-theme-shadows: 
+    box-shadow var(--transition-duration-normal) var(--transition-easing-standard),
+    filter var(--transition-duration-normal) var(--transition-easing-standard);
+  --transition-theme-all: 
+    background-color var(--transition-duration-normal) var(--transition-easing-standard),
+    border-color var(--transition-duration-normal) var(--transition-easing-standard),
+    color var(--transition-duration-normal) var(--transition-easing-standard),
+    fill var(--transition-duration-normal) var(--transition-easing-standard),
+    stroke var(--transition-duration-normal) var(--transition-easing-standard),
+    box-shadow var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+/* Enhanced theme transition classes */
+.theme-transition {
+  transition: var(--transition-theme-all);
+}
+
+.theme-transition-fast {
+  transition: 
+    background-color var(--transition-duration-fast) var(--transition-easing-standard),
+    border-color var(--transition-duration-fast) var(--transition-easing-standard),
+    color var(--transition-duration-fast) var(--transition-easing-standard),
+    fill var(--transition-duration-fast) var(--transition-easing-standard),
+    stroke var(--transition-duration-fast) var(--transition-easing-standard),
+    box-shadow var(--transition-duration-fast) var(--transition-easing-standard);
+}
+
+.theme-transition-slow {
+  transition:
+    background-color var(--transition-duration-slow) var(--transition-easing-decelerated),
+    border-color var(--transition-duration-slow) var(--transition-easing-decelerated),
+    color var(--transition-duration-slow) var(--transition-easing-decelerated),
+    fill var(--transition-duration-slow) var(--transition-easing-decelerated),
+    stroke var(--transition-duration-slow) var(--transition-easing-decelerated),
+    box-shadow var(--transition-duration-slow) var(--transition-easing-decelerated);
+}
+
+.theme-transition-colors {
+  transition: var(--transition-theme-colors);
+}
+
+.theme-transition-shadows {
+  transition: var(--transition-theme-shadows);
+}
+
+/* Theme state classes */
+.theme-no-transition,
+.theme-no-transition * {
+  transition: none !important;
+  animation: none !important;
+}
+
+.theme-loading {
+  visibility: hidden;
+}
+
+.theme-loaded {
+  visibility: visible;
+}
+
+.theme-transitioning {
+  /* Optional: Add slight opacity during transition for subtle effect */
+  /* opacity: 0.98; */
+}
+
+/* Default smooth transitions for common elements */
+html {
+  transition: var(--transition-theme-colors);
+}
+
+body {
   background-color: var(--color-background);
-  overflow-x: hidden; /* Prevent horizontal scrolling */
-  transition: background-color var(--transition-duration-normal) var(--transition-easing-standard),
-              color var(--transition-duration-normal) var(--transition-easing-standard);
-}
-
-/* Typography */
-h1, h2, h3, h4, h5, h6 {
-  font-family: 'Montserrat', sans-serif;
-  font-weight: 700;
-  line-height: 1.2;
-  margin-bottom: 0.5em;
   color: var(--color-text);
-  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: var(--transition-theme-colors);
 }
 
-h1 {
-  font-size: clamp(2rem, 5vw, 3rem);
-}
-
-h2 {
-  font-size: clamp(1.75rem, 4vw, 2.5rem);
-}
-
-h3 {
-  font-size: clamp(1.5rem, 3.5vw, 2rem);
-}
-
-p {
-  margin-bottom: 1em;
-  font-size: clamp(1rem, 2vw, 1.125rem);
-  color: var(--color-text-secondary);
-  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
-}
-
-/* Links */
+/* Link transitions */
 a {
-  color: inherit;
+  color: var(--color-primary);
   text-decoration: none;
-  transition: color var(--transition-duration-fast) var(--transition-easing-standard);
+  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 a:hover {
-  color: var(--color-primary);
+  color: var(--color-primary-hover);
 }
 
+/* Button transitions */
 button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  background: transparent;
-  padding: 0;
-  outline: none;
-  transition: all var(--transition-duration-fast) var(--transition-easing-standard);
+  transition: var(--transition-theme-all);
 }
 
-button:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+/* Form element transitions */
+input, textarea, select {
+  background-color: var(--color-background);
+  border-color: var(--color-border);
+  color: var(--color-text);
+  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
-/* Accessibility */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
+input:focus, textarea:focus, select:focus {
+  border-color: var(--color-primary);
+  transition: color var(--transition-duration-fast) var(--transition-easing-standard);
 }
 
-/* Skip link */
-.skip-link {
-  position: absolute;
-  top: -40px;
-  left: 6px;
-  background: var(--color-text);
-  color: var(--color-background);
-  padding: 8px;
-  text-decoration: none;
-  border-radius: 4px;
-  z-index: 1000;
+/* Heading transitions */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--color-text);
+  font-family: 'Montserrat', sans-serif;
+  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+/* Enhanced accessibility: respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .theme-transition,
+  .theme-transition-fast,
+  .theme-transition-slow,
+  .theme-transition-colors,
+  .theme-transition-shadows {
+    transition: none !important;
+  }
+  
+  html, body, a, button, input, textarea, select, h1, h2, h3, h4, h5, h6 {
+    transition: none !important;
+  }
+  
+  /* Still allow opacity changes for essential feedback */
+  button:hover, a:hover {
+    transition: opacity var(--transition-duration-fast) ease !important;
+  }
+}
+
+/* Header with backdrop blur and smooth transitions */
+header {
+  background-color: var(--color-background);
+  border-bottom: 1px solid var(--color-border);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   transition: top 0.3s, background-color var(--transition-duration-normal) var(--transition-easing-standard),
               color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
-.skip-link:focus {
-  top: 6px;
+.sticky-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
 }
 
-/* Focus indicators for better accessibility */
-*:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: 4px;
+/* Sticky header hide/show animation */
+.header-hidden {
+  top: -100px;
 }
 
-/* Remove outline for mouse users */
-*:focus:not(:focus-visible) {
-  outline: none;
+.header-visible {
+  top: 0;
 }
 
-/* Animation utilities */
-@media (prefers-reduced-motion: reduce) {
+/* Performance optimization: use transform for better performance */
+@media (prefers-reduced-motion: no-preference) {
+  .theme-transitioning * {
+    will-change: background-color, color, border-color;
+  }
+  
+  /* Clean up will-change after transition */
+  .theme-transition:not(.theme-transitioning) * {
+    will-change: auto;
+  }
+}
+
+/* Print styles - disable all transitions and animations */
+@media print {
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    background: white !important;
+    color: black !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+    animation: none !important;
+  }
+
+  body {
+    font-size: 12pt;
+    line-height: 1.4;
+    color: black !important;
+    background: white !important;
+  }
+  
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure theme classes don't affect print */
+  .theme-transition,
+  .theme-transition-fast,
+  .theme-transition-slow,
+  .theme-transition-colors,
+  .theme-transition-shadows {
+    transition: none !important;
   }
 }
 
-/* Container utility */
-.container {
-  width: 100%;
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
-}
-
-@media (min-width: 640px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
-@media (min-width: 1024px) {
-  .container {
-    padding: 0 2rem;
-  }
-}
-
-/* Utilities for preventing horizontal overflow */
-.no-horizontal-scroll {
-  overflow-x: hidden;
-  width: 100%;
-}
-
-/* Performance optimizations */
-.gpu-accelerated {
-  transform: translateZ(0);
-  will-change: transform;
-}
-
-/* Loading states */
+/* Skeleton loading animations with theme awareness */
 .skeleton {
-  background: linear-gradient(90deg, var(--color-background-secondary) 25%, var(--color-background-tertiary) 50%, var(--color-background-secondary) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-background-tertiary) 50%,
+    var(--color-background-secondary) 75%
+  );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
   transition: background var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 @keyframes skeleton-loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Theme-aware skeleton for dark mode */
+.theme-dark .skeleton {
+  background: linear-gradient(
+    90deg,
+    var(--color-background-secondary) 25%,
+    var(--color-background-tertiary) 50%,
+    var(--color-background-secondary) 75%
+  );
+  background-size: 200% 100%;
+  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+/* Card and surface transitions */
+.card, .surface {
+  background-color: var(--color-background-secondary);
+  border: 1px solid var(--color-border);
+  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+}
+
+/* Disable skeleton animation if user prefers reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .skeleton {
+    animation: none;
   }
 }
 
-/* Custom scrollbar styles */
+/* Scroll-based animations with theme awareness */
+.scroll-fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: 
+    opacity 0.6s var(--transition-easing-standard),
+    transform 0.6s var(--transition-easing-standard);
+}
+
+.scroll-fade-in.in-view {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Focus styles with theme transitions */
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+  transition: outline-color var(--transition-duration-fast) var(--transition-easing-standard);
+}
+
+/* Enhanced scrollbar styling with theme support */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -257,42 +357,63 @@ button:focus-visible {
   background: var(--color-border-hover);
 }
 
-/* Theme transition utility classes */
-.theme-transition {
-  transition: background-color var(--transition-duration-normal) var(--transition-easing-standard),
-              border-color var(--transition-duration-normal) var(--transition-easing-standard),
-              color var(--transition-duration-normal) var(--transition-easing-standard),
-              fill var(--transition-duration-normal) var(--transition-easing-standard),
-              stroke var(--transition-duration-normal) var(--transition-easing-standard),
-              box-shadow var(--transition-duration-normal) var(--transition-easing-standard);
+/* Selection colors with theme support */
+::selection {
+  background: var(--color-primary);
+  color: white;
 }
 
-.theme-transition-fast {
-  transition: background-color var(--transition-duration-fast) var(--transition-easing-standard),
-              border-color var(--transition-duration-fast) var(--transition-easing-standard),
-              color var(--transition-duration-fast) var(--transition-easing-standard),
-              fill var(--transition-duration-fast) var(--transition-easing-standard),
-              stroke var(--transition-duration-fast) var(--transition-easing-standard),
-              box-shadow var(--transition-duration-fast) var(--transition-easing-standard);
+::-moz-selection {
+  background: var(--color-primary);
+  color: white;
 }
 
-/* Print styles */
-@media print {
-  body {
-    font-size: 12pt;
-    line-height: 1.4;
-    color: black !important;
-    background: white !important;
-  }
-  
-  .no-print {
-    display: none !important;
-  }
-  
-  /* Ensure theme colors don't interfere with print */
-  * {
-    background: white !important;
-    color: black !important;
-    border-color: black !important;
-  }
+/* Loading spinner with theme colors */
+.spinner {
+  border: 2px solid var(--color-background-secondary);
+  border-top: 2px solid var(--color-primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Utility classes for theme transitions */
+.transition-theme {
+  transition: var(--transition-theme-all) !important;
+}
+
+.transition-theme-colors {
+  transition: var(--transition-theme-colors) !important;
+}
+
+.transition-theme-shadows {
+  transition: var(--transition-theme-shadows) !important;
+}
+
+.duration-theme-fast {
+  transition-duration: var(--transition-duration-fast) !important;
+}
+
+.duration-theme-normal {
+  transition-duration: var(--transition-duration-normal) !important;
+}
+
+.duration-theme-slow {
+  transition-duration: var(--transition-duration-slow) !important;
+}
+
+.ease-theme-standard {
+  transition-timing-function: var(--transition-easing-standard) !important;
+}
+
+.ease-theme-emphasized {
+  transition-timing-function: var(--transition-easing-emphasized) !important;
+}
+
+.ease-theme-decelerated {
+  transition-timing-function: var(--transition-easing-decelerated) !important;
 }
