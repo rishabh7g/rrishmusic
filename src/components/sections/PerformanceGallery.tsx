@@ -24,7 +24,7 @@ import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/a
 // Type definitions
 type PerformanceTypeFilter = 'all' | 'band' | 'solo' | 'acoustic';
 type PerformanceType = 'band' | 'solo' | 'acoustic';
-type PreviewType = 'image' | 'audio' | 'video';
+type PreviewType = 'image' | 'video';
 
 // Audio Preview Interface
 interface AudioPreview {
@@ -150,7 +150,6 @@ const PreviewTypeTabs: React.FC<{
 }> = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'image' as const, label: 'Performance Gallery', icon: '📸' },
-    { id: 'audio' as const, label: 'Audio Previews', icon: '🎵' },
     { id: 'video' as const, label: 'Video Highlights', icon: '🎬' }
   ];
 
@@ -319,12 +318,6 @@ export const PerformanceGallery: React.FC = () => {
     return portfolioData.videos.filter(item => item.performanceType === activeType);
   }, [portfolioData.videos, activeType]);
 
-  const filteredAudioPreviews = useMemo(() => {
-    if (activeType === 'all') {
-      return portfolioData.audioPreviews;
-    }
-    return portfolioData.audioPreviews.filter(item => item.performanceType === activeType);
-  }, [portfolioData.audioPreviews, activeType]);
 
   const featuredTestimonials = portfolioData.testimonials.filter(t => t.featured);
 
@@ -412,37 +405,6 @@ export const PerformanceGallery: React.FC = () => {
             </motion.div>
           )}
 
-          {/* Audio Previews */}
-          {activePreviewTab === 'audio' && (
-            <motion.div
-              key="audio"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.3 }}
-              className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16"
-            >
-              {filteredAudioPreviews.map((item, index) => (
-                <motion.div
-                  key={item.id}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                >
-                  <MediaPreview
-                    type="audio"
-                    id={item.id}
-                    title={item.title}
-                    description={item.description}
-                    audioUrl={item.audioUrl}
-                    duration={item.duration}
-                    genre={item.genre}
-                    thumbnail={item.thumbnail}
-                  />
-                </motion.div>
-              ))}
-            </motion.div>
-          )}
 
           {/* Video Previews */}
           {activePreviewTab === 'video' && (

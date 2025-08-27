@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { ServicePageLayout } from '@/components/ServicePageLayout';
+import { SEOHead } from '@/components/common/SEOHead';
 import { Lessons } from '@/components/sections/Lessons';
 import { Approach } from '@/components/sections/Approach';
 import { About } from '@/components/sections/About';
@@ -51,13 +51,28 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
   }, []);
 
   return (
-    <ServicePageLayout
-      title="Guitar Lessons & Music Theory | Professional Guitar Teaching | Rrish Music"
-      description="Professional guitar lessons in Melbourne specializing in blues, improvisation, and music theory. Personalized instruction for all skill levels with flexible packages and expert guidance."
-      serviceName="Guitar Teaching Services"
-      breadcrumbLabel="Guitar Lessons"
-      className={className}
-    >
+    <>
+      <SEOHead
+        title="Music Lessons & Music Theory | Professional Music Teaching | Rrish Music"
+        description="Professional music lessons specializing in piano, theory, and improvisation. Personalized instruction for all skill levels with flexible packages and expert guidance."
+        keywords="music lessons, piano lessons, music theory, improvisation, personalized instruction, music education"
+        canonical="https://www.rrishmusic.com/lessons"
+        ogType="website"
+        structuredData={{
+          "@context": "https://schema.org",
+          "@type": "Service",
+          "name": "Music Teaching Services",
+          "description": "Professional music lessons specializing in piano, theory, and improvisation",
+          "provider": {
+            "@type": "Person",
+            "name": "Rrish",
+            "url": "https://www.rrishmusic.com"
+          },
+          "url": "https://www.rrishmusic.com/lessons"
+        }}
+      />
+      
+      <main className={`min-h-screen bg-theme-bg transition-theme-colors ${className}`}>
       {/* Minimal Hero - Visual First */}
       <section className="py-12 bg-theme-bg transition-theme-colors">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -264,13 +279,14 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
         </div>
       </section>
 
-      {/* Universal Inquiry Form */}
-      <UniversalInquiryForm
-        isOpen={isFormOpen}
-        onClose={() => setIsFormOpen(false)}
-        onSubmit={handleFormSubmit}
-      />
-    </ServicePageLayout>
+        {/* Universal Inquiry Form */}
+        <UniversalInquiryForm
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+          onSubmit={handleFormSubmit}
+        />
+      </main>
+    </>
   );
 };
 
