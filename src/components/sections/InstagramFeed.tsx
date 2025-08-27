@@ -8,6 +8,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useInstagramContent } from '@/hooks/useInstagramContent';
+import { InstagramOfficialEmbed } from '@/components/InstagramOfficialEmbed';
 import { InstagramEmbed } from '@/components/InstagramEmbed';
 import { fadeInUp, staggerContainer } from '@/utils/animations';
 
@@ -145,7 +146,15 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = ({
             variants={fadeInUp}
             custom={index}
           >
-            <InstagramEmbed post={post} />
+            {post.embed_code && post.use_native_embed ? (
+              <InstagramOfficialEmbed 
+                embedCode={post.embed_code}
+                fallbackUrl={post.permalink}
+                className="w-full max-w-lg mx-auto"
+              />
+            ) : (
+              <InstagramEmbed post={post} />
+            )}
           </motion.div>
         ))}
       </motion.div>
