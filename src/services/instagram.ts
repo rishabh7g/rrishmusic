@@ -20,6 +20,8 @@ export interface InstagramPost {
   tags?: string[];
   venue?: string;
   event_type?: string;
+  embed_code?: string;
+  use_native_embed?: boolean;
 }
 
 export interface InstagramFeedResponse {
@@ -98,6 +100,8 @@ class InstagramService {
   private cache: Map<string, { data: InstagramPost[]; timestamp: number }> = new Map();
   private readonly cacheTimeout = 30 * 60 * 1000; // 30 minutes
   private readonly useJsonData = true; // Primary data source is now JSON
+  private readonly accessToken: string | undefined = undefined; // No API access token needed for JSON mode
+  private readonly baseUrl = 'https://graph.instagram.com/v12.0'; // Instagram API base URL
 
   constructor() {
     // Using JSON-based data management for secure, manual content curation
