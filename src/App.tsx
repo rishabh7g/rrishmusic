@@ -10,7 +10,6 @@ import { ThemeProvider } from './contexts/ThemeContext';
 const Home = lazy(() => import('./components/pages/Home').then(module => ({ default: module.Home })));
 const Teaching = lazy(() => import('./components/pages/Teaching'));
 const Performance = lazy(() => import('./components/pages/Performance'));
-const Collaboration = lazy(() => import('./components/pages/Collaboration'));
 
 // Simple loading spinner with theme awareness
 const Spinner = () => {
@@ -114,7 +113,7 @@ function AppContent() {
                   } 
                 />
                 <Route 
-                  path="/teaching" 
+                  path="/lessons" 
                   element={
                     <PageWrapper>
                       <Suspense fallback={<Spinner />}>
@@ -129,16 +128,6 @@ function AppContent() {
                     <PageWrapper>
                       <Suspense fallback={<Spinner />}>
                         <Performance />
-                      </Suspense>
-                    </PageWrapper>
-                  } 
-                />
-                <Route 
-                  path="/collaboration" 
-                  element={
-                    <PageWrapper>
-                      <Suspense fallback={<Spinner />}>
-                        <Collaboration />
                       </Suspense>
                     </PageWrapper>
                   } 

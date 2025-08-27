@@ -6,6 +6,13 @@ import { LazySection } from '@/components/common/LazySection';
 import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion';
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials';
 
+// Import collaboration components to integrate them
+import { CollaborationPortfolio } from '@/components/sections/CollaborationPortfolio';
+import { CollaborationProcess } from '@/components/sections/CollaborationProcess';
+
+// Import universal inquiry form
+import UniversalInquiryForm, { UniversalInquiryData } from '@/components/forms/UniversalInquiryForm';
+
 /**
  * Section fallback component
  */
@@ -43,13 +50,23 @@ interface PerformancePageProps {
 export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) => {
   // Load testimonials with performance focus
   const { getTestimonialsByService, getFeaturedTestimonials, loading: testimonialsLoading } = useMultiServiceTestimonials();
+  
+  // Form state management
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
+
+  const handleFormSubmit = async (data: UniversalInquiryData) => {
+    console.log('Form submission:', data);
+    // TODO: Implement actual form submission logic
+    // For now, just simulate success
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  };
 
   return (
     <>
       <SEOHead
-        title="Live Music Performance Services | Professional Blues Guitarist Melbourne | Rrish Music"
-        description="Professional live music performances for venues, weddings, corporate events, and private functions in Melbourne. Authentic blues guitar entertainment with engaging stage presence and customized setlists."
-        keywords="Melbourne live music, blues guitarist, wedding music, corporate entertainment, venue performances, private events, professional musician, live entertainment"
+        title="Live Music Performances & Studio Collaborations | Professional Guitarist Melbourne | Rrish Music"
+        description="Professional live music performances, studio work, and musical collaborations in Melbourne. Live performances for venues, events, plus recording sessions and creative project partnerships."
+        keywords="Melbourne live music, blues guitarist, wedding music, corporate entertainment, venue performances, studio collaboration, recording sessions, musical partnerships, professional musician"
         canonical="https://www.rrishmusic.com/performance"
         ogType="website"
         structuredData={{
@@ -175,64 +192,76 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           </div>
         </section>
 
-        {/* Cross-Service Social Proof Section */}
-        <section className="py-16 bg-gradient-to-br from-brand-blue-primary/5 to-brand-orange-warm/5">
+        {/* Collaboration Section - Integrated from Collaboration Page */}
+        <section id="collaboration" className="py-16 bg-theme-bg-secondary transition-theme-colors">
           <div className="container-custom">
             <div className="text-center mb-12">
-              <h3 className="text-3xl font-heading font-bold text-neutral-charcoal mb-4">
-                More Than Just Performance
+              <h3 className="text-3xl md:text-4xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
+                Studio Work & Creative Collaborations
               </h3>
-              <p className="text-lg text-neutral-charcoal/80 max-w-3xl mx-auto">
-                Many of our performance clients also discover the value of our guitar teaching and collaboration services.
+              <p className="text-lg text-theme-text-secondary max-w-3xl mx-auto transition-theme-colors">
+                Beyond live performances, I work with artists, bands, and producers on recording projects, creative collaborations, and studio sessions.
               </p>
             </div>
 
-            <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-              {/* Teaching Cross-Reference */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-brand-orange-warm/20 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-2xl">🎓</span>
+            {/* Collaboration Portfolio */}
+            <ErrorBoundary fallback={<SectionFallback sectionName="Collaboration Portfolio" />}>
+              <LazySection
+                fallback={<SectionFallback sectionName="Collaboration Portfolio" />}
+                rootMargin="200px"
+              >
+                <CollaborationPortfolio />
+              </LazySection>
+            </ErrorBoundary>
+          </div>
+        </section>
+
+        {/* Collaboration Process */}
+        <section id="collaboration-process" className="py-16 bg-theme-bg transition-theme-colors">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Collaboration Process" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="Collaboration Process" />}
+              rootMargin="200px"
+            >
+              <CollaborationProcess />
+            </LazySection>
+          </ErrorBoundary>
+        </section>
+
+        {/* Cross-Service Teaching Reference */}
+        <section className="py-16 bg-theme-bg-tertiary transition-theme-colors">
+          <div className="container-custom">
+            <div className="text-center mb-12">
+              <h3 className="text-3xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
+                Learn From A Performing Professional
+              </h3>
+              <p className="text-lg text-theme-text-secondary max-w-3xl mx-auto transition-theme-colors">
+                Many performance and collaboration clients also discover the value of learning directly from a working musician.
+              </p>
+            </div>
+
+            <div className="max-w-2xl mx-auto">
+              <div className="bg-theme-bg rounded-xl p-8 shadow-sm border border-theme-border transition-theme-colors">
+                <div className="flex items-center mb-6">
+                  <div className="w-16 h-16 bg-theme-secondary/20 rounded-full flex items-center justify-center mr-6">
+                    <svg className="w-8 h-8 text-theme-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
                   </div>
                   <div>
-                    <h4 className="text-lg font-heading font-semibold text-neutral-charcoal">Guitar Lessons</h4>
-                    <p className="text-sm text-neutral-charcoal/60">Learn from a performing professional</p>
+                    <h4 className="text-xl font-heading font-semibold text-theme-text mb-2 transition-theme-colors">Music Lessons</h4>
+                    <p className="text-theme-text-secondary transition-theme-colors">Learn piano, guitar, improvisation, and music theory</p>
                   </div>
                 </div>
-                <p className="text-sm text-neutral-charcoal/80 mb-4">
-                  "Taking lessons with Rrish after hearing him perform was the best decision. His real-world experience makes all the difference." - Alex M.
+                <p className="text-theme-text-secondary mb-6 transition-theme-colors">
+                  "Taking lessons with Rrish after hearing him perform was the best decision. His real-world experience and performance insights make all the difference in my playing." - Alex M.
                 </p>
                 <a
                   href="/lessons"
-                  className="inline-flex items-center text-brand-orange-warm hover:text-brand-orange-warm/80 font-medium text-sm"
+                  className="inline-flex items-center bg-theme-secondary text-white px-6 py-3 rounded-full hover:bg-theme-secondary-hover transition-colors duration-300 font-semibold"
                 >
-                  Explore Teaching Services
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
-                  </svg>
-                </a>
-              </div>
-
-              {/* Collaboration Cross-Reference */}
-              <div className="bg-white rounded-xl p-6 shadow-sm">
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-brand-yellow-accent/20 rounded-full flex items-center justify-center mr-4">
-                    <span className="text-2xl">🤝</span>
-                  </div>
-                  <div>
-                    <h4 className="text-lg font-heading font-semibold text-neutral-charcoal">Collaboration</h4>
-                    <p className="text-sm text-neutral-charcoal/60">Studio work and creative projects</p>
-                  </div>
-                </div>
-                <p className="text-sm text-neutral-charcoal/80 mb-4">
-                  "Working with Rrish on our EP was incredible. His guitar work added exactly the soul we were looking for." - The Midnight Owls
-                </p>
-                <a
-                  href="/collaboration"
-                  className="inline-flex items-center text-brand-yellow-accent hover:text-brand-yellow-accent/80 font-medium text-sm"
-                >
-                  Explore Collaboration
-                  <svg className="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  Explore Music Lessons
+                  <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                   </svg>
                 </a>
@@ -253,37 +282,44 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           </ErrorBoundary>
         </section>
 
-        {/* Final CTA Section */}
-        <section className="py-16 bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white">
+        {/* Final CTA Section - Updated for Performance + Collaboration */}
+        <section className="py-16 bg-gradient-to-r from-theme-primary to-theme-secondary text-white">
           <div className="container-custom text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">
-              Ready to Book Your Performance?
+              Ready to Work Together?
             </h3>
             <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
-              Let's discuss your event needs and create a customized live music experience that will make your occasion unforgettable.
+              Whether you need live performance for your event or want to collaborate on a creative project, let's discuss how we can create something amazing together.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="#contact"
-                className="inline-flex items-center px-8 py-4 bg-brand-yellow-accent text-brand-blue-primary /* ACCESSIBILITY: 5.22:1 contrast - WCAG AA compliant */ 
-                  font-bold rounded-full hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl 
+              <button
+                onClick={() => setIsFormOpen(true)}
+                className="inline-flex items-center px-8 py-4 bg-white text-theme-primary
+                  font-bold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl 
                   transform hover:-translate-y-1"
               >
-                Get Performance Quote
+                Get Started
                 <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                 </svg>
-              </a>
+              </button>
               <a
                 href="tel:+61XXX-XXX-XXX"
                 className="inline-flex items-center px-8 py-4 bg-transparent border border-white text-white 
-                  font-semibold rounded-full hover:bg-white hover:text-brand-blue-primary transition-all duration-300"
+                  font-semibold rounded-full hover:bg-white hover:text-theme-primary transition-all duration-300"
               >
                 Call Now
               </a>
             </div>
           </div>
         </section>
+
+        {/* Universal Inquiry Form */}
+        <UniversalInquiryForm
+          isOpen={isFormOpen}
+          onClose={() => setIsFormOpen(false)}
+          onSubmit={handleFormSubmit}
+        />
       </main>
     </>
   );
