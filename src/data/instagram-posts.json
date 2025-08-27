@@ -1,0 +1,88 @@
+{
+  "posts": [
+    {
+      "id": "reel-DNLMO67T4G8",
+      "caption": "Latest musical performance - bringing the energy! 🎸🔥 Follow for more live music content! #livemusic #performance #music",
+      "media_url": "https://www.instagram.com/reel/DNLMO67T4G8/media/?size=l",
+      "media_type": "VIDEO",
+      "permalink": "https://www.instagram.com/reel/DNLMO67T4G8/",
+      "timestamp": "2024-12-01T18:30:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": true,
+      "tags": ["livemusic", "performance", "music", "reel"],
+      "venue": "Live Performance",
+      "event_type": "Live Performance"
+    },
+    {
+      "id": "reel-DLaYVu4O7DS",
+      "caption": "Musical moments that matter 🎵 Creating unforgettable experiences through music! #music #performance #live",
+      "media_url": "https://www.instagram.com/reel/DLaYVu4O7DS/media/?size=l",
+      "media_type": "VIDEO",
+      "permalink": "https://www.instagram.com/reel/DLaYVu4O7DS/",
+      "timestamp": "2024-11-20T20:15:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": true,
+      "tags": ["music", "performance", "live", "reel"],
+      "venue": "Performance Venue",
+      "event_type": "Live Performance"
+    },
+    {
+      "id": "reel-DMQROZoOQYz",
+      "caption": "Behind the music - every note tells a story 🎹✨ #piano #music #storytelling #performance",
+      "media_url": "https://www.instagram.com/reel/DMQROZoOQYz/media/?size=l",
+      "media_type": "VIDEO",
+      "permalink": "https://www.instagram.com/reel/DMQROZoOQYz/",
+      "timestamp": "2024-11-15T16:45:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": true,
+      "tags": ["piano", "music", "storytelling", "performance", "reel"],
+      "venue": "Studio/Performance",
+      "event_type": "Performance/Recording"
+    },
+    {
+      "id": "post-DLR4m-PSA08",
+      "caption": "Sharing the passion for music through performance and teaching 🎼 Every moment on stage is a gift! #musician #livemusic #passion",
+      "media_url": "https://www.instagram.com/p/DLR4m-PSA08/media/?size=l",
+      "media_type": "IMAGE",
+      "permalink": "https://www.instagram.com/p/DLR4m-PSA08/",
+      "timestamp": "2024-11-10T19:20:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": true,
+      "tags": ["musician", "livemusic", "passion", "performance"],
+      "venue": "Performance Space",
+      "event_type": "Live Performance"
+    },
+    {
+      "id": "fallback-teaching-1",
+      "caption": "Teaching the fundamentals of music theory - love seeing students discover their musical voice! 🎹📚 #musicteaching #education #piano",
+      "media_url": "/images/instagram/teaching-fallback.webp",
+      "media_type": "IMAGE",
+      "permalink": "https://instagram.com/rrishmusic",
+      "timestamp": "2024-10-28T16:45:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": false,
+      "tags": ["musicteaching", "education", "piano", "lessons"],
+      "venue": "Teaching Studio",
+      "event_type": "Music Lesson"
+    },
+    {
+      "id": "fallback-behind-scenes",
+      "caption": "Behind the scenes: Setting up for tonight's performance. The calm before the musical magic! 🎸⚡ #behindthescenes #preparation",
+      "media_url": "/images/instagram/behind-scenes-fallback.webp",
+      "media_type": "IMAGE",
+      "permalink": "https://instagram.com/rrishmusic",
+      "timestamp": "2024-10-15T17:30:00Z",
+      "username": "rrishmusic",
+      "is_performance_related": true,
+      "tags": ["behindthescenes", "preparation", "performance"],
+      "venue": "Backstage",
+      "event_type": "Behind the Scenes"
+    }
+  ],
+  "metadata": {
+    "last_updated": "2024-12-01T12:00:00Z",
+    "total_posts": 6,
+    "username": "rrishmusic",
+    "profile_url": "https://instagram.com/rrishmusic"
+  }
+}
