@@ -102,23 +102,60 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
       />
       
       <main id="main-content" className={`min-h-screen ${className}`}>
-        {/* Performance Hero Section */}
-        <section id="performance-hero" className="app-section">
-          <ErrorBoundary fallback={<SectionFallback sectionName="Performance Hero" />}>
-            <Suspense fallback={<SectionFallback sectionName="Performance Hero" />}>
-              <PerformanceHero />
-            </Suspense>
+        {/* Minimal Hero - Media First */}
+        <section id="performance-hero" className="py-12 bg-theme-bg transition-theme-colors">
+          <div className="container-custom text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
+              Performances
+            </h1>
+            <p className="text-xl text-theme-text-secondary mb-8 max-w-2xl mx-auto transition-theme-colors">
+              Live music, studio work, and creative collaborations
+            </p>
+          </div>
+        </section>
+
+        {/* Instagram Feed - Primary Focus */}
+        <section id="instagram-primary" className="py-16 bg-theme-bg transition-theme-colors">
+          <ErrorBoundary fallback={<SectionFallback sectionName="Instagram" />}>
+            <LazySection
+              fallback={<SectionFallback sectionName="Instagram" />}
+              rootMargin="200px"
+            >
+              <div className="container-custom">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+                    Recent Performances
+                  </h2>
+                  <p className="text-lg text-theme-text-secondary transition-theme-colors">
+                    Live performances and behind-the-scenes moments
+                  </p>
+                </div>
+                <InstagramFeed 
+                  limit={12}
+                  showHeader={false}
+                  className="mb-8"
+                  useEnhancedHook={true}
+                />
+              </div>
+            </LazySection>
           </ErrorBoundary>
         </section>
 
-        {/* Performance Portfolio Gallery */}
-        <section id="performance-gallery" className="app-section bg-white">
+        {/* Performance Portfolio Gallery - Visual Focus */}
+        <section id="performance-gallery" className="py-16 bg-theme-bg-secondary transition-theme-colors">
           <ErrorBoundary fallback={<SectionFallback sectionName="Performance Gallery" />}>
             <LazySection
               fallback={<SectionFallback sectionName="Performance Gallery" />}
               rootMargin="200px"
             >
-              <PerformanceGallery />
+              <div className="container-custom">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+                    Portfolio Highlights
+                  </h2>
+                </div>
+                <PerformanceGallery />
+              </div>
             </LazySection>
           </ErrorBoundary>
         </section>
@@ -138,31 +175,57 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           </div>
         </section>
 
-        {/* Multi-Service Testimonials - Performance Focused */}
-        <section id="performance-testimonials" className="app-section">
-          <ErrorBoundary fallback={<SectionFallback sectionName="Testimonials" />}>
-            <LazySection
-              fallback={<SectionFallback sectionName="Testimonials" />}
-              rootMargin="200px"
-            >
-              {!testimonialsLoading && (
-                <MultiServiceTestimonialsSection
-                  testimonials={[
-                    ...getTestimonialsByService('performance'),
-                    ...getFeaturedTestimonials(3).filter(t => t.service !== 'performance')
-                  ]}
-                  title="Client Testimonials"
-                  subtitle="Hear from clients who have experienced the magic of live music at their events"
-                  defaultService="performance"
-                  showFilters={true}
-                  showServiceBreakdown={true}
-                  maxTestimonials={9}
-                  layoutVariant="grid"
-                  className="bg-gradient-to-br from-neutral-light/20 to-neutral-light/10"
-                />
-              )}
-            </LazySection>
-          </ErrorBoundary>
+        {/* Visual Testimonials - Minimal */}
+        <section id="testimonials" className="py-16 bg-theme-bg-secondary transition-theme-colors">
+          <div className="container-custom">
+            <div className="text-center mb-12">
+              <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+                What Clients Say
+              </h2>
+            </div>
+            
+            {/* Simple testimonial cards with photos */}
+            <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+              <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold">
+                    M
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-theme-text transition-theme-colors">Maria S.</h4>
+                    <p className="text-sm text-theme-text-secondary transition-theme-colors">Wedding Reception</p>
+                  </div>
+                </div>
+                <p className="text-theme-text-secondary transition-theme-colors">"The music made our night unforgettable. Perfect atmosphere."</p>
+              </div>
+              
+              <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
+                    J
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-theme-text transition-theme-colors">James R.</h4>
+                    <p className="text-sm text-theme-text-secondary transition-theme-colors">Corporate Event</p>
+                  </div>
+                </div>
+                <p className="text-theme-text-secondary transition-theme-colors">"Professional, talented, and engaging. Exceeded expectations."</p>
+              </div>
+              
+              <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
+                <div className="flex items-center mb-4">
+                  <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
+                    A
+                  </div>
+                  <div className="ml-4">
+                    <h4 className="font-semibold text-theme-text transition-theme-colors">Alex M.</h4>
+                    <p className="text-sm text-theme-text-secondary transition-theme-colors">Private Party</p>
+                  </div>
+                </div>
+                <p className="text-theme-text-secondary transition-theme-colors">"Amazing performance, great energy. Highly recommend!"</p>
+              </div>
+            </div>
+          </div>
         </section>
 
         {/* Pricing Section */}
@@ -270,17 +333,6 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           </div>
         </section>
 
-        {/* Instagram Feed */}
-        <section id="instagram" className="app-section bg-gray-50">
-          <ErrorBoundary fallback={<SectionFallback sectionName="Instagram" />}>
-            <LazySection
-              fallback={<SectionFallback sectionName="Instagram" />}
-              rootMargin="200px"
-            >
-              <InstagramFeed />
-            </LazySection>
-          </ErrorBoundary>
-        </section>
 
         {/* Final CTA Section - Updated for Performance + Collaboration */}
         <section className="py-16 bg-gradient-to-r from-theme-primary to-theme-secondary text-white">
