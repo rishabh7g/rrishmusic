@@ -1,9 +1,11 @@
 /**
  * Instagram Service Module
  * 
- * Handles Instagram Basic Display API integration for performance content
- * Features: Content filtering, caching, error handling, and fallback content
+ * Handles Instagram content integration with JSON-based data management
+ * Features: Content filtering, caching, error handling, and manual content curation
  */
+
+import { instagramDataService } from './instagramData';
 
 export interface InstagramPost {
   id: string;
@@ -15,6 +17,9 @@ export interface InstagramPost {
   thumbnail_url?: string;
   username: string;
   is_performance_related?: boolean;
+  tags?: string[];
+  venue?: string;
+  event_type?: string;
 }
 
 export interface InstagramFeedResponse {
@@ -87,18 +92,15 @@ const FALLBACK_INSTAGRAM_POSTS: InstagramPost[] = [
 
 /**
  * Instagram Service Class
- * Handles API calls, caching, and content filtering
+ * Handles JSON-based content management and caching
  */
 class InstagramService {
   private cache: Map<string, { data: InstagramPost[]; timestamp: number }> = new Map();
   private readonly cacheTimeout = 30 * 60 * 1000; // 30 minutes
-  private readonly accessToken: string | null = null; // Will be set from environment
-  private readonly baseUrl = 'https://graph.instagram.com';
+  private readonly useJsonData = true; // Primary data source is now JSON
 
   constructor() {
-    // In production, this would be loaded from environment variables
-    // For now, we'll use fallback content
-    this.accessToken = null; // process.env.REACT_APP_INSTAGRAM_ACCESS_TOKEN || null;
+    // Using JSON-based data management for secure, manual content curation
   }
 
   /**
@@ -207,7 +209,7 @@ class InstagramService {
   }
 
   /**
-   * Get performance-related Instagram posts
+   * Get performance-related Instagram posts from JSON data
    */
   async getPerformancePosts(limit: number = 8): Promise<{
     posts: InstagramPost[];
@@ -218,7 +220,7 @@ class InstagramService {
     
     try {
       // Try cache first
-      const cachedPosts = this.getCachedData(cacheKey) || this.loadCachedFromStorage(cacheKey);
+      const cachedPosts = this.getCachedData(cacheKey);
       if (cachedPosts && cachedPosts.length > 0) {
         return {
           posts: cachedPosts.slice(0, limit),
@@ -226,26 +228,14 @@ class InstagramService {
         };
       }
 
-      // Try API if token is available
-      if (this.accessToken) {
-        const apiPosts = await this.fetchFromAPI(limit * 2); // Fetch more to filter
-        const performancePosts = this.filterPerformancePosts(apiPosts);
-        const limitedPosts = performancePosts.slice(0, limit);
-        
-        this.setCachedData(cacheKey, limitedPosts);
-        
-        return {
-          posts: limitedPosts,
-          fromCache: false
-        };
-      }
-
-      // Use fallback content
-      const fallbackPosts = FALLBACK_INSTAGRAM_POSTS.slice(0, limit);
-      this.setCachedData(cacheKey, fallbackPosts);
+      // Load from JSON data service
+      const jsonPosts = instagramDataService.getRecentPosts(limit);
+      
+      // Cache the results
+      this.setCachedData(cacheKey, jsonPosts);
       
       return {
-        posts: fallbackPosts,
+        posts: jsonPosts,
         fromCache: false
       };
 
@@ -256,7 +246,7 @@ class InstagramService {
       return {
         posts: fallbackPosts,
         fromCache: false,
-        error: error instanceof Error ? error.message : 'Unknown error occurred'
+        error: error instanceof Error ? error.message : 'Failed to load Instagram content from JSON'
       };
     }
   }
