@@ -58,50 +58,80 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
       breadcrumbLabel="Guitar Lessons"
       className={className}
     >
-      {/* Teaching Hero Section - Using Lessons component */}
-      <section className="hero-section bg-gradient-to-br from-brand-orange-warm via-brand-orange-light to-brand-orange-warm text-white py-20">
+      {/* Minimal Hero - Visual First */}
+      <section className="py-12 bg-theme-bg transition-theme-colors">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
+            Music Lessons
+          </h1>
+          <p className="text-xl text-theme-text-secondary mb-8 max-w-2xl mx-auto transition-theme-colors">
+            Learn piano, music theory, and improvisation
+          </p>
+          <button 
+            onClick={() => setIsFormOpen(true)}
+            className="bg-theme-secondary text-white hover:bg-theme-secondary-hover font-semibold py-3 px-8 rounded-full text-lg transition-colors shadow-lg"
+          >
+            Start Learning
+          </button>
+        </div>
+      </section>
+
+      {/* Student Showcase - Instagram Style */}
+      <section className="py-16 bg-theme-bg-secondary transition-theme-colors">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto text-center">
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-heading font-bold mb-6">
-              Professional Guitar Lessons
-            </h1>
-            <p className="text-xl md:text-2xl lg:text-3xl mb-8 text-orange-100">
-              Master the guitar with personalized instruction tailored to your musical goals
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+              Student Progress
+            </h2>
+            <p className="text-lg text-theme-text-secondary transition-theme-colors">
+              See what students are achieving in their lessons
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button 
-                onClick={() => setIsFormOpen(true)}
-                className="bg-white text-brand-orange-warm hover:bg-orange-50 font-semibold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg"
-              >
-                Start Your Musical Journey
-              </button>
-              <button 
-                onClick={() => document.getElementById('lessons')?.scrollIntoView({ behavior: 'smooth' })}
-                className="border-2 border-white text-white hover:bg-white hover:text-brand-orange-warm font-semibold py-4 px-8 rounded-lg text-lg transition-colors"
-              >
-                View Lesson Packages
-              </button>
+          </div>
+          
+          {/* Visual student progress grid */}
+          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            <div className="bg-theme-bg rounded-xl overflow-hidden shadow-sm transition-theme-colors">
+              <div className="h-48 bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                  <p className="text-sm">Beginner to Intermediate</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Sarah's Journey</h3>
+                <p className="text-sm text-theme-text-secondary transition-theme-colors">From first keys to playing her favorite songs in 6 months</p>
+              </div>
             </div>
             
-            {/* Feature highlights */}
-            <div className="grid md:grid-cols-3 gap-6 text-center">
-              <div className="flex items-center space-x-2 text-lg">
-                <svg className="w-6 h-6 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>All Skill Levels</span>
+            <div className="bg-theme-bg rounded-xl overflow-hidden shadow-sm transition-theme-colors">
+              <div className="h-48 bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.25 2.25 0 11-4.5 0 2.25 2.25 0 014.5 0z" />
+                  </svg>
+                  <p className="text-sm">Music Theory</p>
+                </div>
               </div>
-              <div className="flex items-center space-x-2 text-lg">
-                <svg className="w-6 h-6 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Flexible Packages</span>
+              <div className="p-4">
+                <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Alex's Improvisation</h3>
+                <p className="text-sm text-theme-text-secondary transition-theme-colors">Building confidence in jazz improvisation and composition</p>
               </div>
-              <div className="flex items-center space-x-2 text-lg">
-                <svg className="w-6 h-6 text-brand-yellow-accent" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>Expert Instruction</span>
+            </div>
+            
+            <div className="bg-theme-bg rounded-xl overflow-hidden shadow-sm transition-theme-colors">
+              <div className="h-48 bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center">
+                <div className="text-white text-center">
+                  <svg className="w-16 h-16 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15.75 5.25a3 3 0 013 3m3 0a6 6 0 01-7.029 5.912c-.563-.097-1.159.026-1.563.43L10.5 17.25H8.25v2.25H6v2.25H2.25v-2.818c0-.597.237-1.17.659-1.591l6.499-6.499c.404-.404.527-1 .43-1.563A6 6 0 1121.75 8.25z" />
+                  </svg>
+                  <p className="text-sm">Advanced Techniques</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Maya's Performance</h3>
+                <p className="text-sm text-theme-text-secondary transition-theme-colors">Preparing for recitals and advanced repertoire</p>
               </div>
             </div>
           </div>
@@ -114,17 +144,68 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
       {/* Teaching Approach Section */}
       <Approach />
 
-      {/* About Section - Teaching focused */}
-      <section className="py-16 bg-gray-50">
+      {/* Teaching Approach - Visual */}
+      <section className="py-16 bg-theme-bg transition-theme-colors">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-charcoal mb-4">
-                About Your Instructor
-              </h2>
-              <div className="w-24 h-1 bg-brand-orange-warm mx-auto rounded-full"></div>
+          <div className="text-center mb-12">
+            <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+              Teaching Approach
+            </h2>
+          </div>
+          
+          {/* Visual teaching methods */}
+          <div className="grid md:grid-cols-2 gap-12 max-w-4xl mx-auto items-center">
+            <div className="space-y-6">
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-theme-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-theme-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Personalized Learning</h3>
+                  <p className="text-theme-text-secondary transition-theme-colors">Every lesson adapted to your pace and musical interests</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-theme-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-theme-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Practical Application</h3>
+                  <p className="text-theme-text-secondary transition-theme-colors">Learn by playing songs you love from day one</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start space-x-4">
+                <div className="w-12 h-12 bg-theme-secondary/20 rounded-full flex items-center justify-center flex-shrink-0">
+                  <svg className="w-6 h-6 text-theme-secondary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-theme-text mb-2 transition-theme-colors">Theory & Creativity</h3>
+                  <p className="text-theme-text-secondary transition-theme-colors">Build understanding while fostering musical creativity</p>
+                </div>
+              </div>
             </div>
-            <About />
+            
+            {/* Visual instructor profile */}
+            <div className="bg-theme-bg-secondary rounded-2xl p-8 text-center transition-theme-colors">
+              <div className="w-32 h-32 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-6 flex items-center justify-center">
+                <div className="text-white text-4xl font-bold">R</div>
+              </div>
+              <h3 className="text-2xl font-bold text-theme-text mb-2 transition-theme-colors">Rrish</h3>
+              <p className="text-theme-text-secondary mb-4 transition-theme-colors">Professional Musician & Educator</p>
+              <div className="space-y-2 text-sm text-theme-text-secondary transition-theme-colors">
+                <p>🎹 Piano & Theory Specialist</p>
+                <p>🎸 Blues & Jazz Improvisation</p>
+                <p>📚 10+ Years Teaching Experience</p>
+              </div>
+            </div>
           </div>
         </div>
       </section>
