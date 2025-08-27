@@ -1,12 +1,8 @@
 {
   "navigationItems": [
     { "id": "home", "label": "Home", "href": "/" },
-    { "id": "lessons", "label": "Lessons", "href": "#lessons" },
     { "id": "performance", "label": "Performances", "href": "/performance" },
-    { "id": "collaboration", "label": "Collaboration", "href": "/collaboration" },
-    { "id": "about", "label": "About", "href": "#about" },
-    { "id": "approach", "label": "Approach", "href": "#approach" },
-    { "id": "contact", "label": "Contact", "href": "#contact" }
+    { "id": "lessons", "label": "Lessons", "href": "/lessons" }
   ],
   "mobileMenu": {
     "hamburgerAriaLabel": "Toggle navigation menu",

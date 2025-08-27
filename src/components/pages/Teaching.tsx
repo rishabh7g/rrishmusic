@@ -3,9 +3,11 @@ import { ServicePageLayout } from '@/components/ServicePageLayout';
 import { Lessons } from '@/components/sections/Lessons';
 import { Approach } from '@/components/sections/Approach';
 import { About } from '@/components/sections/About';
-import { Contact } from '@/components/sections/Contact';
 import { CrossServiceNavigation } from '@/components/CrossServiceNavigation';
 import { performanceMonitor } from '@/utils/performanceMonitor';
+
+// Import universal inquiry form
+import UniversalInquiryForm, { UniversalInquiryData } from '@/components/forms/UniversalInquiryForm';
 
 /**
  * Props interface for Teaching page
@@ -29,6 +31,16 @@ interface TeachingPageProps {
  * - Mobile-first responsive design
  */
 export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
+  // Form state management
+  const [isFormOpen, setIsFormOpen] = React.useState(false);
+
+  const handleFormSubmit = async (data: UniversalInquiryData) => {
+    console.log('Form submission:', data);
+    // TODO: Implement actual form submission logic
+    // For now, just simulate success
+    await new Promise(resolve => setTimeout(resolve, 1000));
+  };
+
   useEffect(() => {
     // Mark teaching page as started for performance monitoring
     performanceMonitor.mark('teaching-page-render-start');
@@ -57,10 +69,16 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
               Master the guitar with personalized instruction tailored to your musical goals
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-              <button className="bg-white text-brand-orange-warm hover:bg-orange-50 font-semibold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg">
+              <button 
+                onClick={() => setIsFormOpen(true)}
+                className="bg-white text-brand-orange-warm hover:bg-orange-50 font-semibold py-4 px-8 rounded-lg text-lg transition-colors shadow-lg"
+              >
                 Start Your Musical Journey
               </button>
-              <button className="border-2 border-white text-white hover:bg-white hover:text-brand-orange-warm font-semibold py-4 px-8 rounded-lg text-lg transition-colors">
+              <button 
+                onClick={() => document.getElementById('lessons')?.scrollIntoView({ behavior: 'smooth' })}
+                className="border-2 border-white text-white hover:bg-white hover:text-brand-orange-warm font-semibold py-4 px-8 rounded-lg text-lg transition-colors"
+              >
                 View Lesson Packages
               </button>
             </div>
@@ -133,8 +151,44 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
         </div>
       </section>
 
-      {/* Contact Section - Teaching focused */}
-      <Contact />
+      {/* Contact Section - Simple CTA */}
+      <section className="py-16 bg-gradient-to-r from-theme-secondary to-theme-primary text-white">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">
+            Ready to Start Learning?
+          </h3>
+          <p className="text-xl mb-8 max-w-3xl mx-auto opacity-90">
+            Take the first step in your musical journey. Get in touch to discuss your goals and find the perfect lesson approach for you.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button
+              onClick={() => setIsFormOpen(true)}
+              className="inline-flex items-center px-8 py-4 bg-white text-theme-secondary
+                font-bold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl 
+                transform hover:-translate-y-1"
+            >
+              Get Started
+              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </button>
+            <a
+              href="tel:+61XXX-XXX-XXX"
+              className="inline-flex items-center px-8 py-4 bg-transparent border border-white text-white 
+                font-semibold rounded-full hover:bg-white hover:text-theme-secondary transition-all duration-300"
+            >
+              Call Now
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Universal Inquiry Form */}
+      <UniversalInquiryForm
+        isOpen={isFormOpen}
+        onClose={() => setIsFormOpen(false)}
+        onSubmit={handleFormSubmit}
+      />
     </ServicePageLayout>
   );
 };
