@@ -3,47 +3,56 @@
  * Advanced inquiry-based pricing system for collaboration projects with consultation booking
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useInquiryPricing, CollaborationPricingData } from '@/hooks/useInquiryPricing';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React, { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  useInquiryPricing,
+  CollaborationPricingData,
+} from '@/hooks/useInquiryPricing'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 export interface CollaborationInquiryData {
   // Contact Information
-  name: string;
-  email: string;
-  phone?: string;
-  
+  name: string
+  email: string
+  phone?: string
+
   // Project Details
-  projectType: 'studio' | 'creative' | 'partnership' | 'other';
-  projectTitle?: string;
-  creativeVision: string;
-  
+  projectType: 'studio' | 'creative' | 'partnership' | 'other'
+  projectTitle?: string
+  creativeVision: string
+
   // Timeline and Scope
-  timeline: 'urgent' | 'flexible' | 'specific-date' | 'ongoing';
-  timelineDetails?: string;
-  projectScope: 'single-session' | 'short-term' | 'long-term' | 'ongoing';
-  
+  timeline: 'urgent' | 'flexible' | 'specific-date' | 'ongoing'
+  timelineDetails?: string
+  projectScope: 'single-session' | 'short-term' | 'long-term' | 'ongoing'
+
   // Budget and Pricing
-  budgetRange: 'under-500' | '500-1000' | '1000-2500' | '2500-5000' | '5000-plus' | 'discuss';
-  budgetNotes?: string;
-  
+  budgetRange:
+    | 'under-500'
+    | '500-1000'
+    | '1000-2500'
+    | '2500-5000'
+    | '5000-plus'
+    | 'discuss'
+  budgetNotes?: string
+
   // Additional Information
-  experience: 'first-time' | 'some-experience' | 'experienced' | 'professional';
-  additionalInfo?: string;
-  portfolioFiles?: FileList;
-  
+  experience: 'first-time' | 'some-experience' | 'experienced' | 'professional'
+  additionalInfo?: string
+  portfolioFiles?: FileList
+
   // Communication Preferences
-  preferredContact: 'email' | 'phone' | 'either';
-  bestTimeToContact?: string;
+  preferredContact: 'email' | 'phone' | 'either'
+  bestTimeToContact?: string
 }
 
 interface CollaborationInquiryProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit?: (data: CollaborationInquiryData) => void;
-  showPricing?: boolean;
-  enableConsultationBooking?: boolean;
+  isOpen: boolean
+  onClose: () => void
+  onSubmit?: (data: CollaborationInquiryData) => void
+  showPricing?: boolean
+  enableConsultationBooking?: boolean
 }
 
 /**
@@ -54,7 +63,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
   onClose,
   onSubmit,
   showPricing = true,
-  enableConsultationBooking = true
+  enableConsultationBooking = true,
 }) => {
   // Form state
   const [formData, setFormData] = useState<CollaborationInquiryData>({
@@ -72,67 +81,83 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
     experience: 'some-experience',
     additionalInfo: '',
     preferredContact: 'email',
-    bestTimeToContact: ''
-  });
+    bestTimeToContact: '',
+  })
 
   // Pricing state
-  const { state: pricingState, actions: pricingActions, computed } = useInquiryPricing({
+  const {
+    state: pricingState,
+    actions: pricingActions,
+    computed,
+  } = useInquiryPricing({
     serviceType: 'collaboration',
-    enableConsultationBooking
-  });
+    enableConsultationBooking,
+  })
 
   // Form validation and UI state
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [visionWordCount, setVisionWordCount] = useState(0);
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [visionWordCount, setVisionWordCount] = useState(0)
 
   /**
    * Handle form field changes
    */
-  const handleFieldChange = useCallback((field: keyof CollaborationInquiryData, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // Update word count for creative vision
-    if (field === 'creativeVision' && typeof value === 'string') {
-      const wordCount = value.trim().split(/\s+/).filter(word => word.length > 0).length;
-      setVisionWordCount(wordCount);
-    }
-
-    // Clear field error
-    if (errors[field]) {
-      setErrors(prev => ({
+  const handleFieldChange = useCallback(
+    (field: keyof CollaborationInquiryData, value: string | boolean) => {
+      setFormData(prev => ({
         ...prev,
-        [field]: ''
-      }));
-    }
-  }, [errors]);
+        [field]: value,
+      }))
+
+      // Update word count for creative vision
+      if (field === 'creativeVision' && typeof value === 'string') {
+        const wordCount = value
+          .trim()
+          .split(/\s+/)
+          .filter(word => word.length > 0).length
+        setVisionWordCount(wordCount)
+      }
+
+      // Clear field error
+      if (errors[field]) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: '',
+        }))
+      }
+    },
+    [errors]
+  )
 
   /**
    * Get pricing data from form
    */
-  const getPricingData = useCallback((): CollaborationPricingData => ({
-    projectType: formData.projectType,
-    projectScope: formData.projectScope,
-    timeline: formData.timeline,
-    experience: formData.experience,
-    creativeVision: formData.creativeVision,
-    budgetRange: formData.budgetRange
-  }), [formData]);
+  const getPricingData = useCallback(
+    (): CollaborationPricingData => ({
+      projectType: formData.projectType,
+      projectScope: formData.projectScope,
+      timeline: formData.timeline,
+      experience: formData.experience,
+      creativeVision: formData.creativeVision,
+      budgetRange: formData.budgetRange,
+    }),
+    [formData]
+  )
 
   /**
    * Update pricing estimate when relevant fields change
    */
   useEffect(() => {
-    if (!showPricing) return;
-    
-    const hasRequiredData = formData.projectType && formData.projectScope && formData.creativeVision.length > 20;
+    if (!showPricing) return
+
+    const hasRequiredData =
+      formData.projectType &&
+      formData.projectScope &&
+      formData.creativeVision.length > 20
     if (hasRequiredData && currentStep >= 2) {
-      const pricingData = getPricingData();
-      pricingActions.estimateCollaborationPrice(pricingData);
+      const pricingData = getPricingData()
+      pricingActions.estimateCollaborationPrice(pricingData)
     }
   }, [
     formData.projectType,
@@ -144,112 +169,148 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
     currentStep,
     showPricing,
     getPricingData,
-    pricingActions
-  ]);
+    pricingActions,
+  ])
 
   /**
    * Validate current step
    */
-  const validateStep = useCallback((step: number): boolean => {
-    const newErrors: Record<string, string> = {};
+  const validateStep = useCallback(
+    (step: number): boolean => {
+      const newErrors: Record<string, string> = {}
 
-    if (step === 1) {
-      if (!formData.name.trim()) newErrors.name = 'Name is required';
-      if (!formData.email.trim()) newErrors.email = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = 'Please enter a valid email';
+      if (step === 1) {
+        if (!formData.name.trim()) newErrors.name = 'Name is required'
+        if (!formData.email.trim()) newErrors.email = 'Email is required'
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = 'Please enter a valid email'
+        }
       }
-    }
 
-    if (step === 2) {
-      if (!formData.projectType) newErrors.projectType = 'Project type is required';
-      if (!formData.creativeVision.trim()) newErrors.creativeVision = 'Creative vision is required';
-      else if (formData.creativeVision.trim().length < 20) {
-        newErrors.creativeVision = 'Please provide more detail about your vision (minimum 20 characters)';
+      if (step === 2) {
+        if (!formData.projectType)
+          newErrors.projectType = 'Project type is required'
+        if (!formData.creativeVision.trim())
+          newErrors.creativeVision = 'Creative vision is required'
+        else if (formData.creativeVision.trim().length < 20) {
+          newErrors.creativeVision =
+            'Please provide more detail about your vision (minimum 20 characters)'
+        }
       }
-    }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [formData]);
+      setErrors(newErrors)
+      return Object.keys(newErrors).length === 0
+    },
+    [formData]
+  )
 
   /**
    * Handle step navigation
    */
   const nextStep = useCallback(() => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 4));
+      setCurrentStep(prev => Math.min(prev + 1, 4))
     }
-  }, [currentStep, validateStep]);
+  }, [currentStep, validateStep])
 
   const previousStep = useCallback(() => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  }, []);
+    setCurrentStep(prev => Math.max(prev - 1, 1))
+  }, [])
 
   /**
    * Handle form submission
    */
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateStep(4)) return;
-    
-    setIsSubmitting(true);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
 
-    try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1200));
-      
-      if (onSubmit) {
-        onSubmit(formData);
+      if (!validateStep(4)) return
+
+      setIsSubmitting(true)
+
+      try {
+        // Simulate form submission
+        await new Promise(resolve => setTimeout(resolve, 1200))
+
+        if (onSubmit) {
+          onSubmit(formData)
+        }
+
+        // Schedule follow-up based on project urgency and complexity
+        const isComplex =
+          computed.isConsultationRecommended ||
+          formData.timeline === 'urgent' ||
+          formData.projectScope === 'long-term'
+
+        pricingActions.scheduleFollowUp(isComplex ? 1 : 3) // 1-3 days based on complexity
+
+        onClose()
+      } catch (error) {
+        console.error('Form submission failed:', error)
+      } finally {
+        setIsSubmitting(false)
       }
-      
-      // Schedule follow-up based on project urgency and complexity
-      const isComplex = computed.isConsultationRecommended || 
-                       formData.timeline === 'urgent' || 
-                       formData.projectScope === 'long-term';
-      
-      pricingActions.scheduleFollowUp(isComplex ? 1 : 3); // 1-3 days based on complexity
-      
-      onClose();
-    } catch (error) {
-      console.error('Form submission failed:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData, validateStep, onSubmit, computed.isConsultationRecommended, pricingActions, onClose]);
+    },
+    [
+      formData,
+      validateStep,
+      onSubmit,
+      computed.isConsultationRecommended,
+      pricingActions,
+      onClose,
+    ]
+  )
 
   /**
    * Handle consultation booking
    */
   const handleBookConsultation = useCallback(() => {
-    const duration = formData.projectScope === 'ongoing' || formData.creativeVision.length > 200 ? 60 : 45;
-    
+    const duration =
+      formData.projectScope === 'ongoing' ||
+      formData.creativeVision.length > 200
+        ? 60
+        : 45
+
     pricingActions.scheduleConsultation({
       serviceType: 'collaboration',
       preferredDates: [new Date().toISOString().split('T')[0]],
       preferredTime: 'flexible',
       duration,
-      consultationType: formData.preferredContact === 'phone' ? 'phone' : 'video',
-      notes: `${formData.projectType} collaboration: ${formData.projectTitle || 'Creative project'}`
-    });
-  }, [formData, pricingActions]);
+      consultationType:
+        formData.preferredContact === 'phone' ? 'phone' : 'video',
+      notes: `${formData.projectType} collaboration: ${formData.projectTitle || 'Creative project'}`,
+    })
+  }, [formData, pricingActions])
 
   /**
    * Get project complexity indicator
    */
   const getComplexityIndicator = useCallback(() => {
-    const vision = formData.creativeVision.toLowerCase();
-    const complexKeywords = ['complex', 'advanced', 'professional', 'sophisticated', 'intricate'];
-    const expertKeywords = ['experimental', 'innovative', 'cutting-edge', 'masterclass', 'expert'];
-    
-    if (expertKeywords.some(keyword => vision.includes(keyword))) return 'expert';
-    if (complexKeywords.some(keyword => vision.includes(keyword))) return 'complex';
-    if (vision.length > 200) return 'moderate';
-    return 'simple';
-  }, [formData.creativeVision]);
+    const vision = formData.creativeVision.toLowerCase()
+    const complexKeywords = [
+      'complex',
+      'advanced',
+      'professional',
+      'sophisticated',
+      'intricate',
+    ]
+    const expertKeywords = [
+      'experimental',
+      'innovative',
+      'cutting-edge',
+      'masterclass',
+      'expert',
+    ]
 
-  if (!isOpen) return null;
+    if (expertKeywords.some(keyword => vision.includes(keyword)))
+      return 'expert'
+    if (complexKeywords.some(keyword => vision.includes(keyword)))
+      return 'complex'
+    if (vision.length > 200) return 'moderate'
+    return 'simple'
+  }, [formData.creativeVision])
+
+  if (!isOpen) return null
 
   return (
     <AnimatePresence>
@@ -258,7 +319,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-        onClick={(e) => e.target === e.currentTarget && onClose()}
+        onClick={e => e.target === e.currentTarget && onClose()}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -292,7 +353,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                 <span>{Math.round((currentStep / 4) * 100)}% Complete</span>
               </div>
               <div className="w-full bg-purple-400 rounded-full h-2">
-                <div 
+                <div
                   className="bg-white h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / 4) * 100}%` }}
                 />
@@ -315,7 +376,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Contact Information
                     </h3>
-                    
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -324,14 +385,18 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e) => handleFieldChange('name', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('name', e.target.value)
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors ${
                             errors.name ? 'border-red-500' : 'border-gray-300'
                           }`}
                           placeholder="Your full name"
                         />
                         {errors.name && (
-                          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.name}
+                          </p>
                         )}
                       </div>
 
@@ -342,14 +407,18 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         <input
                           type="email"
                           value={formData.email}
-                          onChange={(e) => handleFieldChange('email', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('email', e.target.value)
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors ${
                             errors.email ? 'border-red-500' : 'border-gray-300'
                           }`}
                           placeholder="your.email@example.com"
                         />
                         {errors.email && (
-                          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.email}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -362,7 +431,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         <input
                           type="tel"
                           value={formData.phone}
-                          onChange={(e) => handleFieldChange('phone', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('phone', e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                           placeholder="(555) 123-4567"
                         />
@@ -374,7 +445,13 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.preferredContact}
-                          onChange={(e) => handleFieldChange('preferredContact', e.target.value as CollaborationInquiryData['preferredContact'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'preferredContact',
+                              e.target
+                                .value as CollaborationInquiryData['preferredContact']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         >
                           <option value="email">Email</option>
@@ -392,7 +469,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Project Vision
                     </h3>
-                    
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -400,18 +477,32 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.projectType}
-                          onChange={(e) => handleFieldChange('projectType', e.target.value as CollaborationInquiryData['projectType'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'projectType',
+                              e.target
+                                .value as CollaborationInquiryData['projectType']
+                            )
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors ${
-                            errors.projectType ? 'border-red-500' : 'border-gray-300'
+                            errors.projectType
+                              ? 'border-red-500'
+                              : 'border-gray-300'
                           }`}
                         >
                           <option value="studio">Studio Session</option>
-                          <option value="creative">Creative Consultation</option>
-                          <option value="partnership">Long-term Partnership</option>
+                          <option value="creative">
+                            Creative Consultation
+                          </option>
+                          <option value="partnership">
+                            Long-term Partnership
+                          </option>
                           <option value="other">Other Collaboration</option>
                         </select>
                         {errors.projectType && (
-                          <p className="text-red-500 text-sm mt-1">{errors.projectType}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.projectType}
+                          </p>
                         )}
                       </div>
 
@@ -422,7 +513,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         <input
                           type="text"
                           value={formData.projectTitle}
-                          onChange={(e) => handleFieldChange('projectTitle', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('projectTitle', e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                           placeholder="Give your project a name"
                         />
@@ -435,23 +528,31 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                           Creative Vision *
                         </label>
                         <span className="text-xs text-gray-500">
-                          {visionWordCount} words • Complexity: {getComplexityIndicator()}
+                          {visionWordCount} words • Complexity:{' '}
+                          {getComplexityIndicator()}
                         </span>
                       </div>
                       <textarea
                         value={formData.creativeVision}
-                        onChange={(e) => handleFieldChange('creativeVision', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('creativeVision', e.target.value)
+                        }
                         rows={6}
                         className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors resize-none ${
-                          errors.creativeVision ? 'border-red-500' : 'border-gray-300'
+                          errors.creativeVision
+                            ? 'border-red-500'
+                            : 'border-gray-300'
                         }`}
                         placeholder="Describe your creative vision, project goals, and what you hope to achieve through this collaboration. The more detail you provide, the better we can understand and estimate your project needs..."
                       />
                       {errors.creativeVision && (
-                        <p className="text-red-500 text-sm mt-1">{errors.creativeVision}</p>
+                        <p className="text-red-500 text-sm mt-1">
+                          {errors.creativeVision}
+                        </p>
                       )}
                       <p className="text-xs text-gray-600 mt-1">
-                        Tip: Include details about style, scope, timeline, and any specific requirements
+                        Tip: Include details about style, scope, timeline, and
+                        any specific requirements
                       </p>
                     </div>
 
@@ -462,11 +563,21 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.experience}
-                          onChange={(e) => handleFieldChange('experience', e.target.value as CollaborationInquiryData['experience'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'experience',
+                              e.target
+                                .value as CollaborationInquiryData['experience']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         >
-                          <option value="first-time">First-time collaborator</option>
-                          <option value="some-experience">Some experience</option>
+                          <option value="first-time">
+                            First-time collaborator
+                          </option>
+                          <option value="some-experience">
+                            Some experience
+                          </option>
                           <option value="experienced">Experienced</option>
                           <option value="professional">Professional</option>
                         </select>
@@ -478,7 +589,13 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.projectScope}
-                          onChange={(e) => handleFieldChange('projectScope', e.target.value as CollaborationInquiryData['projectScope'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'projectScope',
+                              e.target
+                                .value as CollaborationInquiryData['projectScope']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         >
                           <option value="single-session">Single Session</option>
@@ -501,7 +618,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                     {pricingState.isEstimating ? (
                       <div className="text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600 mx-auto mb-4" />
-                        <p className="text-gray-600">Analyzing project scope and complexity...</p>
+                        <p className="text-gray-600">
+                          Analyzing project scope and complexity...
+                        </p>
                       </div>
                     ) : computed.hasEstimate && computed.formattedEstimate ? (
                       <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6">
@@ -511,27 +630,36 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                               Project Investment Estimate
                             </h4>
                             <p className="text-purple-700 text-sm">
-                              {computed.formattedEstimate.confidence} • {computed.formattedEstimate.summary}
+                              {computed.formattedEstimate.confidence} •{' '}
+                              {computed.formattedEstimate.summary}
                             </p>
                           </div>
                           <div className="text-right">
                             <div className="text-2xl font-bold text-purple-600">
                               {computed.formattedEstimate.range}
                             </div>
-                            <p className="text-sm text-gray-600">Project estimate</p>
+                            <p className="text-sm text-gray-600">
+                              Project estimate
+                            </p>
                           </div>
                         </div>
 
                         {pricingState.currentEstimate?.factors && (
                           <div className="mb-4">
-                            <h5 className="font-medium text-gray-900 mb-2">Assessment based on:</h5>
+                            <h5 className="font-medium text-gray-900 mb-2">
+                              Assessment based on:
+                            </h5>
                             <ul className="text-sm text-gray-700 space-y-1">
-                              {pricingState.currentEstimate.factors.map((factor, index) => (
-                                <li key={index} className="flex items-center">
-                                  <span className="text-purple-500 mr-2">•</span>
-                                  {factor}
-                                </li>
-                              ))}
+                              {pricingState.currentEstimate.factors.map(
+                                (factor, index) => (
+                                  <li key={index} className="flex items-center">
+                                    <span className="text-purple-500 mr-2">
+                                      •
+                                    </span>
+                                    {factor}
+                                  </li>
+                                )
+                              )}
                             </ul>
                           </div>
                         )}
@@ -544,7 +672,8 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                                   Creative Consultation Recommended
                                 </h5>
                                 <p className="text-sm text-gray-600">
-                                  Your project has unique requirements. Let's discuss your vision in detail.
+                                  Your project has unique requirements. Let's
+                                  discuss your vision in detail.
                                 </p>
                               </div>
                               {computed.canBook && (
@@ -576,11 +705,21 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.timeline}
-                          onChange={(e) => handleFieldChange('timeline', e.target.value as CollaborationInquiryData['timeline'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'timeline',
+                              e.target
+                                .value as CollaborationInquiryData['timeline']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         >
-                          <option value="urgent">Rush Project (1-2 weeks)</option>
-                          <option value="specific-date">Specific Deadline</option>
+                          <option value="urgent">
+                            Rush Project (1-2 weeks)
+                          </option>
+                          <option value="specific-date">
+                            Specific Deadline
+                          </option>
                           <option value="flexible">Flexible Timeline</option>
                           <option value="ongoing">Ongoing Project</option>
                         </select>
@@ -592,7 +731,13 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         </label>
                         <select
                           value={formData.budgetRange}
-                          onChange={(e) => handleFieldChange('budgetRange', e.target.value as CollaborationInquiryData['budgetRange'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'budgetRange',
+                              e.target
+                                .value as CollaborationInquiryData['budgetRange']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         >
                           <option value="under-500">Under $500</option>
@@ -613,7 +758,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                         <input
                           type="text"
                           value={formData.timelineDetails}
-                          onChange={(e) => handleFieldChange('timelineDetails', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('timelineDetails', e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                           placeholder="When do you need this completed?"
                         />
@@ -628,14 +775,16 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Final Details
                     </h3>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Budget Notes (optional)
                       </label>
                       <textarea
                         value={formData.budgetNotes}
-                        onChange={(e) => handleFieldChange('budgetNotes', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('budgetNotes', e.target.value)
+                        }
                         rows={3}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         placeholder="Any specific budget considerations or constraints?"
@@ -648,7 +797,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                       </label>
                       <textarea
                         value={formData.additionalInfo}
-                        onChange={(e) => handleFieldChange('additionalInfo', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('additionalInfo', e.target.value)
+                        }
                         rows={4}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         placeholder="Anything else you'd like to share about your project, inspirations, or collaboration preferences?"
@@ -662,7 +813,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                       <input
                         type="text"
                         value={formData.bestTimeToContact}
-                        onChange={(e) => handleFieldChange('bestTimeToContact', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('bestTimeToContact', e.target.value)
+                        }
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500/20 focus:border-purple-500 transition-colors"
                         placeholder="e.g., Weekday mornings, Evening after 6pm, etc."
                       />
@@ -703,7 +856,9 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                   onClick={handleSubmit}
                   className="bg-gradient-to-r from-brand-orange-warm to-orange-600 text-white px-6 py-2 rounded-lg hover:from-orange-600 hover:to-orange-700 transition-colors disabled:opacity-50"
                 >
-                  {isSubmitting ? 'Submitting...' : 'Submit Collaboration Request'}
+                  {isSubmitting
+                    ? 'Submitting...'
+                    : 'Submit Collaboration Request'}
                 </button>
               )}
             </div>
@@ -717,7 +872,8 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
                   Consultation Scheduled!
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  We've scheduled your creative consultation. You'll receive a confirmation with next steps shortly.
+                  We've scheduled your creative consultation. You'll receive a
+                  confirmation with next steps shortly.
                 </p>
                 <button
                   onClick={() => pricingActions.clearEstimate()}
@@ -731,7 +887,7 @@ export const CollaborationInquiry: React.FC<CollaborationInquiryProps> = ({
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default CollaborationInquiry;
+export default CollaborationInquiry

@@ -34,36 +34,36 @@ src/content/
 ### Basic Usage
 
 ```tsx
-import { useContent, useSectionContent } from '@/content';
+import { useContent, useSectionContent } from '@/content'
 
 function MyComponent() {
-  const { content, loading, error } = useContent();
-  const { data: heroData } = useSectionContent('hero');
-  
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  
+  const { content, loading, error } = useContent()
+  const { data: heroData } = useSectionContent('hero')
+
+  if (loading) return <div>Loading...</div>
+  if (error) return <div>Error: {error}</div>
+
   return (
     <div>
       <h1>{heroData?.title}</h1>
       <p>{heroData?.subtitle}</p>
     </div>
-  );
+  )
 }
 ```
 
 ### Lesson Packages with Filtering
 
 ```tsx
-import { useLessonPackages } from '@/content';
+import { useLessonPackages } from '@/content'
 
 function LessonPackages() {
   const { packages, loading } = useLessonPackages({
     popular: true,
     maxPrice: 200,
-    targetAudience: ['beginner', 'intermediate']
-  });
-  
+    targetAudience: ['beginner', 'intermediate'],
+  })
+
   return (
     <div>
       {packages.map(pkg => (
@@ -73,22 +73,22 @@ function LessonPackages() {
         </div>
       ))}
     </div>
-  );
+  )
 }
 ```
 
 ### Testimonials
 
 ```tsx
-import { useTestimonials } from '@/content';
+import { useTestimonials } from '@/content'
 
 function TestimonialsList() {
   const { testimonials, stats } = useTestimonials({
     featured: true,
     minRating: 4,
-    limit: 3
-  });
-  
+    limit: 3,
+  })
+
   return (
     <div>
       <h2>Featured Testimonials (Avg: {stats?.averageRating}/5)</h2>
@@ -100,7 +100,7 @@ function TestimonialsList() {
         </blockquote>
       ))}
     </div>
-  );
+  )
 }
 ```
 
@@ -109,100 +109,109 @@ function TestimonialsList() {
 ### Core Hooks
 
 #### `useContent()`
+
 Main content hook with caching and validation.
 
 ```tsx
-const { 
-  content,     // Complete site content
-  lessons,     // Lesson-specific content
-  loading,     // Loading state
-  error,       // Error message if any
-  refresh      // Manual refresh function
-} = useContent();
+const {
+  content, // Complete site content
+  lessons, // Lesson-specific content
+  loading, // Loading state
+  error, // Error message if any
+  refresh, // Manual refresh function
+} = useContent()
 ```
 
 #### `useSectionContent<T>(section)`
+
 Access specific content sections with type safety.
 
 ```tsx
-const { data, loading, error, sectionErrors, isValid } = useSectionContent('hero');
+const { data, loading, error, sectionErrors, isValid } =
+  useSectionContent('hero')
 ```
 
 ### Specialized Hooks
 
 #### `useLessonPackages(filters?)`
+
 Access lesson packages with filtering and sorting.
 
 ```tsx
-const { 
-  packages,        // Filtered packages
-  allPackages,     // All packages
-  packageInfo,     // Additional info
-  stats,          // Package statistics
-  loading, 
-  error 
+const {
+  packages, // Filtered packages
+  allPackages, // All packages
+  packageInfo, // Additional info
+  stats, // Package statistics
+  loading,
+  error,
 } = useLessonPackages({
   popular: true,
   maxPrice: 150,
-  targetAudience: ['beginner']
-});
+  targetAudience: ['beginner'],
+})
 ```
 
 #### `useTestimonials(filters?)`
+
 Access testimonials with filtering and statistics.
 
 ```tsx
-const { 
-  testimonials,    // Filtered testimonials
-  featured,        // Featured testimonials
-  stats,          // Rating statistics
-  loading, 
-  error 
+const {
+  testimonials, // Filtered testimonials
+  featured, // Featured testimonials
+  stats, // Rating statistics
+  loading,
+  error,
 } = useTestimonials({
   featured: true,
   minRating: 4,
-  verified: true
-});
+  verified: true,
+})
 ```
 
 #### `useContactMethods(filters?)`
+
 Access contact information.
 
 ```tsx
-const { 
-  methods,        // All contact methods
+const {
+  methods, // All contact methods
   primaryContact, // Primary contact method
-  loading, 
-  error 
-} = useContactMethods({ primary: true });
+  loading,
+  error,
+} = useContactMethods({ primary: true })
 ```
 
 #### `useSEO(pageType?, customData?)`
+
 SEO content management.
 
 ```tsx
-const { 
-  seo,              // SEO configuration
-  data,             // Processed SEO data
-  generatePageTitle // Utility function
-} = useSEO('about', { 
-  title: 'Custom Page Title' 
-});
+const {
+  seo, // SEO configuration
+  data, // Processed SEO data
+  generatePageTitle, // Utility function
+} = useSEO('about', {
+  title: 'Custom Page Title',
+})
 ```
 
 #### `useNavigation()`
+
 Navigation structure access.
 
 ```tsx
-const { navigation, loading, error } = useNavigation();
+const { navigation, loading, error } = useNavigation()
 ```
 
 #### `useContentSearch()`
+
 Content search functionality.
 
 ```tsx
-const { search } = useContentSearch();
-const results = search('guitar lessons', { section: 'lessons' });
+const { search } = useContentSearch()
+const results = search('guitar lessons', { section: 'lessons' })
 ```
 
 ## Content Types
@@ -210,6 +219,7 @@ const results = search('guitar lessons', { section: 'lessons' });
 The system includes comprehensive TypeScript interfaces for all content:
 
 ### Core Content Types
+
 - `SiteContent` - Main site content structure
 - `HeroContent` - Hero section data
 - `AboutContent` - About section with skills and achievements
@@ -220,6 +230,7 @@ The system includes comprehensive TypeScript interfaces for all content:
 - `SEOContent` - SEO and metadata
 
 ### Supporting Types
+
 - `LessonPackage` - Individual lesson package details
 - `Testimonial` - Student testimonials with ratings
 - `ContactMethod` - Contact method definitions
@@ -232,41 +243,44 @@ The system includes comprehensive TypeScript interfaces for all content:
 The system includes comprehensive runtime validation:
 
 ### Automatic Validation
+
 All content is automatically validated when loaded:
 
 ```tsx
-const { validationResult } = useContent();
+const { validationResult } = useContent()
 
 if (validationResult && !validationResult.valid) {
-  console.log('Validation errors:', validationResult.errors);
-  console.log('Warnings:', validationResult.warnings);
+  console.log('Validation errors:', validationResult.errors)
+  console.log('Warnings:', validationResult.warnings)
 }
 ```
 
 ### Manual Validation
+
 You can validate content manually:
 
 ```tsx
-import { validateSiteContent, validateLessonPackage } from '@/content';
+import { validateSiteContent, validateLessonPackage } from '@/content'
 
-const result = validateSiteContent(content);
+const result = validateSiteContent(content)
 if (!result.valid) {
-  console.error('Content validation failed:', result.errors);
+  console.error('Content validation failed:', result.errors)
 }
 ```
 
 ### Validation Utilities
+
 ```tsx
-import { validationUtils } from '@/content';
+import { validationUtils } from '@/content'
 
 // Get validation summary
-const summary = validationUtils.getValidationSummary(result);
+const summary = validationUtils.getValidationSummary(result)
 
 // Format errors for display
-const errorMessage = validationUtils.formatValidationErrors(result.errors);
+const errorMessage = validationUtils.formatValidationErrors(result.errors)
 
 // Check minimum requirements
-const isUsable = validationUtils.meetsMinimumRequirements(result);
+const isUsable = validationUtils.meetsMinimumRequirements(result)
 ```
 
 ## Content Utilities
@@ -274,37 +288,37 @@ const isUsable = validationUtils.meetsMinimumRequirements(result);
 ### Formatting and Display
 
 ```tsx
-import { contentUtils } from '@/content';
+import { contentUtils } from '@/content'
 
 // Format prices
-const price = contentUtils.formatPrice(150); // "$150"
+const price = contentUtils.formatPrice(150) // "$150"
 
 // Calculate savings
-const savings = contentUtils.calculateSavings(120, 4, 40); // 25%
+const savings = contentUtils.calculateSavings(120, 4, 40) // 25%
 
 // Generate slugs
-const slug = contentUtils.generateSlug('Advanced Guitar Lessons'); // "advanced-guitar-lessons"
+const slug = contentUtils.generateSlug('Advanced Guitar Lessons') // "advanced-guitar-lessons"
 
 // Truncate text
-const preview = contentUtils.truncateText(longText, 150);
+const preview = contentUtils.truncateText(longText, 150)
 ```
 
 ### Development Helpers
 
 ```tsx
-import { devHelpers } from '@/content';
+import { devHelpers } from '@/content'
 
 // Log content structure (development only)
-devHelpers.logContentStructure(content);
+devHelpers.logContentStructure(content)
 
 // Measure performance
 const { result, duration } = await devHelpers.measureContentOperation(
   () => loadHeavyContent(),
   'Heavy Content Load'
-);
+)
 
 // Validate in development
-devHelpers.validateInDevelopment(content, 'hero');
+devHelpers.validateInDevelopment(content, 'hero')
 ```
 
 ## Error Handling
@@ -312,38 +326,44 @@ devHelpers.validateInDevelopment(content, 'hero');
 The content system provides comprehensive error handling:
 
 ### Loading States
-```tsx
-const { loading, error, retryCount } = useContent();
 
-if (loading) return <LoadingSpinner />;
-if (error) return <ErrorMessage message={error} retryCount={retryCount} />;
+```tsx
+const { loading, error, retryCount } = useContent()
+
+if (loading) return <LoadingSpinner />
+if (error) return <ErrorMessage message={error} retryCount={retryCount} />
 ```
 
 ### Validation Errors
+
 ```tsx
-const { sectionErrors, isValid } = useSectionContent('hero');
+const { sectionErrors, isValid } = useSectionContent('hero')
 
 if (!isValid) {
-  return <ValidationErrors errors={sectionErrors} />;
+  return <ValidationErrors errors={sectionErrors} />
 }
 ```
 
 ### Error Recovery
+
 The system includes automatic retry with exponential backoff for transient errors.
 
 ## Performance Optimization
 
 ### Caching
+
 - Content is automatically cached for 5 minutes
 - Cache is invalidated on manual refresh
 - Supports hot reloading in development
 
 ### Bundle Optimization
+
 - JSON content is imported statically for optimal bundling
 - Type-only imports prevent runtime overhead
 - Tree-shaking eliminates unused validation code
 
 ### Memory Management
+
 - Hooks clean up subscriptions and timeouts
 - Validation results are memoized
 - Search results are cached per query
@@ -353,52 +373,59 @@ The system includes automatic retry with exponential backoff for transient error
 The content system is designed to integrate seamlessly with existing code:
 
 ### Path Aliases
+
 All imports use configured path aliases:
+
 ```tsx
-import { useContent } from '@/content';
-import { SiteContent } from '@/types'; // Re-exported from content types
+import { useContent } from '@/content'
+import { SiteContent } from '@/types' // Re-exported from content types
 ```
 
 ### Backward Compatibility
+
 Legacy interfaces are preserved:
+
 ```tsx
 // Old interface still works
-import { LessonPackage } from '@/types';
+import { LessonPackage } from '@/types'
 
 // New comprehensive interface available
-import { LessonPackage as NewLessonPackage } from '@/content/types';
+import { LessonPackage as NewLessonPackage } from '@/content/types'
 ```
 
 ### Vite Configuration
+
 The system works with existing Vite configuration and build process.
 
 ## Best Practices
 
 ### Component Integration
+
 ```tsx
 function HeroSection() {
-  const { data: hero, loading, error } = useSectionContent('hero');
-  
+  const { data: hero, loading, error } = useSectionContent('hero')
+
   // Always handle loading and error states
-  if (loading) return <HeroSkeleton />;
-  if (error) return <HeroFallback />;
-  if (!hero) return null;
-  
+  if (loading) return <HeroSkeleton />
+  if (error) return <HeroFallback />
+  if (!hero) return null
+
   return (
     <section>
       <h1>{hero.title}</h1>
       <p>{hero.subtitle}</p>
     </section>
-  );
+  )
 }
 ```
 
 ### Type Safety
+
 ```tsx
 // Use specific section types
 function AboutSection() {
-  const { data } = useSectionContent('about');
-  
+  const { data } = useSectionContent('about')
+
   // TypeScript knows data is AboutContent | null
   return data ? (
     <div>
@@ -406,14 +433,16 @@ function AboutSection() {
         <SkillBadge key={skill.name} skill={skill} />
       ))}
     </div>
-  ) : null;
+  ) : null
 }
 ```
 
 ### Error Boundaries
+
 Wrap content-consuming components in error boundaries for graceful degradation.
 
 ### Performance
+
 - Use specific hooks rather than `useContent()` when you only need part of the content
 - Implement proper loading states
 - Consider using `React.memo()` for components that render large content lists
@@ -444,6 +473,6 @@ When adding new content types or functionality:
 For questions or issues with the content management system, refer to:
 
 1. TypeScript compiler errors for type issues
-2. Console warnings for validation problems  
+2. Console warnings for validation problems
 3. React DevTools for hook state inspection
 4. This documentation for usage examples

@@ -1,37 +1,37 @@
 /**
  * Theme Toggle Component
- * 
+ *
  * Radio switch toggle between light and dark themes with sun/moon icons
  * Replaces three-state cycling with simple binary toggle
  * Respects user's motion preferences and provides enhanced animations
  */
 
-import React, { useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useTheme } from '../hooks/useTheme';
-import type { ThemeMode } from '../styles/themes';
+import React, { useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { useTheme } from '../hooks/useTheme'
+import type { ThemeMode } from '../styles/themes'
 
 /**
  * Theme Toggle Props
  */
 interface ThemeToggleProps {
   /** Additional CSS classes */
-  className?: string;
-  
+  className?: string
+
   /** Size variant */
-  size?: 'sm' | 'md' | 'lg';
-  
+  size?: 'sm' | 'md' | 'lg'
+
   /** Show labels alongside icons */
-  showLabel?: boolean;
-  
+  showLabel?: boolean
+
   /** Custom button styling */
-  variant?: 'primary' | 'secondary' | 'ghost';
-  
+  variant?: 'primary' | 'secondary' | 'ghost'
+
   /** Disable the toggle */
-  disabled?: boolean;
-  
+  disabled?: boolean
+
   /** Custom aria-label */
-  'aria-label'?: string;
+  'aria-label'?: string
 }
 
 /**
@@ -93,7 +93,7 @@ const ThemeIcons = {
       <line x1="12" y1="17" x2="12" y2="21" />
     </svg>
   ),
-} as const;
+} as const
 
 /**
  * Get size classes for button and icon
@@ -105,56 +105,62 @@ const getSizeClasses = (size: 'sm' | 'md' | 'lg') => {
         button: 'h-8 w-8 text-sm',
         icon: 'w-4 h-4',
         text: 'text-xs',
-      };
+      }
     case 'lg':
       return {
         button: 'h-12 w-12 text-lg',
         icon: 'w-6 h-6',
         text: 'text-base',
-      };
+      }
     default: // 'md'
       return {
         button: 'h-10 w-10 text-base',
         icon: 'w-5 h-5',
         text: 'text-sm',
-      };
+      }
   }
-};
+}
 
 /**
  * Get variant classes for styling with theme-aware transitions
  */
-const getVariantClasses = (variant: 'primary' | 'secondary' | 'ghost', isDark: boolean, transitionsEnabled: boolean) => {
-  const transitionClass = transitionsEnabled ? 'transition-theme-colors duration-theme-fast' : '';
-  
+const getVariantClasses = (
+  variant: 'primary' | 'secondary' | 'ghost',
+  isDark: boolean,
+  transitionsEnabled: boolean
+) => {
+  const transitionClass = transitionsEnabled
+    ? 'transition-theme-colors duration-theme-fast'
+    : ''
+
   switch (variant) {
     case 'primary':
       return `${transitionClass} ${
-        isDark 
-          ? 'bg-blue-600 hover:bg-blue-700 text-white border border-blue-500' 
+        isDark
+          ? 'bg-blue-600 hover:bg-blue-700 text-white border border-blue-500'
           : 'bg-blue-500 hover:bg-blue-600 text-white border border-blue-400'
-      }`;
+      }`
     case 'secondary':
       return `${transitionClass} ${
         isDark
           ? 'bg-theme-bg-secondary hover:bg-theme-bg-tertiary text-theme-text border border-theme-border'
           : 'bg-theme-bg-secondary hover:bg-theme-bg-tertiary text-theme-text border border-theme-border'
-      }`;
+      }`
     default: // 'ghost'
       return `${transitionClass} ${
         isDark
           ? 'hover:bg-theme-bg-secondary text-theme-text-secondary border border-transparent hover:border-theme-border'
           : 'hover:bg-theme-bg-secondary text-theme-text-secondary border border-transparent hover:border-theme-border'
-      }`;
+      }`
   }
-};
+}
 
 /**
  * Theme Toggle Component
- * 
+ *
  * Accessible button that cycles through theme modes with smooth animations.
  * Integrates with the enhanced theme system and respects motion preferences.
- * 
+ *
  * @example
  * ```tsx
  * <ThemeToggle size="md" showLabel={true} variant="ghost" />
@@ -176,10 +182,10 @@ export default function ThemeToggle({
     cycleTheme,
     transitionsEnabled,
     reducedMotion,
-  } = useTheme();
+  } = useTheme()
 
-  const sizeClasses = getSizeClasses(size);
-  const variantClasses = getVariantClasses(variant, isDark, transitionsEnabled);
+  const sizeClasses = getSizeClasses(size)
+  const variantClasses = getVariantClasses(variant, isDark, transitionsEnabled)
 
   /**
    * Handle theme toggle between light and dark only
@@ -188,36 +194,41 @@ export default function ThemeToggle({
     if (!disabled && isInitialized) {
       // Binary toggle - only light and dark, no system
       if (mode === 'light' || mode === 'system') {
-        cycleTheme(); // This will set to dark
+        cycleTheme() // This will set to dark
       } else {
         // Force set to light mode
-        const themeSystem = (window as any).__themeSystem;
+        const themeSystem = (window as any).__themeSystem
         if (themeSystem && themeSystem.setMode) {
-          themeSystem.setMode('light');
+          themeSystem.setMode('light')
         }
       }
     }
-  }, [disabled, isInitialized, mode, cycleTheme]);
+  }, [disabled, isInitialized, mode, cycleTheme])
 
   /**
    * Handle keyboard navigation
    */
-  const handleKeyDown = useCallback((event: React.KeyboardEvent) => {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      handleToggle();
-    }
-  }, [handleToggle]);
+  const handleKeyDown = useCallback(
+    (event: React.KeyboardEvent) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault()
+        handleToggle()
+      }
+    },
+    [handleToggle]
+  )
 
   // Binary switch - only light/dark
-  const currentTheme = mode === 'system' ? (isDark ? 'dark' : 'light') : mode;
-  const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
-  const ariaLabel = customAriaLabel || `Switch to ${nextTheme} mode. Current: ${currentTheme} mode`;
+  const currentTheme = mode === 'system' ? (isDark ? 'dark' : 'light') : mode
+  const nextTheme = currentTheme === 'light' ? 'dark' : 'light'
+  const ariaLabel =
+    customAriaLabel ||
+    `Switch to ${nextTheme} mode. Current: ${currentTheme} mode`
 
   // Show loading state before theme system initializes
   if (!isInitialized) {
     return (
-      <div 
+      <div
         className={`
           inline-flex items-center justify-center rounded-md 
           ${sizeClasses.button}
@@ -243,35 +254,39 @@ export default function ThemeToggle({
           </svg>
         </div>
       </div>
-    );
+    )
   }
 
   // Icon transition animations (respects motion preferences)
-  const iconAnimations = reducedMotion ? {
-    initial: { opacity: 0 },
-    animate: { opacity: 1 },
-    exit: { opacity: 0 },
-    transition: { duration: 0 }
-  } : {
-    initial: { opacity: 0, rotate: -180, scale: 0.5 },
-    animate: { opacity: 1, rotate: 0, scale: 1 },
-    exit: { opacity: 0, rotate: 180, scale: 0.5 },
-    transition: { 
-      duration: 0.3, 
-      ease: [0.4, 0, 0.2, 1] // Custom easing for smooth feel
-    }
-  };
+  const iconAnimations = reducedMotion
+    ? {
+        initial: { opacity: 0 },
+        animate: { opacity: 1 },
+        exit: { opacity: 0 },
+        transition: { duration: 0 },
+      }
+    : {
+        initial: { opacity: 0, rotate: -180, scale: 0.5 },
+        animate: { opacity: 1, rotate: 0, scale: 1 },
+        exit: { opacity: 0, rotate: 180, scale: 0.5 },
+        transition: {
+          duration: 0.3,
+          ease: [0.4, 0, 0.2, 1], // Custom easing for smooth feel
+        },
+      }
 
   // Button animations (respects motion preferences)
-  const buttonAnimations = reducedMotion ? {
-    whileTap: undefined,
-    whileHover: undefined,
-    transition: { duration: 0 }
-  } : {
-    whileTap: { scale: 0.95 },
-    whileHover: { scale: 1.02 },
-    transition: { duration: 0.1 }
-  };
+  const buttonAnimations = reducedMotion
+    ? {
+        whileTap: undefined,
+        whileHover: undefined,
+        transition: { duration: 0 },
+      }
+    : {
+        whileTap: { scale: 0.95 },
+        whileHover: { scale: 1.02 },
+        transition: { duration: 0.1 },
+      }
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
@@ -298,10 +313,14 @@ export default function ThemeToggle({
             ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
             ${currentTheme === 'light' ? 'text-yellow-500' : 'text-gray-400'}
           `}
-          animate={reducedMotion ? {} : {
-            opacity: currentTheme === 'light' ? 1 : 0.6,
-            scale: currentTheme === 'light' ? 1 : 0.8,
-          }}
+          animate={
+            reducedMotion
+              ? {}
+              : {
+                  opacity: currentTheme === 'light' ? 1 : 0.6,
+                  scale: currentTheme === 'light' ? 1 : 0.8,
+                }
+          }
         >
           {ThemeIcons.light}
         </motion.div>
@@ -312,20 +331,37 @@ export default function ThemeToggle({
             relative flex items-center justify-center rounded-full bg-white shadow-md
             ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
           `}
-          animate={reducedMotion ? {} : {
-            x: currentTheme === 'dark' ? (size === 'sm' ? 20 : size === 'lg' ? 24 : 22) : 0,
-          }}
-          transition={reducedMotion ? {} : {
-            type: 'spring',
-            stiffness: 500,
-            damping: 30,
-          }}
+          animate={
+            reducedMotion
+              ? {}
+              : {
+                  x:
+                    currentTheme === 'dark'
+                      ? size === 'sm'
+                        ? 20
+                        : size === 'lg'
+                          ? 24
+                          : 22
+                      : 0,
+                }
+          }
+          transition={
+            reducedMotion
+              ? {}
+              : {
+                  type: 'spring',
+                  stiffness: 500,
+                  damping: 30,
+                }
+          }
         >
           {/* Current Theme Icon */}
-          <div className={`
+          <div
+            className={`
             ${size === 'sm' ? 'w-3 h-3' : size === 'lg' ? 'w-4 h-4' : 'w-3.5 h-3.5'}
             ${currentTheme === 'dark' ? 'text-blue-600' : 'text-yellow-500'}
-          `}>
+          `}
+          >
             {currentTheme === 'dark' ? ThemeIcons.dark : ThemeIcons.light}
           </div>
         </motion.div>
@@ -337,15 +373,19 @@ export default function ThemeToggle({
             ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
             ${currentTheme === 'dark' ? 'text-blue-100' : 'text-gray-400'}
           `}
-          animate={reducedMotion ? {} : {
-            opacity: currentTheme === 'dark' ? 1 : 0.6,
-            scale: currentTheme === 'dark' ? 1 : 0.8,
-          }}
+          animate={
+            reducedMotion
+              ? {}
+              : {
+                  opacity: currentTheme === 'dark' ? 1 : 0.6,
+                  scale: currentTheme === 'dark' ? 1 : 0.8,
+                }
+          }
         >
           {ThemeIcons.dark}
         </motion.div>
       </motion.button>
-      
+
       {showLabel && (
         <motion.span
           className={`
@@ -355,20 +395,24 @@ export default function ThemeToggle({
             ${transitionsEnabled ? 'theme-transition-colors' : ''}
           `}
           initial={false}
-          animate={reducedMotion ? {} : { 
-            opacity: 1
-          }}
+          animate={
+            reducedMotion
+              ? {}
+              : {
+                  opacity: 1,
+                }
+          }
           transition={reducedMotion ? {} : { duration: 0.2 }}
         >
           {currentTheme === 'light' ? 'Light' : 'Dark'}
         </motion.span>
       )}
     </div>
-  );
+  )
 }
 
 /**
  * Named exports for convenience
  */
-export { ThemeToggle };
-export type { ThemeToggleProps };
+export { ThemeToggle }
+export type { ThemeToggleProps }

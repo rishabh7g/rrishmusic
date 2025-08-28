@@ -9,7 +9,7 @@
     },
     "services": {
       "primary": "Explore Performance Services",
-      "secondary": "View Lesson Packages", 
+      "secondary": "View Lesson Packages",
       "tertiary": "Discuss Collaboration",
       "layout": "horizontal",
       "context": "services"
@@ -81,9 +81,24 @@
     }
   },
   "actionPhrases": {
-    "booking": ["Book Now", "Schedule Today", "Reserve Your Spot", "Get Started"],
-    "learning": ["Start Learning", "Begin Your Journey", "Try a Lesson", "Explore Packages"],
-    "collaboration": ["Let's Collaborate", "Discuss Your Project", "Create Together", "Start Planning"],
+    "booking": [
+      "Book Now",
+      "Schedule Today",
+      "Reserve Your Spot",
+      "Get Started"
+    ],
+    "learning": [
+      "Start Learning",
+      "Begin Your Journey",
+      "Try a Lesson",
+      "Explore Packages"
+    ],
+    "collaboration": [
+      "Let's Collaborate",
+      "Discuss Your Project",
+      "Create Together",
+      "Start Planning"
+    ],
     "inquiry": ["Get In Touch", "Send Message", "Ask Questions", "Learn More"],
     "urgency": ["Limited Time", "Book Today", "Don't Miss Out", "Act Now"]
   },

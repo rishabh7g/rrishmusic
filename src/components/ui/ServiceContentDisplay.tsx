@@ -1,19 +1,19 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { ServiceContentData } from '@/hooks/useServiceContent';
+import React from 'react'
+import { motion } from 'framer-motion'
+import { ServiceContentData } from '@/hooks/useServiceContent'
 
 interface ServiceContentDisplayProps {
-  content: ServiceContentData;
-  compact?: boolean;
-  showStats?: boolean;
-  showTestimonials?: boolean;
-  showPricing?: boolean;
-  className?: string;
+  content: ServiceContentData
+  compact?: boolean
+  showStats?: boolean
+  showTestimonials?: boolean
+  showPricing?: boolean
+  className?: string
 }
 
 /**
  * Service Content Display Component
- * 
+ *
  * Features:
  * - Dynamic service content rendering
  * - Statistics display with animations
@@ -28,7 +28,7 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
   showStats = true,
   showTestimonials = false,
   showPricing = true,
-  className = ''
+  className = '',
 }) => {
   const containerVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -37,19 +37,19 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
       y: 0,
       transition: {
         duration: 0.5,
-        staggerChildren: 0.1
-      }
-    }
-  };
+        staggerChildren: 0.1,
+      },
+    },
+  }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 10 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: { duration: 0.3 }
-    }
-  };
+      transition: { duration: 0.3 },
+    },
+  }
 
   return (
     <motion.div
@@ -68,16 +68,16 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
               variants={itemVariants}
               transition={{ delay: index * 0.1 }}
             >
-              <svg 
-                className="w-4 h-4 mr-3 text-current flex-shrink-0" 
-                fill="currentColor" 
+              <svg
+                className="w-4 h-4 mr-3 text-current flex-shrink-0"
+                fill="currentColor"
                 viewBox="0 0 20 20"
                 aria-hidden="true"
               >
-                <path 
-                  fillRule="evenodd" 
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" 
-                  clipRule="evenodd" 
+                <path
+                  fillRule="evenodd"
+                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                  clipRule="evenodd"
                 />
               </svg>
               <span className="font-medium">{feature}</span>
@@ -88,7 +88,7 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
 
       {/* Statistics Display */}
       {showStats && !compact && (
-        <motion.div 
+        <motion.div
           className="grid grid-cols-2 gap-3 pt-4 border-t border-current/20"
           variants={itemVariants}
         >
@@ -133,7 +133,7 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
 
       {/* Compact Statistics */}
       {showStats && compact && (
-        <motion.div 
+        <motion.div
           className="flex justify-between items-center pt-3 border-t border-current/20 text-xs"
           variants={itemVariants}
         >
@@ -147,7 +147,7 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
 
       {/* Pricing Information */}
       {showPricing && content.pricing && (
-        <motion.div 
+        <motion.div
           className="pt-3 border-t border-current/20"
           variants={itemVariants}
         >
@@ -167,11 +167,13 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
 
       {/* Testimonials Preview */}
       {showTestimonials && content.testimonials.length > 0 && (
-        <motion.div 
+        <motion.div
           className="pt-4 border-t border-current/20"
           variants={itemVariants}
         >
-          <div className="text-xs font-semibold mb-2 opacity-75">Recent Reviews</div>
+          <div className="text-xs font-semibold mb-2 opacity-75">
+            Recent Reviews
+          </div>
           <div className="space-y-2">
             {content.testimonials.slice(0, 2).map((testimonial, index) => (
               <motion.div
@@ -190,7 +192,7 @@ export const ServiceContentDisplay: React.FC<ServiceContentDisplayProps> = ({
         </motion.div>
       )}
     </motion.div>
-  );
-};
+  )
+}
 
-export default ServiceContentDisplay;
+export default ServiceContentDisplay

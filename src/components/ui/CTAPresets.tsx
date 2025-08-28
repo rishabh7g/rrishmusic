@@ -1,29 +1,29 @@
 /**
  * CTA Hierarchy Presets
- * 
+ *
  * Predefined CTA configurations for common use cases
  */
 
-import React from 'react';
-import { CTAHierarchy, type CTAContext, type CTALayout } from './CTAHierarchy';
-import ctaConfig from '@/data/ui/cta.json';
+import React from 'react'
+import { CTAHierarchy, type CTAContext, type CTALayout } from './CTAHierarchy'
+import ctaConfig from '@/data/ui/cta.json'
 
 /**
  * Props interface for CTA Hierarchy (imported from main component)
  */
 interface CTAHierarchyProps {
-  layout?: CTALayout;
-  context?: CTAContext;
-  primaryOnly?: boolean;
+  layout?: CTALayout
+  context?: CTAContext
+  primaryOnly?: boolean
   customMessages?: {
-    primary?: string;
-    secondary?: string;
-    tertiary?: string;
-  };
-  className?: string;
-  performanceEventType?: string;
-  teachingPackageType?: 'individual' | 'package_4' | 'package_8';
-  collaborationProjectType?: 'studio' | 'creative' | 'partnership' | 'other';
+    primary?: string
+    secondary?: string
+    tertiary?: string
+  }
+  className?: string
+  performanceEventType?: string
+  teachingPackageType?: 'individual' | 'package_4' | 'package_8'
+  collaborationProjectType?: 'studio' | 'creative' | 'partnership' | 'other'
 }
 
 /**
@@ -40,7 +40,7 @@ export const CTAPresets = {
       customMessages={{
         primary: ctaConfig.presets.hero.primary,
         secondary: ctaConfig.presets.hero.secondary,
-        tertiary: ctaConfig.presets.hero.tertiary
+        tertiary: ctaConfig.presets.hero.tertiary,
       }}
       {...props}
     />
@@ -50,11 +50,7 @@ export const CTAPresets = {
    * Services section CTA with balanced prominence
    */
   services: (props?: Partial<CTAHierarchyProps>) => (
-    <CTAHierarchy
-      layout="horizontal"
-      context="services"
-      {...props}
-    />
+    <CTAHierarchy layout="horizontal" context="services" {...props} />
   ),
 
   /**
@@ -65,9 +61,9 @@ export const CTAPresets = {
       layout="horizontal"
       context="footer"
       customMessages={{
-        primary: "Book Show",
-        secondary: "Learn Guitar", 
-        tertiary: "Collaborate"
+        primary: 'Book Show',
+        secondary: 'Learn Guitar',
+        tertiary: 'Collaborate',
       }}
       {...props}
     />
@@ -81,7 +77,7 @@ export const CTAPresets = {
       primaryOnly={true}
       layout="vertical"
       customMessages={{
-        primary: "Book Your Performance Today"
+        primary: 'Book Your Performance Today',
       }}
       {...props}
     />
@@ -91,10 +87,6 @@ export const CTAPresets = {
    * Mobile-optimized vertical CTA stack
    */
   mobileOptimized: (props?: Partial<CTAHierarchyProps>) => (
-    <CTAHierarchy
-      layout="vertical"
-      context="inline"
-      {...props}
-    />
-  )
-};
+    <CTAHierarchy layout="vertical" context="inline" {...props} />
+  ),
+}

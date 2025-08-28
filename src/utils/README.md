@@ -42,38 +42,36 @@ The data calculation system consists of three main components:
 ### Basic Usage
 
 ```typescript
-import { dataCalculator } from '@/utils/dataCalculator';
+import { dataCalculator } from '@/utils/dataCalculator'
 
 // Calculate testimonial statistics
-const testimonialStats = await dataCalculator.calculateTestimonialStats(testimonials);
+const testimonialStats =
+  await dataCalculator.calculateTestimonialStats(testimonials)
 
 // Calculate performance data
-const performanceData = await dataCalculator.calculatePerformanceData(rawData);
+const performanceData = await dataCalculator.calculatePerformanceData(rawData)
 
-// Calculate general statistics  
-const generalStats = await dataCalculator.calculateGeneralStats();
+// Calculate general statistics
+const generalStats = await dataCalculator.calculateGeneralStats()
 
 // Calculate lesson package pricing
-const pricingData = await dataCalculator.calculateLessonPackagePricing(package);
+const pricingData = await dataCalculator.calculateLessonPackagePricing(package)
 ```
 
 ### Hook Integration
 
 ```typescript
-import { useContentCalculations } from '@/utils/contentManager';
+import { useContentCalculations } from '@/utils/contentManager'
 
 function MyComponent() {
-  const { 
-    calculateTestimonialStats,
-    clearAllCaches,
-    getPerformanceMetrics 
-  } = useContentCalculations();
+  const { calculateTestimonialStats, clearAllCaches, getPerformanceMetrics } =
+    useContentCalculations()
 
   // Use calculations in component
   const handleCalculation = async () => {
-    const stats = await calculateTestimonialStats(testimonials);
+    const stats = await calculateTestimonialStats(testimonials)
     // ...
-  };
+  }
 }
 ```
 
@@ -81,10 +79,10 @@ function MyComponent() {
 
 ```typescript
 // Old way (still works)
-import { calculateTestimonialStats } from '@/utils/testimonialCalculations';
+import { calculateTestimonialStats } from '@/utils/testimonialCalculations'
 
 // New way (recommended)
-import { calculateTestimonialStats } from '@/utils/contentManager';
+import { calculateTestimonialStats } from '@/utils/contentManager'
 ```
 
 ## Features
@@ -99,53 +97,56 @@ import { calculateTestimonialStats } from '@/utils/contentManager';
 ```typescript
 // Cache TTL constants
 const CacheTTL = {
-  SHORT: 60000,      // 1 minute
-  MEDIUM: 300000,    // 5 minutes  
-  LONG: 900000,      // 15 minutes
-  EXTENDED: 3600000  // 1 hour
-};
+  SHORT: 60000, // 1 minute
+  MEDIUM: 300000, // 5 minutes
+  LONG: 900000, // 15 minutes
+  EXTENDED: 3600000, // 1 hour
+}
 ```
 
 ### 2. Performance Monitoring
 
 ```typescript
 // Get performance metrics
-const metrics = dataCalculator.getPerformanceMetrics();
+const metrics = dataCalculator.getPerformanceMetrics()
 console.log({
   cacheHits: metrics.monitor.cacheHits,
   cacheMisses: metrics.monitor.cacheMisses,
   hitRate: metrics.hitRate,
-  averageCalculationTime: metrics.monitor.averageCalculationTime
-});
+  averageCalculationTime: metrics.monitor.averageCalculationTime,
+})
 ```
 
 ### 3. Error Handling
 
 ```typescript
-import { safeCalculation, createCalculationError } from '@/utils/contentManager';
+import { safeCalculation, createCalculationError } from '@/utils/contentManager'
 
 // Safe calculation with fallback
 const stats = await safeCalculation(
   () => dataCalculator.calculateTestimonialStats(testimonials),
   defaultStats, // fallback value
   'testimonial_stats' // calculation type
-);
+)
 ```
 
 ### 4. Batch Operations
 
 ```typescript
-import { batchCalculations } from '@/utils/contentManager';
+import { batchCalculations } from '@/utils/contentManager'
 
-const results = await batchCalculations({
-  testimonials: () => dataCalculator.calculateTestimonialStats(testimonials),
-  performance: () => dataCalculator.calculatePerformanceData(performanceData),
-  stats: () => dataCalculator.calculateGeneralStats()
-}, {
-  testimonials: defaultTestimonialStats,
-  performance: defaultPerformanceData,
-  stats: defaultStats
-});
+const results = await batchCalculations(
+  {
+    testimonials: () => dataCalculator.calculateTestimonialStats(testimonials),
+    performance: () => dataCalculator.calculatePerformanceData(performanceData),
+    stats: () => dataCalculator.calculateGeneralStats(),
+  },
+  {
+    testimonials: defaultTestimonialStats,
+    performance: defaultPerformanceData,
+    stats: defaultStats,
+  }
+)
 ```
 
 ## Calculator Classes
@@ -153,6 +154,7 @@ const results = await batchCalculations({
 ### TestimonialCalculator
 
 Handles testimonial-related calculations:
+
 - Overall statistics (total, average rating)
 - Service-specific breakdowns
 - Featured/verified counts
@@ -161,6 +163,7 @@ Handles testimonial-related calculations:
 ### PerformanceCalculator
 
 Handles performance data calculations:
+
 - Total performances count
 - Unique venues calculation
 - Genre distribution analysis
@@ -170,6 +173,7 @@ Handles performance data calculations:
 ### StatsCalculator
 
 Handles general site statistics:
+
 - Experience calculations (years active)
 - Student counts and metrics
 - Success story tracking
@@ -178,6 +182,7 @@ Handles general site statistics:
 ### PricingCalculator
 
 Handles pricing-related calculations:
+
 - Package pricing with discounts
 - Per-lesson cost calculations
 - Savings calculations
@@ -189,18 +194,19 @@ Handles pricing-related calculations:
 
 ```typescript
 // Clear all caches
-dataCalculator.clearAllCaches();
+dataCalculator.clearAllCaches()
 
 // Cleanup expired entries
-const clearedCount = dataCalculator.cleanup();
+const clearedCount = dataCalculator.cleanup()
 
 // Get cache statistics
-const cacheStats = globalCache.getStats();
+const cacheStats = globalCache.getStats()
 ```
 
 ### Automatic Maintenance
 
 The cache system automatically:
+
 - Expires entries based on TTL
 - Tracks hit/miss ratios
 - Monitors calculation performance
@@ -238,14 +244,14 @@ The system is designed to be backward-compatible with existing code:
 All calculation utilities include comprehensive error handling and validation:
 
 ```typescript
-import { validateCalculationInputs } from '@/utils/contentManager';
+import { validateCalculationInputs } from '@/utils/contentManager'
 
 // Validate testimonial data
 validateCalculationInputs(
   testimonials,
-  (t) => t.rating >= 1 && t.rating <= 5,
+  t => t.rating >= 1 && t.rating <= 5,
   'Invalid testimonial rating'
-);
+)
 ```
 
 ## Future Enhancements
@@ -269,13 +275,13 @@ validateCalculationInputs(
 
 ```typescript
 // Performance debugging
-const metrics = dataCalculator.getPerformanceMetrics();
-console.log('Performance:', metrics);
+const metrics = dataCalculator.getPerformanceMetrics()
+console.log('Performance:', metrics)
 
 // Cache debugging
-const cacheStats = globalCache.getStats();
-console.log('Cache:', cacheStats);
+const cacheStats = globalCache.getStats()
+console.log('Cache:', cacheStats)
 
 // Clear everything for testing
-dataCalculator.clearAllCaches();
+dataCalculator.clearAllCaches()
 ```

@@ -59,25 +59,31 @@ body {
   --transition-duration-fast: 150ms;
   --transition-duration-normal: 300ms;
   --transition-duration-slow: 500ms;
-  --transition-easing-standard: cubic-bezier(0.4, 0.0, 0.2, 1);
-  --transition-easing-emphasized: cubic-bezier(0.0, 0.0, 0.2, 1);
-  --transition-easing-decelerated: cubic-bezier(0.0, 0.0, 0.2, 1);
+  --transition-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-easing-emphasized: cubic-bezier(0, 0, 0.2, 1);
+  --transition-easing-decelerated: cubic-bezier(0, 0, 0.2, 1);
 
   /* Enhanced transition properties for theme switching */
-  --transition-theme-colors: 
-    background-color var(--transition-duration-normal) var(--transition-easing-standard),
-    border-color var(--transition-duration-normal) var(--transition-easing-standard),
+  --transition-theme-colors:
+    background-color var(--transition-duration-normal)
+      var(--transition-easing-standard),
+    border-color var(--transition-duration-normal)
+      var(--transition-easing-standard),
     color var(--transition-duration-normal) var(--transition-easing-standard);
-  --transition-theme-shadows: 
-    box-shadow var(--transition-duration-normal) var(--transition-easing-standard),
+  --transition-theme-shadows:
+    box-shadow var(--transition-duration-normal)
+      var(--transition-easing-standard),
     filter var(--transition-duration-normal) var(--transition-easing-standard);
-  --transition-theme-all: 
-    background-color var(--transition-duration-normal) var(--transition-easing-standard),
-    border-color var(--transition-duration-normal) var(--transition-easing-standard),
+  --transition-theme-all:
+    background-color var(--transition-duration-normal)
+      var(--transition-easing-standard),
+    border-color var(--transition-duration-normal)
+      var(--transition-easing-standard),
     color var(--transition-duration-normal) var(--transition-easing-standard),
     fill var(--transition-duration-normal) var(--transition-easing-standard),
     stroke var(--transition-duration-normal) var(--transition-easing-standard),
-    box-shadow var(--transition-duration-normal) var(--transition-easing-standard);
+    box-shadow var(--transition-duration-normal)
+      var(--transition-easing-standard);
 }
 
 /* Enhanced theme transition classes */
@@ -86,9 +92,11 @@ body {
 }
 
 .theme-transition-fast {
-  transition: 
-    background-color var(--transition-duration-fast) var(--transition-easing-standard),
-    border-color var(--transition-duration-fast) var(--transition-easing-standard),
+  transition:
+    background-color var(--transition-duration-fast)
+      var(--transition-easing-standard),
+    border-color var(--transition-duration-fast)
+      var(--transition-easing-standard),
     color var(--transition-duration-fast) var(--transition-easing-standard),
     fill var(--transition-duration-fast) var(--transition-easing-standard),
     stroke var(--transition-duration-fast) var(--transition-easing-standard),
@@ -97,12 +105,15 @@ body {
 
 .theme-transition-slow {
   transition:
-    background-color var(--transition-duration-slow) var(--transition-easing-decelerated),
-    border-color var(--transition-duration-slow) var(--transition-easing-decelerated),
+    background-color var(--transition-duration-slow)
+      var(--transition-easing-decelerated),
+    border-color var(--transition-duration-slow)
+      var(--transition-easing-decelerated),
     color var(--transition-duration-slow) var(--transition-easing-decelerated),
     fill var(--transition-duration-slow) var(--transition-easing-decelerated),
     stroke var(--transition-duration-slow) var(--transition-easing-decelerated),
-    box-shadow var(--transition-duration-slow) var(--transition-easing-decelerated);
+    box-shadow var(--transition-duration-slow)
+      var(--transition-easing-decelerated);
 }
 
 .theme-transition-colors {
@@ -148,7 +159,8 @@ body {
 a {
   color: var(--color-primary);
   text-decoration: none;
-  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: color var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 a:hover {
@@ -161,23 +173,35 @@ button {
 }
 
 /* Form element transitions */
-input, textarea, select {
+input,
+textarea,
+select {
   background-color: var(--color-background);
   border-color: var(--color-border);
   color: var(--color-text);
-  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: color var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus,
+textarea:focus,
+select:focus {
   border-color: var(--color-primary);
-  transition: color var(--transition-duration-fast) var(--transition-easing-standard);
+  transition: color var(--transition-duration-fast)
+    var(--transition-easing-standard);
 }
 
 /* Heading transitions */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--color-text);
   font-family: 'Montserrat', sans-serif;
-  transition: color var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: color var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 /* Enhanced accessibility: respect user motion preferences */
@@ -189,13 +213,26 @@ h1, h2, h3, h4, h5, h6 {
   .theme-transition-shadows {
     transition: none !important;
   }
-  
-  html, body, a, button, input, textarea, select, h1, h2, h3, h4, h5, h6 {
+
+  html,
+  body,
+  a,
+  button,
+  input,
+  textarea,
+  select,
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     transition: none !important;
   }
-  
+
   /* Still allow opacity changes for essential feedback */
-  button:hover, a:hover {
+  button:hover,
+  a:hover {
     transition: opacity var(--transition-duration-fast) ease !important;
   }
 }
@@ -206,8 +243,11 @@ header {
   border-bottom: 1px solid var(--color-border);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  transition: top 0.3s, background-color var(--transition-duration-normal) var(--transition-easing-standard),
-              color var(--transition-duration-normal) var(--transition-easing-standard);
+  transition:
+    top 0.3s,
+    background-color var(--transition-duration-normal)
+      var(--transition-easing-standard),
+    color var(--transition-duration-normal) var(--transition-easing-standard);
 }
 
 .sticky-header {
@@ -230,7 +270,7 @@ header {
   .theme-transitioning * {
     will-change: background-color, color, border-color;
   }
-  
+
   /* Clean up will-change after transition */
   .theme-transition:not(.theme-transitioning) * {
     will-change: auto;
@@ -256,7 +296,7 @@ header {
     color: black !important;
     background: white !important;
   }
-  
+
   .no-print {
     display: none !important;
   }
@@ -281,12 +321,17 @@ header {
   );
   background-size: 200% 100%;
   animation: skeleton-loading 1.5s infinite;
-  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: background var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 /* Theme-aware skeleton for dark mode */
@@ -298,14 +343,17 @@ header {
     var(--color-background-secondary) 75%
   );
   background-size: 200% 100%;
-  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: background var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 /* Card and surface transitions */
-.card, .surface {
+.card,
+.surface {
   background-color: var(--color-background-secondary);
   border: 1px solid var(--color-border);
-  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: background var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 /* Disable skeleton animation if user prefers reduced motion */
@@ -319,7 +367,7 @@ header {
 .scroll-fade-in {
   opacity: 0;
   transform: translateY(20px);
-  transition: 
+  transition:
     opacity 0.6s var(--transition-easing-standard),
     transform 0.6s var(--transition-easing-standard);
 }
@@ -333,7 +381,8 @@ header {
 :focus-visible {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
-  transition: outline-color var(--transition-duration-fast) var(--transition-easing-standard);
+  transition: outline-color var(--transition-duration-fast)
+    var(--transition-easing-standard);
 }
 
 /* Enhanced scrollbar styling with theme support */
@@ -344,13 +393,15 @@ header {
 
 ::-webkit-scrollbar-track {
   background: var(--color-background-secondary);
-  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: background var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--color-border);
   border-radius: 4px;
-  transition: background var(--transition-duration-normal) var(--transition-easing-standard);
+  transition: background var(--transition-duration-normal)
+    var(--transition-easing-standard);
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -377,8 +428,12 @@ header {
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Utility classes for theme transitions */
@@ -417,4 +472,3 @@ header {
 .ease-theme-decelerated {
   transition-timing-function: var(--transition-easing-decelerated) !important;
 }
-

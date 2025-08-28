@@ -12,7 +12,9 @@
   -webkit-backdrop-filter: blur(8px);
   background: rgba(255, 255, 255, 0.95);
   border-bottom: 2px solid transparent;
-  transition: border-bottom-color 0.3s ease, backdrop-filter 0.3s ease;
+  transition:
+    border-bottom-color 0.3s ease,
+    backdrop-filter 0.3s ease;
 }
 
 /* Service context transitions */
@@ -21,25 +23,25 @@
 }
 
 /* Service-specific header themes */
-.context-aware-header[data-service="home"] {
+.context-aware-header[data-service='home'] {
   --header-primary: var(--brand-blue-primary);
   --header-secondary: var(--brand-yellow-accent);
   --header-accent: var(--brand-blue-secondary);
 }
 
-.context-aware-header[data-service="teaching"] {
+.context-aware-header[data-service='teaching'] {
   --header-primary: var(--brand-orange-warm);
   --header-secondary: var(--brand-yellow-accent);
   --header-accent: var(--brand-orange-light);
 }
 
-.context-aware-header[data-service="performance"] {
+.context-aware-header[data-service='performance'] {
   --header-primary: var(--brand-blue-primary);
   --header-secondary: var(--brand-yellow-accent);
   --header-accent: var(--brand-blue-dark);
 }
 
-.context-aware-header[data-service="collaboration"] {
+.context-aware-header[data-service='collaboration'] {
   --header-primary: var(--brand-green-success);
   --header-secondary: var(--brand-yellow-accent);
   --header-accent: var(--brand-green-light);
@@ -48,7 +50,9 @@
 /* Logo transitions */
 .context-aware-header .logo {
   color: var(--header-primary);
-  transition: color 0.3s ease, transform 0.2s ease;
+  transition:
+    color 0.3s ease,
+    transform 0.2s ease;
 }
 
 .context-aware-header .logo:hover {
@@ -255,7 +259,7 @@
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
   }
-  
+
   .contextual-nav-item,
   .contextual-cta {
     min-height: 44px; /* Minimum touch target size */
@@ -269,11 +273,11 @@
     background: white;
     border-bottom: 3px solid;
   }
-  
+
   .contextual-nav-item.active {
     border: 2px solid;
   }
-  
+
   .contextual-cta.primary {
     border: 2px solid;
   }
@@ -286,7 +290,7 @@
   .contextual-cta {
     transition: none;
   }
-  
+
   .context-transition-enter,
   .context-nav-transition-enter,
   .context-cta-transition-enter,

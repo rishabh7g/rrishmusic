@@ -3,40 +3,45 @@
  * Side-by-side comparison of teaching packages with detailed analysis
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion } from 'framer-motion';
-import { LessonPackage, PricingCalculation, formatPrice, comparePackages } from '@/utils/pricingCalculator';
+import React, { useState, useMemo } from 'react'
+import { motion } from 'framer-motion'
+import {
+  LessonPackage,
+  PricingCalculation,
+  formatPrice,
+  comparePackages,
+} from '@/utils/pricingCalculator'
 
 /**
  * Props for PackageComparison component
  */
 interface PackageComparisonProps {
-  packages?: LessonPackage[];
-  packageIds?: string[];
-  className?: string;
-  onPackageSelect?: (packageId: string) => void;
-  selectedPackageId?: string;
-  showValueScore?: boolean;
-  showFeatures?: boolean;
-  variant?: 'table' | 'cards' | 'detailed';
-  maxPackages?: number;
+  packages?: LessonPackage[]
+  packageIds?: string[]
+  className?: string
+  onPackageSelect?: (packageId: string) => void
+  selectedPackageId?: string
+  showValueScore?: boolean
+  showFeatures?: boolean
+  variant?: 'table' | 'cards' | 'detailed'
+  maxPackages?: number
 }
 
 /**
  * Comparison data structure
  */
 interface ComparisonData {
-  package: LessonPackage;
-  pricing: PricingCalculation;
-  valueScore: number;
+  package: LessonPackage
+  pricing: PricingCalculation
+  valueScore: number
 }
 
 /**
  * Comparison feature analysis
  */
 interface FeatureComparison {
-  feature: string;
-  availability: Record<string, boolean>;
+  feature: string
+  availability: Record<string, boolean>
 }
 
 /**
@@ -47,15 +52,15 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+      staggerChildren: 0.1,
+    },
+  },
+}
 
 const itemVariants = {
   hidden: { opacity: 0, x: -20 },
-  visible: { opacity: 1, x: 0 }
-};
+  visible: { opacity: 1, x: 0 },
+}
 
 /**
  * PackageComparison Component
@@ -69,10 +74,12 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
   showValueScore = true,
   showFeatures = true,
   variant = 'table',
-  maxPackages = 4
+  maxPackages = 4,
 }) => {
-  const [sortBy, setSortBy] = useState<'name' | 'price' | 'value' | 'sessions'>('value');
-  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
+  const [sortBy, setSortBy] = useState<'name' | 'price' | 'value' | 'sessions'>(
+    'value'
+  )
+  const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc')
 
   // Get comparison data
   const comparisonData = useMemo<ComparisonData[]>(() => {
@@ -84,91 +91,97 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
           basePrice: pkg.originalPrice || pkg.price,
           finalPrice: pkg.price,
           savings: pkg.savings || 0,
-          savingsPercentage: pkg.savings && pkg.originalPrice 
-            ? Math.round(((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100)
-            : 0,
+          savingsPercentage:
+            pkg.savings && pkg.originalPrice
+              ? Math.round(
+                  ((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100
+                )
+              : 0,
           pricePerLesson: Math.round(pkg.price / pkg.sessions),
           totalValue: pkg.originalPrice || pkg.price,
-          discountApplied: Boolean(pkg.savings)
+          discountApplied: Boolean(pkg.savings),
         },
-        valueScore: calculateValueScore(pkg)
-      }));
+        valueScore: calculateValueScore(pkg),
+      }))
     } else {
       // Use package IDs to generate comparison
-      return comparePackages(packageIds.slice(0, maxPackages));
+      return comparePackages(packageIds.slice(0, maxPackages))
     }
-  }, [packages, packageIds, maxPackages]);
+  }, [packages, packageIds, maxPackages])
 
   // Sort comparison data
   const sortedData = useMemo(() => {
     const sorted = [...comparisonData].sort((a, b) => {
-      let aValue: number;
-      let bValue: number;
+      let aValue: number
+      let bValue: number
 
       switch (sortBy) {
         case 'name':
-          return sortDirection === 'asc' 
+          return sortDirection === 'asc'
             ? a.package.name.localeCompare(b.package.name)
-            : b.package.name.localeCompare(a.package.name);
+            : b.package.name.localeCompare(a.package.name)
         case 'price':
-          aValue = a.package.price;
-          bValue = b.package.price;
-          break;
+          aValue = a.package.price
+          bValue = b.package.price
+          break
         case 'value':
-          aValue = a.valueScore;
-          bValue = b.valueScore;
-          break;
+          aValue = a.valueScore
+          bValue = b.valueScore
+          break
         case 'sessions':
-          aValue = a.package.sessions;
-          bValue = b.package.sessions;
-          break;
+          aValue = a.package.sessions
+          bValue = b.package.sessions
+          break
         default:
-          return 0;
+          return 0
       }
 
-      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue;
-    });
+      return sortDirection === 'asc' ? aValue - bValue : bValue - aValue
+    })
 
-    return sorted;
-  }, [comparisonData, sortBy, sortDirection]);
+    return sorted
+  }, [comparisonData, sortBy, sortDirection])
 
   // Feature comparison analysis
   const featureComparison = useMemo<FeatureComparison[]>(() => {
-    if (!showFeatures) return [];
+    if (!showFeatures) return []
 
-    const allFeatures = new Set<string>();
+    const allFeatures = new Set<string>()
     comparisonData.forEach(({ package: pkg }) => {
-      pkg.features?.forEach(feature => allFeatures.add(feature));
-    });
+      pkg.features?.forEach(feature => allFeatures.add(feature))
+    })
 
     return Array.from(allFeatures).map(feature => ({
       feature,
-      availability: comparisonData.reduce((acc, { package: pkg }) => {
-        acc[pkg.id] = Boolean(pkg.features?.includes(feature));
-        return acc;
-      }, {} as Record<string, boolean>)
-    }));
-  }, [comparisonData, showFeatures]);
+      availability: comparisonData.reduce(
+        (acc, { package: pkg }) => {
+          acc[pkg.id] = Boolean(pkg.features?.includes(feature))
+          return acc
+        },
+        {} as Record<string, boolean>
+      ),
+    }))
+  }, [comparisonData, showFeatures])
 
   /**
    * Handle sort change
    */
   const handleSort = (field: typeof sortBy) => {
     if (sortBy === field) {
-      setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+      setSortDirection(prev => (prev === 'asc' ? 'desc' : 'asc'))
     } else {
-      setSortBy(field);
-      setSortDirection('desc');
+      setSortBy(field)
+      setSortDirection('desc')
     }
-  };
+  }
 
   /**
    * Get sort icon
    */
   const getSortIcon = (field: typeof sortBy) => {
-    if (sortBy !== field) return '↕️';
-    return sortDirection === 'asc' ? '↑' : '↓';
-  };
+    if (sortBy !== field) return '↕️'
+    return sortDirection === 'asc' ? '↑' : '↓'
+  }
 
   /**
    * Render table variant
@@ -179,29 +192,35 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
         <thead className="bg-gray-50">
           <tr>
             <th className="text-left p-4 font-medium text-gray-900">Package</th>
-            <th 
+            <th
               className="text-center p-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('sessions')}
             >
               Sessions {getSortIcon('sessions')}
             </th>
-            <th 
+            <th
               className="text-center p-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100"
               onClick={() => handleSort('price')}
             >
               Total Price {getSortIcon('price')}
             </th>
-            <th className="text-center p-4 font-medium text-gray-900">Per Lesson</th>
-            <th className="text-center p-4 font-medium text-gray-900">Savings</th>
+            <th className="text-center p-4 font-medium text-gray-900">
+              Per Lesson
+            </th>
+            <th className="text-center p-4 font-medium text-gray-900">
+              Savings
+            </th>
             {showValueScore && (
-              <th 
+              <th
                 className="text-center p-4 font-medium text-gray-900 cursor-pointer hover:bg-gray-100"
                 onClick={() => handleSort('value')}
               >
                 Value Score {getSortIcon('value')}
               </th>
             )}
-            <th className="text-center p-4 font-medium text-gray-900">Action</th>
+            <th className="text-center p-4 font-medium text-gray-900">
+              Action
+            </th>
           </tr>
         </thead>
         <tbody>
@@ -222,7 +241,9 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
                   )}
                   <div>
                     <div className="font-medium text-gray-900">{pkg.name}</div>
-                    <div className="text-sm text-gray-600">{pkg.description}</div>
+                    <div className="text-sm text-gray-600">
+                      {pkg.description}
+                    </div>
                   </div>
                 </div>
               </td>
@@ -244,7 +265,9 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
                 {pricing.discountApplied ? (
                   <div className="text-green-600 font-medium">
                     {formatPrice(pricing.savings)}
-                    <div className="text-xs">({pricing.savingsPercentage}%)</div>
+                    <div className="text-xs">
+                      ({pricing.savingsPercentage}%)
+                    </div>
                   </div>
                 ) : (
                   <span className="text-gray-400">—</span>
@@ -254,12 +277,16 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
                 <td className="p-4 text-center">
                   <div className="flex items-center justify-center">
                     <div className="w-16 bg-gray-200 rounded-full h-2">
-                      <div 
-                        className="bg-brand-orange-warm h-2 rounded-full transition-all duration-500" 
-                        style={{ width: `${Math.min((valueScore / 100) * 100, 100)}%` }}
+                      <div
+                        className="bg-brand-orange-warm h-2 rounded-full transition-all duration-500"
+                        style={{
+                          width: `${Math.min((valueScore / 100) * 100, 100)}%`,
+                        }}
                       />
                     </div>
-                    <span className="ml-2 text-sm font-medium">{valueScore}</span>
+                    <span className="ml-2 text-sm font-medium">
+                      {valueScore}
+                    </span>
                   </div>
                 </td>
               )}
@@ -280,7 +307,7 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
         </tbody>
       </table>
     </div>
-  );
+  )
 
   /**
    * Render cards variant
@@ -292,8 +319,8 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
           key={pkg.id}
           variants={itemVariants}
           className={`bg-white rounded-xl shadow-sm border-2 p-6 transition-all duration-200 ${
-            selectedPackageId === pkg.id 
-              ? 'border-brand-orange-warm ring-2 ring-orange-100' 
+            selectedPackageId === pkg.id
+              ? 'border-brand-orange-warm ring-2 ring-orange-100'
               : 'border-gray-200 hover:border-gray-300'
           }`}
         >
@@ -357,7 +384,7 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
         </motion.div>
       ))}
     </div>
-  );
+  )
 
   /**
    * Render detailed variant with features
@@ -377,9 +404,14 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
             <table className="w-full">
               <thead>
                 <tr className="border-b">
-                  <th className="text-left p-4 font-medium text-gray-900">Feature</th>
+                  <th className="text-left p-4 font-medium text-gray-900">
+                    Feature
+                  </th>
                   {sortedData.map(({ package: pkg }) => (
-                    <th key={pkg.id} className="text-center p-4 font-medium text-gray-900">
+                    <th
+                      key={pkg.id}
+                      className="text-center p-4 font-medium text-gray-900"
+                    >
                       {pkg.name}
                     </th>
                   ))}
@@ -406,10 +438,10 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
         </div>
       )}
     </div>
-  );
+  )
 
   return (
-    <motion.div 
+    <motion.div
       variants={containerVariants}
       initial="hidden"
       animate="visible"
@@ -419,35 +451,36 @@ export const PackageComparison: React.FC<PackageComparisonProps> = ({
       {variant === 'cards' && renderCardsVariant()}
       {variant === 'detailed' && renderDetailedVariant()}
     </motion.div>
-  );
-};
+  )
+}
 
 /**
  * Calculate value score for a package (simplified version)
  */
 function calculateValueScore(pkg: LessonPackage): number {
-  let score = 0;
-  
+  let score = 0
+
   // Base score from sessions
-  score += pkg.sessions * 10;
-  
+  score += pkg.sessions * 10
+
   // Discount bonus
   if (pkg.savings && pkg.originalPrice) {
-    const discountPercent = ((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100;
-    score += discountPercent * 2;
+    const discountPercent =
+      ((pkg.originalPrice - pkg.price) / pkg.originalPrice) * 100
+    score += discountPercent * 2
   }
-  
+
   // Popular package bonus
   if (pkg.popular) {
-    score += 20;
+    score += 20
   }
-  
+
   // Feature count bonus
   if (pkg.features) {
-    score += pkg.features.length * 5;
+    score += pkg.features.length * 5
   }
-  
-  return Math.round(score);
+
+  return Math.round(score)
 }
 
-export default PackageComparison;
+export default PackageComparison

@@ -9,8 +9,8 @@
  */
 export function useErrorHandler(): (error: Error) => void {
   return (error: Error) => {
-    console.error('Error caught by useErrorHandler:', error);
-    
+    console.error('Error caught by useErrorHandler:', error)
+
     // In a real app, you might want to dispatch to a global error state
     // or show a toast notification
     if (process.env.NODE_ENV === 'production') {
@@ -19,10 +19,10 @@ export function useErrorHandler(): (error: Error) => void {
         message: error.message,
         stack: error.stack,
         timestamp: new Date().toISOString(),
-      });
+      })
     } else {
       // Re-throw in development for debugging
-      throw error;
+      throw error
     }
-  };
+  }
 }

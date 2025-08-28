@@ -3,73 +3,84 @@
  * Comprehensive system for mapping, tracking, and optimizing user journeys across all services
  */
 
-import type { ServiceType } from '@/types';
+import type { ServiceType } from '@/types'
 
 export interface JourneyStep {
-  id: string;
-  name: string;
-  path: string;
-  serviceType?: ServiceType;
-  isOptional: boolean;
-  expectedDuration: number; // in seconds
-  conversionGoal?: string;
-  exitPoints: string[];
-  nextSteps: string[];
+  id: string
+  name: string
+  path: string
+  serviceType?: ServiceType
+  isOptional: boolean
+  expectedDuration: number // in seconds
+  conversionGoal?: string
+  exitPoints: string[]
+  nextSteps: string[]
 }
 
 export interface JourneyMap {
-  id: string;
-  name: string;
-  description: string;
-  serviceType: ServiceType;
-  startStep: string;
-  steps: JourneyStep[];
-  conversionGoals: ConversionGoal[];
-  averageCompletionTime: number;
-  conversionRate: number;
+  id: string
+  name: string
+  description: string
+  serviceType: ServiceType
+  startStep: string
+  steps: JourneyStep[]
+  conversionGoals: ConversionGoal[]
+  averageCompletionTime: number
+  conversionRate: number
 }
 
 export interface ConversionGoal {
-  id: string;
-  name: string;
-  type: 'form_submission' | 'booking_completed' | 'inquiry_sent' | 'email_signup' | 'download' | 'custom';
-  value: number; // business value score
-  isRequired: boolean;
-  trackingEvents: string[];
+  id: string
+  name: string
+  type:
+    | 'form_submission'
+    | 'booking_completed'
+    | 'inquiry_sent'
+    | 'email_signup'
+    | 'download'
+    | 'custom'
+  value: number // business value score
+  isRequired: boolean
+  trackingEvents: string[]
 }
 
 export interface JourneyMetrics {
-  totalViews: number;
-  completedJourneys: number;
-  dropOffPoints: Record<string, number>;
-  averageTimeSpent: number;
-  conversionsByGoal: Record<string, number>;
-  frictionPoints: FrictionPoint[];
-  optimizationScore: number;
+  totalViews: number
+  completedJourneys: number
+  dropOffPoints: Record<string, number>
+  averageTimeSpent: number
+  conversionsByGoal: Record<string, number>
+  frictionPoints: FrictionPoint[]
+  optimizationScore: number
 }
 
 export interface FrictionPoint {
-  stepId: string;
-  type: 'high_exit_rate' | 'long_time_spent' | 'low_conversion' | 'form_abandonment' | 'navigation_confusion';
-  severity: 'low' | 'medium' | 'high' | 'critical';
-  description: string;
-  suggestions: string[];
-  impact: number; // percentage impact on conversion
+  stepId: string
+  type:
+    | 'high_exit_rate'
+    | 'long_time_spent'
+    | 'low_conversion'
+    | 'form_abandonment'
+    | 'navigation_confusion'
+  severity: 'low' | 'medium' | 'high' | 'critical'
+  description: string
+  suggestions: string[]
+  impact: number // percentage impact on conversion
 }
 
 export interface UserSession {
-  sessionId: string;
-  userId?: string;
-  journeyId: string;
-  currentStep: string;
-  startTime: Date;
-  lastActivity: Date;
-  completedSteps: string[];
-  exitPoint?: string;
-  conversionGoalsAchieved: string[];
-  deviceType: 'desktop' | 'mobile' | 'tablet';
-  referralSource: string;
-  metadata: Record<string, unknown>;
+  sessionId: string
+  userId?: string
+  journeyId: string
+  currentStep: string
+  startTime: Date
+  lastActivity: Date
+  completedSteps: string[]
+  exitPoint?: string
+  conversionGoalsAchieved: string[]
+  deviceType: 'desktop' | 'mobile' | 'tablet'
+  referralSource: string
+  metadata: Record<string, unknown>
 }
 
 /**
@@ -93,7 +104,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 30,
         conversionGoal: 'explore_services',
         exitPoints: ['/about', '/contact', 'external'],
-        nextSteps: ['teaching-info', 'about', 'contact']
+        nextSteps: ['teaching-info', 'about', 'contact'],
       },
       {
         id: 'teaching-info',
@@ -104,7 +115,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 90,
         conversionGoal: 'interested_in_lessons',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['teaching-pricing', 'contact-teaching']
+        nextSteps: ['teaching-pricing', 'contact-teaching'],
       },
       {
         id: 'teaching-pricing',
@@ -115,7 +126,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 45,
         conversionGoal: 'pricing_reviewed',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['contact-teaching', 'testimonials']
+        nextSteps: ['contact-teaching', 'testimonials'],
       },
       {
         id: 'testimonials',
@@ -126,7 +137,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 60,
         conversionGoal: 'trust_established',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['contact-teaching']
+        nextSteps: ['contact-teaching'],
       },
       {
         id: 'contact-teaching',
@@ -137,7 +148,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 120,
         conversionGoal: 'form_submission',
         exitPoints: ['homepage', '/teaching', 'external'],
-        nextSteps: ['form-completion']
+        nextSteps: ['form-completion'],
       },
       {
         id: 'form-completion',
@@ -148,8 +159,8 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 15,
         conversionGoal: 'inquiry_sent',
         exitPoints: ['homepage'],
-        nextSteps: []
-      }
+        nextSteps: [],
+      },
     ],
     conversionGoals: [
       {
@@ -158,7 +169,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 20,
         isRequired: false,
-        trackingEvents: ['page_view_teaching', 'scroll_services_section']
+        trackingEvents: ['page_view_teaching', 'scroll_services_section'],
       },
       {
         id: 'interested_in_lessons',
@@ -166,7 +177,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 40,
         isRequired: false,
-        trackingEvents: ['click_learn_more', 'scroll_teaching_details']
+        trackingEvents: ['click_learn_more', 'scroll_teaching_details'],
       },
       {
         id: 'pricing_reviewed',
@@ -174,7 +185,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 60,
         isRequired: false,
-        trackingEvents: ['click_pricing_section', 'expand_package_details']
+        trackingEvents: ['click_pricing_section', 'expand_package_details'],
       },
       {
         id: 'trust_established',
@@ -182,7 +193,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 50,
         isRequired: false,
-        trackingEvents: ['read_testimonials', 'play_demo_audio']
+        trackingEvents: ['read_testimonials', 'play_demo_audio'],
       },
       {
         id: 'form_submission',
@@ -190,7 +201,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'form_submission',
         value: 80,
         isRequired: true,
-        trackingEvents: ['form_focus', 'field_completion']
+        trackingEvents: ['form_focus', 'field_completion'],
       },
       {
         id: 'inquiry_sent',
@@ -198,15 +209,16 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'inquiry_sent',
         value: 100,
         isRequired: true,
-        trackingEvents: ['form_submit_success', 'confirmation_page_view']
-      }
-    ]
+        trackingEvents: ['form_submit_success', 'confirmation_page_view'],
+      },
+    ],
   },
-  
+
   performance: {
     id: 'performance-main',
     name: 'Performance Booking Journey',
-    description: 'Journey for performance booking inquiries with pricing estimation',
+    description:
+      'Journey for performance booking inquiries with pricing estimation',
     serviceType: 'performance',
     startStep: 'homepage',
     averageCompletionTime: 360, // 6 minutes
@@ -220,7 +232,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 30,
         conversionGoal: 'service_discovery',
         exitPoints: ['/about', '/contact', 'external'],
-        nextSteps: ['performance-info', 'about', 'contact']
+        nextSteps: ['performance-info', 'about', 'contact'],
       },
       {
         id: 'performance-info',
@@ -231,7 +243,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 75,
         conversionGoal: 'performance_interest',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['performance-portfolio', 'contact-performance']
+        nextSteps: ['performance-portfolio', 'contact-performance'],
       },
       {
         id: 'performance-portfolio',
@@ -242,7 +254,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 90,
         conversionGoal: 'portfolio_engagement',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['contact-performance']
+        nextSteps: ['contact-performance'],
       },
       {
         id: 'contact-performance',
@@ -253,7 +265,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 180,
         conversionGoal: 'pricing_estimation',
         exitPoints: ['homepage', '/performance', 'external'],
-        nextSteps: ['pricing-review', 'consultation-booking']
+        nextSteps: ['pricing-review', 'consultation-booking'],
       },
       {
         id: 'pricing-review',
@@ -264,7 +276,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 60,
         conversionGoal: 'estimate_reviewed',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['consultation-booking', 'form-completion']
+        nextSteps: ['consultation-booking', 'form-completion'],
       },
       {
         id: 'consultation-booking',
@@ -275,7 +287,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 90,
         conversionGoal: 'consultation_booked',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['form-completion']
+        nextSteps: ['form-completion'],
       },
       {
         id: 'form-completion',
@@ -286,8 +298,8 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 15,
         conversionGoal: 'inquiry_sent',
         exitPoints: ['homepage'],
-        nextSteps: []
-      }
+        nextSteps: [],
+      },
     ],
     conversionGoals: [
       {
@@ -296,7 +308,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 25,
         isRequired: false,
-        trackingEvents: ['click_performance_nav', 'hover_performance_section']
+        trackingEvents: ['click_performance_nav', 'hover_performance_section'],
       },
       {
         id: 'performance_interest',
@@ -304,7 +316,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 45,
         isRequired: false,
-        trackingEvents: ['page_view_performance', 'scroll_services_list']
+        trackingEvents: ['page_view_performance', 'scroll_services_list'],
       },
       {
         id: 'portfolio_engagement',
@@ -312,7 +324,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 55,
         isRequired: false,
-        trackingEvents: ['click_audio_sample', 'view_performance_photos']
+        trackingEvents: ['click_audio_sample', 'view_performance_photos'],
       },
       {
         id: 'pricing_estimation',
@@ -320,7 +332,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'form_submission',
         value: 70,
         isRequired: true,
-        trackingEvents: ['form_start_performance', 'pricing_fields_filled']
+        trackingEvents: ['form_start_performance', 'pricing_fields_filled'],
       },
       {
         id: 'estimate_reviewed',
@@ -328,7 +340,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 75,
         isRequired: false,
-        trackingEvents: ['estimate_displayed', 'estimate_range_viewed']
+        trackingEvents: ['estimate_displayed', 'estimate_range_viewed'],
       },
       {
         id: 'consultation_booked',
@@ -336,7 +348,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'booking_completed',
         value: 90,
         isRequired: false,
-        trackingEvents: ['consultation_form_submit', 'booking_confirmed']
+        trackingEvents: ['consultation_form_submit', 'booking_confirmed'],
       },
       {
         id: 'inquiry_sent',
@@ -344,11 +356,11 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'inquiry_sent',
         value: 100,
         isRequired: true,
-        trackingEvents: ['inquiry_submit_success', 'confirmation_received']
-      }
-    ]
+        trackingEvents: ['inquiry_submit_success', 'confirmation_received'],
+      },
+    ],
   },
-  
+
   collaboration: {
     id: 'collaboration-main',
     name: 'Collaboration Project Journey',
@@ -366,7 +378,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 30,
         conversionGoal: 'service_discovery',
         exitPoints: ['/about', '/contact', 'external'],
-        nextSteps: ['collaboration-info', 'about', 'contact']
+        nextSteps: ['collaboration-info', 'about', 'contact'],
       },
       {
         id: 'collaboration-info',
@@ -377,7 +389,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 120,
         conversionGoal: 'collaboration_interest',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['portfolio-review', 'contact-collaboration']
+        nextSteps: ['portfolio-review', 'contact-collaboration'],
       },
       {
         id: 'portfolio-review',
@@ -388,7 +400,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 150,
         conversionGoal: 'creative_alignment',
         exitPoints: ['homepage', '/contact', 'external'],
-        nextSteps: ['contact-collaboration']
+        nextSteps: ['contact-collaboration'],
       },
       {
         id: 'contact-collaboration',
@@ -399,7 +411,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 240,
         conversionGoal: 'project_scoping',
         exitPoints: ['homepage', '/collaboration', 'external'],
-        nextSteps: ['vision-analysis', 'consultation-recommendation']
+        nextSteps: ['vision-analysis', 'consultation-recommendation'],
       },
       {
         id: 'vision-analysis',
@@ -410,7 +422,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 90,
         conversionGoal: 'vision_articulated',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['pricing-estimation', 'consultation-recommendation']
+        nextSteps: ['pricing-estimation', 'consultation-recommendation'],
       },
       {
         id: 'pricing-estimation',
@@ -421,7 +433,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 60,
         conversionGoal: 'budget_aligned',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['consultation-recommendation', 'form-completion']
+        nextSteps: ['consultation-recommendation', 'form-completion'],
       },
       {
         id: 'consultation-recommendation',
@@ -432,7 +444,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 45,
         conversionGoal: 'consultation_considered',
         exitPoints: ['homepage', 'external'],
-        nextSteps: ['form-completion']
+        nextSteps: ['form-completion'],
       },
       {
         id: 'form-completion',
@@ -443,8 +455,8 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         expectedDuration: 15,
         conversionGoal: 'inquiry_sent',
         exitPoints: ['homepage'],
-        nextSteps: []
-      }
+        nextSteps: [],
+      },
     ],
     conversionGoals: [
       {
@@ -453,7 +465,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 20,
         isRequired: false,
-        trackingEvents: ['click_collaboration_nav', 'creative_section_view']
+        trackingEvents: ['click_collaboration_nav', 'creative_section_view'],
       },
       {
         id: 'collaboration_interest',
@@ -461,7 +473,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 35,
         isRequired: false,
-        trackingEvents: ['page_view_collaboration', 'services_exploration']
+        trackingEvents: ['page_view_collaboration', 'services_exploration'],
       },
       {
         id: 'creative_alignment',
@@ -469,7 +481,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 50,
         isRequired: false,
-        trackingEvents: ['portfolio_engagement', 'style_match_indicated']
+        trackingEvents: ['portfolio_engagement', 'style_match_indicated'],
       },
       {
         id: 'project_scoping',
@@ -477,7 +489,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'form_submission',
         value: 60,
         isRequired: true,
-        trackingEvents: ['collaboration_form_start', 'project_details_entered']
+        trackingEvents: ['collaboration_form_start', 'project_details_entered'],
       },
       {
         id: 'vision_articulated',
@@ -485,7 +497,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 70,
         isRequired: false,
-        trackingEvents: ['vision_text_completed', 'complexity_assessed']
+        trackingEvents: ['vision_text_completed', 'complexity_assessed'],
       },
       {
         id: 'budget_aligned',
@@ -493,7 +505,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 75,
         isRequired: false,
-        trackingEvents: ['pricing_estimate_viewed', 'budget_range_selected']
+        trackingEvents: ['pricing_estimate_viewed', 'budget_range_selected'],
       },
       {
         id: 'consultation_considered',
@@ -501,7 +513,7 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'custom',
         value: 80,
         isRequired: false,
-        trackingEvents: ['consultation_info_viewed', 'meeting_preference_set']
+        trackingEvents: ['consultation_info_viewed', 'meeting_preference_set'],
       },
       {
         id: 'inquiry_sent',
@@ -509,11 +521,14 @@ export const JOURNEY_MAPS: Record<ServiceType, JourneyMap> = {
         type: 'inquiry_sent',
         value: 100,
         isRequired: true,
-        trackingEvents: ['collaboration_submit_success', 'project_confirmation']
-      }
-    ]
-  }
-};
+        trackingEvents: [
+          'collaboration_submit_success',
+          'project_confirmation',
+        ],
+      },
+    ],
+  },
+}
 
 /**
  * Journey analysis and optimization utilities
@@ -522,57 +537,68 @@ export class JourneyOptimizer {
   /**
    * Analyze journey metrics and identify friction points
    */
-  static analyzeJourney(journeyId: string, sessions: UserSession[]): JourneyMetrics {
-    const journeyMap = Object.values(JOURNEY_MAPS).find(map => map.id === journeyId);
+  static analyzeJourney(
+    journeyId: string,
+    sessions: UserSession[]
+  ): JourneyMetrics {
+    const journeyMap = Object.values(JOURNEY_MAPS).find(
+      map => map.id === journeyId
+    )
     if (!journeyMap) {
-      throw new Error(`Journey map not found: ${journeyId}`);
+      throw new Error(`Journey map not found: ${journeyId}`)
     }
 
-    const totalViews = sessions.length;
-    const completedJourneys = sessions.filter(session => 
+    const totalViews = sessions.length
+    const completedJourneys = sessions.filter(session =>
       session.conversionGoalsAchieved.includes('inquiry_sent')
-    ).length;
+    ).length
 
-    const dropOffPoints: Record<string, number> = {};
-    const timeSpentByStep: Record<string, number[]> = {};
-    const conversionsByGoal: Record<string, number> = {};
+    const dropOffPoints: Record<string, number> = {}
+    const timeSpentByStep: Record<string, number[]> = {}
+    const conversionsByGoal: Record<string, number> = {}
 
     // Initialize tracking objects
     journeyMap.steps.forEach(step => {
-      dropOffPoints[step.id] = 0;
-      timeSpentByStep[step.id] = [];
-    });
+      dropOffPoints[step.id] = 0
+      timeSpentByStep[step.id] = []
+    })
 
     journeyMap.conversionGoals.forEach(goal => {
-      conversionsByGoal[goal.id] = 0;
-    });
+      conversionsByGoal[goal.id] = 0
+    })
 
     // Analyze each session
     sessions.forEach(session => {
       // Track drop-off points
       if (session.exitPoint && session.exitPoint !== 'form-completion') {
-        dropOffPoints[session.exitPoint] = (dropOffPoints[session.exitPoint] || 0) + 1;
+        dropOffPoints[session.exitPoint] =
+          (dropOffPoints[session.exitPoint] || 0) + 1
       }
 
       // Track time spent
-      const sessionTime = session.lastActivity.getTime() - session.startTime.getTime();
-      const currentStepTime = Math.min(sessionTime / 1000, 600); // Cap at 10 minutes
+      const sessionTime =
+        session.lastActivity.getTime() - session.startTime.getTime()
+      const currentStepTime = Math.min(sessionTime / 1000, 600) // Cap at 10 minutes
       if (timeSpentByStep[session.currentStep]) {
-        timeSpentByStep[session.currentStep].push(currentStepTime);
+        timeSpentByStep[session.currentStep].push(currentStepTime)
       }
 
       // Track conversions
       session.conversionGoalsAchieved.forEach(goalId => {
         if (conversionsByGoal[goalId] !== undefined) {
-          conversionsByGoal[goalId]++;
+          conversionsByGoal[goalId]++
         }
-      });
-    });
+      })
+    })
 
     // Calculate average time spent
-    const averageTimeSpent = sessions.reduce((total, session) => {
-      return total + (session.lastActivity.getTime() - session.startTime.getTime()) / 1000;
-    }, 0) / sessions.length;
+    const averageTimeSpent =
+      sessions.reduce((total, session) => {
+        return (
+          total +
+          (session.lastActivity.getTime() - session.startTime.getTime()) / 1000
+        )
+      }, 0) / sessions.length
 
     // Identify friction points
     const frictionPoints: FrictionPoint[] = this.identifyFrictionPoints(
@@ -580,7 +606,7 @@ export class JourneyOptimizer {
       dropOffPoints,
       timeSpentByStep,
       totalViews
-    );
+    )
 
     // Calculate optimization score (0-100)
     const optimizationScore = this.calculateOptimizationScore(
@@ -588,7 +614,7 @@ export class JourneyOptimizer {
       frictionPoints,
       averageTimeSpent,
       journeyMap.averageCompletionTime
-    );
+    )
 
     return {
       totalViews,
@@ -597,8 +623,8 @@ export class JourneyOptimizer {
       averageTimeSpent,
       conversionsByGoal,
       frictionPoints,
-      optimizationScore
-    };
+      optimizationScore,
+    }
   }
 
   /**
@@ -610,28 +636,35 @@ export class JourneyOptimizer {
     timeSpentByStep: Record<string, number[]>,
     totalViews: number
   ): FrictionPoint[] {
-    const frictionPoints: FrictionPoint[] = [];
+    const frictionPoints: FrictionPoint[] = []
 
     journeyMap.steps.forEach(step => {
-      const dropOffRate = (dropOffPoints[step.id] || 0) / totalViews;
-      const avgTimeSpent = timeSpentByStep[step.id]?.reduce((a, b) => a + b, 0) / (timeSpentByStep[step.id]?.length || 1) || 0;
-      const expectedTime = step.expectedDuration;
+      const dropOffRate = (dropOffPoints[step.id] || 0) / totalViews
+      const avgTimeSpent =
+        timeSpentByStep[step.id]?.reduce((a, b) => a + b, 0) /
+          (timeSpentByStep[step.id]?.length || 1) || 0
+      const expectedTime = step.expectedDuration
 
       // High exit rate friction point
       if (dropOffRate > 0.3) {
         frictionPoints.push({
           stepId: step.id,
           type: 'high_exit_rate',
-          severity: dropOffRate > 0.5 ? 'critical' : dropOffRate > 0.4 ? 'high' : 'medium',
+          severity:
+            dropOffRate > 0.5
+              ? 'critical'
+              : dropOffRate > 0.4
+                ? 'high'
+                : 'medium',
           description: `${Math.round(dropOffRate * 100)}% of users exit at ${step.name}`,
           suggestions: [
             'Improve page loading speed',
             'Simplify content and navigation',
             'Add clear call-to-action',
-            'Reduce information overload'
+            'Reduce information overload',
           ],
-          impact: dropOffRate * 100
-        });
+          impact: dropOffRate * 100,
+        })
       }
 
       // Long time spent friction point
@@ -645,10 +678,10 @@ export class JourneyOptimizer {
             'Streamline content presentation',
             'Add progress indicators',
             'Improve information architecture',
-            'Add helpful tooltips or guidance'
+            'Add helpful tooltips or guidance',
           ],
-          impact: ((avgTimeSpent - expectedTime) / expectedTime) * 20
-        });
+          impact: ((avgTimeSpent - expectedTime) / expectedTime) * 20,
+        })
       }
 
       // Form abandonment (for form steps)
@@ -662,14 +695,14 @@ export class JourneyOptimizer {
             'Reduce number of required fields',
             'Add form validation feedback',
             'Implement progressive disclosure',
-            'Add save progress functionality'
+            'Add save progress functionality',
           ],
-          impact: dropOffRate * 120 // Forms have higher impact
-        });
+          impact: dropOffRate * 120, // Forms have higher impact
+        })
       }
-    });
+    })
 
-    return frictionPoints.sort((a, b) => b.impact - a.impact);
+    return frictionPoints.sort((a, b) => b.impact - a.impact)
   }
 
   /**
@@ -681,38 +714,46 @@ export class JourneyOptimizer {
     averageTime: number,
     expectedTime: number
   ): number {
-    let score = 50; // Base score
+    let score = 50 // Base score
 
     // Conversion rate impact (0-40 points)
-    score += Math.min(conversionRate * 200, 40);
+    score += Math.min(conversionRate * 200, 40)
 
     // Friction points impact (deduct 5-15 points per friction point)
     frictionPoints.forEach(friction => {
-      const deduction = friction.severity === 'critical' ? 15 : 
-                       friction.severity === 'high' ? 10 : 
-                       friction.severity === 'medium' ? 5 : 2;
-      score -= deduction;
-    });
+      const deduction =
+        friction.severity === 'critical'
+          ? 15
+          : friction.severity === 'high'
+            ? 10
+            : friction.severity === 'medium'
+              ? 5
+              : 2
+      score -= deduction
+    })
 
     // Time efficiency impact (0-10 points)
-    const timeEfficiency = Math.min(expectedTime / averageTime, 1);
-    score += timeEfficiency * 10;
+    const timeEfficiency = Math.min(expectedTime / averageTime, 1)
+    score += timeEfficiency * 10
 
-    return Math.max(0, Math.min(100, Math.round(score)));
+    return Math.max(0, Math.min(100, Math.round(score)))
   }
 
   /**
    * Generate optimization recommendations
    */
-  static generateRecommendations(metrics: JourneyMetrics, journeyMap: JourneyMap): {
-    priority: 'immediate' | 'high' | 'medium' | 'low';
-    category: string;
-    title: string;
-    description: string;
-    expectedImpact: number;
-    implementationEffort: 'low' | 'medium' | 'high';
+  static generateRecommendations(
+    metrics: JourneyMetrics,
+    journeyMap: JourneyMap
+  ): {
+    priority: 'immediate' | 'high' | 'medium' | 'low'
+    category: string
+    title: string
+    description: string
+    expectedImpact: number
+    implementationEffort: 'low' | 'medium' | 'high'
   }[] {
-    const recommendations = [];
+    const recommendations = []
 
     // Critical friction points need immediate attention
     metrics.frictionPoints
@@ -724,9 +765,9 @@ export class JourneyOptimizer {
           title: `Address ${friction.type.replace('_', ' ')} at ${friction.stepId}`,
           description: friction.description,
           expectedImpact: friction.impact,
-          implementationEffort: 'medium' as const
-        });
-      });
+          implementationEffort: 'medium' as const,
+        })
+      })
 
     // Conversion optimization opportunities
     if (metrics.completedJourneys / metrics.totalViews < 0.1) {
@@ -736,8 +777,8 @@ export class JourneyOptimizer {
         title: 'Improve overall conversion rate',
         description: `Current conversion rate is ${Math.round((metrics.completedJourneys / metrics.totalViews) * 100)}%, below industry average`,
         expectedImpact: 25,
-        implementationEffort: 'high' as const
-      });
+        implementationEffort: 'high' as const,
+      })
     }
 
     // Journey flow optimization
@@ -746,20 +787,24 @@ export class JourneyOptimizer {
         priority: 'medium' as const,
         category: 'User Experience',
         title: 'Streamline journey flow',
-        description: 'Users are taking longer than expected to complete the journey',
+        description:
+          'Users are taking longer than expected to complete the journey',
         expectedImpact: 15,
-        implementationEffort: 'medium' as const
-      });
+        implementationEffort: 'medium' as const,
+      })
     }
 
     return recommendations.sort((a, b) => {
-      const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 };
-      return priorityOrder[b.priority] - priorityOrder[a.priority] || b.expectedImpact - a.expectedImpact;
-    });
+      const priorityOrder = { immediate: 4, high: 3, medium: 2, low: 1 }
+      return (
+        priorityOrder[b.priority] - priorityOrder[a.priority] ||
+        b.expectedImpact - a.expectedImpact
+      )
+    })
   }
 }
 
 export default {
   JOURNEY_MAPS,
-  JourneyOptimizer
-};
+  JourneyOptimizer,
+}

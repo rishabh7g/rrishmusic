@@ -3,10 +3,10 @@
  * Export all reusable UI components
  */
 
-export { ServiceCard } from './ServiceCard';
-export type { ServiceCardData, ServiceCardProps } from './ServiceCard';
+export { ServiceCard } from './ServiceCard'
+export type { ServiceCardData, ServiceCardProps } from './ServiceCard'
 
-export { 
+export {
   PerformanceInquiryCTA,
   PrimaryPerformanceCTA,
   SecondaryPerformanceCTA,
@@ -14,9 +14,9 @@ export {
   MinimalPerformanceCTA,
   WeddingInquiryCTA,
   CorporateInquiryCTA,
-  VenueInquiryCTA
-} from './PerformanceInquiryCTA';
-export type { CTAVariant, CTASize } from './PerformanceInquiryCTA';
+  VenueInquiryCTA,
+} from './PerformanceInquiryCTA'
+export type { CTAVariant, CTASize } from './PerformanceInquiryCTA'
 
 export {
   CollaborationInquiryCTA,
@@ -26,7 +26,7 @@ export {
   MinimalCollaborationCTA,
   StudioCollaborationCTA,
   CreativeProjectCTA,
-  PartnershipInquiryCTA
-} from './CollaborationInquiryCTA';
+  PartnershipInquiryCTA,
+} from './CollaborationInquiryCTA'
 
-export { MediaPreview } from "./MediaPreview";
+export { MediaPreview } from './MediaPreview'

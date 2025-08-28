@@ -1,7 +1,7 @@
 /**
  * Media Preview Components - Issue #49 Implementation
  * UPDATED: Issue #101 - WCAG Accessibility Compliance
- * 
+ *
  * Provides audio and video preview functionality for portfolio content
  * - 30-second audio previews with custom controls
  * - Video previews with thumbnail overlays
@@ -10,33 +10,33 @@
  * - WCAG AA compliant color combinations (4.5:1+ contrast)
  */
 
-import React, { useState, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 // Types
 interface BasePreviewProps {
-  title: string;
-  description: string;
-  className?: string;
+  title: string
+  description: string
+  className?: string
 }
 
 interface AudioPreviewProps extends BasePreviewProps {
-  type: 'audio';
-  audioUrl: string;
-  duration: number; // in seconds (30 for preview)
-  genre: string[];
-  thumbnail?: string;
+  type: 'audio'
+  audioUrl: string
+  duration: number // in seconds (30 for preview)
+  genre: string[]
+  thumbnail?: string
 }
 
 interface VideoPreviewProps extends BasePreviewProps {
-  type: 'video';
-  videoUrl: string;
-  thumbnail: string;
-  duration: number; // in seconds
-  embedUrl?: string; // for YouTube/Vimeo
+  type: 'video'
+  videoUrl: string
+  thumbnail: string
+  duration: number // in seconds
+  embedUrl?: string // for YouTube/Vimeo
 }
 
-type MediaPreviewProps = AudioPreviewProps | VideoPreviewProps;
+type MediaPreviewProps = AudioPreviewProps | VideoPreviewProps
 
 /**
  * Audio Preview Player Component
@@ -48,58 +48,58 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
   duration,
   genre,
   thumbnail,
-  className = ''
+  className = '',
 }) => {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [isLoading, setIsLoading] = useState(true);
-  const audioRef = useRef<HTMLAudioElement>(null);
-  const progressRef = useRef<HTMLDivElement>(null);
+  const [isPlaying, setIsPlaying] = useState(false)
+  const [currentTime, setCurrentTime] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
+  const audioRef = useRef<HTMLAudioElement>(null)
+  const progressRef = useRef<HTMLDivElement>(null)
 
   // Audio event handlers
   const handlePlayPause = () => {
     if (audioRef.current) {
       if (isPlaying) {
-        audioRef.current.pause();
+        audioRef.current.pause()
       } else {
-        audioRef.current.play();
+        audioRef.current.play()
       }
-      setIsPlaying(!isPlaying);
+      setIsPlaying(!isPlaying)
     }
-  };
+  }
 
   const handleTimeUpdate = () => {
     if (audioRef.current) {
-      setCurrentTime(audioRef.current.currentTime);
+      setCurrentTime(audioRef.current.currentTime)
     }
-  };
+  }
 
   const handleLoadedData = () => {
-    setIsLoading(false);
-  };
+    setIsLoading(false)
+  }
 
   const handleEnded = () => {
-    setIsPlaying(false);
-    setCurrentTime(0);
-  };
+    setIsPlaying(false)
+    setCurrentTime(0)
+  }
 
   const handleProgressClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (audioRef.current && progressRef.current) {
-      const rect = progressRef.current.getBoundingClientRect();
-      const clickX = e.clientX - rect.left;
-      const newTime = (clickX / rect.width) * duration;
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
+      const rect = progressRef.current.getBoundingClientRect()
+      const clickX = e.clientX - rect.left
+      const newTime = (clickX / rect.width) * duration
+      audioRef.current.currentTime = newTime
+      setCurrentTime(newTime)
     }
-  };
+  }
 
   const formatTime = (time: number): string => {
-    const minutes = Math.floor(time / 60);
-    const seconds = Math.floor(time % 60);
-    return `${minutes}:${seconds.toString().padStart(2, '0')}`;
-  };
+    const minutes = Math.floor(time / 60)
+    const seconds = Math.floor(time % 60)
+    return `${minutes}:${seconds.toString().padStart(2, '0')}`
+  }
 
-  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0;
+  const progressPercentage = duration > 0 ? (currentTime / duration) * 100 : 0
 
   return (
     <motion.div
@@ -120,12 +120,14 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
           </div>
         </div>
       )}
-      
+
       {/* Audio Info */}
       <div className="p-6">
         <div className="flex items-start justify-between mb-4">
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 mb-1">{title}</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-1">
+              {title}
+            </h3>
             <p className="text-sm text-gray-600 mb-2">{description}</p>
             <div className="flex flex-wrap gap-1">
               {genre.map((g, index) => (
@@ -148,16 +150,26 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
               onClick={handlePlayPause}
               disabled={isLoading}
               className="flex items-center justify-center w-12 h-12 bg-brand-blue-primary text-white rounded-full hover:bg-brand-blue-dark transition-colors duration-200 disabled:opacity-50"
-              aria-label={isPlaying ? 'Pause audio preview' : 'Play audio preview'}
+              aria-label={
+                isPlaying ? 'Pause audio preview' : 'Play audio preview'
+              }
             >
               {isLoading ? (
                 <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
               ) : isPlaying ? (
-                <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className="w-5 h-5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 ml-0.5" viewBox="0 0 24 24" fill="currentColor">
+                <svg
+                  className="w-5 h-5 ml-0.5"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                >
                   <path d="M8 5v14l11-7z" />
                 </svg>
               )}
@@ -204,8 +216,8 @@ const AudioPreviewPlayer: React.FC<AudioPreviewProps> = ({
         />
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
 /**
  * Video Preview Player Component
@@ -217,19 +229,19 @@ const VideoPreviewPlayer: React.FC<VideoPreviewProps> = ({
   thumbnail,
   duration,
   embedUrl,
-  className = ''
+  className = '',
 }) => {
-  const [showVideo, setShowVideo] = useState(false);
+  const [showVideo, setShowVideo] = useState(false)
 
   const handlePlayClick = () => {
-    setShowVideo(true);
-  };
+    setShowVideo(true)
+  }
 
   const formatDuration = (seconds: number): string => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = Math.floor(seconds % 60);
-    return `${minutes}:${secs.toString().padStart(2, '0')}`;
-  };
+    const minutes = Math.floor(seconds / 60)
+    const secs = Math.floor(seconds % 60)
+    return `${minutes}:${secs.toString().padStart(2, '0')}`
+  }
 
   return (
     <motion.div
@@ -254,10 +266,10 @@ const VideoPreviewPlayer: React.FC<VideoPreviewProps> = ({
                 alt={`${title} video preview thumbnail`}
                 className="w-full h-full object-cover"
               />
-              
+
               {/* Overlay */}
               <div className="absolute inset-0 bg-black bg-opacity-30 group-hover:bg-opacity-20 transition-all duration-300" />
-              
+
               {/* Play Button */}
               <div className="absolute inset-0 flex items-center justify-center">
                 <motion.div
@@ -265,7 +277,11 @@ const VideoPreviewPlayer: React.FC<VideoPreviewProps> = ({
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  <svg className="w-8 h-8 text-brand-blue-primary ml-1" viewBox="0 0 24 24" fill="currentColor">
+                  <svg
+                    className="w-8 h-8 text-brand-blue-primary ml-1"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                  >
                     <path d="M8 5v14l11-7z" />
                   </svg>
                 </motion.div>
@@ -318,18 +334,18 @@ const VideoPreviewPlayer: React.FC<VideoPreviewProps> = ({
         <p className="text-sm text-gray-600">{description}</p>
       </div>
     </motion.div>
-  );
-};
+  )
+}
 
 /**
  * Main Media Preview Component
  */
-export const MediaPreview: React.FC<MediaPreviewProps> = (props) => {
+export const MediaPreview: React.FC<MediaPreviewProps> = props => {
   if (props.type === 'audio') {
-    return <AudioPreviewPlayer {...props} />;
+    return <AudioPreviewPlayer {...props} />
   } else {
-    return <VideoPreviewPlayer {...props} />;
+    return <VideoPreviewPlayer {...props} />
   }
-};
+}
 
-export default MediaPreview;
+export default MediaPreview

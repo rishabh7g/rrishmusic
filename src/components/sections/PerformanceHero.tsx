@@ -1,11 +1,11 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useSectionContent } from '@/hooks/useContent';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React from 'react'
+import { motion } from 'framer-motion'
+import { useSectionContent } from '@/hooks/useContent'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 /**
  * Performance Hero Section Component
- * 
+ *
  * Features:
  * - Responsive hero section with performance imagery
  * - Mobile-first design approach
@@ -17,7 +17,7 @@ import { fadeInUp, staggerContainer } from '@/utils/animations';
  */
 
 interface PerformanceHeroProps {
-  className?: string;
+  className?: string
 }
 
 /**
@@ -34,7 +34,7 @@ const PerformanceHeroLoading: React.FC = () => (
       </div>
     </div>
   </section>
-);
+)
 
 /**
  * Error fallback for the Performance Hero section
@@ -49,20 +49,21 @@ const PerformanceHeroError: React.FC = () => (
         animate="visible"
         className="space-y-8"
       >
-        <motion.h1 
+        <motion.h1
           className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold leading-tight"
           variants={fadeInUp}
         >
           Live Music That Moves You
         </motion.h1>
-        
-        <motion.p 
+
+        <motion.p
           className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto leading-relaxed text-white/90"
           variants={fadeInUp}
         >
-          Professional guitar performances and blues entertainment for venues, events, and special occasions across Melbourne
+          Professional guitar performances and blues entertainment for venues,
+          events, and special occasions across Melbourne
         </motion.p>
-        
+
         <motion.div
           className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
           variants={fadeInUp}
@@ -78,27 +79,31 @@ const PerformanceHeroError: React.FC = () => (
       </motion.div>
     </div>
   </section>
-);
+)
 
-export const PerformanceHero: React.FC<PerformanceHeroProps> = ({ 
-  className = '' 
+export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
+  className = '',
 }) => {
-  const { data: performanceData, loading, error } = useSectionContent('performance');
-  
+  const {
+    data: performanceData,
+    loading,
+    error,
+  } = useSectionContent('performance')
+
   // Show loading state
   if (loading) {
-    return <PerformanceHeroLoading />;
+    return <PerformanceHeroLoading />
   }
 
   // Show error state with fallback content
   if (error || !performanceData?.hero) {
-    return <PerformanceHeroError />;
+    return <PerformanceHeroError />
   }
 
-  const { hero } = performanceData;
+  const { hero } = performanceData
 
   return (
-    <section 
+    <section
       className={`relative min-h-screen flex items-center justify-center overflow-hidden ${className}`}
       aria-labelledby="performance-hero-title"
     >
@@ -106,10 +111,10 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
       <div className="absolute inset-0">
         {/* Gradient background as fallback */}
         <div className="absolute inset-0 bg-gradient-to-br from-brand-blue-primary via-brand-blue-secondary to-brand-blue-primary"></div>
-        
+
         {/* Background image - will show when image loads */}
         {hero.backgroundImage && (
-          <div 
+          <div
             className="absolute inset-0 bg-cover bg-center bg-no-repeat"
             style={{
               backgroundImage: `url('${hero.backgroundImage}')`,
@@ -118,15 +123,15 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
             aria-label={hero.backgroundAlt || 'Performance background'}
           />
         )}
-        
+
         {/* Dark overlay for text contrast */}
         <div className="absolute inset-0 bg-black/50"></div>
-        
+
         {/* Subtle pattern overlay for texture */}
-        <div 
+        <div
           className="absolute inset-0 opacity-30"
           style={{
-            backgroundImage: `url("data:image/svg+xml;utf8,<svg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'><g fill='none' fill-rule='evenodd'><g fill='%23ffffff' fill-opacity='0.05'><circle cx='30' cy='30' r='1'/></g></svg>")`
+            backgroundImage: `url("data:image/svg+xml;utf8,<svg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'><g fill='none' fill-rule='evenodd'><g fill='%23ffffff' fill-opacity='0.05'><circle cx='30' cy='30' r='1'/></g></svg>")`,
           }}
         ></div>
       </div>
@@ -140,24 +145,24 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
           className="space-y-8"
         >
           {/* Main Title */}
-          <motion.h1 
+          <motion.h1
             id="performance-hero-title"
             className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold leading-tight drop-shadow-lg"
             variants={fadeInUp}
           >
             {hero.title}
           </motion.h1>
-          
+
           {/* Subtitle */}
-          <motion.p 
+          <motion.p
             className="text-lg sm:text-xl lg:text-2xl max-w-4xl mx-auto leading-relaxed text-white/95 drop-shadow-md"
             variants={fadeInUp}
           >
             {hero.subtitle}
           </motion.p>
-          
+
           {/* Description */}
-          <motion.p 
+          <motion.p
             className="text-base sm:text-lg max-w-3xl mx-auto leading-relaxed text-white/85 drop-shadow-md"
             variants={fadeInUp}
           >
@@ -171,7 +176,7 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
               variants={fadeInUp}
             >
               {hero.features.map((feature, index) => (
-                <div 
+                <div
                   key={index}
                   className="flex items-center gap-2 text-white/90 bg-white/10 backdrop-blur-sm rounded-full px-4 py-2"
                 >
@@ -185,7 +190,7 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
               ))}
             </motion.div>
           )}
-          
+
           {/* Call-to-Action */}
           <motion.div
             className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-6"
@@ -198,7 +203,7 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
             >
               {hero.ctaText}
             </a>
-            
+
             <a
               href="#services"
               className="inline-flex items-center justify-center px-8 py-4 bg-transparent border-2 border-white text-white font-heading font-semibold rounded-full hover:bg-white hover:text-brand-blue-primary transition-all duration-300 transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-white/20 text-lg min-w-48"
@@ -209,28 +214,28 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
           </motion.div>
 
           {/* Scroll Indicator */}
-          <motion.div 
+          <motion.div
             className="mt-12 sm:mt-16"
             variants={fadeInUp}
             animate={{ y: [0, 10, 0] }}
-            transition={{ repeat: Infinity, duration: 2.5, ease: "easeInOut" }}
+            transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
           >
-            <a 
-              href="#services" 
+            <a
+              href="#services"
               className="inline-block text-white/80 hover:text-white transition-colors duration-300"
               aria-label="Scroll down to view performance services"
             >
-              <svg 
-                className="w-6 h-6 sm:w-8 sm:h-8 mx-auto drop-shadow-lg" 
-                fill="none" 
-                stroke="currentColor" 
+              <svg
+                className="w-6 h-6 sm:w-8 sm:h-8 mx-auto drop-shadow-lg"
+                fill="none"
+                stroke="currentColor"
                 viewBox="0 0 24 24"
               >
-                <path 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round" 
-                  strokeWidth={2} 
-                  d="M19 14l-7 7m0 0l-7-7m7 7V3" 
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M19 14l-7 7m0 0l-7-7m7 7V3"
                 />
               </svg>
             </a>
@@ -238,11 +243,11 @@ export const PerformanceHero: React.FC<PerformanceHeroProps> = ({
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
 // Set display name for debugging
-PerformanceHero.displayName = 'PerformanceHero';
+PerformanceHero.displayName = 'PerformanceHero'
 
 // Default export
-export default PerformanceHero;
+export default PerformanceHero

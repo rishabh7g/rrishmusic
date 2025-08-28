@@ -18,14 +18,8 @@
       ],
       "popular": false,
       "recommended": false,
-      "targetAudience": [
-        "beginner",
-        "intermediate",
-        "advanced"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["beginner", "intermediate", "advanced"],
+      "instruments": ["guitar"],
       "included": [
         "60-minute one-on-one lesson",
         "Personalized practice materials",
@@ -48,13 +42,8 @@
       ],
       "popular": true,
       "recommended": true,
-      "targetAudience": [
-        "beginner",
-        "intermediate"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["beginner", "intermediate"],
+      "instruments": ["guitar"],
       "included": [
         "4 x 60-minute one-on-one lessons",
         "Personalized curriculum development",
@@ -80,13 +69,8 @@
       ],
       "popular": false,
       "recommended": false,
-      "targetAudience": [
-        "intermediate",
-        "advanced"
-      ],
-      "instruments": [
-        "guitar"
-      ],
+      "targetAudience": ["intermediate", "advanced"],
+      "instruments": ["guitar"],
       "included": [
         "8 x 60-minute one-on-one lessons",
         "Comprehensive curriculum across multiple sessions",
@@ -104,11 +88,7 @@
     "cancellationPolicy": "24 hours notice required for cancellations. Less than 24 hours notice may result in full session charge.",
     "reschedulePolicy": "Free rescheduling with 24+ hours notice. Package students get flexible rescheduling throughout their package period.",
     "location": "Melbourne, Victoria, Australia",
-    "instruments": [
-      "Guitar",
-      "Electric Guitar",
-      "Acoustic Guitar"
-    ],
+    "instruments": ["Guitar", "Electric Guitar", "Acoustic Guitar"],
     "trialLesson": {
       "available": true,
       "duration": 30,
@@ -116,11 +96,7 @@
     },
     "onlineLessons": {
       "available": true,
-      "platforms": [
-        "Zoom",
-        "Skype",
-        "Google Meet"
-      ],
+      "platforms": ["Zoom", "Skype", "Google Meet"],
       "requirements": [
         "Reliable internet connection",
         "Your own guitar",

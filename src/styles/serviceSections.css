@@ -121,10 +121,18 @@
 }
 
 /* Stagger animation delays for multiple elements */
-.animate-stagger-1 { animation-delay: 0.1s; }
-.animate-stagger-2 { animation-delay: 0.2s; }
-.animate-stagger-3 { animation-delay: 0.3s; }
-.animate-stagger-4 { animation-delay: 0.4s; }
+.animate-stagger-1 {
+  animation-delay: 0.1s;
+}
+.animate-stagger-2 {
+  animation-delay: 0.2s;
+}
+.animate-stagger-3 {
+  animation-delay: 0.3s;
+}
+.animate-stagger-4 {
+  animation-delay: 0.4s;
+}
 
 /* Component-Specific Styles */
 
@@ -187,26 +195,33 @@
 }
 
 /* Service Buttons */
-.service-button, .service-nav-button {
+.service-button,
+.service-nav-button {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
 }
 
-.service-button::before, .service-nav-button::before {
+.service-button::before,
+.service-nav-button::before {
   content: '';
   position: absolute;
   top: 50%;
   left: 50%;
   width: 0;
   height: 0;
-  background: radial-gradient(circle, var(--service-primary) 20%, transparent 21%);
+  background: radial-gradient(
+    circle,
+    var(--service-primary) 20%,
+    transparent 21%
+  );
   transition: all 0.4s ease;
   transform: translate(-50%, -50%);
   z-index: -1;
 }
 
-.service-button:hover::before, .service-nav-button:hover::before {
+.service-button:hover::before,
+.service-nav-button:hover::before {
   width: 300%;
   height: 300%;
 }
@@ -242,7 +257,11 @@
   left: 50%;
   width: 2px;
   height: 4rem;
-  background: linear-gradient(to bottom, var(--service-primary), var(--service-accent));
+  background: linear-gradient(
+    to bottom,
+    var(--service-primary),
+    var(--service-accent)
+  );
   transform: translateX(-50%);
 }
 
@@ -311,7 +330,12 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: linear-gradient(45deg, var(--service-primary), var(--service-secondary), var(--service-primary));
+  background: linear-gradient(
+    45deg,
+    var(--service-primary),
+    var(--service-secondary),
+    var(--service-primary)
+  );
   border-radius: inherit;
   z-index: -1;
   opacity: 0;
@@ -342,7 +366,11 @@
 }
 
 .gradient-text {
-  background: linear-gradient(135deg, var(--service-primary) 0%, var(--service-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--service-primary) 0%,
+    var(--service-secondary) 100%
+  );
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -354,19 +382,19 @@
     padding-left: 1rem;
     padding-right: 1rem;
   }
-  
+
   .section-title {
     @apply text-2xl md:text-3xl;
   }
-  
+
   .section-subtitle {
     @apply text-base;
   }
-  
+
   .package-card:hover {
     transform: none;
   }
-  
+
   .venue-card:hover,
   .project-card:hover {
     transform: none;
@@ -376,7 +404,11 @@
 /* Dark mode support (if needed in future) */
 @media (prefers-color-scheme: dark) {
   .service-section--testimonial {
-    background: linear-gradient(135deg, rgba(var(--service-accent-rgb), 0.1) 0%, rgba(0, 0, 0, 0.05) 100%);
+    background: linear-gradient(
+      135deg,
+      rgba(var(--service-accent-rgb), 0.1) 0%,
+      rgba(0, 0, 0, 0.05) 100%
+    );
   }
 }
 
@@ -385,7 +417,7 @@
   .service-section--featured {
     border-left-width: 6px;
   }
-  
+
   .package-card,
   .venue-card,
   .project-card {
@@ -403,13 +435,13 @@
   .equipment-category:hover {
     transform: none;
   }
-  
+
   .animate-fade-in,
   .animate-slide-in-up,
   .animate-scale-in {
     animation: none;
   }
-  
+
   .service-button::before,
   .service-nav-button::before {
     display: none;
@@ -422,7 +454,7 @@
     break-inside: avoid;
     padding: 1rem 0;
   }
-  
+
   .package-card,
   .venue-card,
   .project-card {

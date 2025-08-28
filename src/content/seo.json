@@ -44,14 +44,7 @@
       "ogDescription": "Professional live entertainment for your events. Acoustic performances, diverse repertoire, and engaging stage presence for memorable experiences.",
       "twitterTitle": "Live Music Performances - Rrish Music",
       "twitterDescription": "Professional live music for events, venues, and entertainment. Book now for memorable musical experiences.",
-      "genres": [
-        "Acoustic",
-        "Pop",
-        "Rock",
-        "Jazz",
-        "Blues",
-        "Folk"
-      ],
+      "genres": ["Acoustic", "Pop", "Rock", "Jazz", "Blues", "Folk"],
       "eventTypes": [
         "Weddings",
         "Corporate Events",
@@ -205,9 +198,7 @@
       "name": "Rrish Music",
       "url": "https://www.rrishmusic.com",
       "logo": "https://www.rrishmusic.com/images/logo.png",
-      "sameAs": [
-        "https://www.instagram.com/rrishmusic"
-      ],
+      "sameAs": ["https://www.instagram.com/rrishmusic"],
       "contactPoint": {
         "contactType": "customer service",
         "availableLanguage": "English"

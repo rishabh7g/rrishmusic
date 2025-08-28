@@ -3,26 +3,26 @@
  * Combines ServicePageSEO with additional optimizations
  */
 
-import { ServiceType } from '@/types/content';
-import { useServiceMetaTags } from './useServiceSEO';
-import ServicePageSEO from '@/components/ServicePageSEO';
-import { StructuredData } from '@/utils/structuredData';
+import { ServiceType } from '@/types/content'
+import { useServiceMetaTags } from './useServiceSEO'
+import ServicePageSEO from '@/components/ServicePageSEO'
+import { StructuredData } from '@/utils/structuredData'
 
 /**
  * Props for ServicePageSEO component
  */
 interface ServicePageSEOProps {
-  serviceType?: ServiceType;
-  pageType?: 'about' | 'contact' | 'home';
-  customTitle?: string;
-  customDescription?: string;
-  customKeywords?: string;
-  customImage?: string;
-  includeFAQ?: boolean;
-  includeBreadcrumbs?: boolean;
-  additionalStructuredData?: StructuredData[];
-  noIndex?: boolean;
-  noFollow?: boolean;
+  serviceType?: ServiceType
+  pageType?: 'about' | 'contact' | 'home'
+  customTitle?: string
+  customDescription?: string
+  customKeywords?: string
+  customImage?: string
+  includeFAQ?: boolean
+  includeBreadcrumbs?: boolean
+  additionalStructuredData?: StructuredData[]
+  noIndex?: boolean
+  noFollow?: boolean
 }
 
 /**
@@ -34,21 +34,21 @@ export function useServicePageSEO(
   pageType?: 'about' | 'contact' | 'home',
   options?: Partial<ServicePageSEOProps>
 ) {
-  const metaTags = useServiceMetaTags(serviceType, pageType);
-  
+  const metaTags = useServiceMetaTags(serviceType, pageType)
+
   // Return both the component and the meta tags for flexibility
   return {
     SEOComponent: ServicePageSEO({
       serviceType,
       pageType,
-      ...options
+      ...options,
     }),
     metaTags,
     // Helper function to get specific meta tag value
     getMetaTag: (tagName: string) => metaTags[tagName as keyof typeof metaTags],
     // Helper function to check if page should be indexed
-    shouldIndex: !options?.noIndex
-  };
+    shouldIndex: !options?.noIndex,
+  }
 }
 
-export default useServicePageSEO;
+export default useServicePageSEO

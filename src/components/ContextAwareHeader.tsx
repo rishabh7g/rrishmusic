@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Link, useNavigate } from 'react-router-dom';
-import { useServiceContext } from '@/hooks/useServiceContext';
-import { useSmoothScroll } from '@/hooks/useScrollSpy';
-import { useDeviceDetection } from '@/hooks/useDeviceDetection';
-import { ServiceNavigationItem, ServiceCTA } from '@/types/serviceContext';
-import ThemeToggle from './ThemeToggle';
+import React, { useState, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link, useNavigate } from 'react-router-dom'
+import { useServiceContext } from '@/hooks/useServiceContext'
+import { useSmoothScroll } from '@/hooks/useScrollSpy'
+import { useDeviceDetection } from '@/hooks/useDeviceDetection'
+import { ServiceNavigationItem, ServiceCTA } from '@/types/serviceContext'
+import ThemeToggle from './ThemeToggle'
 
 /**
  * Props for ContextAwareHeader component
@@ -14,49 +14,54 @@ interface ContextAwareHeaderProps {
   /**
    * Additional CSS classes
    */
-  className?: string;
+  className?: string
 }
 
 /**
  * Navigation item component with context-aware styling
  */
 const ContextualNavigationItem: React.FC<{
-  item: ServiceNavigationItem;
-  isActive: boolean;
-  primaryColor: string;
-  onClick: (item: ServiceNavigationItem) => void;
-  isMobile?: boolean;
+  item: ServiceNavigationItem
+  isActive: boolean
+  primaryColor: string
+  onClick: (item: ServiceNavigationItem) => void
+  isMobile?: boolean
 }> = ({ item, isActive, primaryColor, onClick, isMobile }) => {
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    onClick(item);
-  }, [onClick, item]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      onClick(item)
+    },
+    [onClick, item]
+  )
 
-  const baseStyles = isMobile 
-    ? "block w-full text-left py-3 px-4 rounded-lg font-medium transition-all duration-200"
-    : "relative px-4 py-2 rounded-lg font-medium transition-all duration-200";
-  
+  const baseStyles = isMobile
+    ? 'block w-full text-left py-3 px-4 rounded-lg font-medium transition-all duration-200'
+    : 'relative px-4 py-2 rounded-lg font-medium transition-all duration-200'
+
   const activeStyles = isActive
     ? `text-white shadow-lg ${isMobile ? 'bg-current' : ''}`
-    : `hover:text-current hover:bg-black/5 ${isMobile ? 'hover:bg-black/10' : ''}`;
+    : `hover:text-current hover:bg-black/5 ${isMobile ? 'hover:bg-black/10' : ''}`
 
   const content = (
     <>
-      <span className={item.highlighted ? 'font-semibold' : ''}>{item.label}</span>
+      <span className={item.highlighted ? 'font-semibold' : ''}>
+        {item.label}
+      </span>
       {!isMobile && isActive && (
         <motion.div
           layoutId="activeIndicator"
           className="absolute -bottom-1 left-2 right-2 h-0.5 bg-current rounded-full"
-          transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+          transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
         />
       )}
     </>
-  );
+  )
 
   const dynamicStyles = {
     color: isActive ? 'white' : 'inherit',
-    backgroundColor: isActive ? primaryColor : 'transparent'
-  };
+    backgroundColor: isActive ? primaryColor : 'transparent',
+  }
 
   if (item.type === 'route') {
     return (
@@ -69,7 +74,7 @@ const ContextualNavigationItem: React.FC<{
       >
         {content}
       </Link>
-    );
+    )
   }
 
   return (
@@ -81,56 +86,84 @@ const ContextualNavigationItem: React.FC<{
     >
       {content}
     </button>
-  );
-};
+  )
+}
 
 /**
  * CTA button component with contextual styling
  */
 const ContextualCTA: React.FC<{
-  cta: ServiceCTA;
-  primaryColor: string;
-  onClick: (cta: ServiceCTA) => void;
-  className?: string;
+  cta: ServiceCTA
+  primaryColor: string
+  onClick: (cta: ServiceCTA) => void
+  className?: string
 }> = ({ cta, primaryColor, onClick, className = '' }) => {
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    onClick(cta);
-  }, [onClick, cta]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      onClick(cta)
+    },
+    [onClick, cta]
+  )
 
   const variantStyles = {
     primary: `text-white font-semibold shadow-lg hover:shadow-xl`,
     secondary: `text-current border border-current hover:bg-current hover:text-white`,
-    outline: `text-current border border-current hover:bg-current hover:text-white`
-  };
+    outline: `text-current border border-current hover:bg-current hover:text-white`,
+  }
 
   const dynamicStyles = {
     backgroundColor: cta.variant === 'primary' ? primaryColor : 'transparent',
     borderColor: cta.variant !== 'primary' ? primaryColor : 'transparent',
-    color: cta.variant === 'primary' ? 'white' : primaryColor
-  };
+    color: cta.variant === 'primary' ? 'white' : primaryColor,
+  }
 
   const content = (
     <>
       <span>{cta.text}</span>
       {cta.icon && (
-        <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg
+          className="w-4 h-4 ml-2"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
           {cta.icon === 'calendar' && (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+            />
           )}
           {cta.icon === 'music' && (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"
+            />
           )}
           {cta.icon === 'users' && (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a4 4 0 11-8 0 4 4 0 018 0z"
+            />
           )}
           {!cta.icon && (
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M17 8l4 4m0 0l-4 4m4-4H3"
+            />
           )}
         </svg>
       )}
     </>
-  );
+  )
 
   if (cta.type === 'route') {
     return (
@@ -142,7 +175,7 @@ const ContextualCTA: React.FC<{
       >
         {content}
       </Link>
-    );
+    )
   }
 
   return (
@@ -153,12 +186,12 @@ const ContextualCTA: React.FC<{
     >
       {content}
     </button>
-  );
-};
+  )
+}
 
 /**
  * Context-Aware Header Component
- * 
+ *
  * Features:
  * - Adapts navigation and styling based on current service context
  * - Smooth transitions between service contexts
@@ -167,88 +200,99 @@ const ContextualCTA: React.FC<{
  * - Accessibility compliant with WCAG standards
  * - Integrated theme toggle functionality
  */
-export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ className = '' }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const device = useDeviceDetection();
-  const navigate = useNavigate();
-  const { smoothScrollTo } = useSmoothScroll();
-  
+export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({
+  className = '',
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const device = useDeviceDetection()
+  const navigate = useNavigate()
+  const { smoothScrollTo } = useSmoothScroll()
+
   const {
     currentService,
     services,
     isTransitioning,
     getCurrentNavigation,
     getCurrentPrimaryCTA,
-    getCurrentSecondaryCTA
-  } = useServiceContext();
+    getCurrentSecondaryCTA,
+  } = useServiceContext()
 
-  const currentServiceData = services[currentService];
-  const navigationItems = getCurrentNavigation();
-  const primaryCTA = getCurrentPrimaryCTA();
-  const secondaryCTA = getCurrentSecondaryCTA();
+  const currentServiceData = services[currentService]
+  const navigationItems = getCurrentNavigation()
+  const primaryCTA = getCurrentPrimaryCTA()
+  const secondaryCTA = getCurrentSecondaryCTA()
 
   /**
    * Handle navigation item clicks with intelligent routing
    */
-  const handleNavClick = useCallback((item: ServiceNavigationItem) => {
-    setIsMenuOpen(false);
-    
-    if (item.type === 'route') {
-      navigate(item.href);
-    } else if (item.type === 'anchor') {
-      if (item.href.startsWith('#')) {
-        const anchor = item.href.substring(1);
-        if (window.location.pathname !== '/') {
-          navigate('/', { replace: false });
-          setTimeout(() => smoothScrollTo(anchor, 80), 100);
-        } else {
-          smoothScrollTo(anchor, 80);
+  const handleNavClick = useCallback(
+    (item: ServiceNavigationItem) => {
+      setIsMenuOpen(false)
+
+      if (item.type === 'route') {
+        navigate(item.href)
+      } else if (item.type === 'anchor') {
+        if (item.href.startsWith('#')) {
+          const anchor = item.href.substring(1)
+          if (window.location.pathname !== '/') {
+            navigate('/', { replace: false })
+            setTimeout(() => smoothScrollTo(anchor, 80), 100)
+          } else {
+            smoothScrollTo(anchor, 80)
+          }
         }
+      } else if (item.type === 'external') {
+        window.open(item.href, '_blank', 'noopener,noreferrer')
       }
-    } else if (item.type === 'external') {
-      window.open(item.href, '_blank', 'noopener,noreferrer');
-    }
-  }, [navigate, smoothScrollTo]);
+    },
+    [navigate, smoothScrollTo]
+  )
 
   /**
    * Handle CTA clicks
    */
-  const handleCTAClick = useCallback((cta: ServiceCTA) => {
-    if (cta.type === 'route') {
-      navigate(cta.href);
-    } else if (cta.type === 'anchor') {
-      if (cta.href.startsWith('#')) {
-        const anchor = cta.href.substring(1);
-        smoothScrollTo(anchor, 80);
+  const handleCTAClick = useCallback(
+    (cta: ServiceCTA) => {
+      if (cta.type === 'route') {
+        navigate(cta.href)
+      } else if (cta.type === 'anchor') {
+        if (cta.href.startsWith('#')) {
+          const anchor = cta.href.substring(1)
+          smoothScrollTo(anchor, 80)
+        }
+      } else if (cta.type === 'external') {
+        window.open(cta.href, '_blank', 'noopener,noreferrer')
       }
-    } else if (cta.type === 'external') {
-      window.open(cta.href, '_blank', 'noopener,noreferrer');
-    }
-  }, [navigate, smoothScrollTo]);
+    },
+    [navigate, smoothScrollTo]
+  )
 
   /**
    * Toggle mobile menu
    */
   const toggleMenu = useCallback(() => {
-    setIsMenuOpen(!isMenuOpen);
-  }, [isMenuOpen]);
+    setIsMenuOpen(!isMenuOpen)
+  }, [isMenuOpen])
 
   // Determine which navigation items are active
-  const navigationWithActiveState = useMemo(() => 
-    navigationItems.map(item => ({
-      ...item,
-      isActive: item.type === 'route' 
-        ? window.location.pathname === item.href
-        : item.highlighted || false
-    })), [navigationItems]
-  );
+  const navigationWithActiveState = useMemo(
+    () =>
+      navigationItems.map(item => ({
+        ...item,
+        isActive:
+          item.type === 'route'
+            ? window.location.pathname === item.href
+            : item.highlighted || false,
+      })),
+    [navigationItems]
+  )
 
   // Animation variants for header transitions
   const headerVariants = {
     initial: { opacity: 0, y: -20 },
     animate: { opacity: 1, y: 0 },
-    exit: { opacity: 0, y: -20 }
-  };
+    exit: { opacity: 0, y: -20 },
+  }
 
   return (
     <>
@@ -268,7 +312,9 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
         exit="exit"
         transition={{ duration: 0.3 }}
         style={{
-          borderBottomColor: isTransitioning ? 'transparent' : currentServiceData.primaryColor
+          borderBottomColor: isTransitioning
+            ? 'transparent'
+            : currentServiceData.primaryColor,
         }}
       >
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -292,7 +338,11 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
 
             {/* Desktop Navigation */}
             {device.isDesktop && (
-              <nav className="hidden md:flex items-center space-x-6" role="navigation" aria-label="Main navigation">
+              <nav
+                className="hidden md:flex items-center space-x-6"
+                role="navigation"
+                aria-label="Main navigation"
+              >
                 <AnimatePresence mode="wait">
                   <motion.div
                     key={currentService}
@@ -302,7 +352,7 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
                     exit={{ opacity: 0, x: -20 }}
                     transition={{ duration: 0.3 }}
                   >
-                    {navigationWithActiveState.map((item) => (
+                    {navigationWithActiveState.map(item => (
                       <ContextualNavigationItem
                         key={item.id}
                         item={item}
@@ -320,11 +370,7 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
             {device.isDesktop && (
               <div className="hidden md:flex items-center space-x-3">
                 {/* Theme Toggle - positioned before CTAs */}
-                <ThemeToggle 
-                  size="md"
-                  variant="ghost"
-                  className="mr-2"
-                />
+                <ThemeToggle size="md" variant="ghost" className="mr-2" />
 
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -356,11 +402,8 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
             {!device.isDesktop && (
               <div className="md:hidden flex items-center space-x-2">
                 {/* Theme Toggle for Mobile - positioned before hamburger menu */}
-                <ThemeToggle 
-                  size="sm"
-                  variant="ghost"
-                />
-                
+                <ThemeToggle size="sm" variant="ghost" />
+
                 <button
                   onClick={toggleMenu}
                   className="p-2 rounded-lg transition-colors duration-200"
@@ -374,12 +417,32 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
                     transition={{ duration: 0.2 }}
                   >
                     {isMenuOpen ? (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     ) : (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
                       </svg>
                     )}
                   </motion.div>
@@ -403,8 +466,12 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
             >
               <div className="container mx-auto px-4 py-6 space-y-4">
                 {/* Mobile Navigation Items */}
-                <nav className="space-y-2" role="navigation" aria-label="Mobile navigation">
-                  {navigationWithActiveState.map((item) => (
+                <nav
+                  className="space-y-2"
+                  role="navigation"
+                  aria-label="Mobile navigation"
+                >
+                  {navigationWithActiveState.map(item => (
                     <ContextualNavigationItem
                       key={item.id}
                       item={item}
@@ -439,7 +506,7 @@ export const ContextAwareHeader: React.FC<ContextAwareHeaderProps> = ({ classNam
         </AnimatePresence>
       </motion.header>
     </>
-  );
-};
+  )
+}
 
-export default ContextAwareHeader;
+export default ContextAwareHeader

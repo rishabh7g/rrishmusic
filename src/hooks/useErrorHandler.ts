@@ -3,7 +3,7 @@
  * Provides programmatic error boundary integration
  */
 
-import { ErrorInfo } from 'react';
+import { ErrorInfo } from 'react'
 
 /**
  * Hook for programmatic error boundary triggering
@@ -11,8 +11,8 @@ import { ErrorInfo } from 'react';
  */
 export function useErrorHandler() {
   return (error: Error, errorInfo?: Partial<ErrorInfo>) => {
-    console.error('[useErrorHandler] Programmatic error:', error);
-    
+    console.error('[useErrorHandler] Programmatic error:', error)
+
     // You could dispatch this to a global error boundary or error reporting service
     if (process.env.NODE_ENV === 'production') {
       // Log to error reporting service
@@ -22,10 +22,10 @@ export function useErrorHandler() {
         ...errorInfo,
         timestamp: new Date().toISOString(),
         url: window.location.href,
-      });
+      })
     }
-    
+
     // Re-throw to trigger error boundary
-    throw error;
-  };
+    throw error
+  }
 }

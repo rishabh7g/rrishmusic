@@ -6,48 +6,54 @@
  * Get viewport width safely
  */
 export function getViewportWidth(): number {
-  if (typeof window === 'undefined') return 0;
-  return Math.max(document.documentElement.clientWidth || 0, window.innerWidth || 0);
+  if (typeof window === 'undefined') return 0
+  return Math.max(
+    document.documentElement.clientWidth || 0,
+    window.innerWidth || 0
+  )
 }
 
 /**
  * Get viewport height safely
  */
 export function getViewportHeight(): number {
-  if (typeof window === 'undefined') return 0;
-  return Math.max(document.documentElement.clientHeight || 0, window.innerHeight || 0);
+  if (typeof window === 'undefined') return 0
+  return Math.max(
+    document.documentElement.clientHeight || 0,
+    window.innerHeight || 0
+  )
 }
 
 /**
  * Check if current viewport is mobile size
  */
 export function isMobile(): boolean {
-  return getViewportWidth() < 768; // md breakpoint
+  return getViewportWidth() < 768 // md breakpoint
 }
 
 /**
  * Check if current viewport is tablet size
  */
 export function isTablet(): boolean {
-  const width = getViewportWidth();
-  return width >= 768 && width < 1024; // between md and lg
+  const width = getViewportWidth()
+  return width >= 768 && width < 1024 // between md and lg
 }
 
 /**
  * Check if current viewport is desktop size
  */
 export function isDesktop(): boolean {
-  return getViewportWidth() >= 1024; // lg and above
+  return getViewportWidth() >= 1024 // lg and above
 }
 
 /**
  * Get current breakpoint
  */
 export function getCurrentBreakpoint(): 'mobile' | 'tablet' | 'desktop' {
-  const width = getViewportWidth();
-  if (width < 768) return 'mobile';
-  if (width < 1024) return 'tablet';
-  return 'desktop';
+  const width = getViewportWidth()
+  if (width < 768) return 'mobile'
+  if (width < 1024) return 'tablet'
+  return 'desktop'
 }
 
 /**
@@ -59,13 +65,13 @@ export const BREAKPOINTS = {
   lg: 1024,
   xl: 1280,
   '2xl': 1536,
-} as const;
+} as const
 
 /**
  * Check if viewport width matches or exceeds a breakpoint
  */
 export function isBreakpoint(breakpoint: keyof typeof BREAKPOINTS): boolean {
-  return getViewportWidth() >= BREAKPOINTS[breakpoint];
+  return getViewportWidth() >= BREAKPOINTS[breakpoint]
 }
 
 /**
@@ -78,12 +84,12 @@ export function responsiveClass(
   lg?: string,
   xl?: string
 ): string {
-  const classes = [base];
-  
-  if (sm) classes.push(`sm:${sm}`);
-  if (md) classes.push(`md:${md}`);
-  if (lg) classes.push(`lg:${lg}`);
-  if (xl) classes.push(`xl:${xl}`);
-  
-  return classes.join(' ');
+  const classes = [base]
+
+  if (sm) classes.push(`sm:${sm}`)
+  if (md) classes.push(`md:${md}`)
+  if (lg) classes.push(`lg:${lg}`)
+  if (xl) classes.push(`xl:${xl}`)
+
+  return classes.join(' ')
 }

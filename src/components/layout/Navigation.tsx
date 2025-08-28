@@ -1,36 +1,36 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Link, useLocation, useNavigate, Location } from "react-router-dom";
-import { NAVIGATION_ITEMS } from "@/utils/constants";
-import { useSmoothScroll, useScrollSpy } from "@/hooks/useScrollSpy";
-import { useDeviceDetection } from "@/hooks/useDeviceDetection";
-import ThemeToggle from "@/components/ThemeToggle";
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { Link, useLocation, useNavigate, Location } from 'react-router-dom'
+import { NAVIGATION_ITEMS } from '@/utils/constants'
+import { useSmoothScroll, useScrollSpy } from '@/hooks/useScrollSpy'
+import { useDeviceDetection } from '@/hooks/useDeviceDetection'
+import ThemeToggle from '@/components/ThemeToggle'
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing
-  activeSection?: string;
+  activeSection?: string
 }
 
 /**
  * Navigation item hierarchy types for service-based visual prioritization
  */
-type NavigationItemType = 'primary' | 'secondary' | 'tertiary';
+type NavigationItemType = 'primary' | 'secondary' | 'tertiary'
 
 /**
  * Determines the navigation item type based on service hierarchy:
  * - Primary: Home and main service pages (Performances, Collaboration)
- * - Secondary: Teaching services (Approach, Lessons)  
+ * - Secondary: Teaching services (Approach, Lessons)
  * - Tertiary: Standard navigation (About, Contact)
  */
 const getNavigationItemType = (itemId: string): NavigationItemType => {
   if (['home', 'performance', 'collaboration'].includes(itemId)) {
-    return 'primary';
+    return 'primary'
   }
   if (['approach', 'lessons'].includes(itemId)) {
-    return 'secondary';
+    return 'secondary'
   }
-  return 'tertiary';
-};
+  return 'tertiary'
+}
 
 /**
  * Gets styling classes for navigation items based on hierarchy
@@ -40,171 +40,183 @@ const getNavigationItemStyles = (
   isActive: boolean,
   isMobile: boolean
 ) => {
-  const baseClasses = "font-heading transition-all duration-200 focus-visible-enhanced";
-  
+  const baseClasses =
+    'font-heading transition-all duration-200 focus-visible-enhanced'
+
   if (isMobile) {
-    const mobileBase = `${baseClasses} text-left py-3 px-6 rounded-xl block w-full touch-target-comfortable`;
-    
+    const mobileBase = `${baseClasses} text-left py-3 px-6 rounded-xl block w-full touch-target-comfortable`
+
     switch (type) {
       case 'primary':
         return `${mobileBase} font-semibold text-responsive-base ${
           isActive
-            ? "text-white bg-theme-primary border border-theme-primary/20 shadow-lg"
-            : "text-theme-text hover:text-theme-primary hover:bg-theme-primary/10 hover:border hover:border-theme-primary/20 active:bg-theme-primary/20"
-        }`;
+            ? 'text-white bg-theme-primary border border-theme-primary/20 shadow-lg'
+            : 'text-theme-text hover:text-theme-primary hover:bg-theme-primary/10 hover:border hover:border-theme-primary/20 active:bg-theme-primary/20'
+        }`
       case 'secondary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-theme-secondary border border-theme-secondary/20 shadow-lg"
-            : "text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/10 active:bg-theme-secondary/15"
-        }`;
+            ? 'text-white bg-theme-secondary border border-theme-secondary/20 shadow-lg'
+            : 'text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/10 active:bg-theme-secondary/15'
+        }`
       case 'tertiary':
         return `${mobileBase} font-medium text-responsive-base ${
           isActive
-            ? "text-white bg-theme-primary border border-theme-primary/20 shadow-lg"
-            : "text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary active:bg-theme-bg-tertiary"
-        }`;
+            ? 'text-white bg-theme-primary border border-theme-primary/20 shadow-lg'
+            : 'text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary active:bg-theme-bg-tertiary'
+        }`
     }
   }
-  
+
   // Desktop styles with visual hierarchy and dark mode support
-  const desktopBase = `${baseClasses} relative touch-target px-4 py-2 rounded-lg`;
-  
+  const desktopBase = `${baseClasses} relative touch-target px-4 py-2 rounded-lg`
+
   switch (type) {
     case 'primary':
       return `${desktopBase} font-bold text-lg ${
         isActive
-          ? "text-theme-primary"
-          : "text-theme-text hover:text-theme-primary hover:scale-105 hover:bg-theme-primary/5"
-      }`;
+          ? 'text-theme-primary'
+          : 'text-theme-text hover:text-theme-primary hover:scale-105 hover:bg-theme-primary/5'
+      }`
     case 'secondary':
       return `${desktopBase} font-semibold ${
         isActive
-          ? "text-theme-secondary"
-          : "text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/5"
-      }`;
+          ? 'text-theme-secondary'
+          : 'text-theme-text hover:text-theme-secondary hover:bg-theme-secondary/5'
+      }`
     case 'tertiary':
       return `${desktopBase} font-medium ${
         isActive
-          ? "text-theme-primary"
-          : "text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary"
-      }`;
+          ? 'text-theme-primary'
+          : 'text-theme-text hover:text-theme-primary hover:bg-theme-bg-secondary'
+      }`
   }
-};
+}
 
 /**
  * Gets active indicator styles based on item type
  */
-const getActiveIndicatorStyles = (type: NavigationItemType, isMobile: boolean) => {
+const getActiveIndicatorStyles = (
+  type: NavigationItemType,
+  isMobile: boolean
+) => {
   if (isMobile) {
-    const baseClasses = "w-2 h-2 rounded-full";
+    const baseClasses = 'w-2 h-2 rounded-full'
     switch (type) {
       case 'primary':
-        return `${baseClasses} bg-white`;
+        return `${baseClasses} bg-white`
       case 'secondary':
-        return `${baseClasses} bg-white`;
+        return `${baseClasses} bg-white`
       case 'tertiary':
-        return `${baseClasses} bg-white`;
+        return `${baseClasses} bg-white`
     }
   }
 
   // Desktop active indicator with theme support
-  const baseClasses = "absolute -bottom-1 left-2 right-2 h-0.5 rounded-full";
+  const baseClasses = 'absolute -bottom-1 left-2 right-2 h-0.5 rounded-full'
   switch (type) {
     case 'primary':
-      return `${baseClasses} bg-theme-primary`;
+      return `${baseClasses} bg-theme-primary`
     case 'secondary':
-      return `${baseClasses} bg-theme-secondary`;
+      return `${baseClasses} bg-theme-secondary`
     case 'tertiary':
-      return `${baseClasses} bg-theme-primary`;
+      return `${baseClasses} bg-theme-primary`
   }
-};
+}
 
 /**
  * Determines navigation type and target based on href
  */
-const getNavigationTarget = (item: typeof NAVIGATION_ITEMS[0]) => {
+const getNavigationTarget = (item: (typeof NAVIGATION_ITEMS)[0]) => {
   if (!item.href) {
-    return { type: 'scroll' as const, anchor: item.id };
+    return { type: 'scroll' as const, anchor: item.id }
   }
-  
+
   if (item.href.startsWith('/')) {
-    return { type: 'route' as const, path: item.href };
+    return { type: 'route' as const, path: item.href }
   }
-  
+
   if (item.href.startsWith('#')) {
-    return { type: 'scroll' as const, anchor: item.href.substring(1) };
+    return { type: 'scroll' as const, anchor: item.href.substring(1) }
   }
-  
+
   // External or other links
-  return { type: 'external' as const, url: item.href };
-};
+  return { type: 'external' as const, url: item.href }
+}
 
 /**
  * Determines if a navigation item is currently active
  */
-const getIsItemActive = (item: typeof NAVIGATION_ITEMS[0], location: Location, activeSection: string): boolean => {
-  const target = getNavigationTarget(item);
-  
+const getIsItemActive = (
+  item: (typeof NAVIGATION_ITEMS)[0],
+  location: Location,
+  activeSection: string
+): boolean => {
+  const target = getNavigationTarget(item)
+
   if (target.type === 'route') {
-    return location.pathname === target.path;
+    return location.pathname === target.path
   }
-  
+
   if (target.type === 'scroll') {
     // For scroll targets, check if we're on the home page and the section is active
     if (location.pathname === '/') {
-      return activeSection === target.anchor || activeSection === item.id;
+      return activeSection === target.anchor || activeSection === item.id
     }
   }
-  
-  return false;
-};
+
+  return false
+}
 
 /**
  * Scroll spy configuration for anchor navigation items
  */
-const getScrollSpyItems = () => 
-  NAVIGATION_ITEMS
-    .filter(item => {
-      const target = getNavigationTarget(item);
-      return target.type === 'scroll';
-    })
-    .map(item => {
-      const target = getNavigationTarget(item);
-      return target.type === 'scroll' ? target.anchor : item.id;
-    });
+const getScrollSpyItems = () =>
+  NAVIGATION_ITEMS.filter(item => {
+    const target = getNavigationTarget(item)
+    return target.type === 'scroll'
+  }).map(item => {
+    const target = getNavigationTarget(item)
+    return target.type === 'scroll' ? target.anchor : item.id
+  })
 
 /**
  * Memoized navigation item component
  */
 const NavigationItem = React.memo<{
-  item: typeof NAVIGATION_ITEMS[0];
-  isActive: boolean;
-  onClick: (item: typeof NAVIGATION_ITEMS[0]) => void;
-  className?: string;
-  isMobile?: boolean;
-  index?: number;
+  item: (typeof NAVIGATION_ITEMS)[0]
+  isActive: boolean
+  onClick: (item: (typeof NAVIGATION_ITEMS)[0]) => void
+  className?: string
+  isMobile?: boolean
+  index?: number
 }>(({ item, isActive, onClick, className, isMobile, index }) => {
-  const handleClick = useCallback((e: React.MouseEvent) => {
-    e.preventDefault();
-    onClick(item);
-  }, [onClick, item]);
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      e.preventDefault()
+      onClick(item)
+    },
+    [onClick, item]
+  )
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      onClick(item);
-    }
-  }, [onClick, item]);
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault()
+        onClick(item)
+      }
+    },
+    [onClick, item]
+  )
 
-  const itemType = useMemo(() => getNavigationItemType(item.id), [item.id]);
-  const baseClassName = useMemo(() => 
-    getNavigationItemStyles(itemType, isActive, !!isMobile), 
+  const itemType = useMemo(() => getNavigationItemType(item.id), [item.id])
+  const baseClassName = useMemo(
+    () => getNavigationItemStyles(itemType, isActive, !!isMobile),
     [itemType, isActive, isMobile]
-  );
+  )
 
-  const target = getNavigationTarget(item);
-  
+  const target = getNavigationTarget(item)
+
   const content = (
     <>
       {isMobile ? (
@@ -215,7 +227,7 @@ const NavigationItem = React.memo<{
               initial={{ scale: 0, rotate: -90 }}
               animate={{ scale: 1, rotate: 0 }}
               className={getActiveIndicatorStyles(itemType, true)}
-              transition={{ type: "spring", bounce: 0.4, duration: 0.4 }}
+              transition={{ type: 'spring', bounce: 0.4, duration: 0.4 }}
             />
           ) : (
             <svg
@@ -224,11 +236,11 @@ const NavigationItem = React.memo<{
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={2} 
-                d="M9 5l7 7-7 7" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
               />
             </svg>
           )}
@@ -240,20 +252,21 @@ const NavigationItem = React.memo<{
             <motion.div
               layoutId="activeIndicator"
               className={getActiveIndicatorStyles(itemType, false)}
-              transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+              transition={{ type: 'spring', bounce: 0.2, duration: 0.6 }}
             />
           )}
         </>
       )}
     </>
-  );
+  )
 
-  const animationStyles = isMobile && typeof index !== 'undefined' 
-    ? { 
-        animationDelay: `${index * 50}ms`,
-        transitionDelay: `${index * 50}ms` 
-      } 
-    : undefined;
+  const animationStyles =
+    isMobile && typeof index !== 'undefined'
+      ? {
+          animationDelay: `${index * 50}ms`,
+          transitionDelay: `${index * 50}ms`,
+        }
+      : undefined
 
   // Handle different navigation types
   if (target.type === 'route') {
@@ -268,7 +281,7 @@ const NavigationItem = React.memo<{
       >
         {content}
       </Link>
-    );
+    )
   }
 
   if (target.type === 'external') {
@@ -283,7 +296,7 @@ const NavigationItem = React.memo<{
       >
         {content}
       </a>
-    );
+    )
   }
 
   // Default to button for scroll navigation and other actions
@@ -297,80 +310,85 @@ const NavigationItem = React.memo<{
     >
       {content}
     </button>
-  );
-});
+  )
+})
 
-NavigationItem.displayName = 'NavigationItem';
+NavigationItem.displayName = 'NavigationItem'
 
 /**
  * Main Navigation Component with Responsive Design and Dark Mode Support
  */
-export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiveSection }) => {
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-  const { smoothScrollTo } = useSmoothScroll();
-  const device = useDeviceDetection();
-  
+export const Navigation: React.FC<NavigationProps> = ({
+  activeSection: propActiveSection,
+}) => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isAnimating, setIsAnimating] = useState(false)
+  const location = useLocation()
+  const navigate = useNavigate()
+  const { smoothScrollTo } = useSmoothScroll()
+  const device = useDeviceDetection()
+
   // Use scroll spy only for items that should be tracked on home page
-  const scrollSpyItems = useMemo(() => getScrollSpyItems(), []);
+  const scrollSpyItems = useMemo(() => getScrollSpyItems(), [])
   const detectedActiveSection = useScrollSpy(scrollSpyItems, {
     offset: 100,
     throttle: 50,
     rootMargin: '-10% 0px -85% 0px',
-  });
-  
+  })
+
   // Use prop override or detected section
-  const activeSection = propActiveSection || detectedActiveSection;
+  const activeSection = propActiveSection || detectedActiveSection
 
   /**
    * Handle navigation clicks with intelligent routing
    */
-  const handleNavClick = useCallback((item: typeof NAVIGATION_ITEMS[0]) => {
-    setIsAnimating(true);
-    setIsMenuOpen(false);
-    
-    const target = getNavigationTarget(item);
-    
-    try {
-      if (target.type === 'route') {
-        // Direct route navigation
-        navigate(target.path);
-      } else if (target.type === 'scroll') {
-        // Scroll to anchor navigation
-        if (location.pathname !== '/') {
-          // If we're not on the home page, navigate there first
-          navigate('/', { replace: false });
-          // Small delay to allow navigation to complete before scrolling
-          setTimeout(() => {
-            smoothScrollTo(target.anchor, 80);
-          }, 100);
-        } else {
-          // If we're already on the home page, just scroll
-          smoothScrollTo(target.anchor, 80);
+  const handleNavClick = useCallback(
+    (item: (typeof NAVIGATION_ITEMS)[0]) => {
+      setIsAnimating(true)
+      setIsMenuOpen(false)
+
+      const target = getNavigationTarget(item)
+
+      try {
+        if (target.type === 'route') {
+          // Direct route navigation
+          navigate(target.path)
+        } else if (target.type === 'scroll') {
+          // Scroll to anchor navigation
+          if (location.pathname !== '/') {
+            // If we're not on the home page, navigate there first
+            navigate('/', { replace: false })
+            // Small delay to allow navigation to complete before scrolling
+            setTimeout(() => {
+              smoothScrollTo(target.anchor, 80)
+            }, 100)
+          } else {
+            // If we're already on the home page, just scroll
+            smoothScrollTo(target.anchor, 80)
+          }
+        } else if (target.type === 'external') {
+          // External links are handled by the anchor element directly
+          return
         }
-      } else if (target.type === 'external') {
-        // External links are handled by the anchor element directly
-        return;
+      } catch (error) {
+        console.error('[Navigation] Error navigating to:', item, error)
+        // Fallback to homepage
+        navigate('/')
+      } finally {
+        setTimeout(() => setIsAnimating(false), 300)
       }
-    } catch (error) {
-      console.error('[Navigation] Error navigating to:', item, error);
-      // Fallback to homepage
-      navigate('/');
-    } finally {
-      setTimeout(() => setIsAnimating(false), 300);
-    }
-  }, [navigate, location.pathname, smoothScrollTo]);
+    },
+    [navigate, location.pathname, smoothScrollTo]
+  )
 
   /**
    * Toggle mobile menu
    */
   const toggleMenu = useCallback(() => {
     if (!isAnimating) {
-      setIsMenuOpen(!isMenuOpen);
+      setIsMenuOpen(!isMenuOpen)
     }
-  }, [isMenuOpen, isAnimating]);
+  }, [isMenuOpen, isAnimating])
 
   /**
    * Close mobile menu when clicking outside or on escape
@@ -378,61 +396,65 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
   useEffect(() => {
     const handleEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') {
-        setIsMenuOpen(false);
+        setIsMenuOpen(false)
       }
-    };
+    }
 
     const handleClickOutside = (event: MouseEvent) => {
-      const nav = document.getElementById('main-navigation');
+      const nav = document.getElementById('main-navigation')
       if (nav && !nav.contains(event.target as Node)) {
-        setIsMenuOpen(false);
+        setIsMenuOpen(false)
       }
-    };
+    }
 
     if (isMenuOpen) {
-      document.addEventListener('keydown', handleEscape);
-      document.addEventListener('click', handleClickOutside);
-      document.body.style.overflow = 'hidden'; // Prevent background scroll
+      document.addEventListener('keydown', handleEscape)
+      document.addEventListener('click', handleClickOutside)
+      document.body.style.overflow = 'hidden' // Prevent background scroll
     }
 
     return () => {
-      document.removeEventListener('keydown', handleEscape);
-      document.removeEventListener('click', handleClickOutside);
-      document.body.style.overflow = 'unset';
-    };
-  }, [isMenuOpen]);
+      document.removeEventListener('keydown', handleEscape)
+      document.removeEventListener('click', handleClickOutside)
+      document.body.style.overflow = 'unset'
+    }
+  }, [isMenuOpen])
 
   /**
    * Close mobile menu on route changes
    */
   useEffect(() => {
-    setIsMenuOpen(false);
-  }, [location.pathname]);
+    setIsMenuOpen(false)
+  }, [location.pathname])
 
   // Memoize navigation items for performance
-  const desktopNavItems = useMemo(() => 
-    NAVIGATION_ITEMS.map((item) => (
-      <NavigationItem
-        key={item.id}
-        item={item}
-        isActive={getIsItemActive(item, location, activeSection)}
-        onClick={handleNavClick}
-      />
-    )), [location, activeSection, handleNavClick]
-  );
-  
-  const mobileNavItems = useMemo(() => 
-    NAVIGATION_ITEMS.map((item, index) => (
-      <NavigationItem
-        key={item.id}
-        item={item}
-        isActive={getIsItemActive(item, location, activeSection)}
-        onClick={handleNavClick}
-        isMobile
-        index={index}
-      />
-    )), [location, activeSection, handleNavClick]
-  );
+  const desktopNavItems = useMemo(
+    () =>
+      NAVIGATION_ITEMS.map(item => (
+        <NavigationItem
+          key={item.id}
+          item={item}
+          isActive={getIsItemActive(item, location, activeSection)}
+          onClick={handleNavClick}
+        />
+      )),
+    [location, activeSection, handleNavClick]
+  )
+
+  const mobileNavItems = useMemo(
+    () =>
+      NAVIGATION_ITEMS.map((item, index) => (
+        <NavigationItem
+          key={item.id}
+          item={item}
+          isActive={getIsItemActive(item, location, activeSection)}
+          onClick={handleNavClick}
+          isMobile
+          index={index}
+        />
+      )),
+    [location, activeSection, handleNavClick]
+  )
 
   // Menu animation variants
   const menuVariants = {
@@ -442,7 +464,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       transition: {
         duration: 0.2,
         ease: 'easeInOut',
-      }
+      },
     },
     visible: {
       opacity: 1,
@@ -450,9 +472,9 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       transition: {
         duration: 0.3,
         ease: 'easeOut',
-      }
-    }
-  };
+      },
+    },
+  }
 
   return (
     <>
@@ -508,12 +530,32 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
                     className="w-6 h-6"
                   >
                     {isMenuOpen ? (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
                       </svg>
                     ) : (
-                      <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                      <svg
+                        className="w-6 h-6"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M4 6h16M4 12h16M4 18h16"
+                        />
                       </svg>
                     )}
                   </motion.div>
@@ -547,7 +589,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
       {/* Navigation spacer to prevent content overlap */}
       <div className="h-16" aria-hidden="true" />
     </>
-  );
-};
+  )
+}
 
-export default Navigation;
+export default Navigation
