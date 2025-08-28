@@ -9,8 +9,8 @@ export function Lessons() {
 
   if (loading) {
     return (
-      <div className="section bg-white">
-        <div className="container-custom">
+      <div className="section bg-theme-bg/30 backdrop-blur-sm transition-theme-colors">
+        <div className="container mx-auto max-w-7xl p-4">
           <div className="animate-pulse">
             <div className="text-center mb-16">
               <div className="h-12 bg-gray-300 rounded mb-4 mx-auto max-w-lg"></div>
@@ -36,18 +36,7 @@ export function Lessons() {
   }
 
   if (error || !packages.length) {
-    return (
-      <div className="section bg-white">
-        <div className="container-custom text-center">
-          <h2 className="text-4xl font-heading font-bold text-neutral-charcoal">
-            Lesson Packages
-          </h2>
-          <p className="text-lg text-neutral-charcoal mt-4">
-            Content temporarily unavailable. Please try again later.
-          </p>
-        </div>
-      </div>
-    );
+    return null; // Don't render anything if packages unavailable, since there's already a teaching approach section
   }
 
   // Get the single lesson price to calculate other prices from
@@ -102,13 +91,13 @@ export function Lessons() {
   };
 
   return (
-    <div className="section bg-white relative overflow-hidden">
+    <div className="section bg-theme-bg/30 backdrop-blur-sm transition-theme-colors relative overflow-hidden">
       {/* Background decoration */}
       <div className="absolute top-0 left-1/4 w-32 h-32 sm:w-48 sm:h-48 lg:w-72 lg:h-72 bg-brand-yellow-accent/5 rounded-full -translate-y-16 sm:-translate-y-24 lg:-translate-y-36 hidden sm:block"></div>
       <div className="absolute bottom-0 right-1/4 w-32 h-32 sm:w-48 sm:h-48 lg:w-80 lg:h-80 bg-brand-blue-primary/5 rounded-full translate-y-16 sm:translate-y-24 lg:translate-y-40 hidden sm:block"></div>
       
       <motion.div 
-        className="container-custom relative z-10"
+        className="container mx-auto max-w-7xl p-4 relative z-10"
         variants={staggerContainer}
         initial="hidden"
         whileInView="visible"
@@ -118,10 +107,10 @@ export function Lessons() {
           className="text-center mb-16"
           variants={fadeInUp}
         >
-          <h2 className="text-4xl md:text-5xl font-heading font-bold text-neutral-charcoal mb-4">
+          <h2 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 drop-shadow-lg">
             Lesson Packages
           </h2>
-          <p className="text-xl text-neutral-charcoal/80 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow">
             Choose the perfect package for your musical journey. All lessons are personalized to your goals and skill level.
           </p>
           <div className="w-24 h-1 bg-brand-orange-warm mx-auto mt-6 rounded-full"></div>
@@ -269,7 +258,7 @@ export function Lessons() {
           >
             <div className="grid md:grid-cols-2 gap-8 items-center">
               <div>
-                <h3 className="text-2xl font-heading font-bold text-neutral-charcoal mb-6">
+                <h3 className="text-2xl font-heading font-bold text-white mb-6 drop-shadow-lg">
                   What's Included
                 </h3>
                 <ul className="space-y-4">
@@ -277,7 +266,7 @@ export function Lessons() {
                     <svg className="w-5 h-5 text-brand-green-success" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-neutral-charcoal">
+                    <span className="text-white/90 drop-shadow">
                       {packageInfo.sessionLength} minute sessions
                     </span>
                   </li>
@@ -285,7 +274,7 @@ export function Lessons() {
                     <svg className="w-5 h-5 text-brand-green-success" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-neutral-charcoal">
+                    <span className="text-white/90 drop-shadow">
                       Instruments: {packageInfo.instruments?.join(', ') || 'Not specified'}
                     </span>
                   </li>
@@ -293,7 +282,7 @@ export function Lessons() {
                     <svg className="w-5 h-5 text-brand-green-success" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
-                    <span className="text-neutral-charcoal">
+                    <span className="text-white/90 drop-shadow">
                       Location: {packageInfo.location}
                     </span>
                   </li>
@@ -301,10 +290,10 @@ export function Lessons() {
               </div>
               
               <div>
-                <h3 className="text-2xl font-heading font-bold text-neutral-charcoal mb-6">
+                <h3 className="text-2xl font-heading font-bold text-white mb-6 drop-shadow-lg">
                   Policies
                 </h3>
-                <div className="space-y-4 text-sm text-neutral-charcoal/80">
+                <div className="space-y-4 text-sm text-white/80 drop-shadow">
                   <p>
                     <strong>Cancellation:</strong> {packageInfo.cancellationPolicy}
                   </p>
@@ -322,7 +311,7 @@ export function Lessons() {
           className="text-center mt-16"
           variants={fadeInUp}
         >
-          <p className="text-lg text-neutral-charcoal mb-8 max-w-2xl mx-auto">
+          <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
             Not sure which package is right for you? Let's have a chat about your musical goals 
             and find the perfect fit.
           </p>

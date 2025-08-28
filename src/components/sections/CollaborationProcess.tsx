@@ -97,8 +97,8 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
   const activeStepData = processSteps.find(step => step.id === activeStep);
 
   return (
-    <section className={`collaboration-process py-20 bg-white ${className}`}>
-      <div className="container mx-auto px-4">
+    <section className={`collaboration-process py-20 bg-theme-bg/30 backdrop-blur-sm transition-theme-colors ${className}`}>
+      <div className="container mx-auto max-w-7xl p-4">
         <motion.div
           variants={staggerContainer}
           initial="initial"
@@ -109,13 +109,13 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
           <div className="text-center mb-16">
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-neutral-charcoal mb-6"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg mb-6"
             >
               Collaboration <span className="text-brand-blue-primary">Process</span>
             </motion.h2>
             <motion.p
               variants={fadeInUp}
-              className="text-lg md:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed"
             >
               A structured yet flexible approach to creative collaboration that ensures 
               your vision is understood, planned, and executed to the highest standard.
@@ -134,7 +134,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                   className={`flex flex-col items-center p-6 rounded-lg transition-all duration-300 ${
                     activeStep === step.id
                       ? 'bg-brand-blue-primary text-white shadow-lg scale-105'
-                      : 'bg-gray-50 text-neutral-charcoal hover:bg-brand-blue-primary/10 hover:text-brand-blue-primary'
+                      : 'bg-gray-50 text-white drop-shadow-lg hover:bg-brand-blue-primary/10 hover:text-brand-blue-primary'
                   }`}
                 >
                   <div className={`mb-3 ${activeStep === step.id ? 'text-white' : 'text-brand-blue-primary'}`}>
@@ -173,7 +173,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                       {activeStepData.icon}
                     </div>
                     <div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-neutral-charcoal">
+                      <h3 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
                         {activeStepData.title}
                       </h3>
                       <p className="text-lg text-brand-blue-secondary">
@@ -182,20 +182,20 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                     </div>
                   </div>
                   
-                  <p className="text-lg text-neutral-charcoal/80 leading-relaxed mb-8">
+                  <p className="text-lg text-white/90 drop-shadow leading-relaxed mb-8">
                     {activeStepData.description}
                   </p>
                   
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-neutral-charcoal mb-3">Duration</h4>
+                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">Duration</h4>
                       <p className="text-brand-blue-primary font-medium">
                         {activeStepData.duration}
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-neutral-charcoal mb-3">Key Deliverables</h4>
-                      <ul className="text-neutral-charcoal/70 space-y-1">
+                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">Key Deliverables</h4>
+                      <ul className="text-white/80 drop-shadow space-y-1">
                         {activeStepData.deliverables.map((deliverable, index) => (
                           <li key={index} className="flex items-center">
                             <svg className="w-4 h-4 text-brand-blue-primary mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -211,16 +211,16 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
 
                 {/* Right Column - Features */}
                 <div>
-                  <h4 className="text-xl font-semibold text-neutral-charcoal mb-6">
+                  <h4 className="text-xl font-semibold text-white drop-shadow-lg mb-6">
                     What This Includes
                   </h4>
                   <div className="space-y-4">
                     {activeStepData.features.map((feature, index) => (
-                      <div key={index} className="flex items-center p-4 bg-white rounded-lg border border-gray-200">
+                      <div key={index} className="flex items-center p-4 bg-theme-bg/20 backdrop-blur-sm rounded-lg border border-white/20">
                         <svg className="w-5 h-5 text-brand-blue-primary mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                           <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                         </svg>
-                        <span className="text-neutral-charcoal">{feature}</span>
+                        <span className="text-white drop-shadow-lg">{feature}</span>
                       </div>
                     ))}
                   </div>
@@ -235,10 +235,10 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
             className="mt-16 text-center"
           >
             <div className="bg-brand-blue-primary/5 rounded-xl p-8">
-              <h3 className="text-2xl font-bold text-neutral-charcoal mb-4">
+              <h3 className="text-2xl font-bold text-white drop-shadow-lg mb-4">
                 Why This Approach Works
               </h3>
-              <p className="text-lg text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
+              <p className="text-lg text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed">
                 This structured process ensures clear communication, aligned expectations, and 
                 successful outcomes. Every collaboration is unique, and this framework adapts 
                 to your specific needs while maintaining professional standards and quality.
