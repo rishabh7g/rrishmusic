@@ -38,8 +38,19 @@ export function Home() {
       
       <main 
         id="main-content"
-        className="min-h-screen bg-theme-bg text-theme-text transition-theme-colors"
+        className="min-h-screen bg-theme-bg text-theme-text transition-theme-colors relative"
+        style={{
+          backgroundImage: 'url(/images/instagram/portrait/My portrait 1.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
       >
+        {/* Dark gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70 transition-theme-colors" />
+        
+        {/* Content wrapper with relative positioning */}
+        <div className="relative z-10">
         <motion.div
           className="container mx-auto max-w-7xl p-4"
           variants={containerAnimation}
@@ -51,7 +62,7 @@ export function Home() {
             className="text-center mb-8 pt-8"
             variants={boxAnimation}
           >
-            <h1 className="text-3xl md:text-4xl font-bold text-theme-text mb-2 transition-theme-colors">
+            <h1 className="text-3xl md:text-4xl font-bold text-white mb-2 drop-shadow-lg">
               Rrish Music
             </h1>
           </motion.div>
@@ -188,6 +199,7 @@ export function Home() {
           </motion.div>
 
         </motion.div>
+        </div>
       </main>
     </>
   );

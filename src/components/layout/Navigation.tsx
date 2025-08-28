@@ -470,7 +470,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
         role="navigation"
         aria-label="Main navigation"
       >
-        <div className="container-responsive">
+        <div className="container mx-auto max-w-7xl p-4">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
             <Link
@@ -535,7 +535,7 @@ export const Navigation: React.FC<NavigationProps> = ({ activeSection: propActiv
                 exit="hidden"
                 className="nav-mobile-menu open bg-theme-bg/98 backdrop-blur-optimized border-t border-theme-border shadow-lg transition-colors duration-200"
               >
-                <div className="container-responsive py-6 space-y-2">
+                <div className="container mx-auto max-w-7xl p-4 py-6 space-y-2">
                   {mobileNavItems}
                 </div>
               </motion.div>

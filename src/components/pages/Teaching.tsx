@@ -72,14 +72,27 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
         }}
       />
       
-      <main className={`min-h-screen bg-theme-bg transition-theme-colors ${className}`}>
+      <main 
+        className={`min-h-screen bg-theme-bg transition-theme-colors relative ${className}`}
+        style={{
+          backgroundImage: 'url(/images/instagram/portrait/My portrait 2.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/65 via-black/45 to-black/75 transition-theme-colors" />
+        
+        {/* Content wrapper with relative positioning */}
+        <div className="relative z-10">
       {/* Minimal Hero - Visual First */}
-      <section className="py-12 bg-theme-bg transition-theme-colors">
+      <section className="py-12 bg-theme-bg/20 backdrop-blur-sm transition-theme-colors">
         <div className="container mx-auto max-w-7xl p-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
+          <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
             Music Lessons
           </h1>
-          <p className="text-xl text-theme-text-secondary mb-8 max-w-2xl mx-auto transition-theme-colors">
+          <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
             Learn piano, music theory, and improvisation
           </p>
           <button 
@@ -285,6 +298,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
           onClose={() => setIsFormOpen(false)}
           onSubmit={handleFormSubmit}
         />
+        </div>
       </main>
     </>
   );

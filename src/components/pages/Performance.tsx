@@ -101,14 +101,28 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
         }}
       />
       
-      <main id="main-content" className={`min-h-screen ${className}`}>
+      <main 
+        id="main-content" 
+        className={`min-h-screen relative ${className}`}
+        style={{
+          backgroundImage: 'url(/images/instagram/band/XBand 1.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 transition-theme-colors" />
+        
+        {/* Content wrapper with relative positioning */}
+        <div className="relative z-10">
         {/* Minimal Hero - Media First */}
-        <section id="performance-hero" className="py-12 bg-theme-bg transition-theme-colors">
+        <section id="performance-hero" className="py-12 bg-theme-bg/20 backdrop-blur-sm transition-theme-colors">
           <div className="container mx-auto max-w-7xl p-4 text-center">
-            <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
+            <h1 className="text-4xl md:text-5xl font-bold text-white mb-4 drop-shadow-lg">
               Performances
             </h1>
-            <p className="text-xl text-theme-text-secondary mb-8 max-w-2xl mx-auto transition-theme-colors">
+            <p className="text-xl text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
               Live music, studio work, and creative collaborations
             </p>
           </div>
@@ -372,6 +386,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
           onClose={() => setIsFormOpen(false)}
           onSubmit={handleFormSubmit}
         />
+        </div>
       </main>
     </>
   );
