@@ -135,7 +135,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = ({
 
       {/* Instagram Posts Grid */}
       <motion.div
-        className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto"
+        className="flex flex-wrap justify-center gap-4 max-w-6xl mx-auto"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
