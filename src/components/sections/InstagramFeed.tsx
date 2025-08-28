@@ -135,7 +135,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = ({
 
       {/* Instagram Posts Grid */}
       <motion.div
-        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+        className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto"
         variants={staggerContainer}
         initial="hidden"
         animate="visible"
@@ -145,6 +145,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = ({
             key={post.id}
             variants={fadeInUp}
             custom={index}
+            className="w-full sm:w-80 flex-shrink-0"
           >
             {post.embed_code && post.use_native_embed ? (
               <InstagramOfficialEmbed 

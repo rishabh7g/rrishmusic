@@ -104,7 +104,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
       <main id="main-content" className={`min-h-screen ${className}`}>
         {/* Minimal Hero - Media First */}
         <section id="performance-hero" className="py-12 bg-theme-bg transition-theme-colors">
-          <div className="container-custom text-center">
+          <div className="container mx-auto max-w-7xl p-4 text-center">
             <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
               Performances
             </h1>
@@ -121,7 +121,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
               fallback={<SectionFallback sectionName="Instagram" />}
               rootMargin="200px"
             >
-              <div className="container-custom">
+              <div className="container mx-auto max-w-7xl p-4">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
                     Recent Performances
@@ -131,7 +131,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
                   </p>
                 </div>
                 <InstagramFeed 
-                  limit={12}
+                  limit={6}
                   showHeader={false}
                   className="mb-8"
                   useEnhancedHook={true}
@@ -148,7 +148,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
               fallback={<SectionFallback sectionName="Performance Gallery" />}
               rootMargin="200px"
             >
-              <div className="container-custom">
+              <div className="container mx-auto max-w-7xl p-4">
                 <div className="text-center mb-12">
                   <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
                     Portfolio Highlights
@@ -162,7 +162,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Cross-Service Suggestion - Teaching Skills */}
         <section className="py-8">
-          <div className="container-custom">
+          <div className="container mx-auto max-w-7xl p-4">
             <CrossServiceSuggestion
               fromService="performance"
               pageSection="portfolio"
@@ -177,7 +177,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Visual Testimonials - Minimal */}
         <section id="testimonials" className="py-16 bg-theme-bg-secondary transition-theme-colors">
-          <div className="container-custom">
+          <div className="container mx-auto max-w-7xl p-4">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
                 What Clients Say
@@ -242,7 +242,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Cross-Service Suggestion - Collaboration Opportunities */}
         <section className="py-8">
-          <div className="container-custom">
+          <div className="container mx-auto max-w-7xl p-4">
             <CrossServiceSuggestion
               fromService="performance"
               pageSection="pricing"
@@ -257,7 +257,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Collaboration Section - Integrated from Collaboration Page */}
         <section id="collaboration" className="py-16 bg-theme-bg-secondary transition-theme-colors">
-          <div className="container-custom">
+          <div className="container mx-auto max-w-7xl p-4">
             <div className="text-center mb-12">
               <h3 className="text-3xl md:text-4xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
                 Studio Work & Creative Collaborations
@@ -293,7 +293,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Cross-Service Teaching Reference */}
         <section className="py-16 bg-theme-bg-tertiary transition-theme-colors">
-          <div className="container-custom">
+          <div className="container mx-auto max-w-7xl p-4">
             <div className="text-center mb-12">
               <h3 className="text-3xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
                 Learn From A Performing Professional
@@ -336,7 +336,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
 
         {/* Final CTA Section - Updated for Performance + Collaboration */}
         <section className="py-16 bg-gradient-to-r from-theme-primary to-theme-secondary text-white">
-          <div className="container-custom text-center">
+          <div className="container mx-auto max-w-7xl p-4 text-center">
             <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">
               Ready to Work Together?
             </h3>
