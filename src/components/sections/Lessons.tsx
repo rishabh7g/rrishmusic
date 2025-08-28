@@ -160,10 +160,10 @@ export function Lessons() {
                   pkg.popular
                     ? 'bg-gradient-to-br from-brand-blue-primary to-brand-blue-secondary text-white scale-105 lg:scale-110'
                     : pkg.id === 'beginner'
-                      ? 'bg-gradient-to-br from-green-500 to-teal-500 text-white hover:from-green-600 hover:to-teal-600'
+                      ? 'bg-gradient-to-br from-green-200 to-teal-200 text-gray-800 hover:from-green-300 hover:to-teal-300'
                       : pkg.id === 'intermediate'
-                        ? 'bg-gradient-to-br from-purple-500 to-pink-500 text-white hover:from-purple-600 hover:to-pink-600'
-                        : 'bg-gradient-to-br from-orange-500 to-red-500 text-white hover:from-orange-600 hover:to-red-600'
+                        ? 'bg-gradient-to-br from-purple-200 to-pink-200 text-gray-800 hover:from-purple-300 hover:to-pink-300'
+                        : 'bg-gradient-to-br from-orange-200 to-red-200 text-gray-800 hover:from-orange-300 hover:to-red-300'
                 }`}
               variants={scaleIn}
               custom={index}
@@ -200,7 +200,7 @@ export function Lessons() {
                     ${
                       pkg.popular
                         ? 'bg-white/20 text-white'
-                        : 'bg-white/20 text-white'
+                        : 'bg-gray-800/10 text-gray-700'
                     } group-hover:scale-110 transition-transform duration-300`}
                   whileHover={{ rotate: 5 }}
                 >
@@ -208,19 +208,27 @@ export function Lessons() {
                 </motion.div>
 
                 {/* Package name */}
-                <h3 className="text-2xl font-heading font-bold mb-2 text-white">
+                <h3 className={`text-2xl font-heading font-bold mb-2 ${
+                  pkg.popular ? 'text-white' : 'text-gray-800'
+                }`}>
                   {pkg.title}
                 </h3>
 
                 {/* Sessions */}
-                <p className="text-lg mb-4 text-white/90">{pkg.duration}</p>
+                <p className={`text-lg mb-4 ${
+                  pkg.popular ? 'text-white/90' : 'text-gray-700'
+                }`}>{pkg.duration}</p>
 
                 {/* Price */}
                 <div className="mb-6">
-                  <div className="text-4xl font-heading font-bold text-white">
+                  <div className={`text-4xl font-heading font-bold ${
+                    pkg.popular ? 'text-white' : 'text-gray-800'
+                  }`}>
                     {pkg.price}
                   </div>
-                  <div className="text-sm mt-1 text-white/80">
+                  <div className={`text-sm mt-1 ${
+                    pkg.popular ? 'text-white/80' : 'text-gray-600'
+                  }`}>
                     $
                     {Math.round(
                       extractPrice(pkg.price) / extractSessions(pkg.duration)
@@ -231,7 +239,9 @@ export function Lessons() {
 
                 {/* Description */}
                 {pkg.description && (
-                  <p className="text-sm mb-6 leading-relaxed text-white/90">
+                  <p className={`text-sm mb-6 leading-relaxed ${
+                    pkg.popular ? 'text-white/90' : 'text-gray-700'
+                  }`}>
                     {pkg.description}
                   </p>
                 )}
@@ -255,7 +265,9 @@ export function Lessons() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className="text-sm text-white/90">{feature}</span>
+                      <span className={`text-sm ${
+                        pkg.popular ? 'text-white/90' : 'text-gray-700'
+                      }`}>{feature}</span>
                     </li>
                   ))}
                 </ul>
@@ -274,7 +286,7 @@ export function Lessons() {
                       ${
                         pkg.popular
                           ? 'bg-brand-yellow-accent text-brand-blue-primary hover:bg-white'
-                          : 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary'
+                          : 'bg-gray-800 text-white hover:bg-gray-700'
                       } text-center justify-center rounded-full font-semibold shadow-lg hover:shadow-xl`}
                   />
                 </motion.div>

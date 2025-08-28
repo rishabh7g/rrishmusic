@@ -296,7 +296,7 @@ export default function ThemeToggle({
         className={`
           relative inline-flex items-center rounded-full p-1 transition-colors duration-200
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-          ${size === 'sm' ? 'h-6 w-11' : size === 'lg' ? 'h-8 w-14' : 'h-7 w-12'}
+          ${size === 'sm' ? 'h-7 w-13' : size === 'lg' ? 'h-10 w-18' : 'h-8 w-15'}
           ${currentTheme === 'dark' ? 'bg-blue-600' : 'bg-gray-200'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
@@ -338,10 +338,10 @@ export default function ThemeToggle({
                   x:
                     currentTheme === 'dark'
                       ? size === 'sm'
-                        ? 20
+                        ? 24
                         : size === 'lg'
-                          ? 24
-                          : 22
+                          ? 32
+                          : 28
                       : 0,
                 }
           }
