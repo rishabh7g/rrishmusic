@@ -243,7 +243,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
         </section>
 
         {/* Pricing Section */}
-        <section id="pricing" className="app-section bg-white">
+        <section id="pricing" className="app-section bg-theme-bg/30 backdrop-blur-sm transition-theme-colors">
           <ErrorBoundary fallback={<SectionFallback sectionName="Pricing" />}>
             <LazySection
               fallback={<SectionFallback sectionName="Pricing" />}
@@ -360,8 +360,8 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => setIsFormOpen(true)}
-                className="inline-flex items-center px-8 py-4 bg-white text-theme-primary
-                  font-bold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl 
+                className="inline-flex items-center px-8 py-4 bg-white/90 backdrop-blur-sm text-theme-primary
+                  font-bold rounded-full hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl 
                   transform hover:-translate-y-1"
               >
                 Get Started
@@ -372,7 +372,7 @@ export const Performance: React.FC<PerformancePageProps> = ({ className = '' }) 
               <a
                 href="tel:+61XXX-XXX-XXX"
                 className="inline-flex items-center px-8 py-4 bg-transparent border border-white text-white 
-                  font-semibold rounded-full hover:bg-white hover:text-theme-primary transition-all duration-300"
+                  font-semibold rounded-full hover:bg-white/90 hover:text-theme-primary transition-all duration-300"
               >
                 Call Now
               </a>

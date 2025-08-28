@@ -239,14 +239,14 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
       </section>
 
       {/* Cross-Service Navigation Section */}
-      <section className="py-16 bg-white">
+      <section className="py-16 bg-theme-bg/30 backdrop-blur-sm transition-theme-colors">
         <div className="container mx-auto max-w-7xl p-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-charcoal mb-4">
+              <h2 className="text-3xl md:text-4xl font-heading font-bold text-white mb-4 drop-shadow-lg">
                 Expand Your Musical Journey
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+              <p className="text-lg text-white/90 max-w-2xl mx-auto drop-shadow">
                 Take your guitar skills to the next level by exploring our performance and collaboration opportunities.
               </p>
             </div>
@@ -272,8 +272,8 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <button
               onClick={() => setIsFormOpen(true)}
-              className="inline-flex items-center px-8 py-4 bg-white text-theme-secondary
-                font-bold rounded-full hover:bg-gray-100 transition-all duration-300 shadow-lg hover:shadow-xl 
+              className="inline-flex items-center px-8 py-4 bg-white/90 backdrop-blur-sm text-theme-secondary
+                font-bold rounded-full hover:bg-white hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl 
                 transform hover:-translate-y-1"
             >
               Get Started
@@ -284,7 +284,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
             <a
               href="tel:+61XXX-XXX-XXX"
               className="inline-flex items-center px-8 py-4 bg-transparent border border-white text-white 
-                font-semibold rounded-full hover:bg-white hover:text-theme-secondary transition-all duration-300"
+                font-semibold rounded-full hover:bg-white/90 hover:text-theme-secondary transition-all duration-300"
             >
               Call Now
             </a>
