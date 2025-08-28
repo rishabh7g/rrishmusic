@@ -55,7 +55,20 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
         }}
       />
       
-      <div className={`collaboration-page min-h-screen bg-white ${className}`}>
+      <div 
+        className={`collaboration-page min-h-screen relative ${className}`}
+        style={{
+          backgroundImage: 'url(/images/instagram/band/XBand 3.jpg)',
+          backgroundSize: 'cover',
+          backgroundPosition: 'center',
+          backgroundAttachment: 'fixed'
+        }}
+      >
+        {/* Dark gradient overlay for better text readability */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-black/80 transition-theme-colors" />
+        
+        {/* Content wrapper with relative positioning */}
+        <div className="relative z-10">
         <ErrorBoundary>
           {/* Hero Section - Collaboration focus with creative messaging */}
           <CollaborationHero />
@@ -65,7 +78,7 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
           
           {/* Cross-Service Suggestion - Teaching Skills */}
           <section className="py-8">
-            <div className="container-custom">
+            <div className="container mx-auto max-w-7xl p-4">
               <CrossServiceSuggestion
                 fromService="collaboration"
                 pageSection="requirements"
@@ -83,7 +96,7 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
           
           {/* Cross-Service Suggestion - Performance Showcase */}
           <section className="py-8">
-            <div className="container-custom">
+            <div className="container mx-auto max-w-7xl p-4">
               <CrossServiceSuggestion
                 fromService="collaboration"
                 pageSection="project-examples"
@@ -99,6 +112,7 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
           {/* CTA Section - Start Creative Project with appropriate routing */}
           <CollaborationCTA />
         </ErrorBoundary>
+        </div>
       </div>
     </>
   );
