@@ -12,6 +12,7 @@ const Home = lazy(() =>
 )
 const Teaching = lazy(() => import('./components/pages/Teaching'))
 const Performance = lazy(() => import('./components/pages/Performance'))
+const Gallery = lazy(() => import('./components/pages/Gallery').then(module => ({ default: module.Gallery })))
 
 // Simple loading spinner with theme awareness
 const Spinner = () => {
@@ -129,6 +130,16 @@ function AppContent() {
                     <PageWrapper>
                       <Suspense fallback={<Spinner />}>
                         <Performance />
+                      </Suspense>
+                    </PageWrapper>
+                  }
+                />
+                <Route
+                  path="/gallery"
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Gallery />
                       </Suspense>
                     </PageWrapper>
                   }
