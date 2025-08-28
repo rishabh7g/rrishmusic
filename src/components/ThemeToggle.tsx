@@ -1,8 +1,8 @@
 /**
  * Theme Toggle Component
  * 
- * Reusable theme toggle button with accessibility features and smooth transitions
- * Supports three-state cycling: Light → Dark → System → Light
+ * Radio switch toggle between light and dark themes with sun/moon icons
+ * Replaces three-state cycling with simple binary toggle
  * Respects user's motion preferences and provides enhanced animations
  */
 
@@ -182,13 +182,22 @@ export default function ThemeToggle({
   const variantClasses = getVariantClasses(variant, isDark, transitionsEnabled);
 
   /**
-   * Handle theme toggle with cycling through all modes
+   * Handle theme toggle between light and dark only
    */
   const handleToggle = useCallback(() => {
     if (!disabled && isInitialized) {
-      cycleTheme();
+      // Binary toggle - only light and dark, no system
+      if (mode === 'light' || mode === 'system') {
+        cycleTheme(); // This will set to dark
+      } else {
+        // Force set to light mode
+        const themeSystem = (window as any).__themeSystem;
+        if (themeSystem && themeSystem.setMode) {
+          themeSystem.setMode('light');
+        }
+      }
     }
-  }, [disabled, isInitialized, cycleTheme]);
+  }, [disabled, isInitialized, mode, cycleTheme]);
 
   /**
    * Handle keyboard navigation
@@ -200,24 +209,10 @@ export default function ThemeToggle({
     }
   }, [handleToggle]);
 
-  /**
-   * Get the next theme in cycle for accessibility label
-   */
-  const getNextTheme = (currentMode: ThemeMode): string => {
-    switch (currentMode) {
-      case 'light':
-        return 'Dark';
-      case 'dark':
-        return 'System';
-      case 'system':
-        return 'Light';
-      default:
-        return 'Dark';
-    }
-  };
-
-  const nextTheme = getNextTheme(mode);
-  const ariaLabel = customAriaLabel || `Switch to ${nextTheme} theme. Current: ${modeLabel}`;
+  // Binary switch - only light/dark
+  const currentTheme = mode === 'system' ? (isDark ? 'dark' : 'light') : mode;
+  const nextTheme = currentTheme === 'light' ? 'dark' : 'light';
+  const ariaLabel = customAriaLabel || `Switch to ${nextTheme} mode. Current: ${currentTheme} mode`;
 
   // Show loading state before theme system initializes
   if (!isInitialized) {
@@ -280,13 +275,14 @@ export default function ThemeToggle({
 
   return (
     <div className={`inline-flex items-center gap-2 ${className}`}>
+      {/* Radio Switch Toggle */}
       <motion.button
         type="button"
         className={`
-          inline-flex items-center justify-center rounded-md 
+          relative inline-flex items-center rounded-full p-1 transition-colors duration-200
           focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2
-          ${sizeClasses.button}
-          ${variantClasses}
+          ${size === 'sm' ? 'h-6 w-11' : size === 'lg' ? 'h-8 w-14' : 'h-7 w-12'}
+          ${currentTheme === 'dark' ? 'bg-blue-600' : 'bg-gray-200'}
           ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         `}
         onClick={handleToggle}
@@ -295,15 +291,59 @@ export default function ThemeToggle({
         aria-label={ariaLabel}
         {...buttonAnimations}
       >
-        <AnimatePresence mode="wait" initial={false}>
-          <motion.div
-            key={mode}
-            className={`flex items-center justify-center ${sizeClasses.icon}`}
-            {...iconAnimations}
-          >
-            {ThemeIcons[mode]}
-          </motion.div>
-        </AnimatePresence>
+        {/* Sun Icon (Light Mode) */}
+        <motion.div
+          className={`
+            absolute left-1 flex items-center justify-center rounded-full
+            ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
+            ${currentTheme === 'light' ? 'text-yellow-500' : 'text-gray-400'}
+          `}
+          animate={reducedMotion ? {} : {
+            opacity: currentTheme === 'light' ? 1 : 0.6,
+            scale: currentTheme === 'light' ? 1 : 0.8,
+          }}
+        >
+          {ThemeIcons.light}
+        </motion.div>
+
+        {/* Toggle Slider */}
+        <motion.div
+          className={`
+            relative flex items-center justify-center rounded-full bg-white shadow-md
+            ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
+          `}
+          animate={reducedMotion ? {} : {
+            x: currentTheme === 'dark' ? (size === 'sm' ? 20 : size === 'lg' ? 24 : 22) : 0,
+          }}
+          transition={reducedMotion ? {} : {
+            type: 'spring',
+            stiffness: 500,
+            damping: 30,
+          }}
+        >
+          {/* Current Theme Icon */}
+          <div className={`
+            ${size === 'sm' ? 'w-3 h-3' : size === 'lg' ? 'w-4 h-4' : 'w-3.5 h-3.5'}
+            ${currentTheme === 'dark' ? 'text-blue-600' : 'text-yellow-500'}
+          `}>
+            {currentTheme === 'dark' ? ThemeIcons.dark : ThemeIcons.light}
+          </div>
+        </motion.div>
+
+        {/* Moon Icon (Dark Mode) */}
+        <motion.div
+          className={`
+            absolute right-1 flex items-center justify-center rounded-full
+            ${size === 'sm' ? 'h-4 w-4' : size === 'lg' ? 'h-6 w-6' : 'h-5 w-5'}
+            ${currentTheme === 'dark' ? 'text-blue-100' : 'text-gray-400'}
+          `}
+          animate={reducedMotion ? {} : {
+            opacity: currentTheme === 'dark' ? 1 : 0.6,
+            scale: currentTheme === 'dark' ? 1 : 0.8,
+          }}
+        >
+          {ThemeIcons.dark}
+        </motion.div>
       </motion.button>
       
       {showLabel && (
@@ -320,7 +360,7 @@ export default function ThemeToggle({
           }}
           transition={reducedMotion ? {} : { duration: 0.2 }}
         >
-          {modeLabel}
+          {currentTheme === 'light' ? 'Light' : 'Dark'}
         </motion.span>
       )}
     </div>
