@@ -1,8 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { ServiceType } from '@/types/content';
-import { ServiceRecommendation, CrossServiceSuggestion } from '@/types/serviceRelationships';
-import { useServiceTransitions } from '@/hooks/useServiceTransitions';
-import { getServiceRecommendations, getCrossServiceSuggestions } from '@/utils/serviceRecommendations';
+import React, { useState, useEffect } from 'react'
+import { ServiceType } from '@/types/content'
+import {
+  ServiceRecommendation,
+  CrossServiceSuggestion,
+} from '@/types/serviceRelationships'
+import { useServiceTransitions } from '@/hooks/useServiceTransitions'
+import {
+  getServiceRecommendations,
+  getCrossServiceSuggestions,
+} from '@/utils/serviceRecommendations'
 
 /**
  * Cross-Service Navigation Component
@@ -10,12 +16,12 @@ import { getServiceRecommendations, getCrossServiceSuggestions } from '@/utils/s
  */
 
 interface CrossServiceNavigationProps {
-  currentService: ServiceType;
-  variant?: 'minimal' | 'card' | 'banner' | 'sidebar';
-  maxRecommendations?: number;
-  showCrossServiceSuggestions?: boolean;
-  className?: string;
-  onNavigate?: (service: ServiceType) => void;
+  currentService: ServiceType
+  variant?: 'minimal' | 'card' | 'banner' | 'sidebar'
+  maxRecommendations?: number
+  showCrossServiceSuggestions?: boolean
+  className?: string
+  onNavigate?: (service: ServiceType) => void
 }
 
 export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
@@ -24,89 +30,146 @@ export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
   maxRecommendations = 2,
   showCrossServiceSuggestions = true,
   className = '',
-  onNavigate
+  onNavigate,
 }) => {
-  const [recommendations, setRecommendations] = useState<ServiceRecommendation[]>([]);
-  const [crossSuggestions, setCrossSuggestions] = useState<CrossServiceSuggestion[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [recommendations, setRecommendations] = useState<
+    ServiceRecommendation[]
+  >([])
+  const [crossSuggestions, setCrossSuggestions] = useState<
+    CrossServiceSuggestion[]
+  >([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  const {
-    transitionToService,
-    userContext,
-    trackInteraction
-  } = useServiceTransitions();
+  const { transitionToService, userContext, trackInteraction } =
+    useServiceTransitions()
 
   // Load recommendations when component mounts or service changes
   useEffect(() => {
     const loadRecommendations = async () => {
-      setIsLoading(true);
-      
+      setIsLoading(true)
+
       try {
         // Get service recommendations
-        const serviceRecs = getServiceRecommendations(currentService, userContext);
-        setRecommendations(serviceRecs.slice(0, maxRecommendations));
+        const serviceRecs = getServiceRecommendations(
+          currentService,
+          userContext
+        )
+        setRecommendations(serviceRecs.slice(0, maxRecommendations))
 
         // Get cross-service suggestions if enabled
         if (showCrossServiceSuggestions) {
-          const crossRecs = getCrossServiceSuggestions(currentService, userContext);
-          setCrossSuggestions(crossRecs.slice(0, 2));
+          const crossRecs = getCrossServiceSuggestions(
+            currentService,
+            userContext
+          )
+          setCrossSuggestions(crossRecs.slice(0, 2))
         }
       } catch (error) {
-        console.error('Failed to load service recommendations:', error);
+        console.error('Failed to load service recommendations:', error)
       } finally {
-        setIsLoading(false);
+        setIsLoading(false)
       }
-    };
+    }
 
-    loadRecommendations();
-  }, [currentService, userContext, maxRecommendations, showCrossServiceSuggestions]);
+    loadRecommendations()
+  }, [
+    currentService,
+    userContext,
+    maxRecommendations,
+    showCrossServiceSuggestions,
+  ])
 
-  const handleServiceClick = (targetService: ServiceType, method: string = 'recommendation') => {
+  const handleServiceClick = (
+    targetService: ServiceType,
+    method: string = 'recommendation'
+  ) => {
     // Track interaction
     trackInteraction('click', {
       targetService,
       method,
-      sourceComponent: 'CrossServiceNavigation'
-    });
+      sourceComponent: 'CrossServiceNavigation',
+    })
 
     // Call custom handler if provided
-    onNavigate?.(targetService);
+    onNavigate?.(targetService)
 
     // Navigate to service
     transitionToService(targetService, {
-      method: method as "direct_link" | "navigation" | "recommendation" | "search",
-      userIntent: 'service_recommendation'
-    });
-  };
+      method: method as
+        | 'direct_link'
+        | 'navigation'
+        | 'recommendation'
+        | 'search',
+      userIntent: 'service_recommendation',
+    })
+  }
 
   if (isLoading) {
-    return <CrossServiceNavigationSkeleton variant={variant} className={className} />;
+    return (
+      <CrossServiceNavigationSkeleton variant={variant} className={className} />
+    )
   }
 
   if (recommendations.length === 0 && crossSuggestions.length === 0) {
-    return null;
+    return null
   }
 
   switch (variant) {
     case 'minimal':
-      return <MinimalNavigation {...{ recommendations, crossSuggestions, handleServiceClick, className }} />;
+      return (
+        <MinimalNavigation
+          {...{
+            recommendations,
+            crossSuggestions,
+            handleServiceClick,
+            className,
+          }}
+        />
+      )
     case 'banner':
-      return <BannerNavigation {...{ recommendations, crossSuggestions, handleServiceClick, className }} />;
+      return (
+        <BannerNavigation
+          {...{
+            recommendations,
+            crossSuggestions,
+            handleServiceClick,
+            className,
+          }}
+        />
+      )
     case 'sidebar':
-      return <SidebarNavigation {...{ recommendations, crossSuggestions, handleServiceClick, className }} />;
+      return (
+        <SidebarNavigation
+          {...{
+            recommendations,
+            crossSuggestions,
+            handleServiceClick,
+            className,
+          }}
+        />
+      )
     default:
-      return <CardNavigation {...{ recommendations, crossSuggestions, handleServiceClick, className }} />;
+      return (
+        <CardNavigation
+          {...{
+            recommendations,
+            crossSuggestions,
+            handleServiceClick,
+            className,
+          }}
+        />
+      )
   }
-};
+}
 
 /**
  * Minimal Navigation Variant
  */
 const MinimalNavigation: React.FC<{
-  recommendations: ServiceRecommendation[];
-  crossSuggestions: CrossServiceSuggestion[];
-  handleServiceClick: (service: ServiceType, method?: string) => void;
-  className: string;
+  recommendations: ServiceRecommendation[]
+  crossSuggestions: CrossServiceSuggestion[]
+  handleServiceClick: (service: ServiceType, method?: string) => void
+  className: string
 }> = ({ recommendations, handleServiceClick, className }) => (
   <div className={`cross-service-minimal flex gap-2 ${className}`}>
     {recommendations.map((rec, index) => (
@@ -119,16 +182,16 @@ const MinimalNavigation: React.FC<{
       </button>
     ))}
   </div>
-);
+)
 
 /**
  * Card Navigation Variant (Default)
  */
 const CardNavigation: React.FC<{
-  recommendations: ServiceRecommendation[];
-  crossSuggestions: CrossServiceSuggestion[];
-  handleServiceClick: (service: ServiceType, method?: string) => void;
-  className: string;
+  recommendations: ServiceRecommendation[]
+  crossSuggestions: CrossServiceSuggestion[]
+  handleServiceClick: (service: ServiceType, method?: string) => void
+  className: string
 }> = ({ recommendations, crossSuggestions, handleServiceClick, className }) => (
   <div className={`cross-service-cards space-y-6 ${className}`}>
     {/* Service Recommendations */}
@@ -167,30 +230,36 @@ const CardNavigation: React.FC<{
       </div>
     )}
   </div>
-);
+)
 
 /**
  * Banner Navigation Variant
  */
 const BannerNavigation: React.FC<{
-  recommendations: ServiceRecommendation[];
-  crossSuggestions: CrossServiceSuggestion[];
-  handleServiceClick: (service: ServiceType, method?: string) => void;
-  className: string;
+  recommendations: ServiceRecommendation[]
+  crossSuggestions: CrossServiceSuggestion[]
+  handleServiceClick: (service: ServiceType, method?: string) => void
+  className: string
 }> = ({ recommendations, crossSuggestions, handleServiceClick, className }) => {
-  const topSuggestion = crossSuggestions[0] || null;
-  const topRecommendation = recommendations[0] || null;
+  const topSuggestion = crossSuggestions[0] || null
+  const topRecommendation = recommendations[0] || null
 
-  if (!topSuggestion && !topRecommendation) return null;
+  if (!topSuggestion && !topRecommendation) return null
 
   return (
-    <div className={`cross-service-banner bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 ${className}`}>
+    <div
+      className={`cross-service-banner bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 ${className}`}
+    >
       <div className="flex items-center justify-between">
         <div className="flex-1">
           {topSuggestion ? (
             <>
-              <h4 className="font-semibold text-gray-900 mb-2">{topSuggestion.title}</h4>
-              <p className="text-sm text-gray-600 mb-3">{topSuggestion.description}</p>
+              <h4 className="font-semibold text-gray-900 mb-2">
+                {topSuggestion.title}
+              </h4>
+              <p className="text-sm text-gray-600 mb-3">
+                {topSuggestion.description}
+              </p>
               <div className="flex gap-2">
                 {topSuggestion.services.slice(0, 2).map(service => (
                   <button
@@ -209,9 +278,13 @@ const BannerNavigation: React.FC<{
                 <h4 className="font-semibold text-gray-900 mb-2">
                   {getServiceDisplayName(topRecommendation.service)}
                 </h4>
-                <p className="text-sm text-gray-600 mb-3">{topRecommendation.reasoning[0]}</p>
+                <p className="text-sm text-gray-600 mb-3">
+                  {topRecommendation.reasoning[0]}
+                </p>
                 <button
-                  onClick={() => handleServiceClick(topRecommendation.service, 'banner')}
+                  onClick={() =>
+                    handleServiceClick(topRecommendation.service, 'banner')
+                  }
                   className="px-4 py-2 bg-white hover:bg-gray-50 text-gray-900 rounded-lg text-sm font-medium transition-colors"
                 >
                   {topRecommendation.actionText}
@@ -227,23 +300,26 @@ const BannerNavigation: React.FC<{
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
 /**
  * Sidebar Navigation Variant
  */
 const SidebarNavigation: React.FC<{
-  recommendations: ServiceRecommendation[];
-  crossSuggestions: CrossServiceSuggestion[];
-  handleServiceClick: (service: ServiceType, method?: string) => void;
-  className: string;
+  recommendations: ServiceRecommendation[]
+  crossSuggestions: CrossServiceSuggestion[]
+  handleServiceClick: (service: ServiceType, method?: string) => void
+  className: string
 }> = ({ recommendations, crossSuggestions, handleServiceClick, className }) => (
   <div className={`cross-service-sidebar space-y-4 ${className}`}>
     <h4 className="font-semibold text-gray-900">More Services</h4>
-    
+
     {recommendations.map((rec, index) => (
-      <div key={`${rec.service}-${index}`} className="border-l-2 border-gray-200 pl-4 py-2">
+      <div
+        key={`${rec.service}-${index}`}
+        className="border-l-2 border-gray-200 pl-4 py-2"
+      >
         <button
           onClick={() => handleServiceClick(rec.service, 'sidebar')}
           className="text-left w-full group"
@@ -261,30 +337,36 @@ const SidebarNavigation: React.FC<{
         <h5 className="font-medium text-gray-900 mb-2">Package Deals</h5>
         {crossSuggestions.slice(0, 1).map((suggestion, index) => (
           <div key={`cross-${index}`} className="bg-gray-50 rounded-lg p-3">
-            <div className="font-medium text-sm text-gray-900 mb-1">{suggestion.title}</div>
-            <div className="text-xs text-gray-600">{suggestion.description}</div>
+            <div className="font-medium text-sm text-gray-900 mb-1">
+              {suggestion.title}
+            </div>
+            <div className="text-xs text-gray-600">
+              {suggestion.description}
+            </div>
           </div>
         ))}
       </div>
     )}
   </div>
-);
+)
 
 /**
  * Service Recommendation Card Component
  */
 const ServiceRecommendationCard: React.FC<{
-  recommendation: ServiceRecommendation;
-  onNavigate: (service: ServiceType, method?: string) => void;
+  recommendation: ServiceRecommendation
+  onNavigate: (service: ServiceType, method?: string) => void
 }> = ({ recommendation, onNavigate }) => {
   const priorityColors = {
     high: 'border-green-200 bg-green-50',
-    medium: 'border-blue-200 bg-blue-50', 
-    low: 'border-gray-200 bg-gray-50'
-  };
+    medium: 'border-blue-200 bg-blue-50',
+    low: 'border-gray-200 bg-gray-50',
+  }
 
   return (
-    <div className={`recommendation-card border-2 ${priorityColors[recommendation.priority]} rounded-xl p-4 hover:shadow-md transition-shadow`}>
+    <div
+      className={`recommendation-card border-2 ${priorityColors[recommendation.priority]} rounded-xl p-4 hover:shadow-md transition-shadow`}
+    >
       <div className="flex items-start justify-between mb-3">
         <h4 className="font-semibold text-gray-900">
           {getServiceDisplayName(recommendation.service)}
@@ -294,11 +376,11 @@ const ServiceRecommendationCard: React.FC<{
           {Math.round(recommendation.confidence * 100)}% match
         </div>
       </div>
-      
+
       <p className="text-sm text-gray-600 mb-4">
         {recommendation.reasoning[0]}
       </p>
-      
+
       <button
         onClick={() => onNavigate(recommendation.service, 'card')}
         className="w-full bg-white hover:bg-gray-50 text-gray-900 px-4 py-2 rounded-lg text-sm font-medium border border-gray-200 transition-colors"
@@ -306,32 +388,35 @@ const ServiceRecommendationCard: React.FC<{
         {recommendation.actionText}
       </button>
     </div>
-  );
-};
+  )
+}
 
 /**
  * Cross-Service Suggestion Card Component
  */
 const CrossServiceSuggestionCard: React.FC<{
-  suggestion: CrossServiceSuggestion;
-  onNavigate: (service: ServiceType, method?: string) => void;
+  suggestion: CrossServiceSuggestion
+  onNavigate: (service: ServiceType, method?: string) => void
 }> = ({ suggestion, onNavigate }) => (
   <div className="cross-suggestion-card border border-gray-200 rounded-xl p-6 bg-gradient-to-r from-gray-50 to-white hover:shadow-md transition-shadow">
     <div className="flex items-start justify-between mb-4">
       <div className="flex-1">
         <h4 className="font-semibold text-gray-900 mb-2">{suggestion.title}</h4>
         <p className="text-sm text-gray-600 mb-3">{suggestion.description}</p>
-        
+
         <div className="flex flex-wrap gap-2 mb-4">
           {suggestion.benefits.slice(0, 2).map((benefit, index) => (
-            <div key={index} className="flex items-center text-xs text-gray-600">
+            <div
+              key={index}
+              className="flex items-center text-xs text-gray-600"
+            >
               <span className="w-1 h-1 bg-green-500 rounded-full mr-2"></span>
               {benefit}
             </div>
           ))}
         </div>
       </div>
-      
+
       <div className="flex flex-col gap-2 ml-4">
         {suggestion.services.slice(0, 2).map(service => (
           <button
@@ -344,7 +429,7 @@ const CrossServiceSuggestionCard: React.FC<{
         ))}
       </div>
     </div>
-    
+
     <button
       onClick={() => onNavigate(suggestion.services[0], 'cross_service_cta')}
       className="w-full bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
@@ -352,23 +437,26 @@ const CrossServiceSuggestionCard: React.FC<{
       {suggestion.callToAction}
     </button>
   </div>
-);
+)
 
 /**
  * Loading Skeleton Component
  */
 const CrossServiceNavigationSkeleton: React.FC<{
-  variant: string;
-  className: string;
+  variant: string
+  className: string
 }> = ({ variant, className }) => {
   if (variant === 'minimal') {
     return (
       <div className={`flex gap-2 ${className}`}>
         {[1, 2].map(i => (
-          <div key={i} className="w-24 h-8 bg-gray-200 rounded-full animate-pulse"></div>
+          <div
+            key={i}
+            className="w-24 h-8 bg-gray-200 rounded-full animate-pulse"
+          ></div>
         ))}
       </div>
-    );
+    )
   }
 
   return (
@@ -384,8 +472,8 @@ const CrossServiceNavigationSkeleton: React.FC<{
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 /**
  * Utility function to get service display name
@@ -394,9 +482,9 @@ function getServiceDisplayName(service: ServiceType): string {
   const names = {
     teaching: 'Guitar Lessons',
     performance: 'Live Performances',
-    collaboration: 'Music Collaboration'
-  };
-  return names[service];
+    collaboration: 'Music Collaboration',
+  }
+  return names[service]
 }
 
-export default CrossServiceNavigation;
+export default CrossServiceNavigation

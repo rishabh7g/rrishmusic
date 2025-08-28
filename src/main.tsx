@@ -7,11 +7,11 @@ import { initializeRouting } from '@/utils/routing'
 
 // Initialize routing utilities for GitHub Pages SPA support
 // This handles any redirects from 404.html and sets up route validation
-const cleanupRouting = initializeRouting();
+const cleanupRouting = initializeRouting()
 
 // Cleanup routing listeners on page unload
 if (typeof window !== 'undefined') {
-  window.addEventListener('beforeunload', cleanupRouting);
+  window.addEventListener('beforeunload', cleanupRouting)
 }
 
 createRoot(document.getElementById('root')!).render(
@@ -19,5 +19,5 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </StrictMode>,
+  </StrictMode>
 )

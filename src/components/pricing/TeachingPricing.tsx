@@ -3,27 +3,27 @@
  * Comprehensive explicit pricing display for teaching services with clear packages and calculations
  */
 
-import React, { useState, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { LessonPackage } from '@/utils/pricingCalculator';
-import { useTeachingPricing } from '@/hooks/useTeachingPricing';
-import { formatPrice, getSavingsMessage } from '@/utils/pricingCalculator';
+import React, { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { LessonPackage } from '@/utils/pricingCalculator'
+import { useTeachingPricing } from '@/hooks/useTeachingPricing'
+import { formatPrice, getSavingsMessage } from '@/utils/pricingCalculator'
 
 /**
  * Props for TeachingPricing component
  */
 interface TeachingPricingProps {
-  className?: string;
-  showComparison?: boolean;
-  enablePackageSelection?: boolean;
-  onPackageSelect?: (packageId: string, package: LessonPackage) => void;
+  className?: string
+  showComparison?: boolean
+  enablePackageSelection?: boolean
+  onPackageSelect?: (packageId: string, package: LessonPackage) => void
   userProfile?: {
-    experience?: 'beginner' | 'intermediate' | 'advanced';
-    commitment?: 'low' | 'medium' | 'high';
-    budget?: 'low' | 'medium' | 'high';
-  };
-  compact?: boolean;
-  variant?: 'default' | 'modal' | 'inline';
+    experience?: 'beginner' | 'intermediate' | 'advanced'
+    commitment?: 'low' | 'medium' | 'high'
+    budget?: 'low' | 'medium' | 'high'
+  }
+  compact?: boolean
+  variant?: 'default' | 'modal' | 'inline'
 }
 
 /**
@@ -34,20 +34,20 @@ const containerVariants = {
   visible: {
     opacity: 1,
     transition: {
-      staggerChildren: 0.1
-    }
-  }
-};
+      staggerChildren: 0.1,
+    },
+  },
+}
 
 const cardVariants = {
   hidden: { opacity: 0, y: 20 },
   visible: { opacity: 1, y: 0 },
-  hover: { 
+  hover: {
     scale: 1.02,
     y: -2,
-    transition: { duration: 0.2 }
-  }
-};
+    transition: { duration: 0.2 },
+  },
+}
 
 /**
  * TeachingPricing Component
@@ -59,42 +59,48 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
   onPackageSelect,
   userProfile,
   compact = false,
-  variant = 'default'
+  variant = 'default',
 }) => {
-  const [expandedPackage, setExpandedPackage] = useState<string | null>(null);
-  
+  const [expandedPackage, setExpandedPackage] = useState<string | null>(null)
+
   const { state, actions, computed } = useTeachingPricing({
     userProfile,
     enableComparison: showComparison,
-    comparisonPackages: ['foundation', 'transformation', 'single']
-  });
+    comparisonPackages: ['foundation', 'transformation', 'single'],
+  })
 
   /**
    * Handle package selection
    */
-  const handlePackageSelect = useCallback((packageId: string) => {
-    actions.selectPackage(packageId);
-    
-    const selectedPackage = actions.getPackageById(packageId);
-    if (selectedPackage && onPackageSelect) {
-      onPackageSelect(packageId, selectedPackage);
-    }
-  }, [actions, onPackageSelect]);
+  const handlePackageSelect = useCallback(
+    (packageId: string) => {
+      actions.selectPackage(packageId)
+
+      const selectedPackage = actions.getPackageById(packageId)
+      if (selectedPackage && onPackageSelect) {
+        onPackageSelect(packageId, selectedPackage)
+      }
+    },
+    [actions, onPackageSelect]
+  )
 
   /**
    * Toggle package details expansion
    */
   const togglePackageExpansion = useCallback((packageId: string) => {
-    setExpandedPackage(prev => prev === packageId ? null : packageId);
-  }, []);
+    setExpandedPackage(prev => (prev === packageId ? null : packageId))
+  }, [])
 
   /**
    * Render package card
    */
-  const renderPackageCard = (pkg: LessonPackage, isSelected: boolean = false) => {
-    const isExpanded = expandedPackage === pkg.id;
-    const isRecommended = pkg.id === state.recommendedPackageId;
-    
+  const renderPackageCard = (
+    pkg: LessonPackage,
+    isSelected: boolean = false
+  ) => {
+    const isExpanded = expandedPackage === pkg.id
+    const isRecommended = pkg.id === state.recommendedPackageId
+
     return (
       <motion.div
         key={pkg.id}
@@ -112,10 +118,12 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
         aria-selected={isSelected}
         role="button"
         tabIndex={0}
-        onKeyDown={(e) => {
+        onKeyDown={e => {
           if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault();
-            if (enablePackageSelection) { handlePackageSelect(pkg.id); }
+            e.preventDefault()
+            if (enablePackageSelection) {
+              handlePackageSelect(pkg.id)
+            }
           }
         }}
       >
@@ -139,17 +147,21 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
 
         {/* Package Header */}
         <div className="text-center mb-6">
-          <h3 className={`font-heading font-bold text-neutral-charcoal mb-2 ${
-            compact ? 'text-lg' : 'text-xl lg:text-2xl'
-          }`}>
+          <h3
+            className={`font-heading font-bold text-neutral-charcoal mb-2 ${
+              compact ? 'text-lg' : 'text-xl lg:text-2xl'
+            }`}
+          >
             {pkg.name}
           </h3>
 
           {/* Pricing Display */}
           <div className="pricing-section">
-            <div className={`font-bold text-brand-orange-warm mb-1 ${
-              compact ? 'text-2xl' : 'text-3xl lg:text-4xl'
-            }`}>
+            <div
+              className={`font-bold text-brand-orange-warm mb-1 ${
+                compact ? 'text-2xl' : 'text-3xl lg:text-4xl'
+              }`}
+            >
               {formatPrice(pkg.price)}
             </div>
 
@@ -175,9 +187,11 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
         </div>
 
         {/* Package Description */}
-        <p className={`text-gray-700 text-center mb-6 ${
-          compact ? 'text-sm' : 'text-base'
-        }`}>
+        <p
+          className={`text-gray-700 text-center mb-6 ${
+            compact ? 'text-sm' : 'text-base'
+          }`}
+        >
           {pkg.description}
         </p>
 
@@ -189,11 +203,15 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Duration:</span>
-            <span className="font-medium text-gray-900">{pkg.duration} minutes</span>
+            <span className="font-medium text-gray-900">
+              {pkg.duration} minutes
+            </span>
           </div>
           <div className="flex items-center justify-between text-sm">
             <span className="text-gray-600">Valid for:</span>
-            <span className="font-medium text-gray-900">{pkg.validity} days</span>
+            <span className="font-medium text-gray-900">
+              {pkg.validity} days
+            </span>
           </div>
         </div>
 
@@ -202,15 +220,19 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           <div className="mb-6">
             <button
               className="text-sm font-medium text-brand-blue-primary hover:text-brand-blue-secondary transition-colors duration-200 mb-2"
-              onClick={(e) => {
-                e.stopPropagation();
-                togglePackageExpansion(pkg.id);
+              onClick={e => {
+                e.stopPropagation()
+                togglePackageExpansion(pkg.id)
               }}
             >
-              {isExpanded ? 'Hide Details' : 'Show Details'} 
-              <span className={`ml-1 transform transition-transform ${
-                isExpanded ? 'rotate-180' : ''
-              }`}>▼</span>
+              {isExpanded ? 'Hide Details' : 'Show Details'}
+              <span
+                className={`ml-1 transform transition-transform ${
+                  isExpanded ? 'rotate-180' : ''
+                }`}
+              >
+                ▼
+              </span>
             </button>
 
             <AnimatePresence>
@@ -224,7 +246,9 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
                   <ul className="space-y-2 text-sm text-gray-700">
                     {pkg.features.map((feature, index) => (
                       <li key={index} className="flex items-start">
-                        <span className="text-brand-orange-warm mr-2 mt-1 text-xs">✓</span>
+                        <span className="text-brand-orange-warm mr-2 mt-1 text-xs">
+                          ✓
+                        </span>
                         {feature}
                       </li>
                     ))}
@@ -244,8 +268,8 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           </div>
         )}
       </motion.div>
-    );
-  };
+    )
+  }
 
   if (state.isLoading) {
     return (
@@ -253,7 +277,7 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-orange-warm" />
         <span className="ml-3 text-gray-600">Loading pricing...</span>
       </div>
-    );
+    )
   }
 
   if (state.error) {
@@ -268,11 +292,13 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           Try Again
         </button>
       </div>
-    );
+    )
   }
 
   return (
-    <section className={`py-12 ${variant === 'modal' ? '' : 'lg:py-16'} ${className}`}>
+    <section
+      className={`py-12 ${variant === 'modal' ? '' : 'lg:py-16'} ${className}`}
+    >
       <div className={variant === 'modal' ? 'space-y-8' : 'container-custom'}>
         {/* Section Header */}
         {variant !== 'inline' && (
@@ -281,16 +307,22 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
             animate={{ opacity: 1, y: 0 }}
             className="text-center mb-12"
           >
-            <h2 className={`font-heading font-bold text-neutral-charcoal mb-4 ${
-              compact ? 'text-2xl lg:text-3xl' : 'text-3xl lg:text-4xl xl:text-5xl'
-            }`}>
+            <h2
+              className={`font-heading font-bold text-neutral-charcoal mb-4 ${
+                compact
+                  ? 'text-2xl lg:text-3xl'
+                  : 'text-3xl lg:text-4xl xl:text-5xl'
+              }`}
+            >
               Choose Your Learning Package
             </h2>
-            <p className={`text-gray-700 max-w-3xl mx-auto ${
-              compact ? 'text-base' : 'text-lg lg:text-xl'
-            }`}>
-              Transparent pricing with no hidden fees. All packages include personalized instruction, 
-              practice materials, and ongoing support.
+            <p
+              className={`text-gray-700 max-w-3xl mx-auto ${
+                compact ? 'text-base' : 'text-lg lg:text-xl'
+              }`}
+            >
+              Transparent pricing with no hidden fees. All packages include
+              personalized instruction, practice materials, and ongoing support.
             </p>
           </motion.div>
         )}
@@ -301,14 +333,14 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           initial="hidden"
           animate="visible"
           className={`grid gap-6 ${
-            compact 
-              ? 'md:grid-cols-2 lg:grid-cols-4' 
+            compact
+              ? 'md:grid-cols-2 lg:grid-cols-4'
               : 'md:grid-cols-2 lg:grid-cols-4 lg:gap-8'
           }`}
         >
-          {state.packages.map(pkg => 
+          {state.packages.map(pkg =>
             renderPackageCard(
-              pkg, 
+              pkg,
               enablePackageSelection && state.selectedPackageId === pkg.id
             )
           )}
@@ -324,7 +356,7 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
             <h3 className="text-xl font-bold text-gray-900 mb-4">
               Selected: {state.selectedPackage.name}
             </h3>
-            
+
             <div className="grid md:grid-cols-3 gap-4 text-center">
               <div>
                 <div className="text-2xl font-bold text-brand-orange-warm">
@@ -332,14 +364,14 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
                 </div>
                 <div className="text-sm text-gray-600">Total Price</div>
               </div>
-              
+
               <div>
                 <div className="text-2xl font-bold text-brand-blue-primary">
                   {formatPrice(computed.pricePerLesson)}
                 </div>
                 <div className="text-sm text-gray-600">Per Lesson</div>
               </div>
-              
+
               {computed.hasDiscount && (
                 <div>
                   <div className="text-2xl font-bold text-green-600">
@@ -361,66 +393,74 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
         )}
 
         {/* Package Comparison */}
-        {showComparison && computed.comparisonEnabled && state.comparison.length > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="mt-12 bg-gray-50 rounded-xl p-6 lg:p-8"
-          >
-            <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
-              Package Comparison
-            </h3>
-            
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-gray-300">
-                    <th className="text-left py-3 px-4">Package</th>
-                    <th className="text-center py-3 px-4">Sessions</th>
-                    <th className="text-center py-3 px-4">Price</th>
-                    <th className="text-center py-3 px-4">Per Lesson</th>
-                    <th className="text-center py-3 px-4">Savings</th>
-                    <th className="text-center py-3 px-4">Value Score</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {state.comparison.map(({ package: pkg, pricing, valueScore }) => (
-                    <tr key={pkg.id} className="border-b border-gray-200">
-                      <td className="py-3 px-4 font-medium">{pkg.name}</td>
-                      <td className="py-3 px-4 text-center">{pkg.sessions}</td>
-                      <td className="py-3 px-4 text-center font-bold">
-                        {formatPrice(pkg.price)}
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        {formatPrice(pricing.pricePerLesson)}
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        {pricing.discountApplied ? (
-                          <span className="text-green-600 font-medium">
-                            {formatPrice(pricing.savings)}
-                          </span>
-                        ) : (
-                          <span className="text-gray-400">—</span>
-                        )}
-                      </td>
-                      <td className="py-3 px-4 text-center">
-                        <div className="flex items-center justify-center">
-                          <div className="w-16 bg-gray-200 rounded-full h-2">
-                            <div 
-                              className="bg-brand-orange-warm h-2 rounded-full" 
-                              style={{ width: `${Math.min(valueScore, 100)}%` }}
-                            />
-                          </div>
-                          <span className="ml-2 text-xs">{valueScore}</span>
-                        </div>
-                      </td>
+        {showComparison &&
+          computed.comparisonEnabled &&
+          state.comparison.length > 0 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mt-12 bg-gray-50 rounded-xl p-6 lg:p-8"
+            >
+              <h3 className="text-xl font-bold text-gray-900 mb-6 text-center">
+                Package Comparison
+              </h3>
+
+              <div className="overflow-x-auto">
+                <table className="w-full text-sm">
+                  <thead>
+                    <tr className="border-b border-gray-300">
+                      <th className="text-left py-3 px-4">Package</th>
+                      <th className="text-center py-3 px-4">Sessions</th>
+                      <th className="text-center py-3 px-4">Price</th>
+                      <th className="text-center py-3 px-4">Per Lesson</th>
+                      <th className="text-center py-3 px-4">Savings</th>
+                      <th className="text-center py-3 px-4">Value Score</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        )}
+                  </thead>
+                  <tbody>
+                    {state.comparison.map(
+                      ({ package: pkg, pricing, valueScore }) => (
+                        <tr key={pkg.id} className="border-b border-gray-200">
+                          <td className="py-3 px-4 font-medium">{pkg.name}</td>
+                          <td className="py-3 px-4 text-center">
+                            {pkg.sessions}
+                          </td>
+                          <td className="py-3 px-4 text-center font-bold">
+                            {formatPrice(pkg.price)}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            {formatPrice(pricing.pricePerLesson)}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            {pricing.discountApplied ? (
+                              <span className="text-green-600 font-medium">
+                                {formatPrice(pricing.savings)}
+                              </span>
+                            ) : (
+                              <span className="text-gray-400">—</span>
+                            )}
+                          </td>
+                          <td className="py-3 px-4 text-center">
+                            <div className="flex items-center justify-center">
+                              <div className="w-16 bg-gray-200 rounded-full h-2">
+                                <div
+                                  className="bg-brand-orange-warm h-2 rounded-full"
+                                  style={{
+                                    width: `${Math.min(valueScore, 100)}%`,
+                                  }}
+                                />
+                              </div>
+                              <span className="ml-2 text-xs">{valueScore}</span>
+                            </div>
+                          </td>
+                        </tr>
+                      )
+                    )}
+                  </tbody>
+                </table>
+              </div>
+            </motion.div>
+          )}
 
         {/* Additional Information */}
         <motion.div
@@ -431,33 +471,39 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
           <h3 className="text-lg font-bold text-gray-900 mb-4 text-center">
             All Packages Include:
           </h3>
-          
+
           <div className="grid md:grid-cols-3 gap-6 text-center">
             <div>
               <div className="w-12 h-12 bg-brand-blue-primary rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-white font-bold text-lg">♪</span>
               </div>
-              <h4 className="font-medium text-gray-900 mb-2">Personalized Instruction</h4>
+              <h4 className="font-medium text-gray-900 mb-2">
+                Personalized Instruction
+              </h4>
               <p className="text-sm text-gray-600">
                 Every lesson tailored to your goals and skill level
               </p>
             </div>
-            
+
             <div>
               <div className="w-12 h-12 bg-brand-orange-warm rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-white font-bold text-lg">📚</span>
               </div>
-              <h4 className="font-medium text-gray-900 mb-2">Practice Materials</h4>
+              <h4 className="font-medium text-gray-900 mb-2">
+                Practice Materials
+              </h4>
               <p className="text-sm text-gray-600">
                 Custom tabs, chord charts, and learning resources
               </p>
             </div>
-            
+
             <div>
               <div className="w-12 h-12 bg-green-500 rounded-full flex items-center justify-center mx-auto mb-3">
                 <span className="text-white font-bold text-lg">💬</span>
               </div>
-              <h4 className="font-medium text-gray-900 mb-2">Ongoing Support</h4>
+              <h4 className="font-medium text-gray-900 mb-2">
+                Ongoing Support
+              </h4>
               <p className="text-sm text-gray-600">
                 Email support between lessons for any questions
               </p>
@@ -466,7 +512,7 @@ export const TeachingPricing: React.FC<TeachingPricingProps> = ({
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default TeachingPricing;
+export default TeachingPricing

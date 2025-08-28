@@ -6,33 +6,33 @@
 /* ===== BREAKPOINTS ===== */
 :root {
   /* Breakpoint variables */
-  --breakpoint-xs: 320px;   /* Small phones */
-  --breakpoint-sm: 640px;   /* Large phones */
-  --breakpoint-md: 768px;   /* Tablets */
-  --breakpoint-lg: 1024px;  /* Small desktops */
-  --breakpoint-xl: 1280px;  /* Large desktops */
+  --breakpoint-xs: 320px; /* Small phones */
+  --breakpoint-sm: 640px; /* Large phones */
+  --breakpoint-md: 768px; /* Tablets */
+  --breakpoint-lg: 1024px; /* Small desktops */
+  --breakpoint-xl: 1280px; /* Large desktops */
   --breakpoint-2xl: 1536px; /* Extra large desktops */
 
   /* Mobile-first spacing system */
-  --spacing-mobile-xs: 0.25rem;  /* 4px */
-  --spacing-mobile-sm: 0.5rem;   /* 8px */
-  --spacing-mobile-md: 1rem;     /* 16px */
-  --spacing-mobile-lg: 1.5rem;   /* 24px */
-  --spacing-mobile-xl: 2rem;     /* 32px */
-  --spacing-mobile-2xl: 3rem;    /* 48px */
+  --spacing-mobile-xs: 0.25rem; /* 4px */
+  --spacing-mobile-sm: 0.5rem; /* 8px */
+  --spacing-mobile-md: 1rem; /* 16px */
+  --spacing-mobile-lg: 1.5rem; /* 24px */
+  --spacing-mobile-xl: 2rem; /* 32px */
+  --spacing-mobile-2xl: 3rem; /* 48px */
 
   /* Desktop spacing adjustments */
-  --spacing-desktop-xs: 0.5rem;  /* 8px */
-  --spacing-desktop-sm: 1rem;    /* 16px */
-  --spacing-desktop-md: 1.5rem;  /* 24px */
-  --spacing-desktop-lg: 2rem;    /* 32px */
-  --spacing-desktop-xl: 3rem;    /* 48px */
-  --spacing-desktop-2xl: 4rem;   /* 64px */
+  --spacing-desktop-xs: 0.5rem; /* 8px */
+  --spacing-desktop-sm: 1rem; /* 16px */
+  --spacing-desktop-md: 1.5rem; /* 24px */
+  --spacing-desktop-lg: 2rem; /* 32px */
+  --spacing-desktop-xl: 3rem; /* 48px */
+  --spacing-desktop-2xl: 4rem; /* 64px */
 
   /* Touch target sizes */
-  --touch-target-min: 44px;      /* Minimum touch target */
+  --touch-target-min: 44px; /* Minimum touch target */
   --touch-target-comfortable: 48px; /* Comfortable touch target */
-  --touch-target-large: 56px;    /* Large touch target */
+  --touch-target-large: 56px; /* Large touch target */
 
   /* Z-index scale */
   --z-dropdown: 10;
@@ -68,23 +68,65 @@
 }
 
 /* Mobile typography scale */
-.text-mobile-xs { font-size: 0.75rem; line-height: 1.2; }
-.text-mobile-sm { font-size: 0.875rem; line-height: 1.25; }
-.text-mobile-base { font-size: 1rem; line-height: 1.5; }
-.text-mobile-lg { font-size: 1.125rem; line-height: 1.4; }
-.text-mobile-xl { font-size: 1.25rem; line-height: 1.3; }
-.text-mobile-2xl { font-size: 1.5rem; line-height: 1.2; }
-.text-mobile-3xl { font-size: 1.875rem; line-height: 1.1; }
+.text-mobile-xs {
+  font-size: 0.75rem;
+  line-height: 1.2;
+}
+.text-mobile-sm {
+  font-size: 0.875rem;
+  line-height: 1.25;
+}
+.text-mobile-base {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+.text-mobile-lg {
+  font-size: 1.125rem;
+  line-height: 1.4;
+}
+.text-mobile-xl {
+  font-size: 1.25rem;
+  line-height: 1.3;
+}
+.text-mobile-2xl {
+  font-size: 1.5rem;
+  line-height: 1.2;
+}
+.text-mobile-3xl {
+  font-size: 1.875rem;
+  line-height: 1.1;
+}
 
 /* Desktop typography scale */
 @media (min-width: 768px) {
-  .text-desktop-xs { font-size: 0.875rem; line-height: 1.25; }
-  .text-desktop-sm { font-size: 1rem; line-height: 1.5; }
-  .text-desktop-base { font-size: 1.125rem; line-height: 1.4; }
-  .text-desktop-lg { font-size: 1.25rem; line-height: 1.3; }
-  .text-desktop-xl { font-size: 1.5rem; line-height: 1.2; }
-  .text-desktop-2xl { font-size: 1.875rem; line-height: 1.1; }
-  .text-desktop-3xl { font-size: 2.25rem; line-height: 1; }
+  .text-desktop-xs {
+    font-size: 0.875rem;
+    line-height: 1.25;
+  }
+  .text-desktop-sm {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+  .text-desktop-base {
+    font-size: 1.125rem;
+    line-height: 1.4;
+  }
+  .text-desktop-lg {
+    font-size: 1.25rem;
+    line-height: 1.3;
+  }
+  .text-desktop-xl {
+    font-size: 1.5rem;
+    line-height: 1.2;
+  }
+  .text-desktop-2xl {
+    font-size: 1.875rem;
+    line-height: 1.1;
+  }
+  .text-desktop-3xl {
+    font-size: 2.25rem;
+    line-height: 1;
+  }
 }
 
 /* ===== RESPONSIVE CONTAINERS ===== */
@@ -393,7 +435,7 @@
     border-width: 2px;
     border-style: solid;
   }
-  
+
   .nav-mobile {
     border-bottom-width: 2px;
   }
@@ -405,17 +447,17 @@
     background: rgba(17, 24, 39, 0.95);
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-mobile-menu {
     background: rgba(17, 24, 39, 0.98);
     border-bottom-color: rgba(255, 255, 255, 0.1);
   }
-  
+
   .nav-mobile-item {
     color: #f3f4f6;
     border-bottom-color: rgba(255, 255, 255, 0.05);
   }
-  
+
   .nav-mobile-item:hover,
   .nav-mobile-item:focus {
     background-color: rgba(59, 130, 246, 0.2);
@@ -451,8 +493,12 @@
 }
 
 @keyframes skeleton-loading {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

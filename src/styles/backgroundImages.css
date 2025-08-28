@@ -101,7 +101,7 @@
     opacity: 0.9;
     background: rgba(0, 0, 0, 0.9) !important;
   }
-  
+
   .service-bg-content {
     text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
   }
@@ -114,12 +114,12 @@
   .service-bg-container {
     transition: none;
   }
-  
+
   .bg-image-loading {
     animation: none;
     background: #f0f0f0;
   }
-  
+
   .bg-loaded {
     animation: none;
   }
@@ -157,14 +157,14 @@
 
 /* Primary service enhancement */
 .service-bg-primary {
-  box-shadow: 
+  box-shadow:
     0 20px 25px -5px rgba(0, 0, 0, 0.1),
     0 10px 10px -5px rgba(0, 0, 0, 0.04),
     0 0 0 2px rgba(247, 201, 72, 0.5);
 }
 
 .service-bg-primary:hover {
-  box-shadow: 
+  box-shadow:
     0 25px 50px -12px rgba(0, 0, 0, 0.25),
     0 0 0 2px rgba(247, 201, 72, 0.8);
 }
@@ -197,11 +197,11 @@
   .service-bg-container {
     min-height: 350px;
   }
-  
+
   .service-bg-container::before {
     background-attachment: scroll;
   }
-  
+
   /* Reduce overlay opacity on mobile for better readability */
   .service-bg-container::after {
     opacity: calc(var(--bg-opacity, 0.7) * 1.1);
@@ -227,11 +227,11 @@
   .service-bg-container::before {
     display: none;
   }
-  
+
   .service-bg-container::after {
     display: none;
   }
-  
+
   .service-bg-content {
     color: black !important;
     text-shadow: none;

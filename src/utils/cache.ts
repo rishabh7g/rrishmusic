@@ -4,143 +4,144 @@
  */
 
 export interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-  ttl: number; // Time to live in milliseconds
+  data: T
+  timestamp: number
+  ttl: number // Time to live in milliseconds
 }
 
 export class Cache {
-  private cache: Map<string, CacheEntry<unknown>> = new Map();
-  
+  private cache: Map<string, CacheEntry<unknown>> = new Map()
+
   /**
    * Set a cache entry with TTL
    */
-  set<T>(key: string, data: T, ttlMs: number = 300000): void { // Default 5 minutes
+  set<T>(key: string, data: T, ttlMs: number = 300000): void {
+    // Default 5 minutes
     this.cache.set(key, {
       data,
       timestamp: Date.now(),
-      ttl: ttlMs
-    });
+      ttl: ttlMs,
+    })
   }
 
   /**
    * Get a cache entry if not expired
    */
   get<T>(key: string): T | null {
-    const entry = this.cache.get(key);
-    
+    const entry = this.cache.get(key)
+
     if (!entry) {
-      return null;
+      return null
     }
 
     // Check if expired
     if (Date.now() - entry.timestamp > entry.ttl) {
-      this.cache.delete(key);
-      return null;
+      this.cache.delete(key)
+      return null
     }
 
-    return entry.data;
+    return entry.data
   }
 
   /**
    * Check if a key exists and is not expired
    */
   has(key: string): boolean {
-    return this.get(key) !== null;
+    return this.get(key) !== null
   }
 
   /**
    * Clear expired entries
    */
   cleanup(): number {
-    let cleared = 0;
-    const now = Date.now();
-    
+    let cleared = 0
+    const now = Date.now()
+
     for (const [key, entry] of this.cache.entries()) {
       if (now - entry.timestamp > entry.ttl) {
-        this.cache.delete(key);
-        cleared++;
+        this.cache.delete(key)
+        cleared++
       }
     }
-    
-    return cleared;
+
+    return cleared
   }
 
   /**
    * Clear all cache entries
    */
   clear(): void {
-    this.cache.clear();
+    this.cache.clear()
   }
 
   /**
    * Get cache statistics
    */
   getStats(): {
-    size: number;
-    expired: number;
-    hitRate?: number;
+    size: number
+    expired: number
+    hitRate?: number
   } {
-    let expired = 0;
-    const now = Date.now();
-    
+    let expired = 0
+    const now = Date.now()
+
     for (const entry of this.cache.values()) {
       if (now - entry.timestamp > entry.ttl) {
-        expired++;
+        expired++
       }
     }
 
     return {
       size: this.cache.size,
-      expired
-    };
+      expired,
+    }
   }
 
   /**
    * Get or set pattern - execute function if cache miss
    */
   async getOrSet<T>(
-    key: string, 
-    factory: () => T | Promise<T>, 
+    key: string,
+    factory: () => T | Promise<T>,
     ttlMs: number = 300000
   ): Promise<T> {
     // Try to get from cache first
-    const cached = this.get<T>(key);
+    const cached = this.get<T>(key)
     if (cached !== null) {
-      return cached;
+      return cached
     }
 
     // Execute factory function
-    const data = await factory();
-    
+    const data = await factory()
+
     // Store in cache
-    this.set(key, data, ttlMs);
-    
-    return data;
+    this.set(key, data, ttlMs)
+
+    return data
   }
 }
 
 // Global cache instance
-export const globalCache = new Cache();
+export const globalCache = new Cache()
 
 // Cache key generators
 export const CacheKeys = {
   testimonialStats: (hash?: string) => `testimonial_stats_${hash || 'default'}`,
   performanceData: (hash?: string) => `performance_data_${hash || 'default'}`,
   generalStats: (hash?: string) => `general_stats_${hash || 'default'}`,
-  pricingCalculations: (packageId: string, customizations?: string) => 
+  pricingCalculations: (packageId: string, customizations?: string) =>
     `pricing_${packageId}_${customizations || 'default'}`,
   contentMetadata: (contentType: string) => `metadata_${contentType}`,
   socialProof: (service: string) => `social_proof_${service}`,
-} as const;
+} as const
 
 // Performance monitoring
 export interface PerformanceMetrics {
-  cacheHits: number;
-  cacheMisses: number;
-  totalCalculations: number;
-  averageCalculationTime: number;
-  lastCleanup: number;
+  cacheHits: number
+  cacheMisses: number
+  totalCalculations: number
+  averageCalculationTime: number
+  lastCleanup: number
 }
 
 export class PerformanceMonitor {
@@ -149,34 +150,36 @@ export class PerformanceMonitor {
     cacheMisses: 0,
     totalCalculations: 0,
     averageCalculationTime: 0,
-    lastCleanup: Date.now()
-  };
+    lastCleanup: Date.now(),
+  }
 
   recordCacheHit(): void {
-    this.metrics.cacheHits++;
+    this.metrics.cacheHits++
   }
 
   recordCacheMiss(): void {
-    this.metrics.cacheMisses++;
+    this.metrics.cacheMisses++
   }
 
   recordCalculation(timeMs: number): void {
-    this.metrics.totalCalculations++;
-    const total = this.metrics.averageCalculationTime * (this.metrics.totalCalculations - 1);
-    this.metrics.averageCalculationTime = (total + timeMs) / this.metrics.totalCalculations;
+    this.metrics.totalCalculations++
+    const total =
+      this.metrics.averageCalculationTime * (this.metrics.totalCalculations - 1)
+    this.metrics.averageCalculationTime =
+      (total + timeMs) / this.metrics.totalCalculations
   }
 
   recordCleanup(): void {
-    this.metrics.lastCleanup = Date.now();
+    this.metrics.lastCleanup = Date.now()
   }
 
   getMetrics(): PerformanceMetrics {
-    return { ...this.metrics };
+    return { ...this.metrics }
   }
 
   getHitRate(): number {
-    const total = this.metrics.cacheHits + this.metrics.cacheMisses;
-    return total > 0 ? this.metrics.cacheHits / total : 0;
+    const total = this.metrics.cacheHits + this.metrics.cacheMisses
+    return total > 0 ? this.metrics.cacheHits / total : 0
   }
 
   reset(): void {
@@ -185,9 +188,9 @@ export class PerformanceMonitor {
       cacheMisses: 0,
       totalCalculations: 0,
       averageCalculationTime: 0,
-      lastCleanup: Date.now()
-    };
+      lastCleanup: Date.now(),
+    }
   }
 }
 
-export const performanceMonitor = new PerformanceMonitor();
+export const performanceMonitor = new PerformanceMonitor()

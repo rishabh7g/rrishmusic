@@ -1,24 +1,24 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useSectionContent } from '@/hooks/useContent';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React from 'react'
+import { motion } from 'framer-motion'
+import { useSectionContent } from '@/hooks/useContent'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 interface PerformanceTestimonial {
-  id: string;
-  name: string;
-  text: string;
-  rating: number;
-  date: string;
-  service: 'wedding' | 'corporate' | 'venue';
-  event: string;
-  location: string;
-  featured: boolean;
-  verified: boolean;
+  id: string
+  name: string
+  text: string
+  rating: number
+  date: string
+  service: 'wedding' | 'corporate' | 'venue'
+  event: string
+  location: string
+  featured: boolean
+  verified: boolean
 }
 
 /**
  * Performance Testimonials Section Component
- * 
+ *
  * Features:
  * - Displays client testimonials specifically for performance services
  * - Uses performance data from performance.json
@@ -27,8 +27,8 @@ interface PerformanceTestimonial {
  * - Professional presentation matching Performance page design
  */
 const TestimonialsSection: React.FC = () => {
-  const { data: performanceData, loading } = useSectionContent('performance');
-  
+  const { data: performanceData, loading } = useSectionContent('performance')
+
   if (loading) {
     return (
       <section className="py-16 lg:py-24 bg-gradient-to-br from-neutral-light/20 to-neutral-light/10">
@@ -39,12 +39,15 @@ const TestimonialsSection: React.FC = () => {
               <div className="h-6 bg-gray-200 rounded w-96 mx-auto"></div>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3].map(i => (
                 <div key={i} className="bg-white rounded-xl p-6 shadow-sm">
                   <div className="flex items-center mb-4">
                     <div className="flex space-x-1">
                       {[...Array(5)].map((_, j) => (
-                        <div key={j} className="w-5 h-5 bg-gray-200 rounded"></div>
+                        <div
+                          key={j}
+                          className="w-5 h-5 bg-gray-200 rounded"
+                        ></div>
                       ))}
                     </div>
                   </div>
@@ -63,31 +66,32 @@ const TestimonialsSection: React.FC = () => {
           </div>
         </div>
       </section>
-    );
+    )
   }
 
-  const testimonials = (performanceData?.testimonials as PerformanceTestimonial[]) || [];
-  
+  const testimonials =
+    (performanceData?.testimonials as PerformanceTestimonial[]) || []
+
   if (testimonials.length === 0) {
-    return null;
+    return null
   }
 
   // Service type color mapping
   const getServiceBadgeColor = (service: string) => {
     switch (service) {
       case 'wedding':
-        return 'bg-brand-orange-warm/20 text-brand-orange-warm';
+        return 'bg-brand-orange-warm/20 text-brand-orange-warm'
       case 'corporate':
-        return 'bg-brand-blue-primary/20 text-brand-blue-primary';
+        return 'bg-brand-blue-primary/20 text-brand-blue-primary'
       case 'venue':
-        return 'bg-brand-yellow-accent/20 text-brand-yellow-accent';
+        return 'bg-brand-yellow-accent/20 text-brand-yellow-accent'
       default:
-        return 'bg-gray-100 text-gray-700';
+        return 'bg-gray-100 text-gray-700'
     }
-  };
+  }
 
   return (
-    <section 
+    <section
       id="testimonials"
       className="py-16 lg:py-24 bg-gradient-to-br from-neutral-light/20 to-neutral-light/10"
       aria-labelledby="testimonials-title"
@@ -97,21 +101,19 @@ const TestimonialsSection: React.FC = () => {
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
         >
           {/* Section Header */}
-          <motion.div
-            className="text-center mb-16"
-            variants={fadeInUp}
-          >
-            <h2 
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <h2
               id="testimonials-title"
               className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
             >
               Client Testimonials
             </h2>
             <p className="text-lg sm:text-xl text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed">
-              Hear from clients who have experienced the magic of live music at their events
+              Hear from clients who have experienced the magic of live music at
+              their events
             </p>
           </motion.div>
 
@@ -131,8 +133,8 @@ const TestimonialsSection: React.FC = () => {
                       <svg
                         key={i}
                         className={`w-5 h-5 ${
-                          i < testimonial.rating 
-                            ? 'text-brand-yellow-accent' 
+                          i < testimonial.rating
+                            ? 'text-brand-yellow-accent'
                             : 'text-gray-300'
                         }`}
                         fill="currentColor"
@@ -143,8 +145,11 @@ const TestimonialsSection: React.FC = () => {
                       </svg>
                     ))}
                   </div>
-                  <span className={`px-3 py-1 rounded-full text-xs font-medium ${getServiceBadgeColor(testimonial.service)}`}>
-                    {testimonial.service.charAt(0).toUpperCase() + testimonial.service.slice(1)}
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-medium ${getServiceBadgeColor(testimonial.service)}`}
+                  >
+                    {testimonial.service.charAt(0).toUpperCase() +
+                      testimonial.service.slice(1)}
                   </span>
                 </div>
 
@@ -166,10 +171,20 @@ const TestimonialsSection: React.FC = () => {
                     </div>
                     {testimonial.verified && (
                       <div className="flex items-center space-x-1">
-                        <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        <svg
+                          className="w-4 h-4 text-green-500"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                            clipRule="evenodd"
+                          />
                         </svg>
-                        <span className="text-xs text-green-600 font-medium">Verified</span>
+                        <span className="text-xs text-green-600 font-medium">
+                          Verified
+                        </span>
                       </div>
                     )}
                   </div>
@@ -190,7 +205,8 @@ const TestimonialsSection: React.FC = () => {
               Join Our Satisfied Clients
             </h3>
             <p className="text-lg text-neutral-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-6">
-              Ready to create memorable musical moments for your event? Let's discuss how we can make your occasion special.
+              Ready to create memorable musical moments for your event? Let's
+              discuss how we can make your occasion special.
             </p>
             <a
               href="#contact"
@@ -198,15 +214,25 @@ const TestimonialsSection: React.FC = () => {
               aria-label="Contact us to book your performance"
             >
               Book Your Performance
-              <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              <svg
+                className="w-5 h-5 ml-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M17 8l4 4m0 0l-4 4m4-4H3"
+                />
               </svg>
             </a>
           </motion.div>
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default TestimonialsSection;
+export default TestimonialsSection

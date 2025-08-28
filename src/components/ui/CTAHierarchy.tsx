@@ -1,9 +1,9 @@
 /**
  * CTA Hierarchy Component
- * 
+ *
  * Implements Primary/Secondary CTA strategy to reduce decision paralysis
  * and improve conversion rates with clear visual hierarchy.
- * 
+ *
  * Hierarchy Strategy:
  * - Primary CTA: "Book Performance" (60% visual weight, high contrast)
  * - Secondary CTAs: "Guitar Lessons" & "Collaborate" (25%/15% visual weight)
@@ -11,22 +11,22 @@
  * - Analytics tracking for A/B testing and conversion optimization
  */
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
-import { PerformanceInquiryCTA } from './PerformanceInquiryCTA';
-import { TeachingInquiryCTA } from './TeachingInquiryCTA';
-import { CollaborationInquiryCTA } from './CollaborationInquiryCTA';
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
+import { PerformanceInquiryCTA } from './PerformanceInquiryCTA'
+import { TeachingInquiryCTA } from './TeachingInquiryCTA'
+import { CollaborationInquiryCTA } from './CollaborationInquiryCTA'
 
 /**
  * CTA placement context for analytics and styling
  */
-export type CTAContext = 'hero' | 'services' | 'footer' | 'inline' | 'sticky';
+export type CTAContext = 'hero' | 'services' | 'footer' | 'inline' | 'sticky'
 
 /**
  * CTA layout configuration
  */
-export type CTALayout = 'horizontal' | 'vertical' | 'stacked';
+export type CTALayout = 'horizontal' | 'vertical' | 'stacked'
 
 /**
  * Props interface for CTA Hierarchy
@@ -35,46 +35,46 @@ interface CTAHierarchyProps {
   /**
    * Layout orientation
    */
-  layout?: CTALayout;
-  
+  layout?: CTALayout
+
   /**
    * Context for analytics and styling
    */
-  context?: CTAContext;
-  
+  context?: CTAContext
+
   /**
    * Show only primary CTA for focused conversion
    */
-  primaryOnly?: boolean;
-  
+  primaryOnly?: boolean
+
   /**
    * Custom messaging for specific contexts
    */
   customMessages?: {
-    primary?: string;
-    secondary?: string;
-    tertiary?: string;
-  };
-  
+    primary?: string
+    secondary?: string
+    tertiary?: string
+  }
+
   /**
    * Additional CSS classes
    */
-  className?: string;
-  
+  className?: string
+
   /**
    * Pre-select event type for performance CTA
    */
-  performanceEventType?: string;
-  
+  performanceEventType?: string
+
   /**
-   * Pre-select package for teaching CTA  
+   * Pre-select package for teaching CTA
    */
-  teachingPackageType?: 'individual' | 'package_4' | 'package_8';
+  teachingPackageType?: 'individual' | 'package_4' | 'package_8'
 
   /**
    * Pre-select collaboration project type
    */
-  collaborationProjectType?: 'studio' | 'creative' | 'partnership' | 'other';
+  collaborationProjectType?: 'studio' | 'creative' | 'partnership' | 'other'
 }
 
 /**
@@ -88,50 +88,55 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
   className = '',
   performanceEventType,
   teachingPackageType,
-  collaborationProjectType
+  collaborationProjectType,
 }) => {
   // Analytics tracking state
   const [interactions, setInteractions] = useState<{
-    primaryViewed: boolean;
-    primaryClicked: boolean;
-    secondaryViewed: boolean;
-    secondaryClicked: boolean;
-    tertiaryViewed: boolean;
-    tertiaryClicked: boolean;
+    primaryViewed: boolean
+    primaryClicked: boolean
+    secondaryViewed: boolean
+    secondaryClicked: boolean
+    tertiaryViewed: boolean
+    tertiaryClicked: boolean
   }>({
     primaryViewed: false,
     primaryClicked: false,
     secondaryViewed: false,
     secondaryClicked: false,
     tertiaryViewed: false,
-    tertiaryClicked: false
-  });
+    tertiaryClicked: false,
+  })
 
   // Track CTA interactions for analytics
-  const trackInteraction = (cta: 'primary' | 'secondary' | 'tertiary', action: 'view' | 'click') => {
-    const key = `${cta}${action === 'view' ? 'Viewed' : 'Clicked'}` as keyof typeof interactions;
-    
+  const trackInteraction = (
+    cta: 'primary' | 'secondary' | 'tertiary',
+    action: 'view' | 'click'
+  ) => {
+    const key =
+      `${cta}${action === 'view' ? 'Viewed' : 'Clicked'}` as keyof typeof interactions
+
     if (!interactions[key]) {
-      setInteractions(prev => ({ ...prev, [key]: true }));
-      
+      setInteractions(prev => ({ ...prev, [key]: true }))
+
       // Send analytics event
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'cta_interaction', {
           event_category: 'CTA Hierarchy',
           event_label: `${cta}_${action}`,
           cta_context: context,
-          cta_layout: layout
-        });
+          cta_layout: layout,
+        })
       }
     }
-  };
+  }
 
   // Layout configurations
   const layoutClasses = {
-    horizontal: 'flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6',
+    horizontal:
+      'flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6',
     vertical: 'flex flex-col items-center space-y-4',
-    stacked: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4'
-  };
+    stacked: 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4',
+  }
 
   // Context-specific styling
   const contextStyles = {
@@ -139,11 +144,11 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
     services: 'py-6',
     footer: 'py-4',
     inline: 'py-3',
-    sticky: 'py-2'
-  };
+    sticky: 'py-2',
+  }
 
   return (
-    <motion.div 
+    <motion.div
       className={`${layoutClasses[layout]} ${contextStyles[context]} ${className}`}
       variants={staggerContainer}
       initial="hidden"
@@ -218,15 +223,18 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
       )}
 
       {/* A/B Testing Data Collection (Hidden) */}
-      <div className="hidden" data-cta-analytics={JSON.stringify({
-        context,
-        layout,
-        primaryOnly,
-        timestamp: Date.now(),
-        interactions
-      })} />
+      <div
+        className="hidden"
+        data-cta-analytics={JSON.stringify({
+          context,
+          layout,
+          primaryOnly,
+          timestamp: Date.now(),
+          interactions,
+        })}
+      />
     </motion.div>
-  );
-};
+  )
+}
 
-export default CTAHierarchy;
+export default CTAHierarchy

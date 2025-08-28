@@ -1,5 +1,5 @@
-import { Variants } from "framer-motion";
-import { ANIMATION_DURATION } from "./constants";
+import { Variants } from 'framer-motion'
+import { ANIMATION_DURATION } from './constants'
 
 // Fade in from bottom
 export const fadeInUp: Variants = {
@@ -12,10 +12,10 @@ export const fadeInUp: Variants = {
     y: 0,
     transition: {
       duration: ANIMATION_DURATION.normal,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 // Fade in from top
 export const fadeInDown: Variants = {
@@ -28,10 +28,10 @@ export const fadeInDown: Variants = {
     y: 0,
     transition: {
       duration: ANIMATION_DURATION.normal,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 // Stagger container for multiple elements
 export const staggerContainer: Variants = {
@@ -43,7 +43,7 @@ export const staggerContainer: Variants = {
       delayChildren: 0.2,
     },
   },
-};
+}
 
 // Scale in animation
 export const scaleIn: Variants = {
@@ -56,10 +56,10 @@ export const scaleIn: Variants = {
     opacity: 1,
     transition: {
       duration: ANIMATION_DURATION.normal,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 // Slide in from left
 export const slideInLeft: Variants = {
@@ -72,10 +72,10 @@ export const slideInLeft: Variants = {
     x: 0,
     transition: {
       duration: ANIMATION_DURATION.normal,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 // Slide in from right
 export const slideInRight: Variants = {
@@ -88,22 +88,22 @@ export const slideInRight: Variants = {
     x: 0,
     transition: {
       duration: ANIMATION_DURATION.normal,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}
 
 // Button hover animation
 export const buttonHover = {
   scale: 1.05,
   transition: { duration: ANIMATION_DURATION.fast },
-};
+}
 
 // Card hover animation
 export const cardHover = {
   y: -8,
   transition: { duration: ANIMATION_DURATION.fast },
-};
+}
 
 // Fade in animation (simple)
 export const fadeIn: Variants = {
@@ -114,7 +114,7 @@ export const fadeIn: Variants = {
       duration: ANIMATION_DURATION.normal,
     },
   },
-};
+}
 
 // Rotate in animation
 export const rotateIn: Variants = {
@@ -127,7 +127,7 @@ export const rotateIn: Variants = {
     rotate: 0,
     transition: {
       duration: ANIMATION_DURATION.slow,
-      ease: "easeOut",
+      ease: 'easeOut',
     },
   },
-};
+}

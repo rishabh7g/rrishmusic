@@ -16,7 +16,7 @@
     },
     {
       "name": "Live Performance",
-      "level": "advanced", 
+      "level": "advanced",
       "yearsExperience": 10,
       "description": "Regular performer across Melbourne venues, weddings, and corporate events"
     },
@@ -57,7 +57,7 @@
       "id": "venue-performances",
       "title": "Melbourne Venue Regular",
       "description": "Weekly performances at established Melbourne venues, bringing blues and acoustic music to diverse audiences",
-      "date": "2023-2024", 
+      "date": "2023-2024",
       "category": "performance"
     },
     {

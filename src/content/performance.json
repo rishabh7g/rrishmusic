@@ -125,7 +125,12 @@
           "thumbnail": "/images/portfolio/blues-performance-stage.webp"
         },
         "performanceType": "band",
-        "equipment": ["Electric Guitar", "Amplifier", "Effects Pedals", "Stage Lighting"]
+        "equipment": [
+          "Electric Guitar",
+          "Amplifier",
+          "Effects Pedals",
+          "Stage Lighting"
+        ]
       },
       {
         "id": "private-party-1",
@@ -302,7 +307,12 @@
           "Repertoire consultation",
           "Setup and breakdown"
         ],
-        "ideal_for": ["Wedding ceremonies", "Private events", "Restaurants", "Cafés"]
+        "ideal_for": [
+          "Wedding ceremonies",
+          "Private events",
+          "Restaurants",
+          "Cafés"
+        ]
       },
       {
         "id": "full-event",
@@ -317,7 +327,12 @@
           "MC services if needed",
           "Background and featured performance"
         ],
-        "ideal_for": ["Weddings", "Corporate events", "Festivals", "Private parties"]
+        "ideal_for": [
+          "Weddings",
+          "Corporate events",
+          "Festivals",
+          "Private parties"
+        ]
       },
       {
         "id": "venue-residency",

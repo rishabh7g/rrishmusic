@@ -12,12 +12,14 @@
       ],
       "ctaText": "View Performance Schedule",
       "priority": 8,
-      "contexts": [{
-        "fromService": "teaching",
-        "pageSection": "about-instructor",
-        "timing": "after-engagement",
-        "placement": "inline"
-      }],
+      "contexts": [
+        {
+          "fromService": "teaching",
+          "pageSection": "about-instructor",
+          "timing": "after-engagement",
+          "placement": "inline"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -32,12 +34,14 @@
       ],
       "ctaText": "Learn About Private Sessions",
       "priority": 6,
-      "contexts": [{
-        "fromService": "teaching",
-        "pageSection": "advanced-packages",
-        "timing": "after-engagement",
-        "placement": "sidebar"
-      }],
+      "contexts": [
+        {
+          "fromService": "teaching",
+          "pageSection": "advanced-packages",
+          "timing": "after-engagement",
+          "placement": "sidebar"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -52,12 +56,14 @@
       ],
       "ctaText": "Start Guitar Lessons",
       "priority": 9,
-      "contexts": [{
-        "fromService": "performance",
-        "pageSection": "portfolio-gallery",
-        "timing": "after-engagement",
-        "placement": "inline"
-      }],
+      "contexts": [
+        {
+          "fromService": "performance",
+          "pageSection": "portfolio-gallery",
+          "timing": "after-engagement",
+          "placement": "inline"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -72,12 +78,14 @@
       ],
       "ctaText": "Explore Performance Lessons",
       "priority": 7,
-      "contexts": [{
-        "fromService": "performance",
-        "pageSection": "hero-section",
-        "timing": "before-exit",
-        "placement": "banner"
-      }],
+      "contexts": [
+        {
+          "fromService": "performance",
+          "pageSection": "hero-section",
+          "timing": "before-exit",
+          "placement": "banner"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -92,12 +100,14 @@
       ],
       "ctaText": "Discuss Collaboration",
       "priority": 7,
-      "contexts": [{
-        "fromService": "performance",
-        "pageSection": "booking-info",
-        "timing": "after-engagement",
-        "placement": "inline"
-      }],
+      "contexts": [
+        {
+          "fromService": "performance",
+          "pageSection": "booking-info",
+          "timing": "after-engagement",
+          "placement": "inline"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -112,12 +122,14 @@
       ],
       "ctaText": "Plan Performance Showcase",
       "priority": 6,
-      "contexts": [{
-        "fromService": "collaboration",
-        "pageSection": "project-examples",
-        "timing": "after-engagement",
-        "placement": "sidebar"
-      }],
+      "contexts": [
+        {
+          "fromService": "collaboration",
+          "pageSection": "project-examples",
+          "timing": "after-engagement",
+          "placement": "sidebar"
+        }
+      ],
       "dismissable": true
     },
     {
@@ -132,12 +144,14 @@
       ],
       "ctaText": "Start Skill Building",
       "priority": 8,
-      "contexts": [{
-        "fromService": "collaboration",
-        "pageSection": "requirements",
-        "timing": "after-engagement",
-        "placement": "inline"
-      }],
+      "contexts": [
+        {
+          "fromService": "collaboration",
+          "pageSection": "requirements",
+          "timing": "after-engagement",
+          "placement": "inline"
+        }
+      ],
       "dismissable": true
     }
   ],

@@ -1,68 +1,71 @@
 /**
  * Service Navigation Controls Component
- * 
+ *
  * Provides interactive navigation controls for smooth transitions between services
  * with keyboard support, accessibility features, and visual feedback
  */
 
-import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ServiceType } from '@/types/content';
-import { useServiceNavigation } from '@/hooks/useServiceNavigation';
+import React, { useState } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { ServiceType } from '@/types/content'
+import { useServiceNavigation } from '@/hooks/useServiceNavigation'
 
 /**
  * Service Navigation Controls Props
  */
 interface ServiceNavigationControlsProps {
-  className?: string;
-  position?: 'fixed' | 'sticky' | 'relative';
-  showLabels?: boolean;
-  compact?: boolean;
+  className?: string
+  position?: 'fixed' | 'sticky' | 'relative'
+  showLabels?: boolean
+  compact?: boolean
 }
 
 /**
  * Individual Service Button Props
  */
 interface ServiceButtonProps {
-  service: ServiceType;
-  active: boolean;
-  onClick: () => void;
-  showLabel?: boolean;
-  compact?: boolean;
+  service: ServiceType
+  active: boolean
+  onClick: () => void
+  showLabel?: boolean
+  compact?: boolean
 }
 
 /**
  * Service metadata
  */
-const SERVICE_META: Record<ServiceType, {
-  label: string;
-  shortLabel: string;
-  icon: string;
-  color: string;
-  description: string;
-}> = {
+const SERVICE_META: Record<
+  ServiceType,
+  {
+    label: string
+    shortLabel: string
+    icon: string
+    color: string
+    description: string
+  }
+> = {
   performance: {
     label: 'Live Performances',
     shortLabel: 'Perform',
     icon: '🎸',
     color: 'bg-gradient-to-r from-purple-500 to-pink-500',
-    description: 'Professional live music performances'
+    description: 'Professional live music performances',
   },
   teaching: {
     label: 'Music Lessons',
     shortLabel: 'Teach',
     icon: '🎓',
     color: 'bg-gradient-to-r from-blue-500 to-indigo-500',
-    description: 'Personalized music instruction'
+    description: 'Personalized music instruction',
   },
   collaboration: {
     label: 'Music Collaboration',
     shortLabel: 'Collab',
     icon: '🤝',
     color: 'bg-gradient-to-r from-green-500 to-teal-500',
-    description: 'Creative musical partnerships'
-  }
-};
+    description: 'Creative musical partnerships',
+  },
+}
 
 /**
  * Service Button Component
@@ -72,10 +75,10 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({
   active,
   onClick,
   showLabel = true,
-  compact = false
+  compact = false,
 }) => {
-  const [isHovered, setIsHovered] = useState(false);
-  const meta = SERVICE_META[service];
+  const [isHovered, setIsHovered] = useState(false)
+  const meta = SERVICE_META[service]
 
   return (
     <motion.button
@@ -87,9 +90,10 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({
         ${compact ? 'p-2' : 'px-4 py-3'}
         rounded-xl transition-all duration-300 ease-out
         hover:scale-105 focus:scale-105
-        ${active 
-          ? 'bg-white/20 shadow-lg backdrop-blur-sm' 
-          : 'bg-white/10 hover:bg-white/15'
+        ${
+          active
+            ? 'bg-white/20 shadow-lg backdrop-blur-sm'
+            : 'bg-white/10 hover:bg-white/15'
         }
         border border-white/20 hover:border-white/30
         focus:outline-none focus:ring-2 focus:ring-white/50
@@ -106,38 +110,38 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({
         animate={{ opacity: active ? 0.3 : 0 }}
         whileHover={{ opacity: 0.4 }}
       />
-      
+
       {/* Content */}
       <div className="relative z-10 flex items-center space-x-2 text-white">
         {/* Service Icon */}
         <motion.span
           className={`text-xl ${compact ? 'text-base' : 'text-xl'}`}
-          animate={{ 
+          animate={{
             scale: active ? 1.1 : 1,
-            rotate: isHovered ? [0, -5, 5, 0] : 0
+            rotate: isHovered ? [0, -5, 5, 0] : 0,
           }}
-          transition={{ 
+          transition={{
             scale: { duration: 0.2 },
-            rotate: { duration: 0.6, ease: 'easeInOut' }
+            rotate: { duration: 0.6, ease: 'easeInOut' },
           }}
         >
           {meta.icon}
         </motion.span>
-        
+
         {/* Service Label */}
         {showLabel && (
           <motion.span
             className={`font-medium ${compact ? 'text-sm' : 'text-base'} whitespace-nowrap`}
-            animate={{ 
+            animate={{
               opacity: compact ? (active || isHovered ? 1 : 0) : 1,
-              x: compact ? (active || isHovered ? 0 : -10) : 0
+              x: compact ? (active || isHovered ? 0 : -10) : 0,
             }}
             transition={{ duration: 0.2 }}
           >
             {compact ? meta.shortLabel : meta.label}
           </motion.span>
         )}
-        
+
         {/* Active indicator */}
         {active && (
           <motion.div
@@ -149,7 +153,7 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({
           />
         )}
       </div>
-      
+
       {/* Ripple effect on click */}
       <AnimatePresence>
         {active && (
@@ -163,24 +167,24 @@ const ServiceButton: React.FC<ServiceButtonProps> = ({
         )}
       </AnimatePresence>
     </motion.button>
-  );
-};
+  )
+}
 
 /**
  * Arrow Navigation Button
  */
 interface ArrowButtonProps {
-  direction: 'up' | 'down';
-  onClick: () => void;
-  disabled: boolean;
-  compact?: boolean;
+  direction: 'up' | 'down'
+  onClick: () => void
+  disabled: boolean
+  compact?: boolean
 }
 
 const ArrowButton: React.FC<ArrowButtonProps> = ({
   direction,
   onClick,
   disabled,
-  compact = false
+  compact = false,
 }) => (
   <motion.button
     onClick={onClick}
@@ -204,29 +208,31 @@ const ArrowButton: React.FC<ArrowButtonProps> = ({
       fill="none"
       viewBox="0 0 24 24"
       stroke="currentColor"
-      animate={{ 
+      animate={{
         y: direction === 'up' ? 0 : 0,
-        rotate: direction === 'up' ? 180 : 0
+        rotate: direction === 'up' ? 180 : 0,
       }}
     >
-      <path 
-        strokeLinecap="round" 
-        strokeLinejoin="round" 
-        strokeWidth={2} 
-        d="M19 14l-7-7m0 0l-7 7m7-7v18" 
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth={2}
+        d="M19 14l-7-7m0 0l-7 7m7-7v18"
       />
     </motion.svg>
   </motion.button>
-);
+)
 
 /**
  * Service Navigation Controls Component
  */
-export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps> = ({
+export const ServiceNavigationControls: React.FC<
+  ServiceNavigationControlsProps
+> = ({
   className = '',
   position = 'fixed',
   showLabels = true,
-  compact = false
+  compact = false,
 }) => {
   const {
     activeService,
@@ -236,18 +242,18 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
     navigateToService,
     navigateNext,
     navigatePrevious,
-    servicesOrder
-  } = useServiceNavigation();
+    servicesOrder,
+  } = useServiceNavigation()
 
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(false)
 
   /**
    * Handle service navigation
    */
   const handleServiceClick = async (service: ServiceType) => {
-    if (isNavigating) return;
-    await navigateToService(service);
-  };
+    if (isNavigating) return
+    await navigateToService(service)
+  }
 
   /**
    * Position classes
@@ -255,8 +261,8 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
   const positionClasses = {
     fixed: 'fixed top-1/2 right-6 transform -translate-y-1/2 z-50',
     sticky: 'sticky top-20 z-40',
-    relative: 'relative'
-  };
+    relative: 'relative',
+  }
 
   return (
     <motion.nav
@@ -272,14 +278,16 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
       role="navigation"
       aria-label="Service navigation"
     >
-      <div className={`
+      <div
+        className={`
         flex ${position === 'fixed' ? 'flex-col' : 'flex-row'} 
         space-${position === 'fixed' ? 'y' : 'x'}-2
         p-3 rounded-2xl 
         bg-black/20 backdrop-blur-md 
         border border-white/20
         shadow-2xl
-      `}>
+      `}
+      >
         {/* Navigation up arrow (only for fixed position) */}
         {position === 'fixed' && (
           <ArrowButton
@@ -289,13 +297,15 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
             compact={compact}
           />
         )}
-        
+
         {/* Service buttons */}
-        <div className={`
+        <div
+          className={`
           flex ${position === 'fixed' ? 'flex-col' : 'flex-row'}
           space-${position === 'fixed' ? 'y' : 'x'}-2
-        `}>
-          {servicesOrder.map((service) => (
+        `}
+        >
+          {servicesOrder.map(service => (
             <ServiceButton
               key={service}
               service={service}
@@ -306,7 +316,7 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
             />
           ))}
         </div>
-        
+
         {/* Navigation down arrow (only for fixed position) */}
         {position === 'fixed' && (
           <ArrowButton
@@ -317,7 +327,7 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
           />
         )}
       </div>
-      
+
       {/* Keyboard shortcuts hint */}
       {position === 'fixed' && isExpanded && (
         <motion.div
@@ -334,7 +344,7 @@ export const ServiceNavigationControls: React.FC<ServiceNavigationControlsProps>
         </motion.div>
       )}
     </motion.nav>
-  );
-};
+  )
+}
 
-export default ServiceNavigationControls;
+export default ServiceNavigationControls

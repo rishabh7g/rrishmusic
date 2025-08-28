@@ -1,9 +1,9 @@
 /**
  * Email Automation Service - Service-Specific Follow-up System
- * 
- * Automated email sequences based on inquiry type to ensure professional 
+ *
+ * Automated email sequences based on inquiry type to ensure professional
  * and service-appropriate messaging for all service inquiries.
- * 
+ *
  * Features:
  * - Service-specific email templates
  * - Automated follow-up scheduling
@@ -11,105 +11,105 @@
  * - Conversion tracking integration
  */
 
-import type { ServiceType } from '@/utils/contactRouting';
+import type { ServiceType } from '@/utils/contactRouting'
 
 /**
  * Email template types for different stages of follow-up
  */
-export type EmailTemplateType = 
+export type EmailTemplateType =
   | 'immediate_confirmation'
   | 'follow_up_24h'
   | 'follow_up_3days'
   | 'follow_up_1week'
-  | 'final_follow_up';
+  | 'final_follow_up'
 
 /**
  * Contact form data structure for email automation
  */
 export interface ContactFormData {
-  name: string;
-  email: string;
-  serviceType: ServiceType;
-  message?: string;
-  phone?: string;
-  preferredContact?: 'email' | 'phone' | 'text';
-  eventDate?: string;
-  budget?: string;
-  experience?: string;
-  goals?: string;
+  name: string
+  email: string
+  serviceType: ServiceType
+  message?: string
+  phone?: string
+  preferredContact?: 'email' | 'phone' | 'text'
+  eventDate?: string
+  budget?: string
+  experience?: string
+  goals?: string
 }
 
 /**
  * Email template structure
  */
 export interface EmailTemplate {
-  subject: string;
-  htmlContent: string;
-  textContent: string;
-  delayHours: number;
-  tags: string[];
+  subject: string
+  htmlContent: string
+  textContent: string
+  delayHours: number
+  tags: string[]
 }
 
 /**
  * Follow-up sequence configuration
  */
 export interface FollowUpSequence {
-  serviceType: ServiceType;
-  templates: Record<EmailTemplateType, EmailTemplate>;
-  totalDuration: number; // days
+  serviceType: ServiceType
+  templates: Record<EmailTemplateType, EmailTemplate>
+  totalDuration: number // days
 }
 
 /**
  * Email automation response
  */
 export interface EmailAutomationResult {
-  success: boolean;
-  sequenceId?: string;
-  scheduledEmails: number;
-  error?: string;
+  success: boolean
+  sequenceId?: string
+  scheduledEmails: number
+  error?: string
 }
 
 /**
  * Email data structure for scheduling and sending
  */
 interface EmailData {
-  to: string;
-  subject: string;
-  htmlContent: string;
-  textContent: string;
-  sendTime: number;
-  templateType: EmailTemplateType;
-  sequenceId: string;
-  tags: string[];
+  to: string
+  subject: string
+  htmlContent: string
+  textContent: string
+  sendTime: number
+  templateType: EmailTemplateType
+  sequenceId: string
+  tags: string[]
   metadata: {
-    serviceType: ServiceType;
-    originalSubmissionTime: number;
-    customerName: string;
-  };
+    serviceType: ServiceType
+    originalSubmissionTime: number
+    customerName: string
+  }
 }
 
 /**
  * Sequence metadata for tracking and analytics
  */
 interface SequenceMetadata {
-  sequenceId: string;
-  serviceType: ServiceType;
-  customerEmail: string;
-  customerName: string;
-  startTime: number;
-  totalDuration: number;
-  status: string;
-  emailsScheduled: number;
-  emailsSent: number;
+  sequenceId: string
+  serviceType: ServiceType
+  customerEmail: string
+  customerName: string
+  startTime: number
+  totalDuration: number
+  status: string
+  emailsScheduled: number
+  emailsSent: number
 }
 
 /**
  * Debug email data with additional tracking info
  */
 interface DebugEmailData extends EmailData {
-  id: string;
-  status: string;
-  createdAt: number;
+  id: string
+  status: string
+  createdAt: number
 }
 
 /**
@@ -121,7 +121,8 @@ const EMAIL_TEMPLATES: Record<ServiceType, FollowUpSequence> = {
     totalDuration: 14,
     templates: {
       immediate_confirmation: {
-        subject: "Thanks for Your Performance Inquiry - Let's Create Something Amazing!",
+        subject:
+          "Thanks for Your Performance Inquiry - Let's Create Something Amazing!",
         delayHours: 0,
         tags: ['performance', 'confirmation'],
         htmlContent: `
@@ -174,10 +175,10 @@ In the meantime, feel free to check out my performance portfolio at https://www.
 Looking forward to creating an unforgettable musical experience for your event!
 
 Best regards,
-Rrish`
+Rrish`,
       },
       follow_up_24h: {
-        subject: "Your Performance Inquiry - Next Steps & Availability",
+        subject: 'Your Performance Inquiry - Next Steps & Availability',
         delayHours: 24,
         tags: ['performance', 'follow_up'],
         htmlContent: `
@@ -223,7 +224,7 @@ Would you prefer a quick 10-minute phone call or would you like me to put togeth
 I'm here to make this as easy as possible for you!
 
 Best,
-Rrish`
+Rrish`,
       },
       follow_up_3days: {
         subject: "Still Interested in Live Music? Let's Make It Happen!",
@@ -262,10 +263,10 @@ No pressure at all - I just want to make sure you have all the information you n
 If timing isn't right for this event, I'd still love to stay connected for future opportunities. Just let me know!
 
 Wishing you a successful event,
-Rrish`
+Rrish`,
       },
       follow_up_1week: {
-        subject: "One Last Check-in About Your Event Music",
+        subject: 'One Last Check-in About Your Event Music',
         delayHours: 168,
         tags: ['performance', 'follow_up'],
         htmlContent: `
@@ -301,10 +302,10 @@ Regardless, I wish you an absolutely fantastic event. If you ever need live musi
 All the best,
 Rrish
 
-P.S. If you'd prefer not to receive future updates, just reply with "unsubscribe" and I'll make sure to remove you from my list.`
+P.S. If you'd prefer not to receive future updates, just reply with "unsubscribe" and I'll make sure to remove you from my list.`,
       },
       final_follow_up: {
-        subject: "Thank You & Future Opportunities",
+        subject: 'Thank You & Future Opportunities',
         delayHours: 336, // 2 weeks
         tags: ['performance', 'final'],
         htmlContent: `
@@ -339,9 +340,9 @@ I'm always here if you need live music for future events - whether it's annual c
 Wishing you continued success with all your future events!
 
 Best regards,
-Rrish`
-      }
-    }
+Rrish`,
+      },
+    },
   },
 
   teaching: {
@@ -349,7 +350,7 @@ Rrish`
     totalDuration: 21,
     templates: {
       immediate_confirmation: {
-        subject: "Welcome! Your Guitar Learning Journey Starts Here 🎸",
+        subject: 'Welcome! Your Guitar Learning Journey Starts Here 🎸',
         delayHours: 0,
         tags: ['teaching', 'confirmation'],
         htmlContent: `
@@ -404,7 +405,7 @@ I believe every student can become the guitarist they want to be with the right 
 I'll be in touch within 24 hours to discuss your goals and schedule your trial lesson!
 
 Excited to make music together,
-Rrish`
+Rrish`,
       },
       follow_up_24h: {
         subject: "Let's Schedule Your Guitar Trial Lesson!",
@@ -457,7 +458,7 @@ Also, do you currently have a guitar, or would you like recommendations for gett
 Looking forward to our first lesson!
 
 Best,
-Rrish`
+Rrish`,
       },
       follow_up_3days: {
         subject: "Your Guitar Goals Are Within Reach - Let's Get Started!",
@@ -500,7 +501,7 @@ My trial lesson offer (50% off) is still available, and I have some spots open t
 What's holding you back? I'd love to address any concerns you might have!
 
 Ready when you are,
-Rrish`
+Rrish`,
       },
       follow_up_1week: {
         subject: "Still Want to Learn Guitar? I'm Here to Help!",
@@ -548,7 +549,7 @@ Even if you're not ready to commit to regular lessons, I'm happy to answer any q
 The door is always open when you're ready!
 
 Best,
-Rrish`
+Rrish`,
       },
       final_follow_up: {
         subject: "Your Guitar Journey Awaits (When You're Ready)",
@@ -586,9 +587,9 @@ Feel free to reach out anytime if questions come up or if you decide you're read
 
 Wishing you all the best on your musical journey (whenever it begins),
 
-Rrish`
-      }
-    }
+Rrish`,
+      },
+    },
   },
 
   collaboration: {
@@ -653,7 +654,7 @@ I love working with artists who bring fresh perspectives and creative energy to 
 I'll be in touch within 24 hours to discuss the details.
 
 Excited to create something amazing together,
-Rrish`
+Rrish`,
       },
       follow_up_24h: {
         subject: "Your Creative Project - Let's Dive Deeper!",
@@ -702,7 +703,7 @@ Would you prefer to chat over the phone/video call, or would you like to start w
 Can't wait to hear more about your creative vision!
 
 Best,
-Rrish`
+Rrish`,
       },
       follow_up_3days: {
         subject: "Still Interested in Collaborating? Let's Make Music!",
@@ -741,10 +742,10 @@ Whether your project is fully formed or still in the early brainstorming phase, 
 Even if timing isn't perfect right now, I'd love to stay connected for future creative opportunities!
 
 Looking forward to hearing from you,
-Rrish`
+Rrish`,
       },
       follow_up_1week: {
-        subject: "Final Check-in About Your Creative Project",
+        subject: 'Final Check-in About Your Creative Project',
         delayHours: 168,
         tags: ['collaboration', 'follow_up'],
         htmlContent: `
@@ -776,10 +777,10 @@ If You Ever Need a Creative Partner: Whether it's for this project or something 
 Wishing you all the best with your creative endeavors. I hope our paths cross again when the timing is right!
 
 Keep creating,
-Rrish`
+Rrish`,
       },
       final_follow_up: {
-        subject: "Thank You & Future Creative Opportunities",
+        subject: 'Thank You & Future Creative Opportunities',
         delayHours: 240, // 10 days
         tags: ['collaboration', 'final'],
         htmlContent: `
@@ -814,9 +815,9 @@ I'm always excited about new creative partnerships, so please keep me in mind fo
 Keep creating amazing music!
 
 Best,
-Rrish`
-      }
-    }
+Rrish`,
+      },
+    },
   },
 
   general: {
@@ -863,10 +864,10 @@ What I Do:
 If you're interested in any of these services, I'd be happy to discuss how I can help with your specific needs!
 
 Talk soon,
-Rrish`
+Rrish`,
       },
       follow_up_24h: {
-        subject: "Following Up on Your Message",
+        subject: 'Following Up on Your Message',
         delayHours: 24,
         tags: ['general', 'follow_up'],
         htmlContent: `
@@ -895,10 +896,10 @@ Is there anything specific I can help clarify or discuss further?
 Feel free to reach out anytime!
 
 Best,
-Rrish`
+Rrish`,
       },
       follow_up_3days: {
-        subject: "Still Here to Help!",
+        subject: 'Still Here to Help!',
         delayHours: 72,
         tags: ['general', 'follow_up'],
         htmlContent: `
@@ -923,10 +924,10 @@ Whether you're interested in live music for an event, want to learn guitar, or h
 No pressure at all - just want to make sure you have all the information you need!
 
 Best,
-Rrish`
+Rrish`,
       },
       follow_up_1week: {
-        subject: "Final Check-in - Here When You Need Me!",
+        subject: 'Final Check-in - Here When You Need Me!',
         delayHours: 168,
         tags: ['general', 'follow_up'],
         htmlContent: `
@@ -951,10 +952,10 @@ If you ever have questions about music services or want to chat about potential 
 Wishing you all the best!
 
 Best,
-Rrish`
+Rrish`,
       },
       final_follow_up: {
-        subject: "Thank You & Stay in Touch",
+        subject: 'Thank You & Stay in Touch',
         delayHours: 168,
         tags: ['general', 'final'],
         htmlContent: `
@@ -975,64 +976,71 @@ Thank you for your initial interest! While we didn't connect this time, I apprec
 Feel free to contact me anytime if you have future music-related needs or questions.
 
 All the best,
-Rrish`
-      }
-    }
-  }
-};
+Rrish`,
+      },
+    },
+  },
+}
 
 /**
  * Email automation service class
  */
 export class EmailAutomationService {
-  private isEnabled: boolean = true;
-  private debugMode: boolean = process.env.NODE_ENV === 'development';
+  private isEnabled: boolean = true
+  private debugMode: boolean = process.env.NODE_ENV === 'development'
 
   /**
    * Initialize follow-up sequence for a contact form submission
    */
-  async initializeFollowUpSequence(formData: ContactFormData): Promise<EmailAutomationResult> {
+  async initializeFollowUpSequence(
+    formData: ContactFormData
+  ): Promise<EmailAutomationResult> {
     try {
       if (!this.isEnabled) {
-        return { success: false, error: 'Email automation is disabled' };
+        return { success: false, error: 'Email automation is disabled' }
       }
 
-      const sequence = EMAIL_TEMPLATES[formData.serviceType];
+      const sequence = EMAIL_TEMPLATES[formData.serviceType]
       if (!sequence) {
-        return { success: false, error: `No email sequence found for service type: ${formData.serviceType}` };
+        return {
+          success: false,
+          error: `No email sequence found for service type: ${formData.serviceType}`,
+        }
       }
 
-      const sequenceId = this.generateSequenceId(formData);
-      let scheduledEmails = 0;
+      const sequenceId = this.generateSequenceId(formData)
+      let scheduledEmails = 0
 
       // Schedule all emails in the sequence
-      for (const [templateType, template] of Object.entries(sequence.templates)) {
+      for (const [templateType, template] of Object.entries(
+        sequence.templates
+      )) {
         const success = await this.scheduleEmail(
           formData,
           template,
           templateType as EmailTemplateType,
           sequenceId
-        );
-        
+        )
+
         if (success) {
-          scheduledEmails++;
+          scheduledEmails++
         }
       }
 
       // Store sequence metadata for tracking
-      this.storeSequenceMetadata(sequenceId, formData, sequence);
+      this.storeSequenceMetadata(sequenceId, formData, sequence)
 
       return {
         success: true,
         sequenceId,
-        scheduledEmails
-      };
+        scheduledEmails,
+      }
     } catch (error) {
-      console.error('Failed to initialize follow-up sequence:', error);
+      console.error('Failed to initialize follow-up sequence:', error)
       return {
         success: false,
-        error: error instanceof Error ? error.message : 'Unknown error'
-      };
+        error: error instanceof Error ? error.message : 'Unknown error',
+      }
     }
   }
 
@@ -1046,8 +1054,8 @@ export class EmailAutomationService {
     sequenceId: string
   ): Promise<boolean> {
     try {
-      const sendTime = Date.now() + (template.delayHours * 60 * 60 * 1000);
-      
+      const sendTime = Date.now() + template.delayHours * 60 * 60 * 1000
+
       const emailData: EmailData = {
         to: formData.email,
         subject: this.personalizeContent(template.subject, formData),
@@ -1060,38 +1068,44 @@ export class EmailAutomationService {
         metadata: {
           serviceType: formData.serviceType,
           originalSubmissionTime: Date.now(),
-          customerName: formData.name
-        }
-      };
-
-      if (this.debugMode) {
-        console.log(`[EmailAutomation] Scheduled ${templateType} email for ${formData.name} (${formData.serviceType})`, {
-          sendTime: new Date(sendTime),
-          subject: emailData.subject
-        });
-        
-        // In development, store in localStorage for debugging
-        this.storeDebugEmail(emailData);
-      } else {
-        // In production, integrate with actual email service
-        await this.sendToEmailService(emailData);
+          customerName: formData.name,
+        },
       }
 
-      return true;
+      if (this.debugMode) {
+        console.log(
+          `[EmailAutomation] Scheduled ${templateType} email for ${formData.name} (${formData.serviceType})`,
+          {
+            sendTime: new Date(sendTime),
+            subject: emailData.subject,
+          }
+        )
+
+        // In development, store in localStorage for debugging
+        this.storeDebugEmail(emailData)
+      } else {
+        // In production, integrate with actual email service
+        await this.sendToEmailService(emailData)
+      }
+
+      return true
     } catch (error) {
-      console.error(`Failed to schedule ${templateType} email:`, error);
-      return false;
+      console.error(`Failed to schedule ${templateType} email:`, error)
+      return false
     }
   }
 
   /**
    * Personalize email content with form data
    */
-  private personalizeContent(content: string, formData: ContactFormData): string {
+  private personalizeContent(
+    content: string,
+    formData: ContactFormData
+  ): string {
     return content
       .replace(/{{name}}/g, formData.name)
       .replace(/{{email}}/g, formData.email)
-      .replace(/{{service}}/g, this.getServiceDisplayName(formData.serviceType));
+      .replace(/{{service}}/g, this.getServiceDisplayName(formData.serviceType))
   }
 
   /**
@@ -1102,24 +1116,30 @@ export class EmailAutomationService {
       performance: 'Performance Services',
       teaching: 'Guitar Lessons',
       collaboration: 'Creative Collaboration',
-      general: 'General Inquiry'
-    };
-    return displayNames[serviceType] || serviceType;
+      general: 'General Inquiry',
+    }
+    return displayNames[serviceType] || serviceType
   }
 
   /**
    * Generate unique sequence ID
    */
   private generateSequenceId(formData: ContactFormData): string {
-    const timestamp = Date.now();
-    const hash = btoa(`${formData.email}-${formData.serviceType}-${timestamp}`).replace(/[^a-zA-Z0-9]/g, '');
-    return `seq_${formData.serviceType}_${timestamp}_${hash.substr(0, 8)}`;
+    const timestamp = Date.now()
+    const hash = btoa(
+      `${formData.email}-${formData.serviceType}-${timestamp}`
+    ).replace(/[^a-zA-Z0-9]/g, '')
+    return `seq_${formData.serviceType}_${timestamp}_${hash.substr(0, 8)}`
   }
 
   /**
    * Store sequence metadata for tracking and management
    */
-  private storeSequenceMetadata(sequenceId: string, formData: ContactFormData, sequence: FollowUpSequence): void {
+  private storeSequenceMetadata(
+    sequenceId: string,
+    formData: ContactFormData,
+    sequence: FollowUpSequence
+  ): void {
     const metadata: SequenceMetadata = {
       sequenceId,
       serviceType: formData.serviceType,
@@ -1129,17 +1149,19 @@ export class EmailAutomationService {
       totalDuration: sequence.totalDuration,
       status: 'active',
       emailsScheduled: Object.keys(sequence.templates).length,
-      emailsSent: 0
-    };
+      emailsSent: 0,
+    }
 
     if (this.debugMode) {
       // Store in localStorage for development
-      const existingSequences = JSON.parse(localStorage.getItem('email_sequences') || '[]');
-      existingSequences.push(metadata);
-      localStorage.setItem('email_sequences', JSON.stringify(existingSequences));
+      const existingSequences = JSON.parse(
+        localStorage.getItem('email_sequences') || '[]'
+      )
+      existingSequences.push(metadata)
+      localStorage.setItem('email_sequences', JSON.stringify(existingSequences))
     } else {
       // In production, store in actual database/analytics system
-      this.storeSequenceInDatabase(metadata);
+      this.storeSequenceInDatabase(metadata)
     }
   }
 
@@ -1151,12 +1173,14 @@ export class EmailAutomationService {
       ...emailData,
       id: `email_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
       status: 'scheduled',
-      createdAt: Date.now()
-    };
+      createdAt: Date.now(),
+    }
 
-    const existingEmails = JSON.parse(localStorage.getItem('scheduled_emails') || '[]');
-    existingEmails.push(debugEmailData);
-    localStorage.setItem('scheduled_emails', JSON.stringify(existingEmails));
+    const existingEmails = JSON.parse(
+      localStorage.getItem('scheduled_emails') || '[]'
+    )
+    existingEmails.push(debugEmailData)
+    localStorage.setItem('scheduled_emails', JSON.stringify(existingEmails))
   }
 
   /**
@@ -1168,8 +1192,11 @@ export class EmailAutomationService {
     // - Mailchimp
     // - ConvertKit
     // - Custom SMTP server
-    
-    console.log('[EmailAutomation] Production email service integration needed', emailData);
+
+    console.log(
+      '[EmailAutomation] Production email service integration needed',
+      emailData
+    )
   }
 
   /**
@@ -1177,101 +1204,136 @@ export class EmailAutomationService {
    */
   private storeSequenceInDatabase(metadata: SequenceMetadata): void {
     // This would store in actual database for production use
-    console.log('[EmailAutomation] Database integration needed for sequence metadata', metadata);
+    console.log(
+      '[EmailAutomation] Database integration needed for sequence metadata',
+      metadata
+    )
   }
 
   /**
    * Cancel email sequence (for unsubscribes, conversions, etc.)
    */
-  async cancelSequence(sequenceId: string, reason: string = 'user_request'): Promise<boolean> {
+  async cancelSequence(
+    sequenceId: string,
+    reason: string = 'user_request'
+  ): Promise<boolean> {
     try {
       if (this.debugMode) {
         // Update localStorage
-        const sequences = JSON.parse(localStorage.getItem('email_sequences') || '[]');
-        const updatedSequences = sequences.map((seq: SequenceMetadata) => 
-          seq.sequenceId === sequenceId 
-            ? { ...seq, status: 'cancelled', cancelReason: reason, cancelledAt: Date.now() }
+        const sequences = JSON.parse(
+          localStorage.getItem('email_sequences') || '[]'
+        )
+        const updatedSequences = sequences.map((seq: SequenceMetadata) =>
+          seq.sequenceId === sequenceId
+            ? {
+                ...seq,
+                status: 'cancelled',
+                cancelReason: reason,
+                cancelledAt: Date.now(),
+              }
             : seq
-        );
-        localStorage.setItem('email_sequences', JSON.stringify(updatedSequences));
+        )
+        localStorage.setItem(
+          'email_sequences',
+          JSON.stringify(updatedSequences)
+        )
       } else {
         // Cancel in production email service
-        await this.cancelSequenceInEmailService(sequenceId, reason);
+        await this.cancelSequenceInEmailService(sequenceId, reason)
       }
 
-      console.log(`[EmailAutomation] Cancelled sequence ${sequenceId} - Reason: ${reason}`);
-      return true;
+      console.log(
+        `[EmailAutomation] Cancelled sequence ${sequenceId} - Reason: ${reason}`
+      )
+      return true
     } catch (error) {
-      console.error('Failed to cancel email sequence:', error);
-      return false;
+      console.error('Failed to cancel email sequence:', error)
+      return false
     }
   }
 
   /**
    * Cancel sequence in email service (production)
    */
-  private async cancelSequenceInEmailService(sequenceId: string, reason: string): Promise<void> {
+  private async cancelSequenceInEmailService(
+    sequenceId: string,
+    reason: string
+  ): Promise<void> {
     // Implementation for production email service cancellation
-    console.log(`[EmailAutomation] Production cancellation needed for ${sequenceId}: ${reason}`);
+    console.log(
+      `[EmailAutomation] Production cancellation needed for ${sequenceId}: ${reason}`
+    )
   }
 
   /**
    * Get sequence templates for a service type (useful for preview/testing)
    */
   getSequenceTemplates(serviceType: ServiceType): FollowUpSequence | null {
-    return EMAIL_TEMPLATES[serviceType] || null;
+    return EMAIL_TEMPLATES[serviceType] || null
   }
 
   /**
    * Preview email template with sample data
    */
-  previewEmail(serviceType: ServiceType, templateType: EmailTemplateType, sampleData?: Partial<ContactFormData>): EmailTemplate | null {
-    const sequence = EMAIL_TEMPLATES[serviceType];
+  previewEmail(
+    serviceType: ServiceType,
+    templateType: EmailTemplateType,
+    sampleData?: Partial<ContactFormData>
+  ): EmailTemplate | null {
+    const sequence = EMAIL_TEMPLATES[serviceType]
     if (!sequence || !sequence.templates[templateType]) {
-      return null;
+      return null
     }
 
-    const template = sequence.templates[templateType];
+    const template = sequence.templates[templateType]
     const defaultData: ContactFormData = {
       name: sampleData?.name || 'John',
       email: sampleData?.email || 'john@example.com',
       serviceType,
       message: sampleData?.message || 'Sample inquiry message',
-      ...sampleData
-    };
+      ...sampleData,
+    }
 
     return {
       ...template,
       subject: this.personalizeContent(template.subject, defaultData),
       htmlContent: this.personalizeContent(template.htmlContent, defaultData),
-      textContent: this.personalizeContent(template.textContent, defaultData)
-    };
+      textContent: this.personalizeContent(template.textContent, defaultData),
+    }
   }
 
   /**
    * Enable/disable automation system
    */
   setEnabled(enabled: boolean): void {
-    this.isEnabled = enabled;
-    console.log(`[EmailAutomation] System ${enabled ? 'enabled' : 'disabled'}`);
+    this.isEnabled = enabled
+    console.log(`[EmailAutomation] System ${enabled ? 'enabled' : 'disabled'}`)
   }
 
   /**
    * Get automation system status
    */
-  getStatus(): { enabled: boolean; debugMode: boolean; templatesCount: number } {
+  getStatus(): {
+    enabled: boolean
+    debugMode: boolean
+    templatesCount: number
+  } {
     return {
       enabled: this.isEnabled,
       debugMode: this.debugMode,
-      templatesCount: Object.keys(EMAIL_TEMPLATES).reduce((total, serviceType) => 
-        total + Object.keys(EMAIL_TEMPLATES[serviceType as ServiceType].templates).length, 0
-      )
-    };
+      templatesCount: Object.keys(EMAIL_TEMPLATES).reduce(
+        (total, serviceType) =>
+          total +
+          Object.keys(EMAIL_TEMPLATES[serviceType as ServiceType].templates)
+            .length,
+        0
+      ),
+    }
   }
 }
 
 // Export singleton instance
-export const emailAutomationService = new EmailAutomationService();
+export const emailAutomationService = new EmailAutomationService()
 
 // Export types for external use
 export type {
@@ -1279,5 +1341,5 @@ export type {
   ContactFormData,
   EmailTemplate,
   FollowUpSequence,
-  EmailAutomationResult
-};
+  EmailAutomationResult,
+}

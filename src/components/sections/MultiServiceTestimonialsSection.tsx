@@ -1,23 +1,23 @@
-import React, { useMemo, useState } from 'react';
-import { motion } from 'framer-motion';
-import { Testimonial, ServiceType } from '@/types/content';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React, { useMemo, useState } from 'react'
+import { motion } from 'framer-motion'
+import { Testimonial, ServiceType } from '@/types/content'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 interface MultiServiceTestimonialsSectionProps {
-  testimonials: Testimonial[];
-  title?: string;
-  subtitle?: string;
-  showFilters?: boolean;
-  showServiceBreakdown?: boolean;
-  defaultService?: ServiceType;
-  maxTestimonials?: number;
-  layoutVariant?: 'grid' | 'masonry' | 'carousel';
-  className?: string;
+  testimonials: Testimonial[]
+  title?: string
+  subtitle?: string
+  showFilters?: boolean
+  showServiceBreakdown?: boolean
+  defaultService?: ServiceType
+  maxTestimonials?: number
+  layoutVariant?: 'grid' | 'masonry' | 'carousel'
+  className?: string
 }
 
 /**
  * Multi-Service Testimonials Section Component
- * 
+ *
  * Features:
  * - Displays testimonials across all services (Performance, Teaching, Collaboration)
  * - Follows 60/25/15 service allocation for visual hierarchy
@@ -26,32 +26,39 @@ interface MultiServiceTestimonialsSectionProps {
  * - Performance-optimized with lazy loading and animations
  * - Schema markup for SEO
  */
-const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionProps> = ({
+const MultiServiceTestimonialsSection: React.FC<
+  MultiServiceTestimonialsSectionProps
+> = ({
   testimonials = [],
-  title = "Client & Student Testimonials",
-  subtitle = "Hear from clients across all our services - performances, teaching, and collaborations",
+  title = 'Client & Student Testimonials',
+  subtitle = 'Hear from clients across all our services - performances, teaching, and collaborations',
   showFilters = true,
   showServiceBreakdown = true,
   defaultService,
   maxTestimonials = 9,
   layoutVariant = 'grid',
-  className = ""
+  className = '',
 }) => {
-  const [selectedService, setSelectedService] = useState<ServiceType | 'all'>(defaultService || 'all');
-  const [selectedSubType, setSelectedSubType] = useState<string>('all');
+  const [selectedService, setSelectedService] = useState<ServiceType | 'all'>(
+    defaultService || 'all'
+  )
+  const [selectedSubType, setSelectedSubType] = useState<string>('all')
 
   // Calculate testimonial statistics
   const testimonialStats = useMemo(() => {
-    const total = testimonials.length;
+    const total = testimonials.length
     const byService = {
       performance: testimonials.filter(t => t.service === 'performance').length,
       teaching: testimonials.filter(t => t.service === 'teaching').length,
-      collaboration: testimonials.filter(t => t.service === 'collaboration').length,
-    };
-    
-    const averageRating = testimonials.length > 0 
-      ? testimonials.reduce((sum, t) => sum + t.rating, 0) / testimonials.length
-      : 0;
+      collaboration: testimonials.filter(t => t.service === 'collaboration')
+        .length,
+    }
+
+    const averageRating =
+      testimonials.length > 0
+        ? testimonials.reduce((sum, t) => sum + t.rating, 0) /
+          testimonials.length
+        : 0
 
     return {
       total,
@@ -60,135 +67,169 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
         performance: {
           count: byService.performance,
           percentage: Math.round((byService.performance / total) * 100),
-          averageRating: Math.round((testimonials
-            .filter(t => t.service === 'performance')
-            .reduce((sum, t) => sum + t.rating, 0) / byService.performance || 0) * 10) / 10
+          averageRating:
+            Math.round(
+              (testimonials
+                .filter(t => t.service === 'performance')
+                .reduce((sum, t) => sum + t.rating, 0) /
+                byService.performance || 0) * 10
+            ) / 10,
         },
         teaching: {
           count: byService.teaching,
           percentage: Math.round((byService.teaching / total) * 100),
-          averageRating: Math.round((testimonials
-            .filter(t => t.service === 'teaching')
-            .reduce((sum, t) => sum + t.rating, 0) / byService.teaching || 0) * 10) / 10
+          averageRating:
+            Math.round(
+              (testimonials
+                .filter(t => t.service === 'teaching')
+                .reduce((sum, t) => sum + t.rating, 0) / byService.teaching ||
+                0) * 10
+            ) / 10,
         },
         collaboration: {
           count: byService.collaboration,
           percentage: Math.round((byService.collaboration / total) * 100),
-          averageRating: Math.round((testimonials
-            .filter(t => t.service === 'collaboration')
-            .reduce((sum, t) => sum + t.rating, 0) / byService.collaboration || 0) * 10) / 10
-        }
-      }
-    };
-  }, [testimonials]);
+          averageRating:
+            Math.round(
+              (testimonials
+                .filter(t => t.service === 'collaboration')
+                .reduce((sum, t) => sum + t.rating, 0) /
+                byService.collaboration || 0) * 10
+            ) / 10,
+        },
+      },
+    }
+  }, [testimonials])
 
   // Filter and prioritize testimonials according to service hierarchy (60/25/15)
   const filteredTestimonials = useMemo(() => {
     let filtered = testimonials.filter(testimonial => {
-      if (selectedService !== 'all' && testimonial.service !== selectedService) {
-        return false;
+      if (
+        selectedService !== 'all' &&
+        testimonial.service !== selectedService
+      ) {
+        return false
       }
-      if (selectedSubType !== 'all' && testimonial.serviceSubType !== selectedSubType) {
-        return false;
+      if (
+        selectedSubType !== 'all' &&
+        testimonial.serviceSubType !== selectedSubType
+      ) {
+        return false
       }
-      return true;
-    });
+      return true
+    })
 
     // Sort by service priority (performance > teaching > collaboration) and featured status
     filtered.sort((a, b) => {
       // First, prioritize featured testimonials
       if (a.featured !== b.featured) {
-        return a.featured ? -1 : 1;
+        return a.featured ? -1 : 1
       }
-      
+
       // Then, prioritize by service hierarchy
       const servicePriority: Record<ServiceType, number> = {
         performance: 1,
         teaching: 2,
-        collaboration: 3
-      };
-      
-      if (servicePriority[a.service] !== servicePriority[b.service]) {
-        return servicePriority[a.service] - servicePriority[b.service];
+        collaboration: 3,
       }
-      
+
+      if (servicePriority[a.service] !== servicePriority[b.service]) {
+        return servicePriority[a.service] - servicePriority[b.service]
+      }
+
       // Then by rating
       if (a.rating !== b.rating) {
-        return b.rating - a.rating;
+        return b.rating - a.rating
       }
-      
+
       // Finally by date
       if (a.date && b.date) {
-        return new Date(b.date).getTime() - new Date(a.date).getTime();
+        return new Date(b.date).getTime() - new Date(a.date).getTime()
       }
-      
-      return 0;
-    });
+
+      return 0
+    })
 
     // Apply 60/25/15 allocation if showing all services
     if (selectedService === 'all' && maxTestimonials) {
-      const performanceSlots = Math.ceil(maxTestimonials * 0.6);
-      const teachingSlots = Math.ceil(maxTestimonials * 0.25);
-      const collaborationSlots = Math.floor(maxTestimonials * 0.15);
+      const performanceSlots = Math.ceil(maxTestimonials * 0.6)
+      const teachingSlots = Math.ceil(maxTestimonials * 0.25)
+      const collaborationSlots = Math.floor(maxTestimonials * 0.15)
 
-      const performanceTestimonials = filtered.filter(t => t.service === 'performance').slice(0, performanceSlots);
-      const teachingTestimonials = filtered.filter(t => t.service === 'teaching').slice(0, teachingSlots);
-      const collaborationTestimonials = filtered.filter(t => t.service === 'collaboration').slice(0, collaborationSlots);
+      const performanceTestimonials = filtered
+        .filter(t => t.service === 'performance')
+        .slice(0, performanceSlots)
+      const teachingTestimonials = filtered
+        .filter(t => t.service === 'teaching')
+        .slice(0, teachingSlots)
+      const collaborationTestimonials = filtered
+        .filter(t => t.service === 'collaboration')
+        .slice(0, collaborationSlots)
 
-      filtered = [...performanceTestimonials, ...teachingTestimonials, ...collaborationTestimonials];
+      filtered = [
+        ...performanceTestimonials,
+        ...teachingTestimonials,
+        ...collaborationTestimonials,
+      ]
     } else if (maxTestimonials) {
-      filtered = filtered.slice(0, maxTestimonials);
+      filtered = filtered.slice(0, maxTestimonials)
     }
 
-    return filtered;
-  }, [testimonials, selectedService, selectedSubType, maxTestimonials]);
+    return filtered
+  }, [testimonials, selectedService, selectedSubType, maxTestimonials])
 
   // Get available sub-types for the selected service
   const availableSubTypes = useMemo(() => {
-    if (selectedService === 'all') return [];
-    return [...new Set(testimonials
-      .filter(t => t.service === selectedService)
-      .map(t => t.serviceSubType)
-      .filter(Boolean)
-    )];
-  }, [testimonials, selectedService]);
+    if (selectedService === 'all') return []
+    return [
+      ...new Set(
+        testimonials
+          .filter(t => t.service === selectedService)
+          .map(t => t.serviceSubType)
+          .filter(Boolean)
+      ),
+    ]
+  }, [testimonials, selectedService])
 
   // Service color mapping
   const getServiceColors = (service: ServiceType) => {
     switch (service) {
       case 'performance':
         return {
-          badge: 'bg-brand-blue-primary/20 text-brand-blue-primary border-brand-blue-primary/30',
+          badge:
+            'bg-brand-blue-primary/20 text-brand-blue-primary border-brand-blue-primary/30',
           accent: 'border-l-brand-blue-primary',
-          icon: '🎸'
-        };
+          icon: '🎸',
+        }
       case 'teaching':
         return {
-          badge: 'bg-brand-orange-warm/20 text-brand-orange-warm border-brand-orange-warm/30',
+          badge:
+            'bg-brand-orange-warm/20 text-brand-orange-warm border-brand-orange-warm/30',
           accent: 'border-l-brand-orange-warm',
-          icon: '🎓'
-        };
+          icon: '🎓',
+        }
       case 'collaboration':
         return {
-          badge: 'bg-brand-yellow-accent/20 text-brand-yellow-accent border-brand-yellow-accent/30',
+          badge:
+            'bg-brand-yellow-accent/20 text-brand-yellow-accent border-brand-yellow-accent/30',
           accent: 'border-l-brand-yellow-accent',
-          icon: '🤝'
-        };
+          icon: '🤝',
+        }
       default:
         return {
           badge: 'bg-gray-100 text-gray-700 border-gray-300',
           accent: 'border-l-gray-300',
-          icon: '⭐'
-        };
+          icon: '⭐',
+        }
     }
-  };
+  }
 
   if (testimonials.length === 0) {
-    return null;
+    return null
   }
 
   return (
-    <section 
+    <section
       id="testimonials"
       className={`py-16 lg:py-24 bg-gradient-to-br from-neutral-light/20 to-neutral-light/10 ${className}`}
       aria-labelledby="testimonials-title"
@@ -198,14 +239,11 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
         >
           {/* Section Header */}
-          <motion.div
-            className="text-center mb-16"
-            variants={fadeInUp}
-          >
-            <h2 
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <h2
               id="testimonials-title"
               className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
             >
@@ -222,25 +260,33 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                   <div className="text-2xl font-bold text-brand-blue-primary">
                     {testimonialStats.byService.performance.count}
                   </div>
-                  <div className="text-sm text-neutral-charcoal/70">Performance Reviews</div>
+                  <div className="text-sm text-neutral-charcoal/70">
+                    Performance Reviews
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-orange-warm">
                     {testimonialStats.byService.teaching.count}
                   </div>
-                  <div className="text-sm text-neutral-charcoal/70">Teaching Reviews</div>
+                  <div className="text-sm text-neutral-charcoal/70">
+                    Teaching Reviews
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-brand-yellow-accent">
                     {testimonialStats.byService.collaboration.count}
                   </div>
-                  <div className="text-sm text-neutral-charcoal/70">Collaboration Reviews</div>
+                  <div className="text-sm text-neutral-charcoal/70">
+                    Collaboration Reviews
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-neutral-charcoal">
                     {testimonialStats.averageRating}/5
                   </div>
-                  <div className="text-sm text-neutral-charcoal/70">Average Rating</div>
+                  <div className="text-sm text-neutral-charcoal/70">
+                    Average Rating
+                  </div>
                 </div>
               </div>
             )}
@@ -254,8 +300,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
             >
               <button
                 onClick={() => {
-                  setSelectedService('all');
-                  setSelectedSubType('all');
+                  setSelectedService('all')
+                  setSelectedSubType('all')
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedService === 'all'
@@ -267,8 +313,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
               </button>
               <button
                 onClick={() => {
-                  setSelectedService('performance');
-                  setSelectedSubType('all');
+                  setSelectedService('performance')
+                  setSelectedSubType('all')
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedService === 'performance'
@@ -280,8 +326,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
               </button>
               <button
                 onClick={() => {
-                  setSelectedService('teaching');
-                  setSelectedSubType('all');
+                  setSelectedService('teaching')
+                  setSelectedSubType('all')
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedService === 'teaching'
@@ -293,8 +339,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
               </button>
               <button
                 onClick={() => {
-                  setSelectedService('collaboration');
-                  setSelectedSubType('all');
+                  setSelectedService('collaboration')
+                  setSelectedSubType('all')
                 }}
                 className={`px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
                   selectedService === 'collaboration'
@@ -302,7 +348,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                     : 'bg-white text-neutral-charcoal hover:bg-brand-yellow-accent/10'
                 }`}
               >
-                🤝 Collaboration ({testimonialStats.byService.collaboration.count})
+                🤝 Collaboration (
+                {testimonialStats.byService.collaboration.count})
               </button>
             </motion.div>
           )}
@@ -340,11 +387,15 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
           )}
 
           {/* Testimonials Grid */}
-          <div className={`grid gap-8 ${
-            layoutVariant === 'grid' ? 'md:grid-cols-2 lg:grid-cols-3' : 'md:grid-cols-2'
-          }`}>
+          <div
+            className={`grid gap-8 ${
+              layoutVariant === 'grid'
+                ? 'md:grid-cols-2 lg:grid-cols-3'
+                : 'md:grid-cols-2'
+            }`}
+          >
             {filteredTestimonials.map((testimonial, index) => {
-              const serviceColors = getServiceColors(testimonial.service);
+              const serviceColors = getServiceColors(testimonial.service)
               return (
                 <motion.div
                   key={testimonial.id}
@@ -355,9 +406,14 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                   {/* Service Badge and Rating */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2">
-                      <span className={`px-3 py-1 rounded-full text-xs font-medium border ${serviceColors.badge}`}>
-                        {serviceColors.icon} {testimonial.service.charAt(0).toUpperCase() + testimonial.service.slice(1)}
-                        {testimonial.serviceSubType && ` • ${testimonial.serviceSubType.charAt(0).toUpperCase() + testimonial.serviceSubType.slice(1)}`}
+                      <span
+                        className={`px-3 py-1 rounded-full text-xs font-medium border ${serviceColors.badge}`}
+                      >
+                        {serviceColors.icon}{' '}
+                        {testimonial.service.charAt(0).toUpperCase() +
+                          testimonial.service.slice(1)}
+                        {testimonial.serviceSubType &&
+                          ` • ${testimonial.serviceSubType.charAt(0).toUpperCase() + testimonial.serviceSubType.slice(1)}`}
                       </span>
                     </div>
                     <div className="flex items-center space-x-1">
@@ -365,8 +421,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                         <svg
                           key={i}
                           className={`w-4 h-4 ${
-                            i < testimonial.rating 
-                              ? 'text-brand-yellow-accent' 
+                            i < testimonial.rating
+                              ? 'text-brand-yellow-accent'
                               : 'text-gray-300'
                           }`}
                           fill="currentColor"
@@ -399,10 +455,20 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                       </div>
                       {testimonial.verified && (
                         <div className="flex items-center space-x-1">
-                          <svg className="w-4 h-4 text-green-500" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                          <svg
+                            className="w-4 h-4 text-green-500"
+                            fill="currentColor"
+                            viewBox="0 0 20 20"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                              clipRule="evenodd"
+                            />
                           </svg>
-                          <span className="text-xs text-green-600 font-medium">Verified</span>
+                          <span className="text-xs text-green-600 font-medium">
+                            Verified
+                          </span>
                         </div>
                       )}
                     </div>
@@ -413,7 +479,7 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                     )}
                   </div>
                 </motion.div>
-              );
+              )
             })}
           </div>
 
@@ -426,7 +492,8 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
               Ready to Join Our Community?
             </h3>
             <p className="text-lg text-neutral-charcoal/80 max-w-3xl mx-auto leading-relaxed mb-6">
-              Whether you're looking for live music, guitar lessons, or creative collaboration, let's create something amazing together.
+              Whether you're looking for live music, guitar lessons, or creative
+              collaboration, let's create something amazing together.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <a
@@ -435,8 +502,18 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                 aria-label="Book a performance"
               >
                 🎸 Book Performance
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
                 </svg>
               </a>
               <a
@@ -445,8 +522,18 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
                 aria-label="Start guitar lessons"
               >
                 🎓 Start Lessons
-                <svg className="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                <svg
+                  className="w-4 h-4 ml-2"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M17 8l4 4m0 0l-4 4m4-4H3"
+                  />
                 </svg>
               </a>
             </div>
@@ -454,7 +541,7 @@ const MultiServiceTestimonialsSection: React.FC<MultiServiceTestimonialsSectionP
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default MultiServiceTestimonialsSection;
+export default MultiServiceTestimonialsSection

@@ -1,9 +1,9 @@
 /**
  * Collaboration Process Section Component
- * 
- * Visual workflow section explaining the collaboration process from 
+ *
+ * Visual workflow section explaining the collaboration process from
  * initial brief to final execution with clear step-by-step guidance.
- * 
+ *
  * Features:
  * - Brief → Scope → Execution workflow visualization
  * - Interactive process steps with detailed explanations
@@ -12,12 +12,12 @@
  * - Professional and approachable presentation
  */
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 interface CollaborationProcessProps {
-  className?: string;
+  className?: string
 }
 
 /**
@@ -28,26 +28,36 @@ const processSteps = [
     id: 'brief',
     title: 'Initial Brief',
     subtitle: 'Understanding Your Vision',
-    description: 'We start with a detailed discussion about your creative vision, goals, and requirements. This includes understanding the style, scope, timeline, and any specific elements you want to incorporate into the collaboration.',
+    description:
+      'We start with a detailed discussion about your creative vision, goals, and requirements. This includes understanding the style, scope, timeline, and any specific elements you want to incorporate into the collaboration.',
     icon: (
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
+        <path
+          fillRule="evenodd"
+          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z"
+          clipRule="evenodd"
+        />
       </svg>
     ),
     features: [
       'Vision alignment discussion',
-      'Style and genre exploration', 
+      'Style and genre exploration',
       'Timeline and budget planning',
-      'Creative goals definition'
+      'Creative goals definition',
     ],
     duration: '1-2 sessions',
-    deliverables: ['Creative brief document', 'Project timeline', 'Budget outline']
+    deliverables: [
+      'Creative brief document',
+      'Project timeline',
+      'Budget outline',
+    ],
   },
   {
     id: 'scope',
     title: 'Scope Planning',
     subtitle: 'Defining the Framework',
-    description: 'Together, we develop a comprehensive project scope that outlines roles, responsibilities, creative direction, and deliverables. This ensures we\'re aligned on expectations and sets the foundation for successful collaboration.',
+    description:
+      "Together, we develop a comprehensive project scope that outlines roles, responsibilities, creative direction, and deliverables. This ensures we're aligned on expectations and sets the foundation for successful collaboration.",
     icon: (
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
         <path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
@@ -57,47 +67,62 @@ const processSteps = [
       'Detailed project roadmap',
       'Role and responsibility mapping',
       'Creative milestone definition',
-      'Resource allocation planning'
+      'Resource allocation planning',
     ],
     duration: '1-2 weeks',
-    deliverables: ['Project scope document', 'Collaboration agreement', 'Milestone schedule']
+    deliverables: [
+      'Project scope document',
+      'Collaboration agreement',
+      'Milestone schedule',
+    ],
   },
   {
     id: 'execution',
     title: 'Creative Execution',
     subtitle: 'Bringing Ideas to Life',
-    description: 'The collaborative creation phase where we work together to bring your vision to life. This includes regular check-ins, creative sessions, feedback integration, and iterative refinement until we achieve the desired outcome.',
+    description:
+      'The collaborative creation phase where we work together to bring your vision to life. This includes regular check-ins, creative sessions, feedback integration, and iterative refinement until we achieve the desired outcome.',
     icon: (
       <svg className="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
-        <path fillRule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clipRule="evenodd" />
+        <path
+          fillRule="evenodd"
+          d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"
+          clipRule="evenodd"
+        />
       </svg>
     ),
     features: [
       'Collaborative creative sessions',
       'Regular progress reviews',
       'Feedback integration process',
-      'Quality assurance and refinement'
+      'Quality assurance and refinement',
     ],
     duration: 'Project dependent',
-    deliverables: ['Final creative output', 'Project documentation', 'Usage rights agreement']
-  }
-];
+    deliverables: [
+      'Final creative output',
+      'Project documentation',
+      'Usage rights agreement',
+    ],
+  },
+]
 
 /**
  * Collaboration Process Section
- * 
+ *
  * Interactive section displaying the three-step collaboration workflow
  * with detailed information for each phase.
  */
-export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({ 
-  className = '' 
+export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
+  className = '',
 }) => {
-  const [activeStep, setActiveStep] = useState('brief');
+  const [activeStep, setActiveStep] = useState('brief')
 
-  const activeStepData = processSteps.find(step => step.id === activeStep);
+  const activeStepData = processSteps.find(step => step.id === activeStep)
 
   return (
-    <section className={`collaboration-process py-20 bg-theme-bg/30 backdrop-blur-sm transition-theme-colors ${className}`}>
+    <section
+      className={`collaboration-process py-20 bg-theme-bg/30 backdrop-blur-sm transition-theme-colors ${className}`}
+    >
       <div className="container mx-auto max-w-7xl p-4">
         <motion.div
           variants={staggerContainer}
@@ -111,14 +136,16 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
               variants={fadeInUp}
               className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg mb-6"
             >
-              Collaboration <span className="text-brand-blue-primary">Process</span>
+              Collaboration{' '}
+              <span className="text-brand-blue-primary">Process</span>
             </motion.h2>
             <motion.p
               variants={fadeInUp}
               className="text-lg md:text-xl text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed"
             >
-              A structured yet flexible approach to creative collaboration that ensures 
-              your vision is understood, planned, and executed to the highest standard.
+              A structured yet flexible approach to creative collaboration that
+              ensures your vision is understood, planned, and executed to the
+              highest standard.
             </motion.p>
           </div>
 
@@ -137,18 +164,28 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                       : 'bg-gray-50 text-white drop-shadow-lg hover:bg-brand-blue-primary/10 hover:text-brand-blue-primary'
                   }`}
                 >
-                  <div className={`mb-3 ${activeStep === step.id ? 'text-white' : 'text-brand-blue-primary'}`}>
+                  <div
+                    className={`mb-3 ${activeStep === step.id ? 'text-white' : 'text-brand-blue-primary'}`}
+                  >
                     {step.icon}
                   </div>
                   <h3 className="font-semibold text-lg mb-1">{step.title}</h3>
                   <p className="text-sm opacity-80">{step.subtitle}</p>
                 </button>
-                
+
                 {/* Arrow connector (desktop only) */}
                 {index < processSteps.length - 1 && (
                   <div className="hidden md:block mx-4">
-                    <svg className="w-8 h-8 text-brand-blue-primary/30" fill="currentColor" viewBox="0 0 20 20">
-                      <path fillRule="evenodd" d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z" clipRule="evenodd" />
+                    <svg
+                      className="w-8 h-8 text-brand-blue-primary/30"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
+                        clipRule="evenodd"
+                      />
                     </svg>
                   </div>
                 )}
@@ -181,29 +218,43 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                       </p>
                     </div>
                   </div>
-                  
+
                   <p className="text-lg text-white/90 drop-shadow leading-relaxed mb-8">
                     {activeStepData.description}
                   </p>
-                  
+
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">Duration</h4>
+                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">
+                        Duration
+                      </h4>
                       <p className="text-brand-blue-primary font-medium">
                         {activeStepData.duration}
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">Key Deliverables</h4>
+                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">
+                        Key Deliverables
+                      </h4>
                       <ul className="text-white/80 drop-shadow space-y-1">
-                        {activeStepData.deliverables.map((deliverable, index) => (
-                          <li key={index} className="flex items-center">
-                            <svg className="w-4 h-4 text-brand-blue-primary mr-2 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                              <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                            </svg>
-                            {deliverable}
-                          </li>
-                        ))}
+                        {activeStepData.deliverables.map(
+                          (deliverable, index) => (
+                            <li key={index} className="flex items-center">
+                              <svg
+                                className="w-4 h-4 text-brand-blue-primary mr-2 flex-shrink-0"
+                                fill="currentColor"
+                                viewBox="0 0 20 20"
+                              >
+                                <path
+                                  fillRule="evenodd"
+                                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                  clipRule="evenodd"
+                                />
+                              </svg>
+                              {deliverable}
+                            </li>
+                          )
+                        )}
                       </ul>
                     </div>
                   </div>
@@ -216,11 +267,24 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                   </h4>
                   <div className="space-y-4">
                     {activeStepData.features.map((feature, index) => (
-                      <div key={index} className="flex items-center p-4 bg-theme-bg/20 backdrop-blur-sm rounded-lg border border-white/20">
-                        <svg className="w-5 h-5 text-brand-blue-primary mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      <div
+                        key={index}
+                        className="flex items-center p-4 bg-theme-bg/20 backdrop-blur-sm rounded-lg border border-white/20"
+                      >
+                        <svg
+                          className="w-5 h-5 text-brand-blue-primary mr-3 flex-shrink-0"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
                         </svg>
-                        <span className="text-white drop-shadow-lg">{feature}</span>
+                        <span className="text-white drop-shadow-lg">
+                          {feature}
+                        </span>
                       </div>
                     ))}
                   </div>
@@ -230,25 +294,23 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
           )}
 
           {/* Process Benefits */}
-          <motion.div
-            variants={fadeInUp}
-            className="mt-16 text-center"
-          >
+          <motion.div variants={fadeInUp} className="mt-16 text-center">
             <div className="bg-brand-blue-primary/5 rounded-xl p-8">
               <h3 className="text-2xl font-bold text-white drop-shadow-lg mb-4">
                 Why This Approach Works
               </h3>
               <p className="text-lg text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed">
-                This structured process ensures clear communication, aligned expectations, and 
-                successful outcomes. Every collaboration is unique, and this framework adapts 
-                to your specific needs while maintaining professional standards and quality.
+                This structured process ensures clear communication, aligned
+                expectations, and successful outcomes. Every collaboration is
+                unique, and this framework adapts to your specific needs while
+                maintaining professional standards and quality.
               </p>
             </div>
           </motion.div>
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default CollaborationProcess;
+export default CollaborationProcess

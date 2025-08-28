@@ -3,7 +3,7 @@
  * State management and utilities for teaching service pricing
  */
 
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react'
 import {
   LessonPackage,
   PricingCalculation,
@@ -11,53 +11,53 @@ import {
   getAllPackagesWithPricing,
   calculatePackagePricing,
   comparePackages,
-  getRecommendedPackage
-} from '@/utils/pricingCalculator';
+  getRecommendedPackage,
+} from '@/utils/pricingCalculator'
 
 export interface TeachingPricingState {
-  packages: LessonPackage[];
-  selectedPackage: LessonPackage | null;
-  selectedPackageId: string | null;
-  pricing: PricingCalculation | null;
+  packages: LessonPackage[]
+  selectedPackage: LessonPackage | null
+  selectedPackageId: string | null
+  pricing: PricingCalculation | null
   comparison: Array<{
-    package: LessonPackage;
-    pricing: PricingCalculation;
-    valueScore: number;
-  }>;
-  recommendedPackageId: string | null;
-  isLoading: boolean;
-  error: string | null;
+    package: LessonPackage
+    pricing: PricingCalculation
+    valueScore: number
+  }>
+  recommendedPackageId: string | null
+  isLoading: boolean
+  error: string | null
 }
 
 export interface UseTeachingPricingOptions {
-  initialPackageId?: string;
-  pricingOptions?: PricingOptions;
+  initialPackageId?: string
+  pricingOptions?: PricingOptions
   userProfile?: {
-    experience?: 'beginner' | 'intermediate' | 'advanced';
-    commitment?: 'low' | 'medium' | 'high';
-    budget?: 'low' | 'medium' | 'high';
-  };
-  enableComparison?: boolean;
-  comparisonPackages?: string[];
+    experience?: 'beginner' | 'intermediate' | 'advanced'
+    commitment?: 'low' | 'medium' | 'high'
+    budget?: 'low' | 'medium' | 'high'
+  }
+  enableComparison?: boolean
+  comparisonPackages?: string[]
 }
 
 export interface UseTeachingPricingReturn {
-  state: TeachingPricingState;
+  state: TeachingPricingState
   actions: {
-    selectPackage: (packageId: string) => void;
-    clearSelection: () => void;
-    updatePricingOptions: (options: Partial<PricingOptions>) => void;
-    refreshPricing: () => void;
-    getPackageById: (id: string) => LessonPackage | null;
-    calculateCustomPackage: (sessions: number) => PricingCalculation;
-  };
+    selectPackage: (packageId: string) => void
+    clearSelection: () => void
+    updatePricingOptions: (options: Partial<PricingOptions>) => void
+    refreshPricing: () => void
+    getPackageById: (id: string) => LessonPackage | null
+    calculateCustomPackage: (sessions: number) => PricingCalculation
+  }
   computed: {
-    hasDiscount: boolean;
-    savingsAmount: number;
-    pricePerLesson: number;
-    isRecommended: boolean;
-    comparisonEnabled: boolean;
-  };
+    hasDiscount: boolean
+    savingsAmount: number
+    pricePerLesson: number
+    isRecommended: boolean
+    comparisonEnabled: boolean
+  }
 }
 
 /**
@@ -71,8 +71,8 @@ export function useTeachingPricing(
     pricingOptions = {},
     userProfile,
     enableComparison = true,
-    comparisonPackages = ['foundation', 'transformation']
-  } = options;
+    comparisonPackages = ['foundation', 'transformation'],
+  } = options
 
   // Core pricing state
   const [state, setState] = useState<TeachingPricingState>({
@@ -83,58 +83,62 @@ export function useTeachingPricing(
     comparison: [],
     recommendedPackageId: null,
     isLoading: true,
-    error: null
-  });
+    error: null,
+  })
 
   // Current pricing options
-  const [currentPricingOptions, setCurrentPricingOptions] = useState<PricingOptions>(pricingOptions);
+  const [currentPricingOptions, setCurrentPricingOptions] =
+    useState<PricingOptions>(pricingOptions)
 
   /**
    * Select package by ID
    */
-  const selectPackageById = useCallback((
-    packageId: string,
-    availablePackages?: LessonPackage[]
-  ) => {
-    const packages = availablePackages || state.packages;
-    const selectedPackage = packages.find(pkg => pkg.id === packageId) || null;
-    
-    if (selectedPackage) {
-      const pricing = calculatePackagePricing(selectedPackage.sessions, currentPricingOptions);
-      
-      setState(prev => ({
-        ...prev,
-        selectedPackage,
-        selectedPackageId: packageId,
-        pricing
-      }));
-    }
-  }, [state.packages, currentPricingOptions]);
+  const selectPackageById = useCallback(
+    (packageId: string, availablePackages?: LessonPackage[]) => {
+      const packages = availablePackages || state.packages
+      const selectedPackage = packages.find(pkg => pkg.id === packageId) || null
+
+      if (selectedPackage) {
+        const pricing = calculatePackagePricing(
+          selectedPackage.sessions,
+          currentPricingOptions
+        )
+
+        setState(prev => ({
+          ...prev,
+          selectedPackage,
+          selectedPackageId: packageId,
+          pricing,
+        }))
+      }
+    },
+    [state.packages, currentPricingOptions]
+  )
 
   /**
    * Load all packages with pricing
    */
   const loadPackages = useCallback(async () => {
     try {
-      setState(prev => ({ ...prev, isLoading: true, error: null }));
-      
+      setState(prev => ({ ...prev, isLoading: true, error: null }))
+
       // Simulate async data loading (could be from API)
-      const packages = getAllPackagesWithPricing(currentPricingOptions);
-      
+      const packages = getAllPackagesWithPricing(currentPricingOptions)
+
       // Get recommended package
-      let recommendedPackageId = null;
+      let recommendedPackageId = null
       if (userProfile) {
         recommendedPackageId = getRecommendedPackage(
           userProfile.experience || 'beginner',
           userProfile.commitment || 'medium',
           userProfile.budget || 'medium'
-        );
+        )
       }
 
       // Generate comparison if enabled
-      let comparison: TeachingPricingState['comparison'] = [];
+      let comparison: TeachingPricingState['comparison'] = []
       if (enableComparison) {
-        comparison = comparePackages(comparisonPackages, currentPricingOptions);
+        comparison = comparePackages(comparisonPackages, currentPricingOptions)
       }
 
       setState(prev => ({
@@ -142,31 +146,41 @@ export function useTeachingPricing(
         packages,
         recommendedPackageId,
         comparison,
-        isLoading: false
-      }));
+        isLoading: false,
+      }))
 
       // Select initial package if specified
       if (initialPackageId) {
-        selectPackageById(initialPackageId, packages);
+        selectPackageById(initialPackageId, packages)
       } else if (recommendedPackageId) {
-        selectPackageById(recommendedPackageId, packages);
+        selectPackageById(recommendedPackageId, packages)
       }
-
     } catch (error) {
       setState(prev => ({
         ...prev,
-        error: error instanceof Error ? error.message : 'Failed to load pricing',
-        isLoading: false
-      }));
+        error:
+          error instanceof Error ? error.message : 'Failed to load pricing',
+        isLoading: false,
+      }))
     }
-  }, [currentPricingOptions, userProfile, enableComparison, comparisonPackages, initialPackageId, selectPackageById]);
+  }, [
+    currentPricingOptions,
+    userProfile,
+    enableComparison,
+    comparisonPackages,
+    initialPackageId,
+    selectPackageById,
+  ])
 
   /**
    * Public action: Select package
    */
-  const selectPackage = useCallback((packageId: string) => {
-    selectPackageById(packageId);
-  }, [selectPackageById]);
+  const selectPackage = useCallback(
+    (packageId: string) => {
+      selectPackageById(packageId)
+    },
+    [selectPackageById]
+  )
 
   /**
    * Public action: Clear selection
@@ -176,60 +190,72 @@ export function useTeachingPricing(
       ...prev,
       selectedPackage: null,
       selectedPackageId: null,
-      pricing: null
-    }));
-  }, []);
+      pricing: null,
+    }))
+  }, [])
 
   /**
    * Public action: Update pricing options
    */
-  const updatePricingOptions = useCallback((newOptions: Partial<PricingOptions>) => {
-    setCurrentPricingOptions(prev => ({
-      ...prev,
-      ...newOptions
-    }));
-  }, []);
+  const updatePricingOptions = useCallback(
+    (newOptions: Partial<PricingOptions>) => {
+      setCurrentPricingOptions(prev => ({
+        ...prev,
+        ...newOptions,
+      }))
+    },
+    []
+  )
 
   /**
    * Public action: Refresh pricing data
    */
   const refreshPricing = useCallback(() => {
-    loadPackages();
-  }, [loadPackages]);
+    loadPackages()
+  }, [loadPackages])
 
   /**
    * Public action: Get package by ID
    */
-  const getPackageById = useCallback((id: string): LessonPackage | null => {
-    return state.packages.find(pkg => pkg.id === id) || null;
-  }, [state.packages]);
+  const getPackageById = useCallback(
+    (id: string): LessonPackage | null => {
+      return state.packages.find(pkg => pkg.id === id) || null
+    },
+    [state.packages]
+  )
 
   /**
    * Public action: Calculate custom package pricing
    */
-  const calculateCustomPackage = useCallback((sessions: number): PricingCalculation => {
-    return calculatePackagePricing(sessions, currentPricingOptions);
-  }, [currentPricingOptions]);
+  const calculateCustomPackage = useCallback(
+    (sessions: number): PricingCalculation => {
+      return calculatePackagePricing(sessions, currentPricingOptions)
+    },
+    [currentPricingOptions]
+  )
 
   // Computed values
-  const computed = useMemo(() => ({
-    hasDiscount: Boolean(state.pricing?.discountApplied),
-    savingsAmount: state.pricing?.savings || 0,
-    pricePerLesson: state.pricing?.pricePerLesson || 0,
-    isRecommended: state.selectedPackageId === state.recommendedPackageId,
-    comparisonEnabled: enableComparison && state.comparison.length > 0
-  }), [
-    state.pricing,
-    state.selectedPackageId,
-    state.recommendedPackageId,
-    enableComparison,
-    state.comparison
-  ]);
+  const computed = useMemo(
+    () => ({
+      hasDiscount: Boolean(state.pricing?.discountApplied),
+      savingsAmount: state.pricing?.savings || 0,
+      pricePerLesson: state.pricing?.pricePerLesson || 0,
+      isRecommended: state.selectedPackageId === state.recommendedPackageId,
+      comparisonEnabled: enableComparison && state.comparison.length > 0,
+    }),
+    [
+      state.pricing,
+      state.selectedPackageId,
+      state.recommendedPackageId,
+      enableComparison,
+      state.comparison,
+    ]
+  )
 
   // Load packages on mount or when options change
   useEffect(() => {
-    loadPackages();
-  }, [loadPackages]);
+    loadPackages()
+  }, [loadPackages])
 
   // Update selected package pricing when options change
   useEffect(() => {
@@ -237,14 +263,14 @@ export function useTeachingPricing(
       const updatedPricing = calculatePackagePricing(
         state.selectedPackage.sessions,
         currentPricingOptions
-      );
-      
+      )
+
       setState(prev => ({
         ...prev,
-        pricing: updatedPricing
-      }));
+        pricing: updatedPricing,
+      }))
     }
-  }, [currentPricingOptions, state.selectedPackageId, state.selectedPackage]);
+  }, [currentPricingOptions, state.selectedPackageId, state.selectedPackage])
 
   return {
     state,
@@ -254,10 +280,10 @@ export function useTeachingPricing(
       updatePricingOptions,
       refreshPricing,
       getPackageById,
-      calculateCustomPackage
+      calculateCustomPackage,
     },
-    computed
-  };
+    computed,
+  }
 }
 
 /**
@@ -269,32 +295,33 @@ export function useSimplePackageSelection(
 ) {
   const [selectedPackageId, setSelectedPackageId] = useState<string>(
     initialPackageId || packages[0]?.id || ''
-  );
+  )
 
-  const selectedPackage = useMemo(() => 
-    packages.find(pkg => pkg.id === selectedPackageId) || null,
+  const selectedPackage = useMemo(
+    () => packages.find(pkg => pkg.id === selectedPackageId) || null,
     [packages, selectedPackageId]
-  );
+  )
 
   const selectNext = useCallback(() => {
-    const currentIndex = packages.findIndex(pkg => pkg.id === selectedPackageId);
-    const nextIndex = (currentIndex + 1) % packages.length;
-    setSelectedPackageId(packages[nextIndex].id);
-  }, [packages, selectedPackageId]);
+    const currentIndex = packages.findIndex(pkg => pkg.id === selectedPackageId)
+    const nextIndex = (currentIndex + 1) % packages.length
+    setSelectedPackageId(packages[nextIndex].id)
+  }, [packages, selectedPackageId])
 
   const selectPrevious = useCallback(() => {
-    const currentIndex = packages.findIndex(pkg => pkg.id === selectedPackageId);
-    const prevIndex = currentIndex === 0 ? packages.length - 1 : currentIndex - 1;
-    setSelectedPackageId(packages[prevIndex].id);
-  }, [packages, selectedPackageId]);
+    const currentIndex = packages.findIndex(pkg => pkg.id === selectedPackageId)
+    const prevIndex =
+      currentIndex === 0 ? packages.length - 1 : currentIndex - 1
+    setSelectedPackageId(packages[prevIndex].id)
+  }, [packages, selectedPackageId])
 
   return {
     selectedPackageId,
     selectedPackage,
     setSelectedPackageId,
     selectNext,
-    selectPrevious
-  };
+    selectPrevious,
+  }
 }
 
-export default useTeachingPricing;
+export default useTeachingPricing

@@ -26,7 +26,7 @@
       "description": "Majority of content focuses on performance services"
     },
     "secondary": {
-      "service": "teaching", 
+      "service": "teaching",
       "allocation": 15,
       "description": "Secondary focus on teaching services"
     },

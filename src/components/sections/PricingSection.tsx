@@ -1,36 +1,36 @@
-import React from 'react';
-import { motion } from 'framer-motion';
-import { useSectionContent } from '@/hooks/useContent';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React from 'react'
+import { motion } from 'framer-motion'
+import { useSectionContent } from '@/hooks/useContent'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 interface PricingPackage {
-  id: string;
-  name: string;
-  description: string;
-  price: string;
-  duration: string;
-  features: string[];
-  popular: boolean;
-  bestFor: string;
+  id: string
+  name: string
+  description: string
+  price: string
+  duration: string
+  features: string[]
+  popular: boolean
+  bestFor: string
 }
 
 interface AdditionalService {
-  name: string;
-  price: string;
+  name: string
+  price: string
 }
 
 interface PricingData {
-  title: string;
-  subtitle: string;
-  description: string;
-  packages: PricingPackage[];
-  additionalServices: AdditionalService[];
-  notes: string[];
+  title: string
+  subtitle: string
+  description: string
+  packages: PricingPackage[]
+  additionalServices: AdditionalService[]
+  notes: string[]
 }
 
 /**
  * Performance Pricing Section Component
- * 
+ *
  * Features:
  * - Displays performance service packages and pricing
  * - Highlights popular package with visual emphasis
@@ -39,8 +39,8 @@ interface PricingData {
  * - Clear call-to-action for booking inquiries
  */
 const PricingSection: React.FC = () => {
-  const { data: performanceData, loading } = useSectionContent('performance');
-  
+  const { data: performanceData, loading } = useSectionContent('performance')
+
   if (loading) {
     return (
       <section className="py-16 lg:py-24 bg-white">
@@ -52,14 +52,14 @@ const PricingSection: React.FC = () => {
               <div className="h-4 bg-gray-200 rounded w-2/3 mx-auto"></div>
             </div>
             <div className="grid md:grid-cols-3 gap-8">
-              {[1, 2, 3].map((i) => (
+              {[1, 2, 3].map(i => (
                 <div key={i} className="bg-gray-50 rounded-xl p-6 border">
                   <div className="space-y-4">
                     <div className="h-6 bg-gray-200 rounded w-3/4"></div>
                     <div className="h-8 bg-gray-200 rounded w-1/2"></div>
                     <div className="h-4 bg-gray-200 rounded w-2/3"></div>
                     <div className="space-y-2">
-                      {[1, 2, 3, 4, 5].map((j) => (
+                      {[1, 2, 3, 4, 5].map(j => (
                         <div key={j} className="h-4 bg-gray-200 rounded"></div>
                       ))}
                     </div>
@@ -71,17 +71,17 @@ const PricingSection: React.FC = () => {
           </div>
         </div>
       </section>
-    );
+    )
   }
 
-  const pricingData = performanceData?.pricing as PricingData;
-  
+  const pricingData = performanceData?.pricing as PricingData
+
   if (!pricingData) {
-    return null;
+    return null
   }
 
   return (
-    <section 
+    <section
       id="pricing"
       className="py-16 lg:py-24 bg-white"
       aria-labelledby="pricing-title"
@@ -91,14 +91,11 @@ const PricingSection: React.FC = () => {
           variants={staggerContainer}
           initial="hidden"
           whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
+          viewport={{ once: true, margin: '-100px' }}
         >
           {/* Section Header */}
-          <motion.div
-            className="text-center mb-16"
-            variants={fadeInUp}
-          >
-            <h2 
+          <motion.div className="text-center mb-16" variants={fadeInUp}>
+            <h2
               id="pricing-title"
               className="text-3xl sm:text-4xl lg:text-5xl font-heading font-bold text-neutral-charcoal mb-6"
             >
@@ -118,8 +115,8 @@ const PricingSection: React.FC = () => {
               <motion.div
                 key={pkg.id}
                 className={`relative bg-white rounded-xl border-2 p-6 lg:p-8 ${
-                  pkg.popular 
-                    ? 'border-brand-orange-warm shadow-xl scale-105' 
+                  pkg.popular
+                    ? 'border-brand-orange-warm shadow-xl scale-105'
                     : 'border-gray-200 shadow-sm hover:shadow-md'
                 } transition-all duration-300`}
                 variants={fadeInUp}
@@ -156,17 +153,29 @@ const PricingSection: React.FC = () => {
                 <ul className="space-y-3 mb-6">
                   {pkg.features.map((feature, featureIndex) => (
                     <li key={featureIndex} className="flex items-start">
-                      <svg className="w-5 h-5 text-brand-orange-warm mt-0.5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
-                        <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                      <svg
+                        className="w-5 h-5 text-brand-orange-warm mt-0.5 mr-3 flex-shrink-0"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                          clipRule="evenodd"
+                        />
                       </svg>
-                      <span className="text-sm text-neutral-charcoal leading-relaxed">{feature}</span>
+                      <span className="text-sm text-neutral-charcoal leading-relaxed">
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
 
                 {/* Best For */}
                 <div className="border-t pt-4 mb-6">
-                  <p className="text-xs text-neutral-charcoal/60 font-medium mb-2">Best For:</p>
+                  <p className="text-xs text-neutral-charcoal/60 font-medium mb-2">
+                    Best For:
+                  </p>
                   <p className="text-sm text-neutral-charcoal">{pkg.bestFor}</p>
                 </div>
 
@@ -219,14 +228,27 @@ const PricingSection: React.FC = () => {
             variants={fadeInUp}
           >
             <h3 className="text-xl font-heading font-semibold text-neutral-charcoal mb-4 flex items-center">
-              <svg className="w-6 h-6 text-brand-blue-primary mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              <svg
+                className="w-6 h-6 text-brand-blue-primary mr-2"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
               </svg>
               Important Information
             </h3>
             <ul className="space-y-2">
               {pricingData.notes.map((note, index) => (
-                <li key={index} className="text-sm text-neutral-charcoal/80 flex items-start">
+                <li
+                  key={index}
+                  className="text-sm text-neutral-charcoal/80 flex items-start"
+                >
                   <span className="text-brand-blue-primary mr-2 mt-1">•</span>
                   {note}
                 </li>
@@ -235,15 +257,13 @@ const PricingSection: React.FC = () => {
           </motion.div>
 
           {/* Contact CTA */}
-          <motion.div
-            className="mt-16 text-center"
-            variants={fadeInUp}
-          >
+          <motion.div className="mt-16 text-center" variants={fadeInUp}>
             <h3 className="text-2xl lg:text-3xl font-heading font-semibold text-neutral-charcoal mb-4">
               Ready to Discuss Your Event?
             </h3>
             <p className="text-lg text-neutral-charcoal/80 max-w-2xl mx-auto leading-relaxed mb-8">
-              Every event is unique. Contact us for a personalized quote and to discuss how we can make your occasion unforgettable.
+              Every event is unique. Contact us for a personalized quote and to
+              discuss how we can make your occasion unforgettable.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <a
@@ -265,7 +285,7 @@ const PricingSection: React.FC = () => {
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default PricingSection;
+export default PricingSection

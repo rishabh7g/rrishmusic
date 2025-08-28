@@ -1,4 +1,4 @@
-import { LessonPackage } from '@/types/content';
+import { LessonPackage } from '@/types/content'
 
 /**
  * Pricing configuration constants
@@ -6,21 +6,21 @@ import { LessonPackage } from '@/types/content';
 export const PRICING_CONFIG = {
   BASE_LESSON_PRICE: 50, // Base price per lesson in AUD
   CURRENCY: 'AUD',
-  
+
   // Discount tiers based on session count
   DISCOUNT_TIERS: {
-    SINGLE: 0,      // 1 session - no discount
-    SMALL: 5,       // 2-4 sessions - 5% discount
-    MEDIUM: 10,     // 5-8 sessions - 10% discount
-    LARGE: 15,      // 9+ sessions - 15% discount
+    SINGLE: 0, // 1 session - no discount
+    SMALL: 5, // 2-4 sessions - 5% discount
+    MEDIUM: 10, // 5-8 sessions - 10% discount
+    LARGE: 15, // 9+ sessions - 15% discount
   },
-  
+
   // Special pricing
   TRIAL_LESSON: {
-    DURATION: 30,   // minutes
-    PRICE: 45,      // AUD
+    DURATION: 30, // minutes
+    PRICE: 45, // AUD
   },
-  
+
   // Package-specific pricing rules
   PACKAGE_RULES: {
     'single-lesson': {
@@ -36,60 +36,62 @@ export const PRICING_CONFIG = {
       discountPercentage: 10,
     },
   } as const,
-} as const;
+} as const
 
-export type PackageId = keyof typeof PRICING_CONFIG.PACKAGE_RULES;
+export type PackageId = keyof typeof PRICING_CONFIG.PACKAGE_RULES
 
 /**
  * Calculated pricing information for a lesson package
  */
 export interface CalculatedPricing {
-  basePrice: number;
-  totalSessions: number;
-  discountPercentage: number;
-  discountAmount: number;
-  totalPrice: number;
-  pricePerSession: number;
-  currency: string;
-  savings?: number;
+  basePrice: number
+  totalSessions: number
+  discountPercentage: number
+  discountAmount: number
+  totalPrice: number
+  pricePerSession: number
+  currency: string
+  savings?: number
 }
 
 /**
  * Calculate pricing for a lesson package dynamically
- * 
+ *
  * @param packageData - The lesson package data
  * @returns Calculated pricing information
  */
-export function calculateLessonPackagePricing(packageData: Partial<LessonPackage>): CalculatedPricing {
-  const packageId = packageData.id as PackageId;
-  const sessions = packageData.sessions || 1;
-  const duration = packageData.duration || 60;
-  
+export function calculateLessonPackagePricing(
+  packageData: Partial<LessonPackage>
+): CalculatedPricing {
+  const packageId = packageData.id as PackageId
+  const sessions = packageData.sessions || 1
+  const duration = packageData.duration || 60
+
   // Get base configuration for this package
-  const packageRule = PRICING_CONFIG.PACKAGE_RULES[packageId];
-  
-  let basePrice = packageRule?.basePrice || PRICING_CONFIG.BASE_LESSON_PRICE;
-  const discountPercentage = packageRule?.discountPercentage || 0;
-  
+  const packageRule = PRICING_CONFIG.PACKAGE_RULES[packageId]
+
+  let basePrice = packageRule?.basePrice || PRICING_CONFIG.BASE_LESSON_PRICE
+  const discountPercentage = packageRule?.discountPercentage || 0
+
   // Adjust for lesson duration if not standard 60 minutes
   if (duration !== 60) {
-    basePrice = Math.round((basePrice * duration) / 60);
+    basePrice = Math.round((basePrice * duration) / 60)
   }
-  
+
   // Calculate base total before discount
-  const baseTotalPrice = basePrice * sessions;
-  
+  const baseTotalPrice = basePrice * sessions
+
   // Calculate discount amount
-  const discountAmount = Math.round((baseTotalPrice * discountPercentage) / 100);
-  
+  const discountAmount = Math.round((baseTotalPrice * discountPercentage) / 100)
+
   // Calculate final prices
-  const totalPrice = baseTotalPrice - discountAmount;
-  const pricePerSession = Math.round(totalPrice / sessions);
-  
+  const totalPrice = baseTotalPrice - discountAmount
+  const pricePerSession = Math.round(totalPrice / sessions)
+
   // Calculate savings compared to individual lessons
-  const individualLessonTotal = PRICING_CONFIG.BASE_LESSON_PRICE * sessions;
-  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0;
-  
+  const individualLessonTotal = PRICING_CONFIG.BASE_LESSON_PRICE * sessions
+  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0
+
   return {
     basePrice,
     totalSessions: sessions,
@@ -98,8 +100,8 @@ export function calculateLessonPackagePricing(packageData: Partial<LessonPackage
     totalPrice,
     pricePerSession,
     currency: PRICING_CONFIG.CURRENCY,
-    ...(savings > 0 && { savings })
-  };
+    ...(savings > 0 && { savings }),
+  }
 }
 
 /**
@@ -114,37 +116,41 @@ export function calculateTrialLessonPricing(): CalculatedPricing {
     totalPrice: PRICING_CONFIG.TRIAL_LESSON.PRICE,
     pricePerSession: PRICING_CONFIG.TRIAL_LESSON.PRICE,
     currency: PRICING_CONFIG.CURRENCY,
-  };
+  }
 }
 
 /**
  * Get discount tier based on session count
  */
 export function getDiscountTier(sessions: number): number {
-  if (sessions === 1) return PRICING_CONFIG.DISCOUNT_TIERS.SINGLE;
-  if (sessions <= 4) return PRICING_CONFIG.DISCOUNT_TIERS.SMALL;
-  if (sessions <= 8) return PRICING_CONFIG.DISCOUNT_TIERS.MEDIUM;
-  return PRICING_CONFIG.DISCOUNT_TIERS.LARGE;
+  if (sessions === 1) return PRICING_CONFIG.DISCOUNT_TIERS.SINGLE
+  if (sessions <= 4) return PRICING_CONFIG.DISCOUNT_TIERS.SMALL
+  if (sessions <= 8) return PRICING_CONFIG.DISCOUNT_TIERS.MEDIUM
+  return PRICING_CONFIG.DISCOUNT_TIERS.LARGE
 }
 
 /**
  * Calculate bulk pricing for custom session counts
  */
-export function calculateBulkPricing(sessions: number, duration: number = 60): CalculatedPricing {
-  const basePrice = duration === 60 
-    ? PRICING_CONFIG.BASE_LESSON_PRICE 
-    : Math.round((PRICING_CONFIG.BASE_LESSON_PRICE * duration) / 60);
-  
-  const discountPercentage = getDiscountTier(sessions);
-  const baseTotalPrice = basePrice * sessions;
-  const discountAmount = Math.round((baseTotalPrice * discountPercentage) / 100);
-  const totalPrice = baseTotalPrice - discountAmount;
-  const pricePerSession = Math.round(totalPrice / sessions);
-  
+export function calculateBulkPricing(
+  sessions: number,
+  duration: number = 60
+): CalculatedPricing {
+  const basePrice =
+    duration === 60
+      ? PRICING_CONFIG.BASE_LESSON_PRICE
+      : Math.round((PRICING_CONFIG.BASE_LESSON_PRICE * duration) / 60)
+
+  const discountPercentage = getDiscountTier(sessions)
+  const baseTotalPrice = basePrice * sessions
+  const discountAmount = Math.round((baseTotalPrice * discountPercentage) / 100)
+  const totalPrice = baseTotalPrice - discountAmount
+  const pricePerSession = Math.round(totalPrice / sessions)
+
   // Calculate savings compared to individual lessons
-  const individualLessonTotal = PRICING_CONFIG.BASE_LESSON_PRICE * sessions;
-  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0;
-  
+  const individualLessonTotal = PRICING_CONFIG.BASE_LESSON_PRICE * sessions
+  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0
+
   return {
     basePrice,
     totalSessions: sessions,
@@ -153,27 +159,30 @@ export function calculateBulkPricing(sessions: number, duration: number = 60): C
     totalPrice,
     pricePerSession,
     currency: PRICING_CONFIG.CURRENCY,
-    ...(savings > 0 && { savings })
-  };
+    ...(savings > 0 && { savings }),
+  }
 }
 
 /**
  * Format price for display
  */
-export function formatPrice(price: number, currency: string = PRICING_CONFIG.CURRENCY): string {
+export function formatPrice(
+  price: number,
+  currency: string = PRICING_CONFIG.CURRENCY
+): string {
   return new Intl.NumberFormat('en-AU', {
     style: 'currency',
     currency: currency,
     minimumFractionDigits: 0,
     maximumFractionDigits: 0,
-  }).format(price);
+  }).format(price)
 }
 
 /**
  * Format discount percentage for display
  */
 export function formatDiscount(percentage: number): string {
-  return `${percentage}%`;
+  return `${percentage}%`
 }
 
 /**
@@ -181,18 +190,18 @@ export function formatDiscount(percentage: number): string {
  */
 export function getPricingSummary(pricing: CalculatedPricing): string {
   if (pricing.totalSessions === 1) {
-    return `${formatPrice(pricing.totalPrice)} per lesson`;
+    return `${formatPrice(pricing.totalPrice)} per lesson`
   }
-  
-  let summary = `${formatPrice(pricing.totalPrice)} for ${pricing.totalSessions} lessons`;
-  
+
+  let summary = `${formatPrice(pricing.totalPrice)} for ${pricing.totalSessions} lessons`
+
   if (pricing.discountPercentage > 0) {
-    summary += ` (${formatDiscount(pricing.discountPercentage)} off)`;
+    summary += ` (${formatDiscount(pricing.discountPercentage)} off)`
   }
-  
+
   if (pricing.savings && pricing.savings > 0) {
-    summary += ` - Save ${formatPrice(pricing.savings)}`;
+    summary += ` - Save ${formatPrice(pricing.savings)}`
   }
-  
-  return summary;
+
+  return summary
 }

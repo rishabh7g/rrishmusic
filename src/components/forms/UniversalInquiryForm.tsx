@@ -1,119 +1,121 @@
 /**
  * Universal Inquiry Form
- * 
+ *
  * Single unified form for all inquiries - lessons, performances, collaboration, studio work, etc.
  * Simple and flexible with just basic contact info and open text area for any inquiry.
  */
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 
 export interface UniversalInquiryData {
-  name: string;
-  email: string;
-  mobile: string;
-  inquiry: string;
+  name: string
+  email: string
+  mobile: string
+  inquiry: string
 }
 
 interface UniversalInquiryFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: UniversalInquiryData) => void;
-  className?: string;
+  isOpen: boolean
+  onClose: () => void
+  onSubmit: (data: UniversalInquiryData) => void
+  className?: string
 }
 
 export const UniversalInquiryForm: React.FC<UniversalInquiryFormProps> = ({
   isOpen,
   onClose,
   onSubmit,
-  className = ''
+  className = '',
 }) => {
   const [formData, setFormData] = useState<UniversalInquiryData>({
     name: '',
     email: '',
     mobile: '',
-    inquiry: ''
-  });
+    inquiry: '',
+  })
 
-  const [errors, setErrors] = useState<Partial<UniversalInquiryData>>({});
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Partial<UniversalInquiryData>>({})
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<UniversalInquiryData> = {};
+    const newErrors: Partial<UniversalInquiryData> = {}
 
     if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
+      newErrors.name = 'Name is required'
     }
 
     if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
+      newErrors.email = 'Email is required'
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
+      newErrors.email = 'Please enter a valid email address'
     }
 
     if (!formData.mobile.trim()) {
-      newErrors.mobile = 'Mobile number is required';
+      newErrors.mobile = 'Mobile number is required'
     }
 
     if (!formData.inquiry.trim()) {
-      newErrors.inquiry = 'Please tell us about your inquiry';
+      newErrors.inquiry = 'Please tell us about your inquiry'
     }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    e.preventDefault()
 
     if (!validateForm()) {
-      return;
+      return
     }
 
-    setIsSubmitting(true);
+    setIsSubmitting(true)
 
     try {
-      await onSubmit(formData);
-      
+      await onSubmit(formData)
+
       // Reset form
       setFormData({
         name: '',
         email: '',
         mobile: '',
-        inquiry: ''
-      });
-      setErrors({});
-      
+        inquiry: '',
+      })
+      setErrors({})
+
       // Close form after successful submission
       setTimeout(() => {
-        onClose();
-      }, 1000);
-      
+        onClose()
+      }, 1000)
     } catch (error) {
-      console.error('Form submission error:', error);
+      console.error('Form submission error:', error)
     } finally {
-      setIsSubmitting(false);
+      setIsSubmitting(false)
     }
-  };
+  }
 
-  const handleInputChange = (field: keyof UniversalInquiryData, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    
+  const handleInputChange = (
+    field: keyof UniversalInquiryData,
+    value: string
+  ) => {
+    setFormData(prev => ({ ...prev, [field]: value }))
+
     // Clear error when user starts typing
     if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: undefined }));
+      setErrors(prev => ({ ...prev, [field]: undefined }))
     }
-  };
+  }
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <>
       {/* Backdrop */}
-      <div 
+      <div
         className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity duration-300"
         onClick={onClose}
       />
-      
+
       {/* Modal */}
       <div className="fixed inset-0 z-50 overflow-y-auto">
         <div className="min-h-full flex items-center justify-center p-4">
@@ -133,92 +135,123 @@ export const UniversalInquiryForm: React.FC<UniversalInquiryFormProps> = ({
                 className="p-2 hover:bg-theme-bg-secondary rounded-lg transition-theme-colors"
                 aria-label="Close form"
               >
-                <svg className="w-6 h-6 text-theme-text-muted" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                <svg
+                  className="w-6 h-6 text-theme-text-muted"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M6 18L18 6M6 6l12 12"
+                  />
                 </svg>
               </button>
             </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
-              
               {/* Name */}
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors"
+                >
                   Name *
                 </label>
                 <input
                   type="text"
                   id="name"
                   value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
+                  onChange={e => handleInputChange('name', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md bg-theme-bg text-theme-text placeholder-theme-text-muted transition-theme-colors focus:ring-2 focus:ring-theme-primary focus:border-transparent ${
                     errors.name ? 'border-theme-error' : 'border-theme-border'
                   }`}
                   placeholder="Your full name"
                 />
                 {errors.name && (
-                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">{errors.name}</p>
+                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">
+                    {errors.name}
+                  </p>
                 )}
               </div>
 
               {/* Email */}
               <div>
-                <label htmlFor="email" className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors"
+                >
                   Email *
                 </label>
                 <input
                   type="email"
                   id="email"
                   value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
+                  onChange={e => handleInputChange('email', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md bg-theme-bg text-theme-text placeholder-theme-text-muted transition-theme-colors focus:ring-2 focus:ring-theme-primary focus:border-transparent ${
                     errors.email ? 'border-theme-error' : 'border-theme-border'
                   }`}
                   placeholder="your.email@example.com"
                 />
                 {errors.email && (
-                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">{errors.email}</p>
+                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">
+                    {errors.email}
+                  </p>
                 )}
               </div>
 
               {/* Mobile */}
               <div>
-                <label htmlFor="mobile" className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors">
+                <label
+                  htmlFor="mobile"
+                  className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors"
+                >
                   Mobile Number *
                 </label>
                 <input
                   type="tel"
                   id="mobile"
                   value={formData.mobile}
-                  onChange={(e) => handleInputChange('mobile', e.target.value)}
+                  onChange={e => handleInputChange('mobile', e.target.value)}
                   className={`w-full px-3 py-2 border rounded-md bg-theme-bg text-theme-text placeholder-theme-text-muted transition-theme-colors focus:ring-2 focus:ring-theme-primary focus:border-transparent ${
                     errors.mobile ? 'border-theme-error' : 'border-theme-border'
                   }`}
                   placeholder="Your mobile number"
                 />
                 {errors.mobile && (
-                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">{errors.mobile}</p>
+                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">
+                    {errors.mobile}
+                  </p>
                 )}
               </div>
 
               {/* Inquiry */}
               <div>
-                <label htmlFor="inquiry" className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors">
+                <label
+                  htmlFor="inquiry"
+                  className="block text-sm font-medium text-theme-text mb-2 transition-theme-colors"
+                >
                   Inquiry *
                 </label>
                 <textarea
                   id="inquiry"
                   value={formData.inquiry}
-                  onChange={(e) => handleInputChange('inquiry', e.target.value)}
+                  onChange={e => handleInputChange('inquiry', e.target.value)}
                   rows={5}
                   className={`w-full px-3 py-2 border rounded-md bg-theme-bg text-theme-text placeholder-theme-text-muted transition-theme-colors focus:ring-2 focus:ring-theme-primary focus:border-transparent resize-vertical ${
-                    errors.inquiry ? 'border-theme-error' : 'border-theme-border'
+                    errors.inquiry
+                      ? 'border-theme-error'
+                      : 'border-theme-border'
                   }`}
                   placeholder="Tell us about your inquiry - whether it's music lessons, live performance bookings, studio collaboration, recording sessions, or any other musical project..."
                 />
                 {errors.inquiry && (
-                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">{errors.inquiry}</p>
+                  <p className="mt-1 text-sm text-theme-error transition-theme-colors">
+                    {errors.inquiry}
+                  </p>
                 )}
               </div>
 
@@ -257,7 +290,7 @@ export const UniversalInquiryForm: React.FC<UniversalInquiryFormProps> = ({
         </div>
       </div>
     </>
-  );
-};
+  )
+}
 
-export default UniversalInquiryForm;
+export default UniversalInquiryForm

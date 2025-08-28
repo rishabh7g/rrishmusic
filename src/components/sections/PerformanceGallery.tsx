@@ -1,6 +1,6 @@
 /**
  * Enhanced Performance Portfolio Gallery Component - Issue #49 Implementation
- * 
+ *
  * Features:
  * - Band vs Solo performance differentiation
  * - Integrated video players with optimal controls
@@ -14,114 +14,119 @@
  * - Progressive loading for media content
  */
 
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { LazyImage } from '@/components/common/LazySection';
-import { useSectionContent } from '@/hooks/useContent';
-import { MediaPreview } from '@/components/ui/MediaPreview';
-import { fadeInUp, staggerContainer, slideInLeft, slideInRight } from '@/utils/animations';
+import React, { useState, useMemo } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { LazyImage } from '@/components/common/LazySection'
+import { useSectionContent } from '@/hooks/useContent'
+import { MediaPreview } from '@/components/ui/MediaPreview'
+import {
+  fadeInUp,
+  staggerContainer,
+  slideInLeft,
+  slideInRight,
+} from '@/utils/animations'
 
 // Type definitions
-type PerformanceTypeFilter = 'all' | 'band' | 'solo' | 'acoustic';
-type PerformanceType = 'band' | 'solo' | 'acoustic';
-type PreviewType = 'image' | 'video';
+type PerformanceTypeFilter = 'all' | 'band' | 'solo' | 'acoustic'
+type PerformanceType = 'band' | 'solo' | 'acoustic'
+type PreviewType = 'image' | 'video'
 
 // Audio Preview Interface
 interface AudioPreview {
-  url: string;
-  duration: number;
-  genre: string[];
-  thumbnail?: string;
+  url: string
+  duration: number
+  genre: string[]
+  thumbnail?: string
 }
 
 // Portfolio Item Interfaces
 interface PortfolioItem {
-  id: string;
-  src: string;
-  alt: string;
-  title: string;
-  category: string;
-  performanceType: PerformanceType;
-  genre: string[];
-  description: string;
-  venue: string;
-  eventType: string;
-  date?: string;
-  aspectRatio: string;
-  featured?: boolean;
-  audioPreview?: AudioPreview; // New audio preview support
+  id: string
+  src: string
+  alt: string
+  title: string
+  category: string
+  performanceType: PerformanceType
+  genre: string[]
+  description: string
+  venue: string
+  eventType: string
+  date?: string
+  aspectRatio: string
+  featured?: boolean
+  audioPreview?: AudioPreview // New audio preview support
 }
 
 interface VideoItem {
-  id: string;
-  title: string;
-  description: string;
-  embedUrl: string;
-  videoUrl: string;
-  thumbnail: string;
-  performanceType: PerformanceType;
-  genre: string[];
-  venue: string;
-  duration: number;
+  id: string
+  title: string
+  description: string
+  embedUrl: string
+  videoUrl: string
+  thumbnail: string
+  performanceType: PerformanceType
+  genre: string[]
+  venue: string
+  duration: number
 }
 
 interface AudioPreviewItem {
-  id: string;
-  title: string;
-  description: string;
-  audioUrl: string;
-  duration: number;
-  genre: string[];
-  thumbnail: string;
-  performanceType: PerformanceType;
-  venue: string;
+  id: string
+  title: string
+  description: string
+  audioUrl: string
+  duration: number
+  genre: string[]
+  thumbnail: string
+  performanceType: PerformanceType
+  venue: string
 }
 
 interface TestimonialItem {
-  id: string;
-  text: string;
-  author: string;
-  role: string;
-  venue?: string;
-  performanceType?: PerformanceType;
-  featured: boolean;
+  id: string
+  text: string
+  author: string
+  role: string
+  venue?: string
+  performanceType?: PerformanceType
+  featured: boolean
 }
 
 interface PortfolioData {
-  title: string;
-  subtitle: string;
-  description: string;
-  bandDescription: string;
-  soloDescription: string;
-  gallery: PortfolioItem[];
-  videos: VideoItem[];
-  audioPreviews: AudioPreviewItem[];
-  testimonials: TestimonialItem[];
-  genres: string[];
+  title: string
+  subtitle: string
+  description: string
+  bandDescription: string
+  soloDescription: string
+  gallery: PortfolioItem[]
+  videos: VideoItem[]
+  audioPreviews: AudioPreviewItem[]
+  testimonials: TestimonialItem[]
+  genres: string[]
   stats: {
-    totalPerformances: number;
-    venuesPlayed: number;
-    yearsActive: number;
-  };
+    totalPerformances: number
+    venuesPlayed: number
+    yearsActive: number
+  }
 }
 
 /**
  * Performance Type Filter Component
  */
 const PerformanceTypeFilter: React.FC<{
-  activeType: PerformanceTypeFilter;
-  onTypeChange: (type: PerformanceTypeFilter) => void;
+  activeType: PerformanceTypeFilter
+  onTypeChange: (type: PerformanceTypeFilter) => void
 }> = ({ activeType, onTypeChange }) => {
   const filterOptions = [
     { id: 'all' as const, label: 'All Performances', icon: '🎵' },
     { id: 'band' as const, label: 'Band Shows', icon: '🎸' },
     { id: 'solo' as const, label: 'Solo Sets', icon: '🎤' },
-    { id: 'acoustic' as const, label: 'Acoustic', icon: '🪕' }
-  ];
+    { id: 'acoustic' as const, label: 'Acoustic', icon: '🪕' },
+  ]
 
   return (
     <div className="flex flex-wrap justify-center gap-3 mb-12" role="tablist">
-      {filterOptions.map((option) => (
+      {filterOptions.map(option => (
         <button
           key={option.id}
           onClick={() => onTypeChange(option.id)}
@@ -133,30 +138,32 @@ const PerformanceTypeFilter: React.FC<{
           role="tab"
           aria-selected={activeType === option.id}
         >
-          <span className="mr-2" role="img" aria-hidden="true">{option.icon}</span>
+          <span className="mr-2" role="img" aria-hidden="true">
+            {option.icon}
+          </span>
           {option.label}
         </button>
       ))}
     </div>
-  );
-};
+  )
+}
 
 /**
  * Preview Type Tabs Component
  */
 const PreviewTypeTabs: React.FC<{
-  activeTab: PreviewType;
-  onTabChange: (tab: PreviewType) => void;
+  activeTab: PreviewType
+  onTabChange: (tab: PreviewType) => void
 }> = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'image' as const, label: 'Performance Gallery', icon: '📸' },
-    { id: 'video' as const, label: 'Video Highlights', icon: '🎬' }
-  ];
+    { id: 'video' as const, label: 'Video Highlights', icon: '🎬' },
+  ]
 
   return (
     <div className="flex justify-center mb-8">
       <div className="bg-gray-100 p-1 rounded-lg">
-        {tabs.map((tab) => (
+        {tabs.map(tab => (
           <button
             key={tab.id}
             onClick={() => onTabChange(tab.id)}
@@ -166,23 +173,25 @@ const PreviewTypeTabs: React.FC<{
                 : 'text-gray-600 hover:text-brand-blue-primary'
             }`}
           >
-            <span className="mr-2" role="img" aria-hidden="true">{tab.icon}</span>
+            <span className="mr-2" role="img" aria-hidden="true">
+              {tab.icon}
+            </span>
             {tab.label}
           </button>
         ))}
       </div>
     </div>
-  );
-};
+  )
+}
 
 /**
  * Portfolio Item Component with Preview Support
  */
 const PortfolioItemCard: React.FC<{
-  item: PortfolioItem;
-  index: number;
+  item: PortfolioItem
+  index: number
 }> = ({ item, index }) => {
-  const [showPreview, setShowPreview] = useState(false);
+  const [showPreview, setShowPreview] = useState(false)
 
   return (
     <motion.div
@@ -192,13 +201,16 @@ const PortfolioItemCard: React.FC<{
       className="group relative bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300"
     >
       {/* Image Container */}
-      <div className="relative overflow-hidden" style={{ aspectRatio: item.aspectRatio }}>
+      <div
+        className="relative overflow-hidden"
+        style={{ aspectRatio: item.aspectRatio }}
+      >
         <LazyImage
           src={item.src}
           alt={item.alt}
           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        
+
         {/* Audio Preview Overlay */}
         {item.audioPreview && (
           <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
@@ -236,17 +248,17 @@ const PortfolioItemCard: React.FC<{
 
       {/* Content */}
       <div className="p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-2">{item.title}</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-2">
+          {item.title}
+        </h3>
         <p className="text-gray-600 text-sm mb-3">{item.description}</p>
-        
+
         <div className="flex items-center justify-between text-xs text-gray-500">
           <span className="flex items-center gap-1">
             <span>📍</span>
             {item.venue}
           </span>
-          <span className="bg-gray-100 px-2 py-1 rounded">
-            {item.category}
-          </span>
+          <span className="bg-gray-100 px-2 py-1 rounded">{item.category}</span>
         </div>
       </div>
 
@@ -277,16 +289,16 @@ const PortfolioItemCard: React.FC<{
         )}
       </AnimatePresence>
     </motion.div>
-  );
-};
+  )
+}
 
 /**
  * Main Performance Gallery Component
  */
 export const PerformanceGallery: React.FC = () => {
-  const { data: performanceData, loading } = useSectionContent('performance');
-  const [activeType, setActiveType] = useState<PerformanceTypeFilter>('all');
-  const [activePreviewTab, setActivePreviewTab] = useState<PreviewType>('image');
+  const { data: performanceData, loading } = useSectionContent('performance')
+  const [activeType, setActiveType] = useState<PerformanceTypeFilter>('all')
+  const [activePreviewTab, setActivePreviewTab] = useState<PreviewType>('image')
 
   const portfolioData: PortfolioData = performanceData?.portfolio || {
     title: 'Performance Portfolio',
@@ -299,27 +311,32 @@ export const PerformanceGallery: React.FC = () => {
     audioPreviews: [],
     testimonials: [],
     genres: [],
-    stats: { totalPerformances: 0, venuesPlayed: 0, yearsActive: 0 }
-  };
+    stats: { totalPerformances: 0, venuesPlayed: 0, yearsActive: 0 },
+  }
 
   // Filter gallery items by performance type
   const filteredGallery = useMemo(() => {
     if (activeType === 'all') {
-      return portfolioData.gallery;
+      return portfolioData.gallery
     }
-    return portfolioData.gallery.filter(item => item.performanceType === activeType);
-  }, [portfolioData.gallery, activeType]);
+    return portfolioData.gallery.filter(
+      item => item.performanceType === activeType
+    )
+  }, [portfolioData.gallery, activeType])
 
   // Filter video/audio previews by performance type
   const filteredVideos = useMemo(() => {
     if (activeType === 'all') {
-      return portfolioData.videos;
+      return portfolioData.videos
     }
-    return portfolioData.videos.filter(item => item.performanceType === activeType);
-  }, [portfolioData.videos, activeType]);
+    return portfolioData.videos.filter(
+      item => item.performanceType === activeType
+    )
+  }, [portfolioData.videos, activeType])
 
-
-  const featuredTestimonials = portfolioData.testimonials.filter(t => t.featured);
+  const featuredTestimonials = portfolioData.testimonials.filter(
+    t => t.featured
+  )
 
   if (loading) {
     return (
@@ -327,11 +344,13 @@ export const PerformanceGallery: React.FC = () => {
         <div className="container mx-auto px-4">
           <div className="text-center">
             <div className="w-8 h-8 border-4 border-brand-blue-primary border-t-transparent rounded-full animate-spin mx-auto" />
-            <p className="mt-4 text-gray-600">Loading performance portfolio...</p>
+            <p className="mt-4 text-gray-600">
+              Loading performance portfolio...
+            </p>
           </div>
         </div>
       </section>
-    );
+    )
   }
 
   return (
@@ -357,15 +376,21 @@ export const PerformanceGallery: React.FC = () => {
           {/* Performance Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
             <div className="text-center">
-              <div className="text-3xl font-bold text-brand-blue-primary">{portfolioData.stats.totalPerformances}+</div>
+              <div className="text-3xl font-bold text-brand-blue-primary">
+                {portfolioData.stats.totalPerformances}+
+              </div>
               <div className="text-gray-600 font-medium">Live Performances</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-brand-blue-primary">{portfolioData.stats.venuesPlayed}+</div>
+              <div className="text-3xl font-bold text-brand-blue-primary">
+                {portfolioData.stats.venuesPlayed}+
+              </div>
               <div className="text-gray-600 font-medium">Venues Played</div>
             </div>
             <div className="text-center">
-              <div className="text-3xl font-bold text-brand-blue-primary">{portfolioData.stats.yearsActive}</div>
+              <div className="text-3xl font-bold text-brand-blue-primary">
+                {portfolioData.stats.yearsActive}
+              </div>
               <div className="text-gray-600 font-medium">Years Active</div>
             </div>
           </div>
@@ -396,15 +421,10 @@ export const PerformanceGallery: React.FC = () => {
               className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16"
             >
               {filteredGallery.map((item, index) => (
-                <PortfolioItemCard
-                  key={item.id}
-                  item={item}
-                  index={index}
-                />
+                <PortfolioItemCard key={item.id} item={item} index={index} />
               ))}
             </motion.div>
           )}
-
 
           {/* Video Previews */}
           {activePreviewTab === 'video' && (
@@ -447,24 +467,34 @@ export const PerformanceGallery: React.FC = () => {
           viewport={{ once: true }}
           className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16"
         >
-          <motion.div variants={slideInLeft} className="bg-white p-8 rounded-lg shadow-lg">
+          <motion.div
+            variants={slideInLeft}
+            className="bg-white p-8 rounded-lg shadow-lg"
+          >
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-brand-blue-primary rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
                 🎸
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900">Band Performances</h3>
+              <h3 className="text-2xl font-semibold text-gray-900">
+                Band Performances
+              </h3>
             </div>
             <p className="text-gray-600 leading-relaxed">
               {portfolioData.bandDescription}
             </p>
           </motion.div>
 
-          <motion.div variants={slideInRight} className="bg-white p-8 rounded-lg shadow-lg">
+          <motion.div
+            variants={slideInRight}
+            className="bg-white p-8 rounded-lg shadow-lg"
+          >
             <div className="flex items-center mb-6">
               <div className="w-12 h-12 bg-brand-orange-primary rounded-full flex items-center justify-center text-white text-xl font-bold mr-4">
                 🎤
               </div>
-              <h3 className="text-2xl font-semibold text-gray-900">Solo Performances</h3>
+              <h3 className="text-2xl font-semibold text-gray-900">
+                Solo Performances
+              </h3>
             </div>
             <p className="text-gray-600 leading-relaxed">
               {portfolioData.soloDescription}
@@ -481,14 +511,17 @@ export const PerformanceGallery: React.FC = () => {
             className="mb-16"
           >
             <div className="text-center mb-12">
-              <h3 className="text-3xl font-semibold text-gray-900 mb-4">Performance Highlights</h3>
+              <h3 className="text-3xl font-semibold text-gray-900 mb-4">
+                Performance Highlights
+              </h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
-                Experience the energy and emotion of live performances through these video previews
+                Experience the energy and emotion of live performances through
+                these video previews
               </p>
             </div>
-            
+
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-              {portfolioData.videos.slice(0, 3).map((video) => (
+              {portfolioData.videos.slice(0, 3).map(video => (
                 <MediaPreview
                   key={video.id}
                   type="video"
@@ -515,36 +548,48 @@ export const PerformanceGallery: React.FC = () => {
             className="mb-16"
           >
             <motion.div variants={fadeInUp} className="text-center mb-12">
-              <h3 className="text-3xl font-semibold text-gray-900 mb-4">What Clients Say</h3>
+              <h3 className="text-3xl font-semibold text-gray-900 mb-4">
+                What Clients Say
+              </h3>
               <p className="text-gray-600 max-w-2xl mx-auto">
                 Hear from satisfied clients about their performance experiences
               </p>
             </motion.div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {featuredTestimonials.slice(0, 4).map((testimonial) => (
+              {featuredTestimonials.slice(0, 4).map(testimonial => (
                 <motion.div
                   key={testimonial.id}
                   variants={fadeInUp}
                   className="bg-white p-8 rounded-lg shadow-lg"
                 >
                   <div className="flex items-center mb-4">
-                    <div className="text-4xl text-brand-orange-primary mb-2">❝</div>
+                    <div className="text-4xl text-brand-orange-primary mb-2">
+                      ❝
+                    </div>
                   </div>
                   <p className="text-gray-700 italic mb-6 leading-relaxed">
                     {testimonial.text}
                   </p>
                   <div className="flex items-center justify-between">
                     <div>
-                      <div className="font-semibold text-gray-900">{testimonial.author}</div>
-                      <div className="text-sm text-gray-600">{testimonial.role}</div>
+                      <div className="font-semibold text-gray-900">
+                        {testimonial.author}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {testimonial.role}
+                      </div>
                       {testimonial.venue && (
-                        <div className="text-xs text-gray-500">{testimonial.venue}</div>
+                        <div className="text-xs text-gray-500">
+                          {testimonial.venue}
+                        </div>
                       )}
                     </div>
                     <div className="flex items-center">
                       {[...Array(5)].map((_, i) => (
-                        <span key={i} className="text-yellow-400 text-sm">⭐</span>
+                        <span key={i} className="text-yellow-400 text-sm">
+                          ⭐
+                        </span>
                       ))}
                     </div>
                   </div>
@@ -561,7 +606,9 @@ export const PerformanceGallery: React.FC = () => {
           viewport={{ once: true }}
           className="text-center bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white p-12 rounded-2xl"
         >
-          <h3 className="text-3xl font-bold mb-4">Ready to Book Your Performance?</h3>
+          <h3 className="text-3xl font-bold mb-4">
+            Ready to Book Your Performance?
+          </h3>
           <p className="text-xl mb-8 opacity-90">
             Let's create memorable musical experiences for your event or venue
           </p>
@@ -574,7 +621,7 @@ export const PerformanceGallery: React.FC = () => {
         </motion.div>
       </div>
     </section>
-  );
-};
+  )
+}
 
-export default PerformanceGallery;
+export default PerformanceGallery

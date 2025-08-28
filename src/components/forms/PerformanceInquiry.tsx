@@ -3,48 +3,51 @@
  * Builds on existing PerformanceInquiryForm with dynamic pricing estimation and consultation booking
  */
 
-import React, { useState, useEffect, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { useInquiryPricing, PerformancePricingData } from '@/hooks/useInquiryPricing';
-import { fadeInUp, staggerContainer } from '@/utils/animations';
+import React, { useState, useEffect, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import {
+  useInquiryPricing,
+  PerformancePricingData,
+} from '@/hooks/useInquiryPricing'
+import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 export interface PerformanceInquiryData {
   // Contact Information
-  name: string;
-  email: string;
-  phone?: string;
-  
+  name: string
+  email: string
+  phone?: string
+
   // Event Details
-  eventType: 'wedding' | 'corporate' | 'venue' | 'private' | 'other';
-  eventDate?: string;
-  eventTime?: string;
-  venueName?: string;
-  venueAddress?: string;
-  
+  eventType: 'wedding' | 'corporate' | 'venue' | 'private' | 'other'
+  eventDate?: string
+  eventTime?: string
+  venueName?: string
+  venueAddress?: string
+
   // Performance Requirements
-  performanceFormat: 'solo' | 'band' | 'flexible' | 'unsure';
-  performanceStyle: 'acoustic' | 'electric' | 'both' | 'unsure';
-  duration: string;
-  guestCount?: string;
-  budgetRange: 'under-500' | '500-1000' | '1000-2000' | '2000-plus' | 'discuss';
-  
+  performanceFormat: 'solo' | 'band' | 'flexible' | 'unsure'
+  performanceStyle: 'acoustic' | 'electric' | 'both' | 'unsure'
+  duration: string
+  guestCount?: string
+  budgetRange: 'under-500' | '500-1000' | '1000-2000' | '2000-plus' | 'discuss'
+
   // Additional Information
-  specialRequests?: string;
-  musicPreferences?: string;
-  hasVenueRestrictions: boolean;
-  venueRestrictions?: string;
-  
+  specialRequests?: string
+  musicPreferences?: string
+  hasVenueRestrictions: boolean
+  venueRestrictions?: string
+
   // Marketing
-  hearAboutUs?: 'google' | 'instagram' | 'referral' | 'venue' | 'other';
-  hearAboutUsDetail?: string;
+  hearAboutUs?: 'google' | 'instagram' | 'referral' | 'venue' | 'other'
+  hearAboutUsDetail?: string
 }
 
 interface PerformanceInquiryProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit?: (data: PerformanceInquiryData) => void;
-  showPricing?: boolean;
-  enableConsultationBooking?: boolean;
+  isOpen: boolean
+  onClose: () => void
+  onSubmit?: (data: PerformanceInquiryData) => void
+  showPricing?: boolean
+  enableConsultationBooking?: boolean
 }
 
 /**
@@ -55,7 +58,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
   onClose,
   onSubmit,
   showPricing = true,
-  enableConsultationBooking = true
+  enableConsultationBooking = true,
 }) => {
   // Form state
   const [formData, setFormData] = useState<PerformanceInquiryData>({
@@ -76,62 +79,73 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
     musicPreferences: '',
     hasVenueRestrictions: false,
     venueRestrictions: '',
-    hearAboutUs: 'google'
-  });
+    hearAboutUs: 'google',
+  })
 
   // Pricing state
-  const { state: pricingState, actions: pricingActions, computed } = useInquiryPricing({
+  const {
+    state: pricingState,
+    actions: pricingActions,
+    computed,
+  } = useInquiryPricing({
     serviceType: 'performance',
-    enableConsultationBooking
-  });
+    enableConsultationBooking,
+  })
 
   // Form validation
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [currentStep, setCurrentStep] = useState(1);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [errors, setErrors] = useState<Record<string, string>>({})
+  const [currentStep, setCurrentStep] = useState(1)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
   /**
    * Handle form field changes
    */
-  const handleFieldChange = useCallback((field: keyof PerformanceInquiryData, value: string | boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: value
-    }));
-
-    // Clear field error
-    if (errors[field]) {
-      setErrors(prev => ({
+  const handleFieldChange = useCallback(
+    (field: keyof PerformanceInquiryData, value: string | boolean) => {
+      setFormData(prev => ({
         ...prev,
-        [field]: ''
-      }));
-    }
-  }, [errors]);
+        [field]: value,
+      }))
+
+      // Clear field error
+      if (errors[field]) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: '',
+        }))
+      }
+    },
+    [errors]
+  )
 
   /**
    * Get pricing data from form
    */
-  const getPricingData = useCallback((): PerformancePricingData => ({
-    performanceFormat: formData.performanceFormat,
-    performanceStyle: formData.performanceStyle,
-    eventType: formData.eventType,
-    duration: formData.duration,
-    guestCount: formData.guestCount,
-    eventDate: formData.eventDate,
-    venueAddress: formData.venueAddress,
-    budgetRange: formData.budgetRange
-  }), [formData]);
+  const getPricingData = useCallback(
+    (): PerformancePricingData => ({
+      performanceFormat: formData.performanceFormat,
+      performanceStyle: formData.performanceStyle,
+      eventType: formData.eventType,
+      duration: formData.duration,
+      guestCount: formData.guestCount,
+      eventDate: formData.eventDate,
+      venueAddress: formData.venueAddress,
+      budgetRange: formData.budgetRange,
+    }),
+    [formData]
+  )
 
   /**
    * Update pricing estimate when relevant fields change
    */
   useEffect(() => {
-    if (!showPricing) return;
-    
-    const hasRequiredData = formData.eventType && formData.duration && formData.performanceFormat;
+    if (!showPricing) return
+
+    const hasRequiredData =
+      formData.eventType && formData.duration && formData.performanceFormat
     if (hasRequiredData && currentStep >= 2) {
-      const pricingData = getPricingData();
-      pricingActions.estimatePerformancePrice(pricingData);
+      const pricingData = getPricingData()
+      pricingActions.estimatePerformancePrice(pricingData)
     }
   }, [
     formData.eventType,
@@ -144,77 +158,90 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
     currentStep,
     showPricing,
     getPricingData,
-    pricingActions
-  ]);
+    pricingActions,
+  ])
 
   /**
    * Validate current step
    */
-  const validateStep = useCallback((step: number): boolean => {
-    const newErrors: Record<string, string> = {};
+  const validateStep = useCallback(
+    (step: number): boolean => {
+      const newErrors: Record<string, string> = {}
 
-    if (step === 1) {
-      if (!formData.name.trim()) newErrors.name = 'Name is required';
-      if (!formData.email.trim()) newErrors.email = 'Email is required';
-      else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-        newErrors.email = 'Please enter a valid email';
+      if (step === 1) {
+        if (!formData.name.trim()) newErrors.name = 'Name is required'
+        if (!formData.email.trim()) newErrors.email = 'Email is required'
+        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+          newErrors.email = 'Please enter a valid email'
+        }
       }
-    }
 
-    if (step === 2) {
-      if (!formData.eventType) newErrors.eventType = 'Event type is required';
-      if (!formData.duration) newErrors.duration = 'Duration is required';
-    }
+      if (step === 2) {
+        if (!formData.eventType) newErrors.eventType = 'Event type is required'
+        if (!formData.duration) newErrors.duration = 'Duration is required'
+      }
 
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  }, [formData]);
+      setErrors(newErrors)
+      return Object.keys(newErrors).length === 0
+    },
+    [formData]
+  )
 
   /**
    * Handle step navigation
    */
   const nextStep = useCallback(() => {
     if (validateStep(currentStep)) {
-      setCurrentStep(prev => Math.min(prev + 1, 4));
+      setCurrentStep(prev => Math.min(prev + 1, 4))
     }
-  }, [currentStep, validateStep]);
+  }, [currentStep, validateStep])
 
   const previousStep = useCallback(() => {
-    setCurrentStep(prev => Math.max(prev - 1, 1));
-  }, []);
+    setCurrentStep(prev => Math.max(prev - 1, 1))
+  }, [])
 
   /**
    * Handle form submission
    */
-  const handleSubmit = useCallback(async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateStep(4)) return;
-    
-    setIsSubmitting(true);
+  const handleSubmit = useCallback(
+    async (e: React.FormEvent) => {
+      e.preventDefault()
 
-    try {
-      // Simulate form submission
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      if (onSubmit) {
-        onSubmit(formData);
+      if (!validateStep(4)) return
+
+      setIsSubmitting(true)
+
+      try {
+        // Simulate form submission
+        await new Promise(resolve => setTimeout(resolve, 1000))
+
+        if (onSubmit) {
+          onSubmit(formData)
+        }
+
+        // Schedule follow-up based on urgency
+        if (computed.isConsultationRecommended) {
+          pricingActions.scheduleFollowUp(2) // 2 days for high-priority
+        } else {
+          pricingActions.scheduleFollowUp(5) // 5 days for standard
+        }
+
+        onClose()
+      } catch (error) {
+        console.error('Form submission failed:', error)
+      } finally {
+        setIsSubmitting(false)
       }
-      
-      // Schedule follow-up based on urgency
-      if (computed.isConsultationRecommended) {
-        pricingActions.scheduleFollowUp(2); // 2 days for high-priority
-      } else {
-        pricingActions.scheduleFollowUp(5); // 5 days for standard
-      }
-      
-      onClose();
-    } catch (error) {
-      console.error('Form submission failed:', error);
-    } finally {
-      setIsSubmitting(false);
-    }
-  }, [formData, validateStep, onSubmit, computed.isConsultationRecommended, pricingActions, onClose]);
+    },
+    [
+      formData,
+      validateStep,
+      onSubmit,
+      computed.isConsultationRecommended,
+      pricingActions,
+      onClose,
+    ]
+  )
 
   /**
    * Handle consultation booking
@@ -222,15 +249,17 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
   const handleBookConsultation = useCallback(() => {
     pricingActions.scheduleConsultation({
       serviceType: 'performance',
-      preferredDates: [formData.eventDate || new Date().toISOString().split('T')[0]],
+      preferredDates: [
+        formData.eventDate || new Date().toISOString().split('T')[0],
+      ],
       preferredTime: 'flexible',
       duration: 30,
       consultationType: 'phone',
-      notes: `Performance inquiry for ${formData.eventType} event`
-    });
-  }, [formData, pricingActions]);
+      notes: `Performance inquiry for ${formData.eventType} event`,
+    })
+  }, [formData, pricingActions])
 
-  if (!isOpen) return null;
+  if (!isOpen) return null
 
   return (
     <AnimatePresence>
@@ -239,7 +268,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
-        onClick={(e) => e.target === e.currentTarget && onClose()}
+        onClick={e => e.target === e.currentTarget && onClose()}
       >
         <motion.div
           initial={{ scale: 0.95, opacity: 0 }}
@@ -273,7 +302,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                 <span>{Math.round((currentStep / 4) * 100)}% Complete</span>
               </div>
               <div className="w-full bg-brand-blue-secondary rounded-full h-2">
-                <div 
+                <div
                   className="bg-white h-2 rounded-full transition-all duration-300"
                   style={{ width: `${(currentStep / 4) * 100}%` }}
                 />
@@ -296,7 +325,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Contact Information
                     </h3>
-                    
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -305,14 +334,18 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         <input
                           type="text"
                           value={formData.name}
-                          onChange={(e) => handleFieldChange('name', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('name', e.target.value)
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
                             errors.name ? 'border-red-500' : 'border-gray-300'
                           }`}
                           placeholder="Your full name"
                         />
                         {errors.name && (
-                          <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.name}
+                          </p>
                         )}
                       </div>
 
@@ -323,14 +356,18 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         <input
                           type="email"
                           value={formData.email}
-                          onChange={(e) => handleFieldChange('email', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('email', e.target.value)
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
                             errors.email ? 'border-red-500' : 'border-gray-300'
                           }`}
                           placeholder="your.email@example.com"
                         />
                         {errors.email && (
-                          <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.email}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -342,7 +379,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                       <input
                         type="tel"
                         value={formData.phone}
-                        onChange={(e) => handleFieldChange('phone', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('phone', e.target.value)
+                        }
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         placeholder="(555) 123-4567"
                       />
@@ -356,7 +395,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Event Details
                     </h3>
-                    
+
                     <div className="grid md:grid-cols-2 gap-4">
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -364,9 +403,17 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         </label>
                         <select
                           value={formData.eventType}
-                          onChange={(e) => handleFieldChange('eventType', e.target.value as PerformanceInquiryData['eventType'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'eventType',
+                              e.target
+                                .value as PerformanceInquiryData['eventType']
+                            )
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
-                            errors.eventType ? 'border-red-500' : 'border-gray-300'
+                            errors.eventType
+                              ? 'border-red-500'
+                              : 'border-gray-300'
                           }`}
                         >
                           <option value="wedding">Wedding</option>
@@ -376,7 +423,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                           <option value="other">Other</option>
                         </select>
                         {errors.eventType && (
-                          <p className="text-red-500 text-sm mt-1">{errors.eventType}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.eventType}
+                          </p>
                         )}
                       </div>
 
@@ -387,7 +436,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         <input
                           type="date"
                           value={formData.eventDate}
-                          onChange={(e) => handleFieldChange('eventDate', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('eventDate', e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         />
                       </div>
@@ -400,7 +451,13 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         </label>
                         <select
                           value={formData.performanceFormat}
-                          onChange={(e) => handleFieldChange('performanceFormat', e.target.value as PerformanceInquiryData['performanceFormat'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'performanceFormat',
+                              e.target
+                                .value as PerformanceInquiryData['performanceFormat']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         >
                           <option value="solo">Solo Performance</option>
@@ -416,7 +473,13 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         </label>
                         <select
                           value={formData.performanceStyle}
-                          onChange={(e) => handleFieldChange('performanceStyle', e.target.value as PerformanceInquiryData['performanceStyle'])}
+                          onChange={e =>
+                            handleFieldChange(
+                              'performanceStyle',
+                              e.target
+                                .value as PerformanceInquiryData['performanceStyle']
+                            )
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         >
                           <option value="acoustic">Acoustic</option>
@@ -434,9 +497,13 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         </label>
                         <select
                           value={formData.duration}
-                          onChange={(e) => handleFieldChange('duration', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('duration', e.target.value)
+                          }
                           className={`w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors ${
-                            errors.duration ? 'border-red-500' : 'border-gray-300'
+                            errors.duration
+                              ? 'border-red-500'
+                              : 'border-gray-300'
                           }`}
                         >
                           <option value="1-2 hours">1-2 hours</option>
@@ -446,7 +513,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                           <option value="multi-day">Multi-day event</option>
                         </select>
                         {errors.duration && (
-                          <p className="text-red-500 text-sm mt-1">{errors.duration}</p>
+                          <p className="text-red-500 text-sm mt-1">
+                            {errors.duration}
+                          </p>
                         )}
                       </div>
 
@@ -457,7 +526,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                         <input
                           type="text"
                           value={formData.guestCount}
-                          onChange={(e) => handleFieldChange('guestCount', e.target.value)}
+                          onChange={e =>
+                            handleFieldChange('guestCount', e.target.value)
+                          }
                           className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                           placeholder="e.g., 50-100 guests"
                         />
@@ -476,7 +547,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                     {pricingState.isEstimating ? (
                       <div className="text-center py-8">
                         <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-brand-blue-primary mx-auto mb-4" />
-                        <p className="text-gray-600">Calculating personalized estimate...</p>
+                        <p className="text-gray-600">
+                          Calculating personalized estimate...
+                        </p>
                       </div>
                     ) : computed.hasEstimate && computed.formattedEstimate ? (
                       <div className="bg-blue-50 rounded-xl p-6">
@@ -486,7 +559,8 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                               Estimated Investment
                             </h4>
                             <p className="text-blue-700 text-sm">
-                              {computed.formattedEstimate.confidence} • {computed.formattedEstimate.summary}
+                              {computed.formattedEstimate.confidence} •{' '}
+                              {computed.formattedEstimate.summary}
                             </p>
                           </div>
                           <div className="text-right">
@@ -498,14 +572,20 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
 
                         {pricingState.currentEstimate?.factors && (
                           <div className="mb-4">
-                            <h5 className="font-medium text-gray-900 mb-2">Pricing based on:</h5>
+                            <h5 className="font-medium text-gray-900 mb-2">
+                              Pricing based on:
+                            </h5>
                             <ul className="text-sm text-gray-700 space-y-1">
-                              {pricingState.currentEstimate.factors.map((factor, index) => (
-                                <li key={index} className="flex items-center">
-                                  <span className="text-blue-500 mr-2">•</span>
-                                  {factor}
-                                </li>
-                              ))}
+                              {pricingState.currentEstimate.factors.map(
+                                (factor, index) => (
+                                  <li key={index} className="flex items-center">
+                                    <span className="text-blue-500 mr-2">
+                                      •
+                                    </span>
+                                    {factor}
+                                  </li>
+                                )
+                              )}
                             </ul>
                           </div>
                         )}
@@ -518,7 +598,8 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                                   Free Consultation Recommended
                                 </h5>
                                 <p className="text-sm text-gray-600">
-                                  Let's discuss your specific needs for accurate pricing
+                                  Let's discuss your specific needs for accurate
+                                  pricing
                                 </p>
                               </div>
                               {computed.canBook && (
@@ -549,7 +630,13 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                       </label>
                       <select
                         value={formData.budgetRange}
-                        onChange={(e) => handleFieldChange('budgetRange', e.target.value as PerformanceInquiryData['budgetRange'])}
+                        onChange={e =>
+                          handleFieldChange(
+                            'budgetRange',
+                            e.target
+                              .value as PerformanceInquiryData['budgetRange']
+                          )
+                        }
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                       >
                         <option value="under-500">Under $500</option>
@@ -568,7 +655,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                     <h3 className="text-xl font-bold text-gray-900 mb-4">
                       Additional Details
                     </h3>
-                    
+
                     <div>
                       <label className="block text-sm font-medium text-gray-700 mb-2">
                         Venue Name
@@ -576,7 +663,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                       <input
                         type="text"
                         value={formData.venueName}
-                        onChange={(e) => handleFieldChange('venueName', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('venueName', e.target.value)
+                        }
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         placeholder="Event venue name"
                       />
@@ -588,7 +677,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                       </label>
                       <textarea
                         value={formData.musicPreferences}
-                        onChange={(e) => handleFieldChange('musicPreferences', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('musicPreferences', e.target.value)
+                        }
                         rows={3}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         placeholder="Any specific songs, genres, or musical styles you'd like?"
@@ -601,7 +692,9 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                       </label>
                       <textarea
                         value={formData.specialRequests}
-                        onChange={(e) => handleFieldChange('specialRequests', e.target.value)}
+                        onChange={e =>
+                          handleFieldChange('specialRequests', e.target.value)
+                        }
                         rows={3}
                         className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-brand-blue-primary/20 focus:border-brand-blue-primary transition-colors"
                         placeholder="Any special requests or additional information?"
@@ -657,7 +750,8 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
                   Consultation Booked!
                 </h3>
                 <p className="text-gray-600 mb-4">
-                  We've scheduled your consultation call. You'll receive a confirmation email shortly.
+                  We've scheduled your consultation call. You'll receive a
+                  confirmation email shortly.
                 </p>
                 <button
                   onClick={() => pricingActions.clearEstimate()}
@@ -671,7 +765,7 @@ export const PerformanceInquiry: React.FC<PerformanceInquiryProps> = ({
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  );
-};
+  )
+}
 
-export default PerformanceInquiry;
+export default PerformanceInquiry

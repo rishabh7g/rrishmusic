@@ -44,7 +44,7 @@
   .app-section {
     padding: 6rem 0;
   }
-  
+
   .app-section:first-child {
     padding-top: 4rem;
   }
@@ -149,8 +149,9 @@ a:focus {
   .app-container {
     border: 1px solid #000;
   }
-  
-  button, .btn {
+
+  button,
+  .btn {
     border: 2px solid currentColor;
   }
 }
@@ -160,7 +161,7 @@ a:focus {
   html {
     scroll-behavior: auto;
   }
-  
+
   *,
   *::before,
   *::after {
@@ -176,11 +177,11 @@ a:focus {
     background: white;
     color: black;
   }
-  
+
   .main-content {
     padding-top: 0;
   }
-  
+
   nav,
   .skip-link,
   .loading-spinner {

@@ -35,7 +35,7 @@
 .category-nav-button {
   @apply relative overflow-hidden;
   min-width: fit-content;
-  
+
   /* Smooth transitions */
   transition: all 300ms cubic-bezier(0.4, 0, 0.2, 1);
 }
@@ -63,13 +63,17 @@
   content: '';
   @apply absolute inset-0 bg-white opacity-0 pointer-events-none;
   transform: scale(0);
-  transition: transform 0.3s, opacity 0.3s;
+  transition:
+    transform 0.3s,
+    opacity 0.3s;
 }
 
 .category-nav-button:active::before {
   transform: scale(1);
   @apply opacity-20;
-  transition: transform 0s, opacity 0s;
+  transition:
+    transform 0s,
+    opacity 0s;
 }
 
 /* Horizontal Variant */
@@ -164,7 +168,7 @@
   .category-progress-indicator .progress-bar {
     transition: none;
   }
-  
+
   .category-nav-button:hover {
     transform: none;
   }
@@ -175,7 +179,7 @@
   .category-nav-button {
     @apply border border-gray-800;
   }
-  
+
   .category-nav-button:hover {
     @apply border-brand-blue-primary;
   }
@@ -194,7 +198,7 @@
     -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
   }
-  
+
   .category-navigation::-webkit-scrollbar {
     display: none;
   }
