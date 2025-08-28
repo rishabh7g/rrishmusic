@@ -75,7 +75,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
       <main className={`min-h-screen bg-theme-bg transition-theme-colors ${className}`}>
       {/* Minimal Hero - Visual First */}
       <section className="py-12 bg-theme-bg transition-theme-colors">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container mx-auto max-w-7xl p-4 text-center">
           <h1 className="text-4xl md:text-5xl font-bold text-theme-text mb-4 transition-theme-colors">
             Music Lessons
           </h1>
@@ -93,7 +93,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
 
       {/* Student Showcase - Instagram Style */}
       <section className="py-16 bg-theme-bg-secondary transition-theme-colors">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl p-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
               Student Progress
@@ -161,7 +161,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
 
       {/* Teaching Approach - Visual */}
       <section className="py-16 bg-theme-bg transition-theme-colors">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl p-4">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
               Teaching Approach
@@ -227,7 +227,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
 
       {/* Cross-Service Navigation Section */}
       <section className="py-16 bg-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="container mx-auto max-w-7xl p-4">
           <div className="max-w-6xl mx-auto">
             <div className="text-center mb-12">
               <h2 className="text-3xl md:text-4xl font-heading font-bold text-neutral-charcoal mb-4">
@@ -249,7 +249,7 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
 
       {/* Contact Section - Simple CTA */}
       <section className="py-16 bg-gradient-to-r from-theme-secondary to-theme-primary text-white">
-        <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="container mx-auto max-w-7xl p-4 text-center">
           <h3 className="text-3xl md:text-4xl font-heading font-bold mb-6">
             Ready to Start Learning?
           </h3>
