@@ -8,8 +8,8 @@
 
 import React, { useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { useTheme } from '../hooks/useTheme'
-import type { ThemeMode } from '../styles/themes'
+import { useTheme } from '@/hooks/useTheme'
+import type { ThemeMode } from '@/styles/themes'
 
 /**
  * Theme Toggle Props

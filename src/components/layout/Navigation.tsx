@@ -4,7 +4,7 @@ import { Link, useLocation, useNavigate, Location } from 'react-router-dom'
 import { NAVIGATION_ITEMS } from '@/utils/constants'
 import { useSmoothScroll, useScrollSpy } from '@/hooks/useScrollSpy'
 import { useDeviceDetection } from '@/hooks/useDeviceDetection'
-import ThemeToggle from '@/components/ThemeToggle'
+import ThemeToggle from '@/components/ui/ThemeToggle'
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing

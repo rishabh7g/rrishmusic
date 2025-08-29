@@ -16,7 +16,7 @@
 
 import React, { useState, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { LazyImage } from '@/components/common/LazySection'
+import { LazyImage } from '@/components/ui/LazyImage'
 import { useSectionContent } from '@/hooks/useContent'
 import { MediaPreview } from '@/components/ui/MediaPreview'
 import {
