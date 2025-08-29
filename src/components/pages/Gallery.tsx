@@ -397,37 +397,34 @@ export function Gallery() {
           transition={{ duration: 0.6 }}
         >
           <h2 className="text-2xl md:text-3xl font-heading font-bold text-white mb-4 drop-shadow-lg">
-            Browse All Media
+            Media Mosaic
           </h2>
           <p className="text-lg text-white/80 drop-shadow">
-            Click on any image or video to view it in full size
+            Explore all images and videos in their natural flow - click any item to view in full size
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+        {/* Masonry/Mosaic Grid - Natural aspect ratios */}
+        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 md:gap-6 space-y-4 md:space-y-6">
           {mediaItems.map((item, index) => (
             <motion.div
               key={item.id}
-              className="group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer"
-              whileHover={{ scale: 1.05, y: -5 }}
-              whileTap={{ scale: 0.95 }}
+              className="group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer break-inside-avoid mb-4 md:mb-6"
+              whileHover={{ scale: 1.02, y: -2 }}
+              whileTap={{ scale: 0.98 }}
               onClick={() => openLightbox(index)}
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: '-50px' }}
               transition={{ duration: 0.4, delay: index * 0.05 }}
             >
-              {/* Thumbnail */}
-              <div className={`relative ${
-                imageAspectRatios[item.id] ? 'aspect-[3/4]' : 'aspect-[4/3]'
-              } overflow-hidden`}>
+              {/* Natural aspect ratio thumbnail */}
+              <div className="relative overflow-hidden">
                 {item.type === 'video' ? (
-                  <div className="relative w-full h-full">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center">
-                      <svg className="w-12 h-12 text-white/80" fill="currentColor" viewBox="0 0 24 24">
-                        <path d="M8 5v14l11-7z"/>
-                      </svg>
-                    </div>
+                  <div className="relative w-full aspect-video bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center">
+                    <svg className="w-16 h-16 text-white/80" fill="currentColor" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z"/>
+                    </svg>
                     <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
                       VIDEO
                     </div>
@@ -436,8 +433,9 @@ export function Gallery() {
                   <img
                     src={item.src}
                     alt={item.title}
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                    className="w-full h-auto object-cover transition-transform duration-300 group-hover:scale-105"
                     loading="lazy"
+                    style={{ display: 'block' }}
                   />
                 )}
 
