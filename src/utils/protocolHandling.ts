@@ -61,7 +61,9 @@ export const enforceHTTPS = (): boolean => {
   // Redirect non-www to www for consistency (HTTP only since domain doesn't support HTTPS)
   if (protocol === 'http:' && hostname === 'rrishmusic.com') {
     const wwwUrl = `http://www.rrishmusic.com${pathname}${search}${hash}`
-    console.log('[ProtocolHandling] Redirecting to www subdomain:', wwwUrl)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('[ProtocolHandling] Redirecting to www subdomain:', wwwUrl)
+    }
     window.location.replace(wwwUrl)
     return true
   }

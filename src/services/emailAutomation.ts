@@ -1193,10 +1193,12 @@ export class EmailAutomationService {
     // - ConvertKit
     // - Custom SMTP server
 
-    console.log(
-      '[EmailAutomation] Production email service integration needed',
-      emailData
-    )
+    if (this.debugMode) {
+      console.log(
+        '[EmailAutomation] Production email service integration needed',
+        emailData
+      )
+    }
   }
 
   /**
@@ -1204,10 +1206,12 @@ export class EmailAutomationService {
    */
   private storeSequenceInDatabase(metadata: SequenceMetadata): void {
     // This would store in actual database for production use
-    console.log(
-      '[EmailAutomation] Database integration needed for sequence metadata',
-      metadata
-    )
+    if (this.debugMode) {
+      console.log(
+        '[EmailAutomation] Database integration needed for sequence metadata',
+        metadata
+      )
+    }
   }
 
   /**
@@ -1242,9 +1246,11 @@ export class EmailAutomationService {
         await this.cancelSequenceInEmailService(sequenceId, reason)
       }
 
-      console.log(
-        `[EmailAutomation] Cancelled sequence ${sequenceId} - Reason: ${reason}`
-      )
+      if (this.debugMode) {
+        console.log(
+          `[EmailAutomation] Cancelled sequence ${sequenceId} - Reason: ${reason}`
+        )
+      }
       return true
     } catch (error) {
       console.error('Failed to cancel email sequence:', error)
@@ -1260,9 +1266,11 @@ export class EmailAutomationService {
     reason: string
   ): Promise<void> {
     // Implementation for production email service cancellation
-    console.log(
-      `[EmailAutomation] Production cancellation needed for ${sequenceId}: ${reason}`
-    )
+    if (this.debugMode) {
+      console.log(
+        `[EmailAutomation] Production cancellation needed for ${sequenceId}: ${reason}`
+      )
+    }
   }
 
   /**
@@ -1307,7 +1315,9 @@ export class EmailAutomationService {
    */
   setEnabled(enabled: boolean): void {
     this.isEnabled = enabled
-    console.log(`[EmailAutomation] System ${enabled ? 'enabled' : 'disabled'}`)
+    if (this.debugMode) {
+      console.log(`[EmailAutomation] System ${enabled ? 'enabled' : 'disabled'}`)
+    }
   }
 
   /**
