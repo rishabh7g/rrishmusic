@@ -22,7 +22,7 @@ import {
   getContextualMessage,
   type CrossServiceSuggestion,
 } from '@/utils/crossServiceSuggestions'
-import { ServiceType } from '@/utils/contactRouting'
+import { ServiceType } from '@/types/content'
 import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
 
 /**
