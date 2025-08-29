@@ -9,6 +9,7 @@ interface MediaItem {
   src: string
   title: string
   category?: string
+  isPortrait?: boolean
 }
 
 // Animation variants
@@ -47,6 +48,7 @@ export function Gallery() {
   const [currentIndex, setCurrentIndex] = useState(0)
   const [direction, setDirection] = useState(0)
   const [loading, setLoading] = useState(true)
+  const [imageAspectRatios, setImageAspectRatios] = useState<Record<string, boolean>>({})
 
   // SEO setup
   usePageSEO({
@@ -55,6 +57,26 @@ export function Gallery() {
     keywords: 'gallery, photos, videos, performances, music, collaboration, band',
     canonicalUrl: 'https://www.rrishmusic.com/gallery'
   })
+
+  // Detect image aspect ratio
+  const detectImageAspectRatio = useCallback((src: string, itemId: string) => {
+    const img = new Image()
+    img.onload = () => {
+      const isPortrait = img.height > img.width
+      setImageAspectRatios(prev => ({
+        ...prev,
+        [itemId]: isPortrait
+      }))
+    }
+    img.onerror = () => {
+      // Fallback to landscape if image fails to load
+      setImageAspectRatios(prev => ({
+        ...prev,
+        [itemId]: false
+      }))
+    }
+    img.src = src
+  }, [])
 
   // Load media items
   useEffect(() => {
@@ -102,13 +124,17 @@ export function Gallery() {
         ]
 
         imageFiles.forEach((file, index) => {
+          const itemId = `image-${file.category}-${index}`
           items.push({
-            id: `image-${file.category}-${index}`,
+            id: itemId,
             type: 'image',
             src: file.path,
             title: file.filename.replace(/\.[^/.]+$/, ''),
             category: file.category
           })
+          
+          // Detect aspect ratio for each image
+          detectImageAspectRatio(file.path, itemId)
         })
 
         // TODO: Load video files when they're added
@@ -123,7 +149,7 @@ export function Gallery() {
     }
 
     loadMediaItems()
-  }, [])
+  }, [detectImageAspectRatio])
 
   // Navigation functions
   const paginate = useCallback((newDirection: number) => {
@@ -188,6 +214,7 @@ export function Gallery() {
   }
 
   const currentItem = mediaItems[currentIndex]
+  const currentItemIsPortrait = currentItem ? imageAspectRatios[currentItem.id] : false
 
   return (
     <motion.div
@@ -217,8 +244,16 @@ export function Gallery() {
       {/* Carousel Container */}
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="relative">
-          {/* Main Carousel */}
-          <div className="relative h-[60vh] md:h-[70vh] rounded-3xl overflow-hidden bg-theme-bg-secondary shadow-2xl">
+          {/* Main Carousel - Dynamic height based on image orientation */}
+          <motion.div 
+            className={`relative rounded-3xl overflow-hidden bg-theme-bg-secondary shadow-2xl transition-all duration-500 ${
+              currentItemIsPortrait 
+                ? 'h-[70vh] md:h-[80vh] max-w-2xl mx-auto' 
+                : 'h-[60vh] md:h-[70vh]'
+            }`}
+            layout
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+          >
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={currentIndex}
@@ -243,7 +278,11 @@ export function Gallery() {
                   <img
                     src={currentItem.src}
                     alt={currentItem.title}
-                    className="w-full h-full object-cover"
+                    className={`w-full h-full ${
+                      currentItemIsPortrait 
+                        ? 'object-contain bg-black' 
+                        : 'object-cover'
+                    }`}
                     loading="lazy"
                   />
                 )}
@@ -282,7 +321,7 @@ export function Gallery() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
-          </div>
+          </motion.div>
 
           {/* Indicators */}
           <div className="flex justify-center mt-6 space-x-2">
