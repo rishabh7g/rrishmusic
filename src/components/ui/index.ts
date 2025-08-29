@@ -30,3 +30,8 @@ export {
 } from './CollaborationInquiryCTA'
 
 export { MediaPreview } from './MediaPreview'
+export { default as ContextAwareHeader } from './ContextAwareHeader'
+export { default as ServicePageLayout } from './ServicePageLayout'
+export { LazyImage } from './LazyImage'
+export type { LazyImageProps } from './LazyImage'
+export { default as ThemeToggle } from './ThemeToggle'

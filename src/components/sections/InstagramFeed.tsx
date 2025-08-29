@@ -8,8 +8,8 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { useInstagramContent } from '@/hooks/useInstagramContent'
-import { InstagramOfficialEmbed } from '@/components/InstagramOfficialEmbed'
-import { InstagramEmbed } from '@/components/InstagramEmbed'
+import { InstagramOfficialEmbed } from '@/components/social/InstagramOfficialEmbed'
+import { InstagramEmbed } from '@/components/social/InstagramEmbed'
 import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 interface InstagramFeedProps {

@@ -16,7 +16,7 @@ import { motion } from 'framer-motion'
 import { instagramService, InstagramPost } from '@/services/instagram'
 import { useInstagramContent } from '@/hooks/useInstagramContent'
 import { fadeInUp, staggerContainer } from '@/utils/animations'
-import { InstagramEmbed } from '@/components/InstagramEmbed'
+import { InstagramEmbed } from '@/components/social/InstagramEmbed'
 
 interface InstagramFeedProps {
   limit?: number
