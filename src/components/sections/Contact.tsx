@@ -9,7 +9,8 @@ import {
 import { pluralize } from '@/utils/string'
 import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
 import { useEmailAutomation } from '@/hooks/useEmailAutomation'
-import type { ContactContext, ServiceType } from '@/utils/contactRouting'
+import type { ContactContext } from '@/utils/contactRouting'
+import type { ServiceType } from '@/types/content'
 import type { InquiryFormData } from '@/types/forms'
 import type { ContactFormData } from '@/hooks/useEmailAutomation'
 

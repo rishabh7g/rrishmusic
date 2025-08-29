@@ -11,7 +11,7 @@
  * - Conversion tracking integration
  */
 
-import type { ServiceType } from '@/utils/contactRouting'
+import type { ServiceType } from '@/types/content'
 
 /**
  * Email template types for different stages of follow-up
