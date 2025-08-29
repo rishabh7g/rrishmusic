@@ -36,13 +36,15 @@ export function useEmailAutomation() {
       setError(null)
 
       try {
-        // For now, just log the automation trigger
-        console.log('📧 Email sequence would be initialized:', {
-          service: formData.serviceType,
-          name: formData.name,
-          email: formData.email,
-          timestamp: new Date().toISOString(),
-        })
+        // For now, just log the automation trigger (development only)
+        if (process.env.NODE_ENV === 'development') {
+          console.log('📧 Email sequence would be initialized:', {
+            service: formData.serviceType,
+            name: formData.name,
+            email: formData.email,
+            timestamp: new Date().toISOString(),
+          })
+        }
 
         // Simulate processing delay
         await new Promise(resolve => setTimeout(resolve, 500))

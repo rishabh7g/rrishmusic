@@ -1,14 +1,16 @@
 /**
  * Service context types for context-aware navigation and headers
  */
+import { ServiceType } from './content'
 
-export type ServiceType = 'home' | 'teaching' | 'performance' | 'collaboration'
+// Note: ServiceContext includes 'home' for navigation but core services are performance, teaching, collaboration
+export type ExtendedServiceType = ServiceType | 'home'
 
 export interface ServiceContextualData {
   /**
    * Service identifier
    */
-  service: ServiceType
+  service: ExtendedServiceType
 
   /**
    * Service display name
@@ -104,12 +106,12 @@ export interface ServiceContextState {
   /**
    * Current active service context
    */
-  currentService: ServiceType
+  currentService: ExtendedServiceType
 
   /**
    * Available service contexts
    */
-  services: Record<ServiceType, ServiceContextualData>
+  services: Record<ExtendedServiceType, ServiceContextualData>
 
   /**
    * Whether context is being transitioned
@@ -119,24 +121,24 @@ export interface ServiceContextState {
   /**
    * Previous service context (for transition animations)
    */
-  previousService?: ServiceType
+  previousService?: ExtendedServiceType
 }
 
 export interface ServiceContextActions {
   /**
    * Change the current service context
    */
-  setService: (service: ServiceType) => void
+  setService: (service: ExtendedServiceType) => void
 
   /**
    * Get contextual data for a specific service
    */
-  getServiceData: (service: ServiceType) => ServiceContextualData
+  getServiceData: (service: ExtendedServiceType) => ServiceContextualData
 
   /**
    * Check if a service is currently active
    */
-  isServiceActive: (service: ServiceType) => boolean
+  isServiceActive: (service: ExtendedServiceType) => boolean
 
   /**
    * Get navigation items for current service

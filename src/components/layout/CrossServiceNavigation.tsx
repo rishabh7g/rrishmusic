@@ -71,11 +71,7 @@ export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
     }
 
     loadRecommendations()
-  }, [
-    currentService,
-    maxRecommendations,
-    showCrossServiceSuggestions,
-  ])
+  }, [currentService, maxRecommendations, showCrossServiceSuggestions])
 
   const handleServiceClick = (
     targetService: ServiceType,

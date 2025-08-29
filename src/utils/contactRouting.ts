@@ -15,15 +15,12 @@
 
 import { Location } from 'react-router-dom'
 import type { FormInitialData } from '@/types/forms'
+import { ServiceType as CoreServiceType } from '@/types/content'
 
 /**
- * Supported service types for contact routing
+ * Supported service types for contact routing (includes general for fallbacks)
  */
-export type ServiceType =
-  | 'performance'
-  | 'collaboration'
-  | 'teaching'
-  | 'general'
+export type ServiceType = CoreServiceType | 'general'
 
 /**
  * Enhanced referral source categories

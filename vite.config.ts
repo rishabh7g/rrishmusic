@@ -55,9 +55,7 @@ export default defineConfig({
         '*.config.ts',
         'src/**/*.test.{ts,tsx}',
         'src/**/__tests__/**',
-        // Exclude demo and debug components from coverage
-        'src/components/pages/CategoryDemo.tsx',
-        'src/components/pages/ServiceSectionsDemo.tsx',
+        // Exclude debug components from coverage
         'src/components/debug/**/*',
         // Exclude type definitions and constants
         'src/types/**/*',
