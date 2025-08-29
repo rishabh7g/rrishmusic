@@ -25,7 +25,6 @@
 
 /* Main Content Area */
 .main-content {
-  padding-top: 4rem; /* Space for fixed navigation */
   position: relative;
   z-index: 1;
 }

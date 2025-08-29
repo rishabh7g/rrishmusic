@@ -483,8 +483,6 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
         )}
       </AnimatePresence>
 
-      {/* Navigation spacer to prevent content overlap */}
-      <div className="h-16" aria-hidden="true" />
     </div>
   )
 }

@@ -586,8 +586,6 @@ export const Navigation: React.FC<NavigationProps> = ({
         )}
       </nav>
 
-      {/* Navigation spacer to prevent content overlap */}
-      <div className="h-16" aria-hidden="true" />
     </>
   )
 }
