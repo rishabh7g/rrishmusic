@@ -147,7 +147,7 @@ export interface ThemeConfig {
 // Theme constants
 export const THEME_STORAGE_KEY = 'theme-mode'
 export const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
-export const DEFAULT_THEME_MODE: ThemeMode = 'system'
+export const DEFAULT_THEME_MODE: ThemeMode = 'dark'
 
 // Basic theme colors for light and dark modes
 export const lightThemeColors: ThemeColors = {
