@@ -3,7 +3,7 @@ import {
   ServiceSectionTemplate,
   ServiceSectionProps,
 } from './ServiceSectionTemplate'
-import collaborationData from '@/data/collaboration.json'
+import collaborationData from '@/content/collaboration.json'
 
 /**
  * Collaboration Portfolio Section

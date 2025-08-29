@@ -13,7 +13,7 @@
  */
 
 import { ServiceType } from '@/utils/contactRouting'
-import suggestionsData from '@/data/crossServiceSuggestions.json'
+import suggestionsData from '@/content/crossServiceSuggestions.json'
 
 /**
  * Cross-service suggestion data

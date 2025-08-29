@@ -6,7 +6,7 @@
  */
 
 import { InstagramPost } from './instagram'
-import instagramPostsData from '@/data/instagram-posts.json'
+import instagramPostsData from '@/content/instagram-posts.json'
 
 export interface InstagramDataFile {
   posts: InstagramPost[]
