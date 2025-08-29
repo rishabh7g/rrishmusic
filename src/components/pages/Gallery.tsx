@@ -8,6 +8,9 @@ interface MediaItem {
   type: 'image' | 'video'
   src: string
   title: string
+  name: string
+  location?: string
+  hasUnderscore: boolean
   category?: string
   isPortrait?: boolean
 }
@@ -21,6 +24,38 @@ const containerVariants = {
   }
 }
 
+
+/**
+ * Parse image filename to extract name and location
+ * Format: {name}_{location} with optional serial numbers
+ * Examples:
+ * - "All star band_Grazeland.jpg" → name: "All star band", location: "Grazeland", hasUnderscore: true
+ * - "XBand_Grazeland 1.jpeg" → name: "XBand", location: "Grazeland", hasUnderscore: true
+ * - "Rrish solo 1.jpg" → name: "Rrish solo", location: undefined, hasUnderscore: false
+ * - "Rrish_Rishikesh.jpg" → name: "Rrish", location: "Rishikesh", hasUnderscore: true
+ */
+const parseImageName = (filename: string): { name: string; location?: string; hasUnderscore: boolean } => {
+  // Remove file extension
+  const nameWithoutExt = filename.replace(/\.[^/.]+$/, '')
+  
+  // Check if there's an underscore (indicating location)
+  const underscoreIndex = nameWithoutExt.indexOf('_')
+  
+  if (underscoreIndex === -1) {
+    // No underscore, so no location - just remove serial numbers if any and use the full name
+    const name = nameWithoutExt.replace(/\s+\d+$/, '').trim()
+    return { name, hasUnderscore: false }
+  }
+  
+  // Split by first underscore
+  const name = nameWithoutExt.substring(0, underscoreIndex).trim()
+  const locationPart = nameWithoutExt.substring(underscoreIndex + 1).trim()
+  
+  // Remove serial numbers from location part (numbers at the end)
+  const location = locationPart.replace(/\s+\d+$/, '').trim()
+  
+  return { name, location: location || undefined, hasUnderscore: true }
+}
 
 export function Gallery() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
@@ -136,11 +171,16 @@ export function Gallery() {
 
         imageFiles.forEach((file, index) => {
           const itemId = `image-${file.category}-${index}`
+          const parsed = parseImageName(file.filename)
+          
           items.push({
             id: itemId,
             type: 'image',
             src: file.path,
             title: file.filename.replace(/\.[^/.]+$/, ''),
+            name: parsed.name,
+            location: parsed.location,
+            hasUnderscore: parsed.hasUnderscore,
             category: file.category
           })
           
@@ -274,13 +314,28 @@ export function Gallery() {
                   />
                 )}
 
-                {/* Overlay on hover */}
-                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <div className="bg-white/20 backdrop-blur-sm rounded-full p-3">
+                {/* Overlay on hover with image details */}
+                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/60 transition-all duration-300 flex flex-col items-center justify-center">
+                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 text-center px-3">
+                    {/* Zoom icon */}
+                    <div className="bg-white/20 backdrop-blur-sm rounded-full p-3 mx-auto mb-3">
                       <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
                       </svg>
+                    </div>
+                    
+                    {/* Image name and location */}
+                    <div className="text-white">
+                      <h4 className="text-sm font-semibold mb-1">{item.name}</h4>
+                      {item.hasUnderscore && item.location && (
+                        <p className="text-xs text-white/80 flex items-center justify-center">
+                          <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          {item.location}
+                        </p>
+                      )}
                     </div>
                   </div>
                 </div>
@@ -333,14 +388,27 @@ export function Gallery() {
                   
                   {/* Image info */}
                   <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-4 rounded-b-lg">
-                    <h3 className="text-white text-lg font-semibold mb-1">
-                      {mediaItems[lightboxIndex].title}
+                    <h3 className="text-white text-lg font-semibold mb-2">
+                      {mediaItems[lightboxIndex].name}
                     </h3>
-                    {mediaItems[lightboxIndex].category && (
-                      <span className="text-white/80 text-sm capitalize">
-                        {mediaItems[lightboxIndex].category}
-                      </span>
-                    )}
+                    <div className="flex items-center justify-between">
+                      <div className="flex flex-col">
+                        {mediaItems[lightboxIndex].hasUnderscore && mediaItems[lightboxIndex].location && (
+                          <div className="flex items-center text-white/90 text-sm mb-1">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            {mediaItems[lightboxIndex].location}
+                          </div>
+                        )}
+                        {mediaItems[lightboxIndex].category && (
+                          <span className="text-white/70 text-xs capitalize bg-white/10 px-2 py-1 rounded-full inline-block w-fit">
+                            {mediaItems[lightboxIndex].category}
+                          </span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               )}
