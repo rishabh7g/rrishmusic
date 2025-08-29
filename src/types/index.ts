@@ -1,7 +1,4 @@
 // Core React types
-export * from './audio'
-export * from './instagram'
-export * from './contact'
 export * from './content'
 
 // Re-export commonly used React types
