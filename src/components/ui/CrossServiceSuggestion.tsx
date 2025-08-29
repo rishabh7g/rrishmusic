@@ -23,7 +23,7 @@ import {
   type CrossServiceSuggestion,
 } from '@/utils/crossServiceSuggestions'
 import { ServiceType } from '@/types/content'
-import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
+import { SmartContactCTA } from '@/components/ui/cta'
 
 /**
  * Props for the Cross-Service Suggestion component

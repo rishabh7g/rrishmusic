@@ -7,7 +7,7 @@ import {
   slideInRight,
 } from '@/utils/animations'
 import { pluralize } from '@/utils/string'
-import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
+import { SmartContactCTA } from '@/components/ui/cta'
 import { useEmailAutomation } from '@/hooks/useEmailAutomation'
 import type { ContactContext } from '@/utils/contactRouting'
 import type { ServiceType } from '@/types/content'

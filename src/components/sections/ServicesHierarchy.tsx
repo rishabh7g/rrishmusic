@@ -1,7 +1,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { fadeInUp, staggerContainer, scaleIn } from '@/utils/animations'
-import { CTAHierarchy } from '@/components/ui/CTAHierarchy'
+import { CTAHierarchy } from '@/components/ui/cta'
 
 /**
  * Service item interface for the hierarchy

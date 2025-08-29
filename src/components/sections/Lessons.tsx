@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { useLessonPackages } from '@/hooks/useContent'
 import { fadeInUp, staggerContainer, scaleIn } from '@/utils/animations'
-import { TeachingInquiryCTA } from '@/components/ui/TeachingInquiryCTA'
+import { TeachingInquiryCTA } from '@/components/ui/cta'
 import type { TeachingInquiryData } from '@/components/forms/TeachingInquiryForm'
 
 export function Lessons() {
