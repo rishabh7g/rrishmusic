@@ -16,7 +16,7 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import { fadeInUp, staggerContainer } from '@/utils/animations'
-import { CollaborationInquiryCTA } from '@/components/ui/CollaborationInquiryCTA'
+import { CollaborationInquiryCTA } from '@/components/ui/cta'
 
 interface CollaborationCTAProps {
   className?: string
