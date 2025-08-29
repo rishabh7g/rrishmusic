@@ -3,7 +3,7 @@ import {
   ServiceSectionTemplate,
   ServiceSectionProps,
 } from './ServiceSectionTemplate'
-import teachingData from '@/data/teaching.json'
+import teachingData from '@/content/teaching.json'
 
 /**
  * Teaching Package Section

@@ -5,7 +5,6 @@
  * - Reusable CTA button for performance inquiries
  * - Multiple style variants (primary, secondary, outline)
  * - Configurable event type pre-selection
- * - Analytics tracking integration
  * - Mobile-optimized responsive design
  * - Accessibility compliance with proper ARIA labels
  */
@@ -27,7 +26,6 @@ interface PerformanceInquiryCTAProps {
   children?: React.ReactNode
   className?: string
   onClick?: () => void
-  trackingLabel?: string // For analytics
 }
 
 /**
@@ -76,20 +74,10 @@ export const PerformanceInquiryCTA: React.FC<PerformanceInquiryCTAProps> = ({
   children,
   className = '',
   onClick,
-  trackingLabel = 'Performance CTA',
 }) => {
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   const handleClick = () => {
-    // Track analytics
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'cta_click', {
-        event_category: 'Performance Inquiry',
-        event_label: trackingLabel,
-        event_context: eventType || 'general',
-      })
-    }
-
     // Custom onClick handler
     onClick?.()
 
@@ -98,16 +86,6 @@ export const PerformanceInquiryCTA: React.FC<PerformanceInquiryCTAProps> = ({
   }
 
   const handleFormSubmit = (data: PerformanceInquiryData) => {
-    // Track successful form submission
-    if (typeof gtag !== 'undefined') {
-      gtag('event', 'inquiry_submit', {
-        event_category: 'Performance Inquiry',
-        event_label: trackingLabel,
-        event_type: data.eventType,
-        value: 1,
-      })
-    }
-
     console.log('Performance inquiry submitted:', data)
     // In production, this would send data to your backend/email service
   }

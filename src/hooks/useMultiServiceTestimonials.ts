@@ -9,7 +9,7 @@ import { calculateTestimonialStats } from '@/utils/testimonialCalculations'
 
 // Import testimonials and service configuration
 import testimonialsData from '@/content/testimonials.json'
-import serviceConfig from '@/data/serviceConfiguration.json'
+import serviceConfig from '@/content/serviceConfiguration.json'
 
 interface TestimonialData {
   testimonials: Testimonial[]

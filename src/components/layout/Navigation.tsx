@@ -585,7 +585,6 @@ export const Navigation: React.FC<NavigationProps> = ({
           </AnimatePresence>
         )}
       </nav>
-
     </>
   )
 }

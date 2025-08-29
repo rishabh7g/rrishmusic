@@ -1,6 +1,6 @@
 import { NavigationItem } from '@/types'
-import navigationData from '@/data/navigation.json'
-import contactData from '@/data/contact.json'
+import navigationData from '@/content/navigation.json'
+import contactData from '@/content/contact.json'
 
 // Navigation Configuration - Optimized order for better UX flow and service hierarchy
 export const NAVIGATION_ITEMS: NavigationItem[] = navigationData.navigationItems

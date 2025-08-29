@@ -12,10 +12,10 @@
  * - Performance optimization through cached data loading
  */
 
-import collaborationData from '@/data/collaboration.json'
-import teachingData from '@/data/teaching.json'
-import performanceGalleryData from '@/data/performance-gallery.json'
-import uiConfigData from '@/data/ui-config.json'
+import collaborationData from '@/content/collaboration.json'
+import teachingData from '@/content/teaching.json'
+import performanceGalleryData from '@/content/performance-gallery.json'
+import uiConfigData from '@/content/ui-config.json'
 
 // Type definitions for better TypeScript support
 export interface CollaborationProject {

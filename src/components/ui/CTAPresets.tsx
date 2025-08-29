@@ -6,7 +6,7 @@
 
 import React from 'react'
 import { CTAHierarchy, type CTAContext, type CTALayout } from './CTAHierarchy'
-import ctaConfig from '@/data/ui/cta.json'
+import ctaConfig from '@/content/ui/cta.json'
 
 /**
  * Props interface for CTA Hierarchy (imported from main component)

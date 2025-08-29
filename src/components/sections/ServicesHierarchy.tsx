@@ -370,23 +370,7 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
         scale: size === 'large' || size === 'split-large' ? 1.02 : 1.03,
       }}
       onClick={() => {
-        // Analytics tracking for service hierarchy engagement
-        if (typeof window !== 'undefined' && window.gtag) {
-          window.gtag('event', 'service_card_click', {
-            event_category: 'Content Allocation 80/15/5',
-            event_label: service.title,
-            service_prominence: service.prominence,
-            card_size: size,
-            content_allocation:
-              size === 'large'
-                ? '80%'
-                : size === 'split-large'
-                  ? '50%'
-                  : size === 'medium'
-                    ? '15%'
-                    : '5%',
-          })
-        }
+        // Service card clicked
       }}
     >
       {/* Service Icon */}
@@ -404,23 +388,6 @@ const ServiceCard: React.FC<ServiceCardProps> = ({ service, size }) => {
         className={classes.cta}
         onClick={e => {
           e.stopPropagation()
-          // Analytics tracking for CTA clicks with content allocation context
-          if (typeof window !== 'undefined' && window.gtag) {
-            window.gtag('event', 'service_cta_click', {
-              event_category: 'Content Allocation 80/15/5',
-              event_label: `${service.title} - ${service.ctaText}`,
-              service_prominence: service.prominence,
-              destination: service.ctaLink,
-              content_allocation:
-                size === 'large'
-                  ? '80%'
-                  : size === 'split-large'
-                    ? '50%'
-                    : size === 'medium'
-                      ? '15%'
-                      : '5%',
-            })
-          }
         }}
       >
         {service.ctaText}

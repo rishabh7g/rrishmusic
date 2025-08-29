@@ -12,7 +12,11 @@ const Home = lazy(() =>
 )
 const Teaching = lazy(() => import('./components/pages/Teaching'))
 const Performance = lazy(() => import('./components/pages/Performance'))
-const Gallery = lazy(() => import('./components/pages/Gallery').then(module => ({ default: module.Gallery })))
+const Gallery = lazy(() =>
+  import('./components/pages/Gallery').then(module => ({
+    default: module.Gallery,
+  }))
+)
 
 // Simple loading spinner with theme awareness
 const Spinner = () => {
@@ -172,13 +176,14 @@ function App(): React.JSX.Element {
       document.head.appendChild(link)
     })
 
-    // Preload hero images for faster LCP
-    const heroImages = [
-      '/images/performance-hero-bg.webp',
-      '/images/services/performance-bg.webp',
+    // Only preload images that are immediately visible on the homepage
+    // Performance-specific images are loaded when the user navigates to those pages
+    const immediateImages = [
+      // Add only images that are immediately visible on page load
+      '/images/services/performance-bg.webp', // Used on homepage service cards
     ]
 
-    heroImages.forEach(src => {
+    immediateImages.forEach(src => {
       const link = document.createElement('link')
       link.rel = 'preload'
       link.as = 'image'
@@ -188,8 +193,6 @@ function App(): React.JSX.Element {
 
     // DNS prefetch for external domains
     const externalDomains = [
-      'https://www.googletagmanager.com',
-      'https://www.google-analytics.com',
       'https://fonts.googleapis.com',
       'https://fonts.gstatic.com',
     ]

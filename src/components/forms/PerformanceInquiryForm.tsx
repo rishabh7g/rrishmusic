@@ -8,7 +8,6 @@
  * - Comprehensive form validation with TypeScript
  * - Mobile-optimized responsive design with professional appearance
  * - Form submission handling with confirmation flow
- * - Analytics tracking for conversion measurement
  */
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -157,14 +156,7 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = ({
       // Simulate form submission - in production this would send to an API
       await new Promise(resolve => setTimeout(resolve, 1500))
 
-      // Track analytics (placeholder)
-      if (typeof gtag !== 'undefined') {
-        gtag('event', 'form_submit', {
-          event_category: 'Performance Inquiry',
-          event_label: `${formData.eventType}-${formData.performanceFormat}`,
-          value: 1,
-        })
-      }
+      // Form submitted successfully
 
       onSubmit?.(formData)
       setIsSubmitted(true)

@@ -482,7 +482,6 @@ export const MobileNavigation: React.FC<MobileNavigationProps> = ({
           </>
         )}
       </AnimatePresence>
-
     </div>
   )
 }

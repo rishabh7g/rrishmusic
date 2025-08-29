@@ -4,10 +4,10 @@
 import { useMemo } from 'react'
 
 // Import all JSON data files using the correct paths
-import teachingContentRaw from '../data/teaching.json'
-import collaborationContentRaw from '../data/collaboration.json'
-import contactContent from '../data/contact.json'
-import navigationData from '../data/navigation.json'
+import teachingContentRaw from '../content/teaching.json'
+import collaborationContentRaw from '../content/collaboration.json'
+import contactContent from '../content/contact.json'
+import navigationData from '../content/navigation.json'
 // import statsData from '../content/stats.json'; // Currently unused
 
 // Type definitions for better TypeScript support

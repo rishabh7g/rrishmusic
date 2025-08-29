@@ -8,12 +8,10 @@ import {
 } from '@/utils/animations'
 import { pluralize } from '@/utils/string'
 import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
-import { SmartRoutingDebug } from '@/components/debug/SmartRoutingDebug'
-import { EmailAutomationDebug } from '@/components/debug/EmailAutomationDebug'
 import { useEmailAutomation } from '@/hooks/useEmailAutomation'
 import type { ContactContext, ServiceType } from '@/utils/contactRouting'
 import type { InquiryFormData } from '@/types/forms'
-import type { ContactFormData } from '@/services/emailAutomation'
+import type { ContactFormData } from '@/hooks/useEmailAutomation'
 
 export function Contact() {
   const { data: contact, loading, error } = useSectionContent('contact')
@@ -474,12 +472,7 @@ export function Contact() {
         </motion.div>
 
         {/* Debug Panels - Development Only */}
-        {process.env.NODE_ENV === 'development' && (
-          <>
-            <SmartRoutingDebug />
-            <EmailAutomationDebug />
-          </>
-        )}
+        {process.env.NODE_ENV === 'development' && <></>}
       </div>
     </div>
   )
