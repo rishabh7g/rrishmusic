@@ -65,40 +65,72 @@ export function Gallery() {
 
         // Load image files from known structure
         const imageFiles = [
+          // Band images
           {
-            filename: 'All star band.jpg',
+            filename: 'All star band_Grazeland.jpg',
             category: 'band',
-            path: '/images/instagram/band/All star band.jpg'
+            path: '/images/instagram/band/All star band_Grazeland.jpg'
           },
           {
-            filename: 'XBand 1.jpg',
+            filename: 'XBand_Grazeland 1.jpeg',
             category: 'band', 
-            path: '/images/instagram/band/XBand 1.jpg'
+            path: '/images/instagram/band/XBand_Grazeland 1.jpeg'
           },
           {
-            filename: 'XBand 2.jpg',
+            filename: 'XBand_Grazeland.jpg',
             category: 'band',
-            path: '/images/instagram/band/XBand 2.jpg'
+            path: '/images/instagram/band/XBand_Grazeland.jpg'
           },
           {
-            filename: 'XBand 3.jpg',
+            filename: 'XBand_Lunar day night event.jpg',
             category: 'band',
-            path: '/images/instagram/band/XBand 3.jpg'
+            path: '/images/instagram/band/XBand_Lunar day night event.jpg'
           },
           {
-            filename: 'My portrait 1.jpg',
+            filename: 'XBand_Pop up park-Point Cook.jpg',
+            category: 'band',
+            path: '/images/instagram/band/XBand_Pop up park-Point Cook.jpg'
+          },
+          // Portrait images
+          {
+            filename: 'Rrish solo 1.jpg',
             category: 'portrait',
-            path: '/images/instagram/portrait/My portrait 1.jpg'
+            path: '/images/instagram/portrait/Rrish solo 1.jpg'
           },
           {
-            filename: 'My portrait 2.jpg',
+            filename: 'Rrish solo 2.jpg',
             category: 'portrait',
-            path: '/images/instagram/portrait/My portrait 2.jpg'
+            path: '/images/instagram/portrait/Rrish solo 2.jpg'
           },
           {
-            filename: 'My portrait 4.jpg',
+            filename: 'Rrish solo 3.jpg',
             category: 'portrait',
-            path: '/images/instagram/portrait/My portrait 4.jpg'
+            path: '/images/instagram/portrait/Rrish solo 3.jpg'
+          },
+          {
+            filename: 'Rrish solo.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish solo.jpg'
+          },
+          {
+            filename: 'Rrish_Lunar day night event.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish_Lunar day night event.jpg'
+          },
+          {
+            filename: 'Rrish_Pop up park-Point Cook 1.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg'
+          },
+          {
+            filename: 'Rrish_Pop up park-Point Cook.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg'
+          },
+          {
+            filename: 'Rrish_Rishikesh.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish_Rishikesh.jpg'
           }
         ]
 
@@ -211,9 +243,9 @@ export function Gallery() {
             <motion.div
               key={item.id}
               className={`group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer break-inside-avoid mb-4 md:mb-6 ${
-                imageAspectRatios[item.id] === false ? 'transform scale-110 my-6 md:my-8' : ''
+                imageAspectRatios[item.id] === false ? 'transform scale-125 my-8 md:my-10 col-span-2' : ''
               }`}
-              whileHover={{ scale: imageAspectRatios[item.id] === false ? 1.12 : 1.02, y: -2 }}
+              whileHover={{ scale: imageAspectRatios[item.id] === false ? 1.15 : 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => openLightbox(index)}
               initial={{ opacity: 0, y: 20 }}
