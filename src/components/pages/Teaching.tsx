@@ -1,7 +1,6 @@
 import React, { useEffect } from 'react'
 import { SEOHead } from '@/components/common/SEOHead'
 import { Lessons } from '@/components/sections/Lessons'
-import { About } from '@/components/sections/About'
 import { performanceMonitor } from '@/utils/performance'
 
 // Import universal inquiry form

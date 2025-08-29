@@ -157,7 +157,7 @@ export function preloadImage(src: string): Promise<void> {
  * Calculate contrast ratio between background and text
  * Ensures WCAG compliance for text readability
  */
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 export function calculateContrastRatio(
   _backgroundColor: string,
   _textColor: string

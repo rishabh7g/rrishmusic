@@ -1,8 +1,6 @@
-import React, { Suspense } from 'react'
+import React from 'react'
 import {
-  PerformanceHero,
   PerformanceGallery,
-  MultiServiceTestimonialsSection,
   PricingSection,
   InstagramFeed,
 } from '@/components/sections'
@@ -60,12 +58,8 @@ interface PerformancePageProps {
 export const Performance: React.FC<PerformancePageProps> = ({
   className = '',
 }) => {
-  // Load testimonials with performance focus
-  const {
-    getTestimonialsByService,
-    getFeaturedTestimonials,
-    loading: testimonialsLoading,
-  } = useMultiServiceTestimonials()
+  // Load testimonials with performance focus (reserved for future use)
+  useMultiServiceTestimonials()
 
   // Form state management
   const [isFormOpen, setIsFormOpen] = React.useState(false)

@@ -24,9 +24,11 @@ import {
   trackContactRouting,
   getUserJourneySummary,
 } from '@/utils/contactRouting'
-import { PerformanceInquiryForm } from '@/components/forms/PerformanceInquiryForm'
-import { CollaborationInquiryForm } from '@/components/forms/CollaborationInquiryForm'
-import { TeachingInquiryForm } from '@/components/forms/TeachingInquiryForm'
+import { 
+  PerformanceInquiryForm, 
+  CollaborationInquiryForm, 
+  TeachingInquiryForm 
+} from '@/components/forms'
 import { ServiceSelectionModal } from '@/components/ui/ServiceSelectionModal'
 import type {
   InquiryFormData,
@@ -618,17 +620,12 @@ export const SmartContactCTA: React.FC<SmartContactCTAProps> = ({
     <>
       {renderEnhancedCTA()}
 
-      {/* Enhanced Service-Specific Forms with Pre-filling */}
+      {/* Enhanced Service-Specific Forms - Using New Unified System */}
       {formComponent === 'PerformanceInquiryForm' && (
         <PerformanceInquiryForm
           isOpen={isFormOpen}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialPerformanceType={
-            'performanceType' in initialFormData
-              ? initialFormData.performanceType
-              : undefined
-          }
         />
       )}
 
@@ -637,11 +634,6 @@ export const SmartContactCTA: React.FC<SmartContactCTAProps> = ({
           isOpen={isFormOpen}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialProjectType={
-            'projectType' in initialFormData
-              ? initialFormData.projectType
-              : undefined
-          }
         />
       )}
 
@@ -650,11 +642,6 @@ export const SmartContactCTA: React.FC<SmartContactCTAProps> = ({
           isOpen={isFormOpen}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialPackageType={
-            'packageType' in initialFormData
-              ? initialFormData.packageType
-              : undefined
-          }
         />
       )}
 

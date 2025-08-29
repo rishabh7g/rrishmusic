@@ -116,7 +116,8 @@ export type InquiryData =
   | UniversalInquiryData
 
 // Service types
-export type ServiceType = 'performance' | 'collaboration' | 'teaching' | 'universal'
+import { ServiceType as CoreServiceType } from "@/types/content"
+export type ServiceType = CoreServiceType | "universal"
 
 // Common form props interface
 export interface BaseInquiryFormProps {

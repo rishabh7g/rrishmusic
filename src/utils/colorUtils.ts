@@ -5,7 +5,7 @@
  * and WCAG AA compliance checking for the RrishMusic theme system.
  */
 
-import { ThemeColors } from '../styles/themes'
+import { ThemeColors } from '../types'
 
 /**
  * Converts hex color to RGB values

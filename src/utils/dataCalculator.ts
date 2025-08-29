@@ -271,9 +271,7 @@ export class PricingCalculator extends BaseCalculator {
       return {
         basePrice,
         pricePerHour: Math.round((basePrice / duration) * 60),
-        withCustomizations: customizations
-          ? basePrice * 1.1
-          : basePrice, // 10% surcharge for customizations
+        withCustomizations: customizations ? basePrice * 1.1 : basePrice, // 10% surcharge for customizations
         currency: 'AUD',
         lastCalculated: new Date().toISOString(),
       }
@@ -347,7 +345,9 @@ export class DataCalculator {
  * Synchronous testimonial stats calculation for React hooks
  * This is a lightweight version that skips caching for immediate use in hooks
  */
-export function calculateTestimonialStats(testimonials: Testimonial[]): TestimonialStats {
+export function calculateTestimonialStats(
+  testimonials: Testimonial[]
+): TestimonialStats {
   const total = testimonials.length
 
   if (total === 0) {
@@ -369,15 +369,23 @@ export function calculateTestimonialStats(testimonials: Testimonial[]): Testimon
 
   // Calculate service-specific stats
   const services = ['performance', 'teaching', 'collaboration'] as const
-  const byService: Record<string, { count: number; percentage: number; averageRating: number }> = {}
+  const byService: Record<
+    string,
+    { count: number; percentage: number; averageRating: number }
+  > = {}
 
   services.forEach(service => {
     const serviceTestimonials = testimonials.filter(t => t.service === service)
     const count = serviceTestimonials.length
     const percentage = total > 0 ? Math.round((count / total) * 100) : 0
-    const serviceRating = count > 0
-      ? Math.round((serviceTestimonials.reduce((sum, t) => sum + t.rating, 0) / count) * 10) / 10
-      : 0
+    const serviceRating =
+      count > 0
+        ? Math.round(
+            (serviceTestimonials.reduce((sum, t) => sum + t.rating, 0) /
+              count) *
+              10
+          ) / 10
+        : 0
 
     byService[service] = { count, percentage, averageRating: serviceRating }
   })

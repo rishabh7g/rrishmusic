@@ -26,9 +26,7 @@ export type InquiryFormData = InquiryData
 /**
  * Form submission handler type
  */
-export type FormSubmissionHandler<T = InquiryData> = (
-  data: T
-) => Promise<void>
+export type FormSubmissionHandler<T = InquiryData> = (data: T) => Promise<void>
 
 /**
  * Generic form props interface

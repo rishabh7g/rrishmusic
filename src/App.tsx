@@ -12,6 +12,7 @@ const Home = lazy(() =>
 )
 const Teaching = lazy(() => import('./components/pages/Teaching'))
 const Performance = lazy(() => import('./components/pages/Performance'))
+const Collaboration = lazy(() => import('./components/pages/Collaboration'))
 const Gallery = lazy(() =>
   import('./components/pages/Gallery').then(module => ({
     default: module.Gallery,
@@ -134,6 +135,16 @@ function AppContent() {
                     <PageWrapper>
                       <Suspense fallback={<Spinner />}>
                         <Performance />
+                      </Suspense>
+                    </PageWrapper>
+                  }
+                />
+                <Route
+                  path="/collaboration"
+                  element={
+                    <PageWrapper>
+                      <Suspense fallback={<Spinner />}>
+                        <Collaboration />
                       </Suspense>
                     </PageWrapper>
                   }

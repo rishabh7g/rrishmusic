@@ -122,14 +122,118 @@ export interface ThemeColors {
   secondary: string
   accent: string
   background: string
+  backgroundSecondary: string
+  backgroundTertiary: string
   surface: string
   text: string
   textSecondary: string
+  textMuted: string
   border: string
   success: string
   warning: string
   error: string
   info: string
+}
+
+export type ThemeMode = 'light' | 'dark' | 'system'
+export type ActiveTheme = 'light' | 'dark'
+
+export interface ThemeConfig {
+  colors: ThemeColors
+  mode: ThemeMode
+  name: string
+}
+
+// Theme constants
+export const THEME_STORAGE_KEY = 'theme-mode'
+export const DARK_MODE_MEDIA_QUERY = '(prefers-color-scheme: dark)'
+export const DEFAULT_THEME_MODE: ThemeMode = 'system'
+
+// Basic theme colors for light and dark modes
+export const lightThemeColors: ThemeColors = {
+  primary: '#3b82f6',
+  secondary: '#6b7280',
+  accent: '#10b981',
+  background: '#ffffff',
+  backgroundSecondary: '#f8fafc',
+  backgroundTertiary: '#e2e8f0',
+  surface: '#ffffff',
+  text: '#1f2937',
+  textSecondary: '#6b7280',
+  textMuted: '#9ca3af',
+  border: '#e5e7eb',
+  success: '#10b981',
+  warning: '#f59e0b',
+  error: '#ef4444',
+  info: '#3b82f6',
+}
+
+export const darkThemeColors: ThemeColors = {
+  primary: '#60a5fa',
+  secondary: '#9ca3af',
+  accent: '#34d399',
+  background: '#111827',
+  backgroundSecondary: '#1f2937',
+  backgroundTertiary: '#374151',
+  surface: '#1f2937',
+  text: '#f9fafb',
+  textSecondary: '#d1d5db',
+  textMuted: '#9ca3af',
+  border: '#374151',
+  success: '#34d399',
+  warning: '#fbbf24',
+  error: '#f87171',
+  info: '#60a5fa',
+}
+
+export const themes: Record<ActiveTheme, ThemeConfig> = {
+  light: {
+    colors: lightThemeColors,
+    mode: 'light',
+    name: 'Light',
+  },
+  dark: {
+    colors: darkThemeColors,
+    mode: 'dark',
+    name: 'Dark',
+  },
+}
+
+// Transition configurations
+export const themeTransitions = {
+  duration: {
+    fast: '150ms',
+    normal: '250ms',
+    slow: '400ms',
+  },
+  easing: {
+    standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    emphasized: 'cubic-bezier(0.0, 0, 0.2, 1)',
+    decelerated: 'cubic-bezier(0.0, 0, 0.2, 1)',
+  },
+}
+
+// CSS custom properties helper
+export const createCSSCustomProperties = (
+  colors: ThemeColors
+): Record<string, string> => {
+  return {
+    '--color-primary': colors.primary,
+    '--color-secondary': colors.secondary,
+    '--color-accent': colors.accent,
+    '--color-background': colors.background,
+    '--color-background-secondary': colors.backgroundSecondary,
+    '--color-background-tertiary': colors.backgroundTertiary,
+    '--color-surface': colors.surface,
+    '--color-text': colors.text,
+    '--color-text-secondary': colors.textSecondary,
+    '--color-text-muted': colors.textMuted,
+    '--color-border': colors.border,
+    '--color-success': colors.success,
+    '--color-warning': colors.warning,
+    '--color-error': colors.error,
+    '--color-info': colors.info,
+  }
 }
 
 export interface Breakpoints {

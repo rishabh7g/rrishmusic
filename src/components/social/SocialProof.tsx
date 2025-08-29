@@ -24,6 +24,7 @@ interface SocialStat {
   icon: React.ReactNode
 }
 
+// Simplified testimonial interface for social proof display
 interface Testimonial {
   id: string
   content: string

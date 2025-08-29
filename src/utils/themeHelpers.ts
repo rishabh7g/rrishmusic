@@ -15,7 +15,7 @@ import {
   lightThemeColors,
   darkThemeColors,
   themeTransitions,
-} from '../styles/themes'
+} from '../types'
 
 /**
  * Theme animation state management

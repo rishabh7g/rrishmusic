@@ -162,10 +162,10 @@ class RateLimiter {
 
   async checkLimit(): Promise<boolean> {
     const now = Date.now()
-    
+
     // Remove requests outside the time window
     this.requests = this.requests.filter(time => now - time < this.timeWindow)
-    
+
     return this.requests.length < this.maxRequests
   }
 
@@ -176,11 +176,14 @@ class RateLimiter {
   getStatus(): { remainingRequests: number; resetTime: number } {
     const now = Date.now()
     this.requests = this.requests.filter(time => now - time < this.timeWindow)
-    
-    const remainingRequests = Math.max(0, this.maxRequests - this.requests.length)
+
+    const remainingRequests = Math.max(
+      0,
+      this.maxRequests - this.requests.length
+    )
     const oldestRequest = this.requests[0] || now
     const resetTime = oldestRequest + this.timeWindow
-    
+
     return { remainingRequests, resetTime }
   }
 }
@@ -202,7 +205,7 @@ class InstagramService {
       this.config.rateLimit.requestsPerHour,
       3600000 // 1 hour in milliseconds
     )
-    
+
     // Enable API mode if access token is provided
     this.useAPI = !!this.config.accessToken
   }
@@ -237,8 +240,8 @@ class InstagramService {
    * Get posts by venue from JSON data
    */
   getPostsByVenue(venue: string, limit?: number): InstagramPost[] {
-    const venuePosts = this.data.posts.filter(
-      post => post.venue?.toLowerCase().includes(venue.toLowerCase())
+    const venuePosts = this.data.posts.filter(post =>
+      post.venue?.toLowerCase().includes(venue.toLowerCase())
     )
 
     if (limit) {
@@ -253,7 +256,10 @@ class InstagramService {
    */
   getRecentPosts(limit: number = 6): InstagramPost[] {
     return [...this.data.posts]
-      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .sort(
+        (a, b) =>
+          new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+      )
       .slice(0, limit)
   }
 
@@ -263,8 +269,8 @@ class InstagramService {
   getPostsByTags(tags: string[], limit?: number): InstagramPost[] {
     const taggedPosts = this.data.posts.filter(post => {
       if (!post.tags || post.tags.length === 0) return false
-      return tags.some(tag => 
-        post.tags!.some(postTag => 
+      return tags.some(tag =>
+        post.tags!.some(postTag =>
           postTag.toLowerCase().includes(tag.toLowerCase())
         )
       )
@@ -282,23 +288,23 @@ class InstagramService {
    */
   searchPosts(query: string, limit?: number): InstagramPost[] {
     const lowerQuery = query.toLowerCase()
-    
+
     const matchingPosts = this.data.posts.filter(post => {
       // Search in caption
       if (post.caption?.toLowerCase().includes(lowerQuery)) {
         return true
       }
-      
+
       // Search in tags
       if (post.tags?.some(tag => tag.toLowerCase().includes(lowerQuery))) {
         return true
       }
-      
+
       // Search in venue
       if (post.venue?.toLowerCase().includes(lowerQuery)) {
         return true
       }
-      
+
       return false
     })
 
@@ -368,24 +374,26 @@ class InstagramService {
       }
 
       const url = `${this.config.baseUrl}/me/media?fields=id,caption,media_url,media_type,permalink,timestamp,thumbnail_url&access_token=${this.config.accessToken}&limit=${limit}`
-      
+
       this.rateLimiter.recordRequest()
-      
+
       const response = await fetch(url)
-      
+
       if (!response.ok) {
-        throw new Error(`Instagram API error: ${response.status} ${response.statusText}`)
+        throw new Error(
+          `Instagram API error: ${response.status} ${response.statusText}`
+        )
       }
 
       const data = await response.json()
-      
+
       if (data.error) {
         throw new Error(`Instagram API error: ${data.error.message}`)
       }
 
       // Process and enhance the API data
       const processedPosts = await this.processAPIData(data.data || [])
-      
+
       return processedPosts
     } catch (error) {
       console.error('Error fetching from Instagram API:', error)
@@ -409,12 +417,12 @@ class InstagramService {
       }
 
       const url = `${this.config.baseUrl}/me?fields=id,username,account_type,media_count&access_token=${this.config.accessToken}`
-      
+
       this.rateLimiter.recordRequest()
-      
+
       const response = await fetch(url)
       const data = await response.json()
-      
+
       if (data.error) {
         throw new Error(`Instagram API error: ${data.error.message}`)
       }
@@ -443,17 +451,20 @@ class InstagramService {
       }
 
       // Auto-detect performance-related content
-      processedPost.is_performance_related = this.isPerformanceRelated(processedPost)
-      
+      processedPost.is_performance_related =
+        this.isPerformanceRelated(processedPost)
+
       // Extract tags from caption
       if (processedPost.caption) {
         processedPost.tags = this.extractHashtags(processedPost.caption)
-        
+
         // Try to extract venue information
         processedPost.venue = this.extractVenue(processedPost.caption)
-        
+
         // Try to determine event type
-        processedPost.event_type = this.determineEventType(processedPost.caption)
+        processedPost.event_type = this.determineEventType(
+          processedPost.caption
+        )
       }
 
       return processedPost
@@ -468,8 +479,9 @@ class InstagramService {
    * Determine if a post is performance-related
    */
   private isPerformanceRelated(post: InstagramPost): boolean {
-    const text = `${post.caption || ''} ${post.tags?.join(' ') || ''}`.toLowerCase()
-    
+    const text =
+      `${post.caption || ''} ${post.tags?.join(' ') || ''}`.toLowerCase()
+
     return PERFORMANCE_KEYWORDS.some(keyword => text.includes(keyword))
   }
 
@@ -489,11 +501,11 @@ class InstagramService {
     // Look for @ mentions or venue keywords
     const mentionRegex = /@[\w\d_.]+/g
     const mentions = caption.match(mentionRegex)
-    
+
     if (mentions && mentions.length > 0) {
       return mentions[0].substring(1).replace(/[_.]/g, ' ')
     }
-    
+
     // Look for venue keywords in context
     const words = caption.toLowerCase().split(/\s+/)
     for (let i = 0; i < words.length - 1; i++) {
@@ -502,7 +514,7 @@ class InstagramService {
         return words.slice(i, Math.min(i + 3, words.length)).join(' ')
       }
     }
-    
+
     return undefined
   }
 
@@ -511,13 +523,23 @@ class InstagramService {
    */
   private determineEventType(caption: string): string | undefined {
     const lowerCaption = caption.toLowerCase()
-    
+
     if (lowerCaption.includes('wedding')) return 'wedding'
     if (lowerCaption.includes('corporate')) return 'corporate'
-    if (lowerCaption.includes('private') || lowerCaption.includes('birthday') || lowerCaption.includes('anniversary')) return 'private'
+    if (
+      lowerCaption.includes('private') ||
+      lowerCaption.includes('birthday') ||
+      lowerCaption.includes('anniversary')
+    )
+      return 'private'
     if (lowerCaption.includes('festival')) return 'festival'
-    if (lowerCaption.includes('pub') || lowerCaption.includes('bar') || lowerCaption.includes('venue')) return 'venue'
-    
+    if (
+      lowerCaption.includes('pub') ||
+      lowerCaption.includes('bar') ||
+      lowerCaption.includes('venue')
+    )
+      return 'venue'
+
     return undefined
   }
 
@@ -535,7 +557,7 @@ class InstagramService {
         return apiPosts
       }
     }
-    
+
     // Fallback to JSON data
     return limit ? this.getAllPosts().slice(0, limit) : this.getAllPosts()
   }
@@ -547,11 +569,13 @@ class InstagramService {
     if (this.useAPI) {
       const apiPosts = await this.fetchFromAPI(50) // Get more to filter
       if (apiPosts && apiPosts.length > 0) {
-        const performancePosts = apiPosts.filter(post => post.is_performance_related)
+        const performancePosts = apiPosts.filter(
+          post => post.is_performance_related
+        )
         return limit ? performancePosts.slice(0, limit) : performancePosts
       }
     }
-    
+
     // Fallback to JSON data
     return this.getPerformancePosts(limit)
   }
@@ -563,20 +587,23 @@ class InstagramService {
   /**
    * Generate Instagram embed code for a post
    */
-  generateEmbedCode(post: InstagramPost, options: {
-    width?: number
-    height?: number
-    hideCaption?: boolean
-  } = {}): string {
+  generateEmbedCode(
+    post: InstagramPost,
+    options: {
+      width?: number
+      height?: number
+      hideCaption?: boolean
+    } = {}
+  ): string {
     const { width = 540, height = 540, hideCaption = false } = options
-    
+
     if (post.embed_code) {
       return post.embed_code
     }
 
     // Generate basic embed code
     const embedUrl = `${post.permalink}embed${hideCaption ? '/captioned' : ''}`
-    
+
     return `<blockquote class="instagram-media" data-instgrm-permalink="${post.permalink}" data-instgrm-version="14" style="max-width:${width}px; min-width:326px; width:99.375%; width:-webkit-calc(100% - 2px); width:calc(100% - 2px);"><a href="${post.permalink}" target="_blank" rel="noopener"><div style="padding:16px;"><div style="display:flex; align-items:center;"><div style="margin-left:8px;"><div style="font-weight:600; margin-bottom:4px;">${post.username}</div></div></div><div style="padding:19% 0;"></div><div style="display:block; height:50px; margin:0 auto 12px; width:50px;"></div><div style="padding-top:8px;"><div style="color:#3897f0; font-weight:600; text-align:center;">${post.caption?.substring(0, 50) || 'View on Instagram'}</div></div></div></a></blockquote><script async src="//www.instagram.com/embed.js"></script>`
   }
 
@@ -602,12 +629,15 @@ class InstagramService {
   } {
     const allPosts = this.getAllPosts()
     const performancePosts = this.getPerformancePosts()
-    
-    const mediaTypes = allPosts.reduce((acc, post) => {
-      acc[post.media_type] = (acc[post.media_type] || 0) + 1
-      return acc
-    }, {} as Record<string, number>)
-    
+
+    const mediaTypes = allPosts.reduce(
+      (acc, post) => {
+        acc[post.media_type] = (acc[post.media_type] || 0) + 1
+        return acc
+      },
+      {} as Record<string, number>
+    )
+
     return {
       totalPosts: allPosts.length,
       performancePosts: performancePosts.length,
@@ -648,7 +678,7 @@ class InstagramService {
     const venues = this.getAllPosts()
       .map(post => post.venue)
       .filter((venue): venue is string => !!venue)
-    
+
     return [...new Set(venues)]
   }
 
@@ -658,18 +688,18 @@ class InstagramService {
   getPostsByMonth(): Record<string, InstagramPost[]> {
     const posts = this.getAllPosts()
     const grouped: Record<string, InstagramPost[]> = {}
-    
+
     posts.forEach(post => {
       const date = new Date(post.timestamp)
       const monthKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
-      
+
       if (!grouped[monthKey]) {
         grouped[monthKey] = []
       }
-      
+
       grouped[monthKey].push(post)
     })
-    
+
     return grouped
   }
 }
@@ -701,7 +731,10 @@ export const getRecentPosts = (limit: number = 6): InstagramPost[] => {
 /**
  * Search Instagram posts
  */
-export const searchInstagramPosts = (query: string, limit?: number): InstagramPost[] => {
+export const searchInstagramPosts = (
+  query: string,
+  limit?: number
+): InstagramPost[] => {
   return instagramService.searchPosts(query, limit)
 }
 
@@ -715,14 +748,18 @@ export const getInstagramStats = () => {
 /**
  * Get best available posts (hybrid mode)
  */
-export const getBestInstagramPosts = async (limit?: number): Promise<InstagramPost[]> => {
+export const getBestInstagramPosts = async (
+  limit?: number
+): Promise<InstagramPost[]> => {
   return instagramService.getBestPosts(limit)
 }
 
 /**
  * Get best performance posts (hybrid mode)
  */
-export const getBestPerformancePosts = async (limit?: number): Promise<InstagramPost[]> => {
+export const getBestPerformancePosts = async (
+  limit?: number
+): Promise<InstagramPost[]> => {
   return instagramService.getBestPerformancePosts(limit)
 }
 
@@ -734,19 +771,16 @@ export const getBestPerformancePosts = async (limit?: number): Promise<Instagram
 export default instagramService
 
 // Legacy function exports for existing code
-export {
-  InstagramService,
-  PERFORMANCE_KEYWORDS,
-  VENUE_KEYWORDS,
-  RateLimiter,
-}
+export { InstagramService, PERFORMANCE_KEYWORDS, VENUE_KEYWORDS, RateLimiter }
 
 /**
  * Instagram Data Service Class (for backward compatibility)
  */
 export class InstagramDataService {
   constructor() {
-    console.warn('InstagramDataService is deprecated. Use instagramService instead.')
+    console.warn(
+      'InstagramDataService is deprecated. Use instagramService instead.'
+    )
   }
 
   getAllPosts(): InstagramPost[] {

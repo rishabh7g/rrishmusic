@@ -8,7 +8,7 @@
 import { useMemo } from 'react'
 import { useThemeContext } from '../contexts/ThemeContext'
 import { getThemeModeLabel } from '../utils/themeHelpers'
-import type { ThemeMode, ThemeConfig } from '../styles/themes'
+import type { ThemeMode, ThemeConfig } from '../types'
 
 /**
  * Enhanced theme hook return type
