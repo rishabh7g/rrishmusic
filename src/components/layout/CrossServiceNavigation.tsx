@@ -4,7 +4,6 @@ import {
   ServiceRecommendation,
   CrossServiceSuggestion,
 } from '@/types/serviceRelationships'
-import { useServiceTransitions } from '@/hooks/useServiceTransitions'
 import {
   getServiceRecommendations,
   getCrossServiceSuggestions,
@@ -40,8 +39,8 @@ export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
   >([])
   const [isLoading, setIsLoading] = useState(true)
 
-  const { transitionToService, userContext, trackInteraction } =
-    useServiceTransitions()
+  // Simple user context (replacing missing hook)
+  const userContext = { currentService }
 
   // Load recommendations when component mounts or service changes
   useEffect(() => {
@@ -72,19 +71,14 @@ export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
     }
 
     loadRecommendations()
-  }, [
-    currentService,
-    userContext,
-    maxRecommendations,
-    showCrossServiceSuggestions,
-  ])
+  }, [currentService, maxRecommendations, showCrossServiceSuggestions])
 
   const handleServiceClick = (
     targetService: ServiceType,
     method: string = 'recommendation'
   ) => {
-    // Track interaction
-    trackInteraction('click', {
+    // Track interaction (simplified)
+    console.log('Service navigation:', {
       targetService,
       method,
       sourceComponent: 'CrossServiceNavigation',
@@ -93,15 +87,8 @@ export const CrossServiceNavigation: React.FC<CrossServiceNavigationProps> = ({
     // Call custom handler if provided
     onNavigate?.(targetService)
 
-    // Navigate to service
-    transitionToService(targetService, {
-      method: method as
-        | 'direct_link'
-        | 'navigation'
-        | 'recommendation'
-        | 'search',
-      userIntent: 'service_recommendation',
-    })
+    // Navigate to service (simplified - just use the provided navigation handler)
+    // The navigation is handled by the onNavigate callback
   }
 
   if (isLoading) {

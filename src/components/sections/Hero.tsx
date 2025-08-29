@@ -1,7 +1,7 @@
 import { motion } from 'framer-motion'
 import { Suspense } from 'react'
 import { usePageSEO } from '../../hooks/usePageSEO'
-import { CTAHierarchy } from '../ui/CTAHierarchy'
+import { CTAHierarchy } from '@/components/ui/cta'
 
 export function Hero() {
   const { seoData } = usePageSEO()

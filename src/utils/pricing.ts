@@ -1,8 +1,311 @@
 /**
- * Pricing Estimation Utilities
- * Dynamic pricing algorithms for Performance and Collaboration services based on project scope
+ * Unified Pricing System
+ * Consolidated pricing calculations for all services with dynamic estimation
  */
 
+import { LessonPackage } from '@/types/content'
+
+// ============================================================================
+// TEACHING PRICING SYSTEM
+// ============================================================================
+
+/**
+ * Teaching pricing configuration
+ */
+export const TEACHING_PRICING_CONFIG = {
+  baseLessonPrice: 50, // Base price per lesson
+  trialLessonPrice: 45, // Special trial lesson price
+  currency: 'AUD',
+
+  // Bulk discount tiers
+  discountTiers: [
+    { minSessions: 4, discountPercent: 5, name: 'Foundation Discount' },
+    { minSessions: 8, discountPercent: 10, name: 'Transformation Discount' },
+    { minSessions: 12, discountPercent: 15, name: 'Mastery Discount' },
+  ],
+
+  // Package configurations
+  packages: [
+    {
+      id: 'trial',
+      sessions: 1,
+      duration: 30,
+      validity: 30,
+      features: [
+        '30-minute session',
+        'Teaching style introduction',
+        'Goal assessment',
+      ],
+    },
+    {
+      id: 'single',
+      sessions: 1,
+      duration: 60,
+      validity: 60,
+      features: [
+        'Full 60-minute lesson',
+        'Personalized instruction',
+        'Practice materials',
+      ],
+    },
+    {
+      id: 'foundation',
+      sessions: 4,
+      duration: 60,
+      validity: 90,
+      features: [
+        '4 weekly lessons',
+        '5% bulk discount',
+        'Progress tracking',
+        'Email support',
+      ],
+    },
+    {
+      id: 'transformation',
+      sessions: 8,
+      duration: 60,
+      validity: 120,
+      popular: true,
+      features: [
+        '8 weekly lessons',
+        '10% bulk discount',
+        'Comprehensive curriculum',
+        'Performance preparation',
+      ],
+    },
+  ],
+
+  // Package-specific pricing rules
+  packageRules: {
+    'single-lesson': {
+      basePrice: 50,
+      discountPercentage: 0,
+    },
+    'foundation-package': {
+      basePrice: 50,
+      discountPercentage: 5,
+    },
+    'transformation-intensive': {
+      basePrice: 50,
+      discountPercentage: 10,
+    },
+  } as const,
+} as const
+
+export type PackageId = keyof typeof TEACHING_PRICING_CONFIG.packageRules
+
+/**
+ * Calculated pricing information for a lesson package
+ */
+export interface CalculatedPricing {
+  basePrice: number
+  totalSessions: number
+  discountPercentage: number
+  discountAmount: number
+  totalPrice: number
+  pricePerSession: number
+  currency: string
+  savings?: number
+  discountApplied: boolean
+}
+
+/**
+ * Teaching pricing calculation options
+ */
+export interface PricingOptions {
+  includeDiscount?: boolean
+  customDiscountRate?: number
+  bulkDiscountThreshold?: number
+  loyaltyDiscount?: number
+}
+
+/**
+ * Enhanced lesson package with calculated pricing
+ */
+export interface EnhancedLessonPackage {
+  id: string
+  name: string
+  sessions: number
+  price: number
+  originalPrice?: number
+  savings?: number
+  description: string
+  popular?: boolean
+  features?: string[]
+  duration: number // minutes
+  validity: number // days
+}
+
+/**
+ * Calculate pricing for a lesson package dynamically
+ */
+export function calculateLessonPackagePricing(
+  packageData: Partial<LessonPackage>
+): CalculatedPricing {
+  const packageId = packageData.id as PackageId
+  const sessions = packageData.sessions || 1
+  const duration = packageData.duration || 60
+
+  // Get base configuration for this package
+  const packageRule = TEACHING_PRICING_CONFIG.packageRules[packageId]
+
+  let basePrice = packageRule?.basePrice || TEACHING_PRICING_CONFIG.baseLessonPrice
+  const discountPercentage = packageRule?.discountPercentage || 0
+
+  // Adjust for lesson duration if not standard 60 minutes
+  if (duration !== 60) {
+    basePrice = Math.round((basePrice * duration) / 60)
+  }
+
+  // Calculate base total before discount
+  const baseTotalPrice = basePrice * sessions
+
+  // Calculate discount amount
+  const discountAmount = Math.round((baseTotalPrice * discountPercentage) / 100)
+
+  // Calculate final prices
+  const totalPrice = baseTotalPrice - discountAmount
+  const pricePerSession = Math.round(totalPrice / sessions)
+
+  // Calculate savings compared to individual lessons
+  const individualLessonTotal = TEACHING_PRICING_CONFIG.baseLessonPrice * sessions
+  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0
+
+  return {
+    basePrice,
+    totalSessions: sessions,
+    discountPercentage,
+    discountAmount,
+    totalPrice,
+    pricePerSession,
+    currency: TEACHING_PRICING_CONFIG.currency,
+    discountApplied: discountPercentage > 0 || discountAmount > 0,
+    ...(savings > 0 && { savings }),
+  }
+}
+
+/**
+ * Calculate bulk pricing for custom session counts
+ */
+export function calculateBulkPricing(
+  sessions: number,
+  options: PricingOptions = {}
+): CalculatedPricing {
+  const {
+    includeDiscount = true,
+    customDiscountRate,
+    bulkDiscountThreshold = 4,
+    loyaltyDiscount = 0,
+  } = options
+
+  const duration = 60 // Standard lesson duration
+  const basePrice = TEACHING_PRICING_CONFIG.baseLessonPrice
+  const totalBasePrice = basePrice * sessions
+
+  // Calculate bulk discount
+  let discountPercent = 0
+  let discountApplied = false
+
+  if (includeDiscount && sessions >= bulkDiscountThreshold) {
+    // Find applicable discount tier
+    const applicableTier = TEACHING_PRICING_CONFIG.discountTiers
+      .filter(tier => sessions >= tier.minSessions)
+      .sort((a, b) => b.discountPercent - a.discountPercent)[0]
+
+    if (applicableTier) {
+      discountPercent = customDiscountRate ?? applicableTier.discountPercent
+      discountApplied = true
+    }
+  }
+
+  // Add loyalty discount if applicable
+  if (loyaltyDiscount > 0) {
+    discountPercent = Math.min(discountPercent + loyaltyDiscount, 25) // Cap at 25%
+    discountApplied = true
+  }
+
+  const discountAmount = Math.round(totalBasePrice * (discountPercent / 100))
+  const totalPrice = totalBasePrice - discountAmount
+  const pricePerSession = Math.round(totalPrice / sessions)
+
+  // Calculate savings compared to individual lessons
+  const individualLessonTotal = TEACHING_PRICING_CONFIG.baseLessonPrice * sessions
+  const savings = sessions > 1 ? individualLessonTotal - totalPrice : 0
+
+  return {
+    basePrice: totalBasePrice,
+    totalSessions: sessions,
+    discountPercentage: discountPercent,
+    discountAmount,
+    totalPrice,
+    pricePerSession,
+    currency: TEACHING_PRICING_CONFIG.currency,
+    discountApplied,
+    ...(savings > 0 && { savings }),
+  }
+}
+
+/**
+ * Get package details with calculated pricing
+ */
+export function getPackageWithPricing(
+  packageId: string,
+  options: PricingOptions = {}
+): EnhancedLessonPackage | null {
+  const packageConfig = TEACHING_PRICING_CONFIG.packages.find(
+    pkg => pkg.id === packageId
+  )
+  if (!packageConfig) return null
+
+  const pricing = calculateBulkPricing(packageConfig.sessions, options)
+
+  // Special handling for trial lesson
+  if (packageId === 'trial') {
+    return {
+      id: packageConfig.id,
+      name: 'Trial Lesson',
+      sessions: packageConfig.sessions,
+      price: TEACHING_PRICING_CONFIG.trialLessonPrice,
+      description: 'Shorter 30-minute introduction to my teaching style',
+      duration: packageConfig.duration,
+      validity: packageConfig.validity,
+      features: packageConfig.features,
+    }
+  }
+
+  return {
+    id: packageConfig.id,
+    name: getPackageName(packageConfig.sessions),
+    sessions: packageConfig.sessions,
+    price: pricing.totalPrice,
+    originalPrice: pricing.discountApplied ? pricing.basePrice : undefined,
+    savings: pricing.discountApplied ? pricing.discountAmount : undefined,
+    description: getPackageDescription(packageConfig.sessions, pricing),
+    popular: packageConfig.popular,
+    duration: packageConfig.duration,
+    validity: packageConfig.validity,
+    features: packageConfig.features,
+  }
+}
+
+/**
+ * Get all available packages with pricing
+ */
+export function getAllPackagesWithPricing(
+  options: PricingOptions = {}
+): EnhancedLessonPackage[] {
+  return TEACHING_PRICING_CONFIG.packages
+    .map(pkg => getPackageWithPricing(pkg.id, options))
+    .filter((pkg): pkg is EnhancedLessonPackage => pkg !== null)
+}
+
+// ============================================================================
+// PERFORMANCE & COLLABORATION PRICING ESTIMATION
+// ============================================================================
+
+/**
+ * Price estimate for services
+ */
 export interface PriceEstimate {
   estimatedRange: {
     min: number
@@ -207,24 +510,6 @@ export function estimatePerformancePricing(data: {
     }
   }
 
-  // Seasonal adjustment (if event date provided)
-  if (data.eventDate) {
-    const season = getEventSeason(data.eventDate)
-    const seasonMultiplier =
-      PERFORMANCE_PRICING_CONFIG.seasonalAdjustments[season]
-    if (seasonMultiplier > 0) {
-      const adjustment = basePrice * seasonMultiplier
-      adjustments.push({
-        factor: 'Seasonal Demand',
-        impact: 'increase',
-        percentage: Math.round(seasonMultiplier * 100),
-        amount: adjustment,
-        description: `${season} season pricing`,
-      })
-      factors.push(`Season: ${season}`)
-    }
-  }
-
   // Calculate totals
   const totalAdjustment = adjustments.reduce((sum, adj) => sum + adj.amount, 0)
   const finalPrice = basePrice * eventMultiplier + totalAdjustment
@@ -357,10 +642,105 @@ export function estimateCollaborationPricing(data: {
   }
 }
 
-/**
- * Helper functions
- */
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
 
+/**
+ * Format price for display
+ */
+export function formatPrice(
+  amount: number,
+  currency: string = TEACHING_PRICING_CONFIG.currency,
+  showCents: boolean = false
+): string {
+  const formatter = new Intl.NumberFormat('en-AU', {
+    style: 'currency',
+    currency: currency,
+    minimumFractionDigits: showCents ? 2 : 0,
+    maximumFractionDigits: showCents ? 2 : 0,
+  })
+  
+  return formatter.format(amount)
+}
+
+/**
+ * Format discount percentage for display
+ */
+export function formatDiscount(percentage: number): string {
+  return `${percentage}%`
+}
+
+/**
+ * Get pricing summary text
+ */
+export function getPricingSummary(pricing: CalculatedPricing): string {
+  if (pricing.totalSessions === 1) {
+    return `${formatPrice(pricing.totalPrice)} per lesson`
+  }
+
+  let summary = `${formatPrice(pricing.totalPrice)} for ${pricing.totalSessions} lessons`
+
+  if (pricing.discountPercentage > 0) {
+    summary += ` (${formatDiscount(pricing.discountPercentage)} off)`
+  }
+
+  if (pricing.savings && pricing.savings > 0) {
+    summary += ` - Save ${formatPrice(pricing.savings)}`
+  }
+
+  return summary
+}
+
+/**
+ * Calculate savings message for display
+ */
+export function getSavingsMessage(pricing: CalculatedPricing): string {
+  if (!pricing.discountApplied || pricing.discountAmount === 0) {
+    return ''
+  }
+
+  return `Save ${formatPrice(pricing.discountAmount)} (${pricing.discountPercentage}%) compared to individual lessons!`
+}
+
+/**
+ * Get recommended package based on user profile
+ */
+export function getRecommendedPackage(
+  experience: 'beginner' | 'intermediate' | 'advanced',
+  commitment: 'low' | 'medium' | 'high',
+  budget: 'low' | 'medium' | 'high'
+): string {
+  // Logic for package recommendation
+  if (commitment === 'low' || budget === 'low') {
+    return experience === 'beginner' ? 'trial' : 'single'
+  }
+
+  if (commitment === 'high' && budget === 'high') {
+    return 'transformation'
+  }
+
+  return 'foundation' // Most balanced option
+}
+
+/**
+ * Format price estimate for display
+ */
+export function formatPriceEstimate(estimate: PriceEstimate): {
+  range: string
+  confidence: string
+  summary: string
+} {
+  const range = `${formatPrice(estimate.estimatedRange.min, 'AUD')} - ${formatPrice(estimate.estimatedRange.max, 'AUD')}`
+  const confidence = `${estimate.confidence} confidence`
+  const summary = estimate.consultationRecommended
+    ? 'Consultation recommended for accurate pricing'
+    : `Based on ${estimate.factors.length} project factors`
+
+  return { range, confidence, summary }
+}
+
+// Helper functions for estimation
 function parseDuration(duration: string): string {
   const lower = duration.toLowerCase()
   if (lower.includes('1') || lower.includes('2')) return '1-2'
@@ -379,19 +759,6 @@ function parseGuestCount(guestCount: string): string {
   if (count < 150) return 'medium'
   if (count < 300) return 'large'
   return 'xlarge'
-}
-
-function getEventSeason(eventDate: string): string {
-  const date = new Date(eventDate)
-  const month = date.getMonth() + 1 // 1-12
-
-  // Wedding peak season (May-October)
-  if (month >= 5 && month <= 10) return 'peak'
-
-  // Holiday season (November-December)
-  if (month >= 11) return 'holiday'
-
-  return 'standard'
 }
 
 function assessProjectComplexity(
@@ -471,27 +838,60 @@ function getExperienceDescription(experience: string): string {
   return descriptions[experience as keyof typeof descriptions] || ''
 }
 
-/**
- * Format price estimate for display
- */
-export function formatPriceEstimate(estimate: PriceEstimate): {
-  range: string
-  confidence: string
-  summary: string
-} {
-  const range = `$${estimate.estimatedRange.min.toLocaleString()} - $${estimate.estimatedRange.max.toLocaleString()}`
-  const confidence = `${estimate.confidence} confidence`
-  const summary = estimate.consultationRecommended
-    ? 'Consultation recommended for accurate pricing'
-    : `Based on ${estimate.factors.length} project factors`
+function getPackageName(sessions: number): string {
+  const nameMap: Record<number, string> = {
+    1: 'Single Lesson',
+    4: 'Foundation Package',
+    8: 'Transformation Intensive',
+    12: 'Mastery Program',
+  }
 
-  return { range, confidence, summary }
+  return nameMap[sessions] || `${sessions}-Lesson Package`
 }
 
+function getPackageDescription(
+  sessions: number,
+  pricing: CalculatedPricing
+): string {
+  const baseDescriptions: Record<number, string> = {
+    1: 'Perfect for trying out my teaching style or addressing specific challenges',
+    4: 'Build solid foundations with weekly lessons',
+    8: 'Comprehensive package for serious improvement',
+    12: 'Complete transformation with extensive curriculum',
+  }
+
+  let description =
+    baseDescriptions[sessions] || `${sessions} personalized guitar lessons`
+
+  if (pricing.discountApplied) {
+    description += ` - Save ${pricing.discountPercentage}% with bulk pricing!`
+  }
+
+  return description
+}
+
+// Export all main functions and types
 export default {
-  estimatePerformancePricing,
-  estimateCollaborationPricing,
-  formatPriceEstimate,
+  // Teaching pricing
+  TEACHING_PRICING_CONFIG,
+  calculateLessonPackagePricing,
+  calculateBulkPricing,
+  getPackageWithPricing,
+  getAllPackagesWithPricing,
+  
+  // Performance pricing
   PERFORMANCE_PRICING_CONFIG,
+  estimatePerformancePricing,
+  
+  // Collaboration pricing  
   COLLABORATION_PRICING_CONFIG,
+  estimateCollaborationPricing,
+  
+  // Utilities
+  formatPrice,
+  formatDiscount,
+  getPricingSummary,
+  getSavingsMessage,
+  getRecommendedPackage,
+  formatPriceEstimate,
 }

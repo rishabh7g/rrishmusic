@@ -155,7 +155,7 @@ export interface Testimonial {
   text: string
   rating: 1 | 2 | 3 | 4 | 5
   date?: string
-  service: 'performance' | 'teaching' | 'collaboration'
+  service: ServiceType
   serviceSubType?: string // e.g., 'wedding', 'corporate', 'venue', 'guitar', 'theory', 'recording', 'session'
   event?: string
   instrument?: string
@@ -621,7 +621,7 @@ export type MediaType = MediaItem['type']
 export type ContactType = ContactMethod['type']
 export type SkillLevel = Skill['level']
 export type AudienceLevel = 'beginner' | 'intermediate' | 'advanced'
-export type ServiceType = Testimonial['service']
+export type ServiceType = 'performance' | 'teaching' | 'collaboration'
 export type TestimonialRating = Testimonial['rating']
 
 // Utility types for content operations

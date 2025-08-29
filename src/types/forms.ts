@@ -5,30 +5,35 @@
  * across the contact routing system.
  */
 
-// Re-export form data types from individual forms
-export type { PerformanceInquiryData } from '@/components/forms/PerformanceInquiryForm'
-export type { CollaborationInquiryData } from '@/components/forms/CollaborationInquiryForm'
-export type { TeachingInquiryData } from '@/components/forms/TeachingInquiryForm'
+// Re-export form data types from unified forms system
+export type {
+  PerformanceInquiryData,
+  CollaborationInquiryData,
+  TeachingInquiryData,
+  UniversalInquiryData,
+  InquiryData,
+  ServiceType,
+  FormErrors,
+  FormState,
+} from '@/components/forms/types'
 
 /**
- * Union type for all form data types
+ * Legacy compatibility - Union type for all form data types
+ * @deprecated Use InquiryData from forms/types instead
  */
-export type InquiryFormData =
-  | import('@/components/forms/PerformanceInquiryForm').PerformanceInquiryData
-  | import('@/components/forms/CollaborationInquiryForm').CollaborationInquiryData
-  | import('@/components/forms/TeachingInquiryForm').TeachingInquiryData
+export type InquiryFormData = InquiryData
 
 /**
  * Form submission handler type
  */
-export type FormSubmissionHandler<T = InquiryFormData> = (
+export type FormSubmissionHandler<T = InquiryData> = (
   data: T
 ) => Promise<void>
 
 /**
  * Generic form props interface
  */
-export interface BaseFormProps<T = InquiryFormData> {
+export interface BaseFormProps<T = InquiryData> {
   isOpen: boolean
   onClose: () => void
   onSubmit: FormSubmissionHandler<T>

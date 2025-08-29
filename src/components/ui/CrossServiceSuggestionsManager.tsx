@@ -20,7 +20,8 @@ import {
   hasUserInterest,
   type CrossServiceSuggestion,
 } from '@/utils/crossServiceSuggestions'
-import { detectServiceContext, type ServiceType } from '@/utils/contactRouting'
+import { detectServiceContext } from '@/utils/contactRouting'
+import type { ServiceType } from '@/types/content'
 import { CrossServiceSuggestion as CrossServiceSuggestionComponent } from '@/components/ui/CrossServiceSuggestion'
 
 /**

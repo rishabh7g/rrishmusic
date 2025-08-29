@@ -6,28 +6,8 @@
 export { ServiceCard } from './ServiceCard'
 export type { ServiceCardData, ServiceCardProps } from './ServiceCard'
 
-export {
-  PerformanceInquiryCTA,
-  PrimaryPerformanceCTA,
-  SecondaryPerformanceCTA,
-  OutlinePerformanceCTA,
-  MinimalPerformanceCTA,
-  WeddingInquiryCTA,
-  CorporateInquiryCTA,
-  VenueInquiryCTA,
-} from './PerformanceInquiryCTA'
-export type { CTAVariant, CTASize } from './PerformanceInquiryCTA'
-
-export {
-  CollaborationInquiryCTA,
-  PrimaryCollaborationCTA,
-  SecondaryCollaborationCTA,
-  OutlineCollaborationCTA,
-  MinimalCollaborationCTA,
-  StudioCollaborationCTA,
-  CreativeProjectCTA,
-  PartnershipInquiryCTA,
-} from './CollaborationInquiryCTA'
+// CTA Components - now consolidated in cta folder
+export * from './cta'
 
 export { MediaPreview } from './MediaPreview'
 export { default as ContextAwareHeader } from './ContextAwareHeader'

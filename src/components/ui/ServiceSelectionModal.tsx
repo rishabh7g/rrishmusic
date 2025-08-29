@@ -14,10 +14,12 @@
 
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { ServiceType } from '@/utils/contactRouting'
-import { PerformanceInquiryForm } from '@/components/forms/PerformanceInquiryForm'
-import { CollaborationInquiryForm } from '@/components/forms/CollaborationInquiryForm'
-import { TeachingInquiryForm } from '@/components/forms/TeachingInquiryForm'
+import { ServiceType } from '@/types/content'
+import { 
+  PerformanceInquiryForm, 
+  CollaborationInquiryForm, 
+  TeachingInquiryForm 
+} from '@/components/forms'
 import type { InquiryFormData, FormSubmissionHandler } from '@/types/forms'
 
 /**
@@ -335,7 +337,6 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
           isOpen={showServiceForm}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialPerformanceType="band"
         />
       )}
 
@@ -344,7 +345,6 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
           isOpen={showServiceForm}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialProjectType="creative"
         />
       )}
 
@@ -353,7 +353,6 @@ export const ServiceSelectionModal: React.FC<ServiceSelectionModalProps> = ({
           isOpen={showServiceForm}
           onClose={handleFormClose}
           onSubmit={handleFormSubmit}
-          initialPackageType="single"
         />
       )}
     </>

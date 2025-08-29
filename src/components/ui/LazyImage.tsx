@@ -10,7 +10,7 @@
  */
 
 import React, { useState, useEffect, useRef, useCallback } from 'react'
-import { performanceMonitor } from '@/utils/performanceMonitor'
+import { performanceMonitor } from '@/utils/performance'
 
 export interface LazyImageProps {
   src: string

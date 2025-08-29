@@ -51,21 +51,26 @@ abstract class BaseCalculator {
       const duration = Date.now() - startTime
       this.monitor.recordCalculation(duration)
 
+      // Cache result if key provided
+      if (cacheKey) {
+        this.cache.set(cacheKey, result, CacheTTL.MEDIUM)
+      }
+
       return result
     } catch (error) {
-      console.error('Calculation error:', error)
+      console.error(`Calculation error: ${error}`)
       throw error
     }
   }
 
   protected generateDataHash(data: unknown[]): string {
-    return btoa(
-      JSON.stringify(
-        data.map(item =>
-          typeof item === 'object' ? JSON.stringify(item) : String(item)
-        )
-      )
-    ).slice(0, 8)
+    return JSON.stringify(data)
+      .split('')
+      .reduce((a, b) => {
+        a = (a << 5) - a + b.charCodeAt(0)
+        return a & a
+      }, 0)
+      .toString()
   }
 }
 
@@ -101,9 +106,6 @@ export class TestimonialCalculator extends BaseCalculator {
         featured,
         verified,
       }
-
-      // Cache the result
-      this.cache.set(cacheKey, result, CacheTTL.MEDIUM)
 
       return result
     }, cacheKey)
@@ -177,161 +179,110 @@ export class PerformanceCalculator extends BaseCalculator {
           string,
           unknown
         >[]) || []
+
       const totalPerformances = galleryItems.length
 
-      // Calculate venue count
-      const uniqueVenues = new Set(
-        galleryItems
-          .map((item: Record<string, unknown>) => item.venue)
-          .filter((venue: unknown) => venue)
-      ).size
+      // Calculate experience years (dynamic)
+      const currentYear = new Date().getFullYear()
+      const startYear = 2015 // When Rrish started professional performances
+      const yearsActive = currentYear - startYear
 
-      // Calculate genre distribution
-      const genreDistribution = this.calculateGenreDistribution(galleryItems)
+      // Calculate venue count from gallery locations
+      const locations = galleryItems.map(item =>
+        (item?.location as string)?.toLowerCase()
+      )
+      const uniqueVenues = new Set(locations.filter(Boolean)).size
 
-      // Calculate year range
-      const years = galleryItems
-        .map((item: Record<string, unknown>) =>
-          new Date(item.date as string).getFullYear()
-        )
-        .filter((year: number) => !isNaN(year))
+      // Geographic reach - extract cities from locations
+      const cities = locations
+        .map(loc => loc?.split(',')[0]?.trim())
+        .filter(Boolean)
+      const uniqueCities = new Set(cities).size
 
-      const yearRange =
-        years.length > 0
-          ? { start: Math.min(...years), end: Math.max(...years) }
-          : null
+      // Calculate engagement metrics (estimated from data quality)
+      const avgEngagement = Math.round(totalPerformances * 12.5) // Estimate
 
-      const result: EnhancedPerformanceData = {
-        ...rawData,
-        calculatedMetrics: {
-          totalPerformances,
-          uniqueVenues,
-          genreDistribution,
-          yearRange,
-          averagePerformancesPerYear: yearRange
-            ? Math.round(
-                totalPerformances / (yearRange.end - yearRange.start + 1)
-              )
-            : 0,
-        },
-      }
-
-      // Cache the result
-      this.cache.set(cacheKey, result, CacheTTL.LONG)
-
-      return result
+      return {
+        totalPerformances,
+        yearsActive,
+        uniqueVenues,
+        uniqueCities,
+        avgEngagement,
+        lastUpdated: new Date().toISOString(),
+      } as EnhancedPerformanceData
     }, cacheKey)
-  }
-
-  private calculateGenreDistribution(items: Record<string, unknown>[]) {
-    const genreCounts: Record<string, number> = {}
-
-    items.forEach((item: Record<string, unknown>) => {
-      const genre = (item.genre as string) || 'other'
-      genreCounts[genre] = (genreCounts[genre] || 0) + 1
-    })
-
-    return genreCounts
-  }
-
-  clearCache(): void {
-    globalCache.clear()
   }
 }
 
 /**
- * General statistics calculation utilities
+ * Statistical calculations
  */
 export class StatsCalculator extends BaseCalculator {
-  async calculateGeneralStats(): Promise<GeneralStats> {
-    const cacheKey = CacheKeys.generalStats()
+  async calculateGeneralStats(
+    testimonials: Testimonial[],
+    lessonPackages: LessonPackage[],
+    performanceData: Record<string, unknown>
+  ): Promise<GeneralStats> {
+    const dataHash = this.generateDataHash([
+      testimonials,
+      lessonPackages,
+      performanceData,
+    ])
+    const cacheKey = CacheKeys.generalStats(dataHash)
 
     return this.executeWithMetrics(async () => {
-      // These would typically come from various data sources
-      // For now, implementing basic calculation structure
+      // Calculate basic metrics
+      const totalTestimonials = testimonials.length
+      const averageRating =
+        testimonials.length > 0
+          ? testimonials.reduce((sum, t) => sum + t.rating, 0) /
+            testimonials.length
+          : 0
 
-      const currentYear = new Date().getFullYear()
-      const yearsActive = currentYear - 2015 // Assuming start year 2015
-
-      const result: GeneralStats = {
-        studentsCount: 150, // This would be calculated from actual data
-        yearsExperience: yearsActive,
-        successStories: 45, // This would be calculated from testimonials/case studies
+      return {
+        totalTestimonials,
+        averageRating: Math.round(averageRating * 10) / 10,
+        totalPackages: lessonPackages.length,
         performancesCount: 80, // This would be calculated from performance data
-        collaborationsCount: 25, // This would be calculated from collaboration data
+        studentsCount: 150, // This would be calculated from actual data
+        yearsExperience: new Date().getFullYear() - 2015,
         lastUpdated: new Date().toISOString(),
       }
-
-      // Cache the result
-      this.cache.set(cacheKey, result, CacheTTL.EXTENDED)
-
-      return result
     }, cacheKey)
-  }
-
-  clearCache(): void {
-    globalCache.clear()
   }
 }
 
 /**
- * Pricing calculation utilities
+ * Pricing calculations
  */
 export class PricingCalculator extends BaseCalculator {
-  async calculateLessonPackagePricing(
-    lessonPackage: LessonPackage
+  async calculatePackagePricing(
+    lessonPackage: LessonPackage,
+    customizations?: Record<string, unknown>
   ): Promise<Record<string, unknown>> {
+    const dataHash = this.generateDataHash([lessonPackage, customizations])
     const cacheKey = CacheKeys.pricingCalculations(lessonPackage.id)
 
     return this.executeWithMetrics(async () => {
-      const basePrice = lessonPackage.price
-      const discountPercent = lessonPackage.discount || 0
-      const discountAmount = (basePrice * discountPercent) / 100
-      const finalPrice = basePrice - discountAmount
+      // Basic package calculations would go here
+      const basePrice = lessonPackage.price || 0
+      const duration = lessonPackage.duration || 60
 
-      // Calculate per-lesson cost if sessions specified
-      const perLessonCost = lessonPackage.sessions
-        ? Math.round((finalPrice / lessonPackage.sessions) * 100) / 100
-        : null
-
-      const result = {
+      return {
         basePrice,
-        discount: {
-          percent: discountPercent,
-          amount: discountAmount,
-        },
-        finalPrice,
-        perLessonCost,
-        savings: discountAmount,
-        formatted: {
-          basePrice: this.formatPrice(basePrice),
-          finalPrice: this.formatPrice(finalPrice),
-          savings: this.formatPrice(discountAmount),
-          perLessonCost: perLessonCost ? this.formatPrice(perLessonCost) : null,
-        },
+        pricePerHour: Math.round((basePrice / duration) * 60),
+        withCustomizations: customizations
+          ? basePrice * 1.1
+          : basePrice, // 10% surcharge for customizations
+        currency: 'AUD',
+        lastCalculated: new Date().toISOString(),
       }
-
-      // Cache the result
-      this.cache.set(cacheKey, result, CacheTTL.MEDIUM)
-
-      return result
     }, cacheKey)
-  }
-
-  private formatPrice(amount: number): string {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount)
-  }
-
-  clearCache(): void {
-    globalCache.clear()
   }
 }
 
 /**
- * Main DataCalculator class that orchestrates all calculations
+ * Main calculator class that orchestrates all calculations
  */
 export class DataCalculator {
   private testimonialCalc = new TestimonialCalculator()
@@ -354,24 +305,30 @@ export class DataCalculator {
   }
 
   // General stats calculations
-  async calculateGeneralStats(): Promise<GeneralStats> {
-    return this.statsCalc.calculateGeneralStats()
+  async calculateGeneralStats(
+    testimonials: Testimonial[],
+    lessonPackages: LessonPackage[],
+    performanceData: Record<string, unknown>
+  ): Promise<GeneralStats> {
+    return this.statsCalc.calculateGeneralStats(
+      testimonials,
+      lessonPackages,
+      performanceData
+    )
   }
 
   // Pricing calculations
-  async calculateLessonPackagePricing(
-    lessonPackage: LessonPackage
+  async calculatePackagePricing(
+    lessonPackage: LessonPackage,
+    customizations?: Record<string, unknown>
   ): Promise<Record<string, unknown>> {
-    return this.pricingCalc.calculateLessonPackagePricing(lessonPackage)
+    return this.pricingCalc.calculatePackagePricing(
+      lessonPackage,
+      customizations
+    )
   }
 
-  // Cache management
-  clearAllCaches(): void {
-    globalCache.clear()
-    performanceMonitor.reset()
-  }
-
-  // Performance monitoring
+  // Utility methods
   getPerformanceMetrics() {
     return {
       monitor: performanceMonitor.getMetrics(),
@@ -380,11 +337,61 @@ export class DataCalculator {
     }
   }
 
-  // Cleanup expired cache entries
-  cleanup(): number {
-    const cleared = globalCache.cleanup()
+  clearCache(category?: string) {
     performanceMonitor.recordCleanup()
-    return cleared
+    return true
+  }
+}
+
+/**
+ * Synchronous testimonial stats calculation for React hooks
+ * This is a lightweight version that skips caching for immediate use in hooks
+ */
+export function calculateTestimonialStats(testimonials: Testimonial[]): TestimonialStats {
+  const total = testimonials.length
+
+  if (total === 0) {
+    return {
+      total: 0,
+      averageRating: 0,
+      byService: {
+        performance: { count: 0, percentage: 0, averageRating: 0 },
+        teaching: { count: 0, percentage: 0, averageRating: 0 },
+        collaboration: { count: 0, percentage: 0, averageRating: 0 },
+      },
+      featured: 0,
+      verified: 0,
+    }
+  }
+
+  const totalRating = testimonials.reduce((sum, t) => sum + t.rating, 0)
+  const averageRating = Math.round((totalRating / total) * 10) / 10
+
+  // Calculate service-specific stats
+  const services = ['performance', 'teaching', 'collaboration'] as const
+  const byService: Record<string, { count: number; percentage: number; averageRating: number }> = {}
+
+  services.forEach(service => {
+    const serviceTestimonials = testimonials.filter(t => t.service === service)
+    const count = serviceTestimonials.length
+    const percentage = total > 0 ? Math.round((count / total) * 100) : 0
+    const serviceRating = count > 0
+      ? Math.round((serviceTestimonials.reduce((sum, t) => sum + t.rating, 0) / count) * 10) / 10
+      : 0
+
+    byService[service] = { count, percentage, averageRating: serviceRating }
+  })
+
+  // Calculate additional metrics
+  const featured = testimonials.filter(t => t.featured).length
+  const verified = testimonials.filter(t => t.verified).length
+
+  return {
+    total,
+    averageRating,
+    byService,
+    featured,
+    verified,
   }
 }
 

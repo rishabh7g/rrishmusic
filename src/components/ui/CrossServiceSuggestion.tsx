@@ -22,8 +22,8 @@ import {
   getContextualMessage,
   type CrossServiceSuggestion,
 } from '@/utils/crossServiceSuggestions'
-import { ServiceType } from '@/utils/contactRouting'
-import { SmartContactCTA } from '@/components/ui/SmartContactCTA'
+import { ServiceType } from '@/types/content'
+import { SmartContactCTA } from '@/components/ui/cta'
 
 /**
  * Props for the Cross-Service Suggestion component

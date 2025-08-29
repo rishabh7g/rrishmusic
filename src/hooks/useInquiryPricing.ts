@@ -4,14 +4,19 @@
  */
 
 import { useState, useEffect, useCallback, useMemo } from 'react'
+import { ServiceType as CoreServiceType } from '@/types/content'
 import {
   PriceEstimate,
   estimatePerformancePricing,
   estimateCollaborationPricing,
   formatPriceEstimate,
-} from '@/utils/pricingEstimation'
+} from '@/utils/pricing'
 
-export type ServiceType = 'performance' | 'collaboration'
+// Only performance and collaboration have inquiry-based pricing
+export type ServiceType = Extract<
+  CoreServiceType,
+  'performance' | 'collaboration'
+>
 
 export interface ConsultationBooking {
   id: string
