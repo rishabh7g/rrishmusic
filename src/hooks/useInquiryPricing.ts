@@ -10,7 +10,7 @@ import {
   estimatePerformancePricing,
   estimateCollaborationPricing,
   formatPriceEstimate,
-} from '@/utils/pricingEstimation'
+} from '@/utils/pricing'
 
 // Only performance and collaboration have inquiry-based pricing
 export type ServiceType = Extract<

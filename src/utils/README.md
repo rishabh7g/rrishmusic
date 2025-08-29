@@ -79,7 +79,7 @@ function MyComponent() {
 
 ```typescript
 // Old way (still works)
-import { calculateTestimonialStats } from '@/utils/testimonialCalculations'
+import { calculateTestimonialStats } from '@/utils/dataCalculator'
 
 // New way (recommended)
 import { calculateTestimonialStats } from '@/utils/contentManager'

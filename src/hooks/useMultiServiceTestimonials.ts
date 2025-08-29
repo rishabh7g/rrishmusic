@@ -5,7 +5,7 @@ import {
   TestimonialStats,
   ServiceType,
 } from '@/types/content'
-import { calculateTestimonialStats } from '@/utils/testimonialCalculations'
+import { calculateTestimonialStats } from '@/utils/dataCalculator'
 
 // Import testimonials and service configuration
 import testimonialsData from '@/content/testimonials.json'

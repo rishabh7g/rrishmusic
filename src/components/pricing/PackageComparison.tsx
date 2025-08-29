@@ -10,7 +10,7 @@ import {
   PricingCalculation,
   formatPrice,
   comparePackages,
-} from '@/utils/pricingCalculator'
+} from '@/utils/pricing'
 
 /**
  * Props for PackageComparison component
