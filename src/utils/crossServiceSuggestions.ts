@@ -3,7 +3,7 @@
  * Basic implementation for component compatibility during cleanup phase
  */
 
-import { ServiceType } from '@/utils/contactRouting'
+import { ServiceType } from '@/types/content'
 
 export interface CrossServiceSuggestion {
   id: string
