@@ -1,16 +1,14 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePageSEO } from '@/hooks/usePageSEO'
-import instagramData from '@/data/instagram-posts.json'
 
 // Types
 interface MediaItem {
   id: string
-  type: 'image' | 'video' | 'instagram'
+  type: 'image' | 'video'
   src: string
   title: string
   category?: string
-  embedCode?: string
 }
 
 // Animation variants
@@ -53,8 +51,8 @@ export function Gallery() {
   // SEO setup
   usePageSEO({
     title: 'Gallery - Rrish Music',
-    description: 'Explore Rrish\'s musical journey through photos, videos, and Instagram content showcasing performances and collaborations.',
-    keywords: 'gallery, photos, videos, instagram, performances, music, collaboration, band',
+    description: 'Explore Rrish\'s musical journey through photos and videos showcasing performances and collaborations.',
+    keywords: 'gallery, photos, videos, performances, music, collaboration, band',
     canonicalUrl: 'https://www.rrishmusic.com/gallery'
   })
 
@@ -63,20 +61,6 @@ export function Gallery() {
     const loadMediaItems = () => {
       try {
         const items: MediaItem[] = []
-
-        // Load Instagram posts from imported data
-        if (instagramData?.posts) {
-          instagramData.posts.forEach((post: any, index: number) => {
-            items.push({
-              id: `instagram-${index}`,
-              type: 'instagram',
-              src: post.media_url || post.mediaUrl || '',
-              title: post.caption || post.title || 'Instagram Post',
-              category: post.category,
-              embedCode: post.embed_code || post.embedCode
-            })
-          })
-        }
 
         // Load image files from known structure
         const imageFiles = [
@@ -224,7 +208,7 @@ export function Gallery() {
             Gallery
           </h1>
           <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow">
-            Explore the musical journey through performances, collaborations, and behind-the-scenes moments.
+            Explore the musical journey through photos and videos of performances, collaborations, and behind-the-scenes moments.
           </p>
           <div className="w-24 h-1 bg-brand-orange-warm mx-auto mt-6 rounded-full"></div>
         </motion.div>
@@ -246,12 +230,7 @@ export function Gallery() {
                 transition={transition}
                 className="absolute inset-0 w-full h-full"
               >
-                {currentItem.type === 'instagram' && currentItem.embedCode ? (
-                  <div
-                    className="w-full h-full flex items-center justify-center bg-black"
-                    dangerouslySetInnerHTML={{ __html: currentItem.embedCode }}
-                  />
-                ) : currentItem.type === 'video' ? (
+                {currentItem.type === 'video' ? (
                   <video
                     src={currentItem.src}
                     controls
