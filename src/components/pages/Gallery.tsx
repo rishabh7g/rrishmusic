@@ -277,15 +277,20 @@ export function Gallery() {
       {/* Media Mosaic Grid */}
       <div className="container mx-auto px-4 max-w-6xl mt-8">
 
-        {/* Masonry/Mosaic Grid - Natural aspect ratios */}
-        <div className="columns-2 md:columns-3 lg:columns-4 gap-4 md:gap-6 space-y-4 md:space-y-6">
-          {mediaItems.map((item, index) => (
-            <motion.div
-              key={item.id}
-              className={`group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer break-inside-avoid mb-4 md:mb-6 ${
-                imageAspectRatios[item.id] === false ? 'transform scale-125 my-8 md:my-10 col-span-2' : ''
-              }`}
-              whileHover={{ scale: imageAspectRatios[item.id] === false ? 1.15 : 1.02, y: -4 }}
+        {/* CSS Grid - Dynamic spanning for landscape and portrait */}
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 auto-rows-[200px] gap-4 md:gap-6">
+          {mediaItems.map((item, index) => {
+            // Determine grid spanning based on aspect ratio
+            const isLandscape = imageAspectRatios[item.id] === false
+            const gridSpanClasses = isLandscape 
+              ? 'col-span-2 row-span-2' // Landscape: 2 columns x 2 rows
+              : 'col-span-1 row-span-2' // Portrait: 1 column x 2 rows
+            
+            return (
+              <motion.div
+                key={item.id}
+                className={`group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer ${gridSpanClasses}`}
+                whileHover={{ scale: 1.02, y: -4 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => openLightbox(index)}
               initial={{ opacity: 0, y: 20 }}
@@ -342,7 +347,8 @@ export function Gallery() {
               </div>
 
             </motion.div>
-          ))}
+            )
+          })}
         </div>
       </div>
 
