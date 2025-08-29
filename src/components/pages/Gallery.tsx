@@ -241,19 +241,11 @@ export function Gallery() {
         </motion.div>
       </div>
 
-      {/* Carousel Container */}
+      {/* Carousel Container - Fixed layout to prevent shifts */}
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="relative">
-          {/* Main Carousel - Dynamic height based on image orientation */}
-          <motion.div 
-            className={`relative rounded-3xl overflow-hidden bg-theme-bg-secondary shadow-2xl transition-all duration-500 ${
-              currentItemIsPortrait 
-                ? 'h-[70vh] md:h-[80vh] max-w-2xl mx-auto' 
-                : 'h-[60vh] md:h-[70vh]'
-            }`}
-            layout
-            transition={{ duration: 0.5, ease: "easeInOut" }}
-          >
+          {/* Main Carousel - Static container with consistent dimensions */}
+          <div className="relative h-[70vh] md:h-[75vh] rounded-3xl overflow-hidden bg-theme-bg-secondary shadow-2xl flex items-center justify-center">
             <AnimatePresence initial={false} custom={direction}>
               <motion.div
                 key={currentIndex}
@@ -278,12 +270,13 @@ export function Gallery() {
                   <img
                     src={currentItem.src}
                     alt={currentItem.title}
-                    className={`w-full h-full ${
+                    className={`${
                       currentItemIsPortrait 
-                        ? 'object-contain bg-black' 
-                        : 'object-cover'
+                        ? 'max-h-full max-w-full object-contain' 
+                        : 'w-full h-full object-cover'
                     }`}
                     loading="lazy"
+                    style={currentItemIsPortrait ? { maxHeight: '100%', maxWidth: '100%' } : {}}
                   />
                 )}
 
@@ -321,10 +314,10 @@ export function Gallery() {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
               </svg>
             </button>
-          </motion.div>
+          </div>
 
-          {/* Indicators */}
-          <div className="flex justify-center mt-6 space-x-2">
+          {/* Indicators - Fixed position to prevent layout shifts */}
+          <div className="flex justify-center mt-8 space-x-2">
             {mediaItems.map((_, index) => (
               <button
                 key={index}
@@ -342,8 +335,8 @@ export function Gallery() {
             ))}
           </div>
 
-          {/* Counter */}
-          <div className="text-center mt-4">
+          {/* Counter - Fixed position */}
+          <div className="text-center mt-6">
             <span className="text-theme-text-secondary text-sm">
               {currentIndex + 1} of {mediaItems.length}
             </span>
