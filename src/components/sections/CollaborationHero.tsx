@@ -141,11 +141,11 @@ export const CollaborationHero: React.FC<CollaborationHeroProps> = ({
             <CollaborationInquiryCTA variant="primary" size="large">
               Start Your Project
             </CollaborationInquiryCTA>
-            
+
             {/* CTA Enhancement */}
             <div className="absolute -top-2 -right-2 w-4 h-4 bg-brand-orange-bright rounded-full animate-pulse"></div>
           </div>
-          
+
           <div className="text-white/70 text-sm">
             Free consultation • Quick response
           </div>
@@ -158,7 +158,8 @@ export const CollaborationHero: React.FC<CollaborationHeroProps> = ({
         >
           <p>
             Trusted by artists, producers, and creative professionals for
-            high-quality musical collaboration and innovative project development.
+            high-quality musical collaboration and innovative project
+            development.
           </p>
         </motion.div>
       </motion.div>

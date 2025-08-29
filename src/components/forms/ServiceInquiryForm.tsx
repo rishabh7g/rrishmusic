@@ -19,7 +19,9 @@ import {
 /**
  * Performance Inquiry Form
  */
-export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = (props) => {
+export const PerformanceInquiryForm: React.FC<
+  PerformanceInquiryFormProps
+> = props => {
   return (
     <BaseInquiryForm<PerformanceInquiryData>
       {...props}
@@ -31,7 +33,9 @@ export const PerformanceInquiryForm: React.FC<PerformanceInquiryFormProps> = (pr
 /**
  * Collaboration Inquiry Form
  */
-export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> = (props) => {
+export const CollaborationInquiryForm: React.FC<
+  CollaborationInquiryFormProps
+> = props => {
   return (
     <BaseInquiryForm<CollaborationInquiryData>
       {...props}
@@ -43,7 +47,9 @@ export const CollaborationInquiryForm: React.FC<CollaborationInquiryFormProps> =
 /**
  * Teaching Inquiry Form
  */
-export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = (props) => {
+export const TeachingInquiryForm: React.FC<
+  TeachingInquiryFormProps
+> = props => {
   return (
     <BaseInquiryForm<TeachingInquiryData>
       {...props}
@@ -55,7 +61,9 @@ export const TeachingInquiryForm: React.FC<TeachingInquiryFormProps> = (props) =
 /**
  * Universal Inquiry Form
  */
-export const UniversalInquiryForm: React.FC<UniversalInquiryFormProps> = (props) => {
+export const UniversalInquiryForm: React.FC<
+  UniversalInquiryFormProps
+> = props => {
   return (
     <BaseInquiryForm<UniversalInquiryData>
       {...props}

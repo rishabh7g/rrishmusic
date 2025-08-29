@@ -523,7 +523,7 @@ import {
   PerformanceVenueStats,
   PerformanceEventStats,
   PerformancePortfolioStats,
-  CalculatedPerformanceData
+  CalculatedPerformanceData,
 } from '@/types/content'
 
 /**
@@ -935,8 +935,10 @@ export function useWebVitals(
   useEffect(() => {
     if (!enabled || monitorRef.current) return
 
-    monitorRef.current = new PerformanceMonitor({ enableConsoleLogging: enabled })
-    
+    monitorRef.current = new PerformanceMonitor({
+      enableConsoleLogging: enabled,
+    })
+
     return () => {
       monitorRef.current?.cleanup()
       monitorRef.current = null

@@ -17,13 +17,12 @@
 
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
-import { 
-  PerformanceInquiryForm, 
-  CollaborationInquiryForm, 
+import {
+  PerformanceInquiryForm,
+  CollaborationInquiryForm,
   TeachingInquiryForm,
   type PerformanceInquiryData,
-  type CollaborationInquiryData,
-  type TeachingInquiryData
+  type TeachingInquiryData,
 } from '@/components/forms'
 
 /**
@@ -49,32 +48,32 @@ export interface ServiceCTAProps {
    * Service type determines which form opens and styling theme
    */
   service: ServiceType
-  
+
   /**
    * Visual style variant
    */
   variant?: CTAVariant
-  
+
   /**
    * Button size
    */
   size?: CTASize
-  
+
   /**
    * Full width button
    */
   fullWidth?: boolean
-  
+
   /**
    * Custom button text (falls back to service defaults)
    */
   children?: React.ReactNode
-  
+
   /**
    * Additional CSS classes
    */
   className?: string
-  
+
   /**
    * Custom click handler (called before opening form)
    */
@@ -85,32 +84,32 @@ export interface ServiceCTAProps {
    * Performance: Pre-select event type
    */
   eventType?: PerformanceInquiryData['eventType']
-  
+
   /**
    * Collaboration: Pre-select project type
    */
   projectType?: 'studio' | 'creative' | 'partnership' | 'other'
-  
+
   /**
    * Teaching: Pre-select package type
    */
   initialPackageType?: TeachingInquiryData['packageType']
-  
+
   /**
    * Teaching: Show pricing in CTA
    */
   showPricing?: boolean
-  
+
   /**
    * Teaching: Display variant
    */
   teachingVariant?: 'default' | 'compact' | 'prominent'
-  
+
   /**
    * Custom CTA text override
    */
   ctaText?: string
-  
+
   /**
    * Analytics tracking label
    */
@@ -124,24 +123,36 @@ const getServiceColors = (service: ServiceType) => {
   switch (service) {
     case 'performance':
       return {
-        primary: 'bg-brand-orange-warm text-white hover:bg-brand-orange-warm/90 shadow-lg hover:shadow-xl focus:ring-brand-orange-warm',
-        secondary: 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
-        outline: 'border-2 border-brand-orange-warm text-brand-orange-warm hover:bg-brand-orange-warm hover:text-white focus:ring-brand-orange-warm',
-        minimal: 'text-brand-orange-warm hover:text-brand-orange-warm/80 underline hover:no-underline focus:ring-brand-orange-warm'
+        primary:
+          'bg-brand-orange-warm text-white hover:bg-brand-orange-warm/90 shadow-lg hover:shadow-xl focus:ring-brand-orange-warm',
+        secondary:
+          'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
+        outline:
+          'border-2 border-brand-orange-warm text-brand-orange-warm hover:bg-brand-orange-warm hover:text-white focus:ring-brand-orange-warm',
+        minimal:
+          'text-brand-orange-warm hover:text-brand-orange-warm/80 underline hover:no-underline focus:ring-brand-orange-warm',
       }
     case 'collaboration':
       return {
-        primary: 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
-        secondary: 'bg-brand-blue-secondary text-white hover:bg-brand-blue-primary shadow-lg hover:shadow-xl focus:ring-brand-blue-secondary',
-        outline: 'border-2 border-brand-blue-primary text-brand-blue-primary hover:bg-brand-blue-primary hover:text-white focus:ring-brand-blue-primary',
-        minimal: 'text-brand-blue-primary hover:text-brand-blue-secondary underline hover:no-underline focus:ring-brand-blue-primary'
+        primary:
+          'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
+        secondary:
+          'bg-brand-blue-secondary text-white hover:bg-brand-blue-primary shadow-lg hover:shadow-xl focus:ring-brand-blue-secondary',
+        outline:
+          'border-2 border-brand-blue-primary text-brand-blue-primary hover:bg-brand-blue-primary hover:text-white focus:ring-brand-blue-primary',
+        minimal:
+          'text-brand-blue-primary hover:text-brand-blue-secondary underline hover:no-underline focus:ring-brand-blue-primary',
       }
     case 'teaching':
       return {
-        primary: 'bg-brand-orange-warm text-white hover:bg-brand-orange-warm/90 shadow-lg hover:shadow-xl focus:ring-brand-orange-warm',
-        secondary: 'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
-        outline: 'border-2 border-brand-orange-warm text-brand-orange-warm hover:bg-brand-orange-warm hover:text-white focus:ring-brand-orange-warm',
-        minimal: 'text-brand-orange-warm hover:text-brand-orange-warm/80 underline hover:no-underline focus:ring-brand-orange-warm'
+        primary:
+          'bg-brand-orange-warm text-white hover:bg-brand-orange-warm/90 shadow-lg hover:shadow-xl focus:ring-brand-orange-warm',
+        secondary:
+          'bg-brand-blue-primary text-white hover:bg-brand-blue-secondary shadow-lg hover:shadow-xl focus:ring-brand-blue-primary',
+        outline:
+          'border-2 border-brand-orange-warm text-brand-orange-warm hover:bg-brand-orange-warm hover:text-white focus:ring-brand-orange-warm',
+        minimal:
+          'text-brand-orange-warm hover:text-brand-orange-warm/80 underline hover:no-underline focus:ring-brand-orange-warm',
       }
   }
 }
@@ -230,16 +241,15 @@ export const ServiceCTA: React.FC<ServiceCTAProps> = ({
   }
 
   const buttonClasses = getButtonClasses(service, variant, size, fullWidth)
-  const displayText = ctaText || (children as string) || getDefaultCTAText(service)
+  const displayText =
+    ctaText || (children as string) || getDefaultCTAText(service)
 
   // Special rendering for teaching with pricing
   if (service === 'teaching' && showPricing) {
     return (
       <>
         <div className={`text-center ${className}`}>
-          <div className="mb-2 text-sm text-neutral-600">
-            Starting at
-          </div>
+          <div className="mb-2 text-sm text-neutral-600">Starting at</div>
           <div className="mb-4 text-2xl font-bold text-brand-orange-warm">
             $50/lesson
           </div>
@@ -309,97 +319,141 @@ export const ServiceCTA: React.FC<ServiceCTAProps> = ({
  */
 
 // Performance CTA Variants
-export const PerformanceCTA: React.FC<Omit<ServiceCTAProps, 'service'>> = (props) => (
-  <ServiceCTA service="performance" {...props} />
-)
+export const PerformanceCTA: React.FC<
+  Omit<ServiceCTAProps, 'service'>
+> = props => <ServiceCTA service="performance" {...props} />
 
-export const PrimaryPerformanceCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="performance" variant="primary" {...props} />
-)
+export const PrimaryPerformanceCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="performance" variant="primary" {...props} />
 
-export const SecondaryPerformanceCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="performance" variant="secondary" {...props} />
-)
+export const SecondaryPerformanceCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="performance" variant="secondary" {...props} />
 
-export const OutlinePerformanceCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="performance" variant="outline" {...props} />
-)
+export const OutlinePerformanceCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="performance" variant="outline" {...props} />
 
-export const MinimalPerformanceCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="performance" variant="minimal" {...props} />
-)
+export const MinimalPerformanceCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="performance" variant="minimal" {...props} />
 
 // Event-specific Performance CTAs
-export const WeddingInquiryCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="performance" eventType="wedding" trackingLabel="wedding-inquiry" {...props} />
+export const WeddingInquiryCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="performance"
+    eventType="wedding"
+    trackingLabel="wedding-inquiry"
+    {...props}
+  />
 )
 
-export const CorporateInquiryCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="performance" eventType="corporate" trackingLabel="corporate-inquiry" {...props} />
+export const CorporateInquiryCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="performance"
+    eventType="corporate"
+    trackingLabel="corporate-inquiry"
+    {...props}
+  />
 )
 
-export const VenueInquiryCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="performance" eventType="venue" trackingLabel="venue-inquiry" {...props} />
+export const VenueInquiryCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'eventType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="performance"
+    eventType="venue"
+    trackingLabel="venue-inquiry"
+    {...props}
+  />
 )
 
 // Collaboration CTA Variants
-export const CollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service'>> = (props) => (
-  <ServiceCTA service="collaboration" {...props} />
-)
+export const CollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service'>
+> = props => <ServiceCTA service="collaboration" {...props} />
 
-export const PrimaryCollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="collaboration" variant="primary" {...props} />
-)
+export const PrimaryCollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="collaboration" variant="primary" {...props} />
 
-export const SecondaryCollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
+export const SecondaryCollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => (
   <ServiceCTA service="collaboration" variant="secondary" {...props} />
 )
 
-export const OutlineCollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="collaboration" variant="outline" {...props} />
-)
+export const OutlineCollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="collaboration" variant="outline" {...props} />
 
-export const MinimalCollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="collaboration" variant="minimal" {...props} />
-)
+export const MinimalCollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="collaboration" variant="minimal" {...props} />
 
 // Project-specific Collaboration CTAs
-export const StudioCollaborationCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="collaboration" projectType="studio" trackingLabel="studio-collaboration" {...props} />
+export const StudioCollaborationCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="collaboration"
+    projectType="studio"
+    trackingLabel="studio-collaboration"
+    {...props}
+  />
 )
 
-export const CreativeProjectCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="collaboration" projectType="creative" trackingLabel="creative-project" {...props} />
+export const CreativeProjectCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="collaboration"
+    projectType="creative"
+    trackingLabel="creative-project"
+    {...props}
+  />
 )
 
-export const PartnershipInquiryCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>> = (props) => (
-  <ServiceCTA service="collaboration" projectType="partnership" trackingLabel="partnership-inquiry" {...props} />
+export const PartnershipInquiryCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'projectType' | 'trackingLabel'>
+> = props => (
+  <ServiceCTA
+    service="collaboration"
+    projectType="partnership"
+    trackingLabel="partnership-inquiry"
+    {...props}
+  />
 )
 
 // Teaching CTA Variants
-export const TeachingCTA: React.FC<Omit<ServiceCTAProps, 'service'>> = (props) => (
-  <ServiceCTA service="teaching" {...props} />
-)
+export const TeachingCTA: React.FC<
+  Omit<ServiceCTAProps, 'service'>
+> = props => <ServiceCTA service="teaching" {...props} />
 
-export const PrimaryTeachingCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="teaching" variant="primary" {...props} />
-)
+export const PrimaryTeachingCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="teaching" variant="primary" {...props} />
 
-export const SecondaryTeachingCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="teaching" variant="secondary" {...props} />
-)
+export const SecondaryTeachingCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="teaching" variant="secondary" {...props} />
 
-export const OutlineTeachingCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="teaching" variant="outline" {...props} />
-)
+export const OutlineTeachingCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="teaching" variant="outline" {...props} />
 
-export const MinimalTeachingCTA: React.FC<Omit<ServiceCTAProps, 'service' | 'variant'>> = (props) => (
-  <ServiceCTA service="teaching" variant="minimal" {...props} />
-)
+export const MinimalTeachingCTA: React.FC<
+  Omit<ServiceCTAProps, 'service' | 'variant'>
+> = props => <ServiceCTA service="teaching" variant="minimal" {...props} />
 
 // Legacy component names for backward compatibility
 export const PerformanceInquiryCTA = PerformanceCTA
-export const CollaborationInquiryCTA = CollaborationCTA  
+export const CollaborationInquiryCTA = CollaborationCTA
 export const TeachingInquiryCTA = TeachingCTA
 
 export default ServiceCTA

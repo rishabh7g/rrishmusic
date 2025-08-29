@@ -8,7 +8,17 @@ import { ServiceType } from './types'
 export interface FieldConfig {
   name: string
   label: string
-  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'file' | 'date' | 'time'
+  type:
+    | 'text'
+    | 'email'
+    | 'tel'
+    | 'textarea'
+    | 'select'
+    | 'radio'
+    | 'checkbox'
+    | 'file'
+    | 'date'
+    | 'time'
   required: boolean
   placeholder?: string
   options?: Array<{ value: string; label: string; description?: string }>
@@ -62,8 +72,8 @@ const contactFields: FieldConfig[] = [
     order: 1,
     validation: {
       minLength: 2,
-      maxLength: 100
-    }
+      maxLength: 100,
+    },
   },
   {
     name: 'email',
@@ -74,8 +84,8 @@ const contactFields: FieldConfig[] = [
     section: 'contact',
     order: 2,
     validation: {
-      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    }
+      pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+    },
   },
   {
     name: 'phone',
@@ -85,8 +95,8 @@ const contactFields: FieldConfig[] = [
     placeholder: 'Enter your phone number (optional)',
     section: 'contact',
     order: 3,
-    helpText: 'We may call to discuss your inquiry in detail'
-  }
+    helpText: 'We may call to discuss your inquiry in detail',
+  },
 ]
 
 const marketingFields: FieldConfig[] = [
@@ -102,8 +112,8 @@ const marketingFields: FieldConfig[] = [
       { value: 'instagram', label: 'Instagram' },
       { value: 'referral', label: 'Friend/Family Referral' },
       { value: 'venue', label: 'Venue Recommendation' },
-      { value: 'other', label: 'Other' }
-    ]
+      { value: 'other', label: 'Other' },
+    ],
   },
   {
     name: 'hearAboutUsDetail',
@@ -115,24 +125,26 @@ const marketingFields: FieldConfig[] = [
     order: 2,
     conditional: {
       dependsOn: 'hearAboutUs',
-      showWhen: (value) => ['other', 'referral', 'venue'].includes(value)
-    }
-  }
+      showWhen: value => ['other', 'referral', 'venue'].includes(value),
+    },
+  },
 ]
 
 // Performance form configuration
 export const performanceFormConfig: FormConfig = {
   serviceType: 'performance',
   title: 'Performance Inquiry',
-  description: 'Tell us about your event and we\'ll create the perfect musical experience',
+  description:
+    "Tell us about your event and we'll create the perfect musical experience",
   submitText: 'Submit Performance Inquiry',
-  successMessage: 'Thank you for your performance inquiry! We\'ll get back to you within 24 hours.',
+  successMessage:
+    "Thank you for your performance inquiry! We'll get back to you within 24 hours.",
   sections: [
     { name: 'contact', title: 'Contact Information', order: 1 },
     { name: 'event', title: 'Event Details', order: 2 },
     { name: 'requirements', title: 'Performance Requirements', order: 3 },
     { name: 'additional', title: 'Additional Information', order: 4 },
-    { name: 'marketing', title: 'How You Found Us', order: 5 }
+    { name: 'marketing', title: 'How You Found Us', order: 5 },
   ],
   fields: [
     ...contactFields,
@@ -145,12 +157,32 @@ export const performanceFormConfig: FormConfig = {
       section: 'event',
       order: 1,
       options: [
-        { value: 'wedding', label: 'Wedding', description: 'Ceremonies, receptions, and celebrations' },
-        { value: 'corporate', label: 'Corporate Event', description: 'Company parties, conferences, networking' },
-        { value: 'venue', label: 'Venue Performance', description: 'Restaurants, bars, hotels' },
-        { value: 'private', label: 'Private Party', description: 'Birthdays, anniversaries, gatherings' },
-        { value: 'other', label: 'Other Event', description: 'Tell us about your unique event' }
-      ]
+        {
+          value: 'wedding',
+          label: 'Wedding',
+          description: 'Ceremonies, receptions, and celebrations',
+        },
+        {
+          value: 'corporate',
+          label: 'Corporate Event',
+          description: 'Company parties, conferences, networking',
+        },
+        {
+          value: 'venue',
+          label: 'Venue Performance',
+          description: 'Restaurants, bars, hotels',
+        },
+        {
+          value: 'private',
+          label: 'Private Party',
+          description: 'Birthdays, anniversaries, gatherings',
+        },
+        {
+          value: 'other',
+          label: 'Other Event',
+          description: 'Tell us about your unique event',
+        },
+      ],
     },
     {
       name: 'eventDate',
@@ -159,7 +191,7 @@ export const performanceFormConfig: FormConfig = {
       required: false,
       section: 'event',
       order: 2,
-      helpText: 'If you have a specific date in mind'
+      helpText: 'If you have a specific date in mind',
     },
     {
       name: 'eventTime',
@@ -168,7 +200,7 @@ export const performanceFormConfig: FormConfig = {
       required: false,
       section: 'event',
       order: 3,
-      helpText: 'Approximate start time for the performance'
+      helpText: 'Approximate start time for the performance',
     },
     {
       name: 'venueName',
@@ -177,7 +209,7 @@ export const performanceFormConfig: FormConfig = {
       required: false,
       placeholder: 'Name of the venue',
       section: 'event',
-      order: 4
+      order: 4,
     },
     {
       name: 'venueAddress',
@@ -186,7 +218,7 @@ export const performanceFormConfig: FormConfig = {
       required: false,
       placeholder: 'Venue location',
       section: 'event',
-      order: 5
+      order: 5,
     },
     // Performance Requirements
     {
@@ -197,11 +229,27 @@ export const performanceFormConfig: FormConfig = {
       section: 'requirements',
       order: 1,
       options: [
-        { value: 'solo', label: 'Solo Performance', description: 'Just me and my guitar' },
-        { value: 'band', label: 'Band Performance', description: 'Full band setup' },
-        { value: 'flexible', label: 'Either Works', description: 'I\'m flexible on format' },
-        { value: 'unsure', label: 'Not Sure Yet', description: 'Help me decide what works best' }
-      ]
+        {
+          value: 'solo',
+          label: 'Solo Performance',
+          description: 'Just me and my guitar',
+        },
+        {
+          value: 'band',
+          label: 'Band Performance',
+          description: 'Full band setup',
+        },
+        {
+          value: 'flexible',
+          label: 'Either Works',
+          description: "I'm flexible on format",
+        },
+        {
+          value: 'unsure',
+          label: 'Not Sure Yet',
+          description: 'Help me decide what works best',
+        },
+      ],
     },
     {
       name: 'performanceStyle',
@@ -211,11 +259,27 @@ export const performanceFormConfig: FormConfig = {
       section: 'requirements',
       order: 2,
       options: [
-        { value: 'acoustic', label: 'Acoustic', description: 'Intimate, unplugged sound' },
-        { value: 'electric', label: 'Electric', description: 'Full amplified sound' },
-        { value: 'both', label: 'Mix of Both', description: 'Variety throughout the event' },
-        { value: 'unsure', label: 'Not Sure', description: 'Help me choose what fits' }
-      ]
+        {
+          value: 'acoustic',
+          label: 'Acoustic',
+          description: 'Intimate, unplugged sound',
+        },
+        {
+          value: 'electric',
+          label: 'Electric',
+          description: 'Full amplified sound',
+        },
+        {
+          value: 'both',
+          label: 'Mix of Both',
+          description: 'Variety throughout the event',
+        },
+        {
+          value: 'unsure',
+          label: 'Not Sure',
+          description: 'Help me choose what fits',
+        },
+      ],
     },
     {
       name: 'duration',
@@ -225,7 +289,7 @@ export const performanceFormConfig: FormConfig = {
       placeholder: 'e.g., 2 hours, 3 sets of 45 minutes',
       section: 'requirements',
       order: 3,
-      helpText: 'How long would you like the performance to last?'
+      helpText: 'How long would you like the performance to last?',
     },
     {
       name: 'guestCount',
@@ -234,7 +298,7 @@ export const performanceFormConfig: FormConfig = {
       required: false,
       placeholder: 'Approximate number of guests',
       section: 'requirements',
-      order: 4
+      order: 4,
     },
     {
       name: 'budgetRange',
@@ -248,8 +312,8 @@ export const performanceFormConfig: FormConfig = {
         { value: '500-1000', label: '$500 - $1,000' },
         { value: '1000-2000', label: '$1,000 - $2,000' },
         { value: '2000-plus', label: '$2,000+' },
-        { value: 'discuss', label: 'Let\'s Discuss' }
-      ]
+        { value: 'discuss', label: "Let's Discuss" },
+      ],
     },
     // Additional Information
     {
@@ -257,18 +321,20 @@ export const performanceFormConfig: FormConfig = {
       label: 'Special Requests',
       type: 'textarea',
       required: false,
-      placeholder: 'Any specific songs, arrangements, or special moments you\'d like included?',
+      placeholder:
+        "Any specific songs, arrangements, or special moments you'd like included?",
       section: 'additional',
-      order: 1
+      order: 1,
     },
     {
       name: 'musicPreferences',
       label: 'Music Preferences',
       type: 'textarea',
       required: false,
-      placeholder: 'What style of music fits your event? Any favorite artists or genres?',
+      placeholder:
+        'What style of music fits your event? Any favorite artists or genres?',
       section: 'additional',
-      order: 2
+      order: 2,
     },
     {
       name: 'hasVenueRestrictions',
@@ -279,40 +345,42 @@ export const performanceFormConfig: FormConfig = {
       order: 3,
       options: [
         { value: 'true', label: 'Yes, there are restrictions' },
-        { value: 'false', label: 'No restrictions' }
-      ]
+        { value: 'false', label: 'No restrictions' },
+      ],
     },
     {
       name: 'venueRestrictions',
       label: 'Venue Restrictions Details',
       type: 'textarea',
       required: false,
-      placeholder: 'Please describe any sound limits, setup restrictions, or other venue requirements',
+      placeholder:
+        'Please describe any sound limits, setup restrictions, or other venue requirements',
       section: 'additional',
       order: 4,
       conditional: {
         dependsOn: 'hasVenueRestrictions',
-        showWhen: (value) => value === 'true' || value === true
-      }
+        showWhen: value => value === 'true' || value === true,
+      },
     },
-    ...marketingFields
-  ]
+    ...marketingFields,
+  ],
 }
 
 // Collaboration form configuration
 export const collaborationFormConfig: FormConfig = {
   serviceType: 'collaboration',
   title: 'Collaboration Inquiry',
-  description: 'Let\'s explore how we can create something amazing together',
+  description: "Let's explore how we can create something amazing together",
   submitText: 'Submit Collaboration Inquiry',
-  successMessage: 'Thank you for your collaboration inquiry! We\'ll get back to you within 24 hours.',
+  successMessage:
+    "Thank you for your collaboration inquiry! We'll get back to you within 24 hours.",
   sections: [
     { name: 'contact', title: 'Contact Information', order: 1 },
     { name: 'project', title: 'Project Details', order: 2 },
     { name: 'timeline', title: 'Timeline & Scope', order: 3 },
     { name: 'budget', title: 'Budget & Investment', order: 4 },
     { name: 'additional', title: 'Additional Information', order: 5 },
-    { name: 'marketing', title: 'How You Found Us', order: 6 }
+    { name: 'marketing', title: 'How You Found Us', order: 6 },
   ],
   fields: [
     ...contactFields,
@@ -325,11 +393,27 @@ export const collaborationFormConfig: FormConfig = {
       section: 'project',
       order: 1,
       options: [
-        { value: 'studio', label: 'Studio Collaboration', description: 'Recording, production, session work' },
-        { value: 'creative', label: 'Creative Project', description: 'Songwriting, arranging, musical direction' },
-        { value: 'partnership', label: 'Ongoing Partnership', description: 'Long-term musical collaboration' },
-        { value: 'other', label: 'Other Collaboration', description: 'Something unique we should discuss' }
-      ]
+        {
+          value: 'studio',
+          label: 'Studio Collaboration',
+          description: 'Recording, production, session work',
+        },
+        {
+          value: 'creative',
+          label: 'Creative Project',
+          description: 'Songwriting, arranging, musical direction',
+        },
+        {
+          value: 'partnership',
+          label: 'Ongoing Partnership',
+          description: 'Long-term musical collaboration',
+        },
+        {
+          value: 'other',
+          label: 'Other Collaboration',
+          description: 'Something unique we should discuss',
+        },
+      ],
     },
     {
       name: 'projectTitle',
@@ -338,20 +422,21 @@ export const collaborationFormConfig: FormConfig = {
       required: false,
       placeholder: 'What are you calling this project?',
       section: 'project',
-      order: 2
+      order: 2,
     },
     {
       name: 'creativeVision',
       label: 'Creative Vision',
       type: 'textarea',
       required: true,
-      placeholder: 'Tell us about your creative vision, goals, and what you\'re hoping to achieve',
+      placeholder:
+        "Tell us about your creative vision, goals, and what you're hoping to achieve",
       section: 'project',
       order: 3,
       validation: {
         minLength: 20,
-        maxLength: 1000
-      }
+        maxLength: 1000,
+      },
     },
     // Timeline & Scope
     {
@@ -365,8 +450,8 @@ export const collaborationFormConfig: FormConfig = {
         { value: 'urgent', label: 'Urgent (Within 2 weeks)' },
         { value: 'flexible', label: 'Flexible (Within 2 months)' },
         { value: 'specific-date', label: 'Specific Deadline' },
-        { value: 'ongoing', label: 'Ongoing Project' }
-      ]
+        { value: 'ongoing', label: 'Ongoing Project' },
+      ],
     },
     {
       name: 'timelineDetails',
@@ -378,8 +463,8 @@ export const collaborationFormConfig: FormConfig = {
       order: 2,
       conditional: {
         dependsOn: 'timeline',
-        showWhen: (value) => ['specific-date', 'urgent'].includes(value)
-      }
+        showWhen: value => ['specific-date', 'urgent'].includes(value),
+      },
     },
     {
       name: 'projectScope',
@@ -389,11 +474,27 @@ export const collaborationFormConfig: FormConfig = {
       section: 'timeline',
       order: 3,
       options: [
-        { value: 'single-session', label: 'Single Session', description: 'One-time collaboration' },
-        { value: 'short-term', label: 'Short-term', description: '2-4 weeks of work' },
-        { value: 'long-term', label: 'Long-term', description: '1-3 months of collaboration' },
-        { value: 'ongoing', label: 'Ongoing', description: 'Continuous partnership' }
-      ]
+        {
+          value: 'single-session',
+          label: 'Single Session',
+          description: 'One-time collaboration',
+        },
+        {
+          value: 'short-term',
+          label: 'Short-term',
+          description: '2-4 weeks of work',
+        },
+        {
+          value: 'long-term',
+          label: 'Long-term',
+          description: '1-3 months of collaboration',
+        },
+        {
+          value: 'ongoing',
+          label: 'Ongoing',
+          description: 'Continuous partnership',
+        },
+      ],
     },
     // Budget & Investment
     {
@@ -409,8 +510,8 @@ export const collaborationFormConfig: FormConfig = {
         { value: '1000-2500', label: '$1,000 - $2,500' },
         { value: '2500-5000', label: '$2,500 - $5,000' },
         { value: '5000-plus', label: '$5,000+' },
-        { value: 'discuss', label: 'Let\'s Discuss' }
-      ]
+        { value: 'discuss', label: "Let's Discuss" },
+      ],
     },
     {
       name: 'budgetNotes',
@@ -419,7 +520,7 @@ export const collaborationFormConfig: FormConfig = {
       required: false,
       placeholder: 'Any additional budget considerations or questions?',
       section: 'budget',
-      order: 2
+      order: 2,
     },
     // Additional Information
     {
@@ -430,20 +531,37 @@ export const collaborationFormConfig: FormConfig = {
       section: 'additional',
       order: 1,
       options: [
-        { value: 'first-time', label: 'First-time Collaborator', description: 'New to musical collaboration' },
-        { value: 'some-experience', label: 'Some Experience', description: 'Done a few projects before' },
-        { value: 'experienced', label: 'Experienced', description: 'Regular collaborator' },
-        { value: 'professional', label: 'Music Professional', description: 'Industry professional' }
-      ]
+        {
+          value: 'first-time',
+          label: 'First-time Collaborator',
+          description: 'New to musical collaboration',
+        },
+        {
+          value: 'some-experience',
+          label: 'Some Experience',
+          description: 'Done a few projects before',
+        },
+        {
+          value: 'experienced',
+          label: 'Experienced',
+          description: 'Regular collaborator',
+        },
+        {
+          value: 'professional',
+          label: 'Music Professional',
+          description: 'Industry professional',
+        },
+      ],
     },
     {
       name: 'additionalInfo',
       label: 'Additional Information',
       type: 'textarea',
       required: false,
-      placeholder: 'Anything else you\'d like us to know about this collaboration?',
+      placeholder:
+        "Anything else you'd like us to know about this collaboration?",
       section: 'additional',
-      order: 2
+      order: 2,
     },
     {
       name: 'portfolioFiles',
@@ -452,7 +570,7 @@ export const collaborationFormConfig: FormConfig = {
       required: false,
       section: 'additional',
       order: 3,
-      helpText: 'Share any demos, references, or examples (optional)'
+      helpText: 'Share any demos, references, or examples (optional)',
     },
     // Marketing (updated for collaboration context)
     {
@@ -467,8 +585,8 @@ export const collaborationFormConfig: FormConfig = {
         { value: 'instagram', label: 'Instagram' },
         { value: 'referral', label: 'Friend/Colleague Referral' },
         { value: 'community', label: 'Music Community' },
-        { value: 'other', label: 'Other' }
-      ]
+        { value: 'other', label: 'Other' },
+      ],
     },
     {
       name: 'hearAboutUsDetail',
@@ -480,26 +598,28 @@ export const collaborationFormConfig: FormConfig = {
       order: 2,
       conditional: {
         dependsOn: 'hearAboutUs',
-        showWhen: (value) => ['other', 'referral', 'community'].includes(value)
-      }
-    }
-  ]
+        showWhen: value => ['other', 'referral', 'community'].includes(value),
+      },
+    },
+  ],
 }
 
 // Teaching form configuration
 export const teachingFormConfig: FormConfig = {
   serviceType: 'teaching',
   title: 'Guitar Lesson Inquiry',
-  description: 'Start your musical journey with personalized guitar instruction',
+  description:
+    'Start your musical journey with personalized guitar instruction',
   submitText: 'Submit Lesson Inquiry',
-  successMessage: 'Thank you for your interest in guitar lessons! We\'ll get back to you within 24 hours.',
+  successMessage:
+    "Thank you for your interest in guitar lessons! We'll get back to you within 24 hours.",
   sections: [
     { name: 'contact', title: 'Contact Information', order: 1 },
     { name: 'lessons', title: 'Lesson Details', order: 2 },
     { name: 'schedule', title: 'Schedule & Format', order: 3 },
     { name: 'additional', title: 'Additional Information', order: 4 },
     { name: 'preferences', title: 'Communication Preferences', order: 5 },
-    { name: 'marketing', title: 'How You Found Us', order: 6 }
+    { name: 'marketing', title: 'How You Found Us', order: 6 },
   ],
   fields: [
     ...contactFields,
@@ -512,11 +632,27 @@ export const teachingFormConfig: FormConfig = {
       section: 'lessons',
       order: 1,
       options: [
-        { value: 'trial', label: 'Trial Lesson', description: 'Single lesson to get started ($75)' },
-        { value: 'single', label: 'Single Lessons', description: 'Pay-as-you-go ($85 per lesson)' },
-        { value: 'foundation', label: 'Foundation Package', description: '4 lessons for focused learning ($320)' },
-        { value: 'transformation', label: 'Transformation Package', description: '8 lessons for serious progress ($600)' }
-      ]
+        {
+          value: 'trial',
+          label: 'Trial Lesson',
+          description: 'Single lesson to get started ($75)',
+        },
+        {
+          value: 'single',
+          label: 'Single Lessons',
+          description: 'Pay-as-you-go ($85 per lesson)',
+        },
+        {
+          value: 'foundation',
+          label: 'Foundation Package',
+          description: '4 lessons for focused learning ($320)',
+        },
+        {
+          value: 'transformation',
+          label: 'Transformation Package',
+          description: '8 lessons for serious progress ($600)',
+        },
+      ],
     },
     {
       name: 'experienceLevel',
@@ -526,24 +662,41 @@ export const teachingFormConfig: FormConfig = {
       section: 'lessons',
       order: 2,
       options: [
-        { value: 'complete-beginner', label: 'Complete Beginner', description: 'Never played guitar before' },
-        { value: 'some-basics', label: 'Know Some Basics', description: 'Can play a few chords or songs' },
-        { value: 'intermediate', label: 'Intermediate', description: 'Comfortable with basics, want to improve' },
-        { value: 'advanced', label: 'Advanced', description: 'Looking to refine technique and expand skills' }
-      ]
+        {
+          value: 'complete-beginner',
+          label: 'Complete Beginner',
+          description: 'Never played guitar before',
+        },
+        {
+          value: 'some-basics',
+          label: 'Know Some Basics',
+          description: 'Can play a few chords or songs',
+        },
+        {
+          value: 'intermediate',
+          label: 'Intermediate',
+          description: 'Comfortable with basics, want to improve',
+        },
+        {
+          value: 'advanced',
+          label: 'Advanced',
+          description: 'Looking to refine technique and expand skills',
+        },
+      ],
     },
     {
       name: 'musicalGoals',
       label: 'Musical Goals',
       type: 'textarea',
       required: true,
-      placeholder: 'What would you like to achieve with guitar lessons? Any specific songs or styles you want to learn?',
+      placeholder:
+        'What would you like to achieve with guitar lessons? Any specific songs or styles you want to learn?',
       section: 'lessons',
       order: 3,
       validation: {
         minLength: 10,
-        maxLength: 500
-      }
+        maxLength: 500,
+      },
     },
     // Schedule & Format
     {
@@ -554,10 +707,22 @@ export const teachingFormConfig: FormConfig = {
       section: 'schedule',
       order: 1,
       options: [
-        { value: 'in-person', label: 'In-Person', description: 'Face-to-face lessons (Sydney area)' },
-        { value: 'online', label: 'Online', description: 'Video call lessons via Zoom' },
-        { value: 'flexible', label: 'Flexible', description: 'Mix of both formats' }
-      ]
+        {
+          value: 'in-person',
+          label: 'In-Person',
+          description: 'Face-to-face lessons (Sydney area)',
+        },
+        {
+          value: 'online',
+          label: 'Online',
+          description: 'Video call lessons via Zoom',
+        },
+        {
+          value: 'flexible',
+          label: 'Flexible',
+          description: 'Mix of both formats',
+        },
+      ],
     },
     {
       name: 'preferredSchedule',
@@ -567,21 +732,42 @@ export const teachingFormConfig: FormConfig = {
       section: 'schedule',
       order: 2,
       options: [
-        { value: 'weekday-mornings', label: 'Weekday Mornings', description: '9am - 12pm, Monday-Friday' },
-        { value: 'weekday-afternoons', label: 'Weekday Afternoons', description: '1pm - 5pm, Monday-Friday' },
-        { value: 'weekday-evenings', label: 'Weekday Evenings', description: '6pm - 9pm, Monday-Friday' },
-        { value: 'weekends', label: 'Weekends', description: 'Saturday or Sunday' },
-        { value: 'flexible', label: 'Flexible', description: 'I can work around your availability' }
-      ]
+        {
+          value: 'weekday-mornings',
+          label: 'Weekday Mornings',
+          description: '9am - 12pm, Monday-Friday',
+        },
+        {
+          value: 'weekday-afternoons',
+          label: 'Weekday Afternoons',
+          description: '1pm - 5pm, Monday-Friday',
+        },
+        {
+          value: 'weekday-evenings',
+          label: 'Weekday Evenings',
+          description: '6pm - 9pm, Monday-Friday',
+        },
+        {
+          value: 'weekends',
+          label: 'Weekends',
+          description: 'Saturday or Sunday',
+        },
+        {
+          value: 'flexible',
+          label: 'Flexible',
+          description: 'I can work around your availability',
+        },
+      ],
     },
     {
       name: 'scheduleDetails',
       label: 'Schedule Details',
       type: 'textarea',
       required: false,
-      placeholder: 'Any specific days/times that work best for you? Or times to avoid?',
+      placeholder:
+        'Any specific days/times that work best for you? Or times to avoid?',
       section: 'schedule',
-      order: 3
+      order: 3,
     },
     // Additional Information
     {
@@ -589,27 +775,29 @@ export const teachingFormConfig: FormConfig = {
       label: 'Previous Musical Experience',
       type: 'textarea',
       required: false,
-      placeholder: 'Any other instruments? Previous lessons? Musical background?',
+      placeholder:
+        'Any other instruments? Previous lessons? Musical background?',
       section: 'additional',
-      order: 1
+      order: 1,
     },
     {
       name: 'specificInterests',
       label: 'Specific Interests',
       type: 'textarea',
       required: false,
-      placeholder: 'Particular genres, techniques, or aspects of guitar you\'re most interested in?',
+      placeholder:
+        "Particular genres, techniques, or aspects of guitar you're most interested in?",
       section: 'additional',
-      order: 2
+      order: 2,
     },
     {
       name: 'additionalInfo',
       label: 'Additional Information',
       type: 'textarea',
       required: false,
-      placeholder: 'Anything else you\'d like me to know?',
+      placeholder: "Anything else you'd like me to know?",
       section: 'additional',
-      order: 3
+      order: 3,
     },
     // Communication Preferences
     {
@@ -620,11 +808,27 @@ export const teachingFormConfig: FormConfig = {
       section: 'preferences',
       order: 1,
       options: [
-        { value: 'email', label: 'Email', description: 'Best for detailed information' },
-        { value: 'phone', label: 'Phone Call', description: 'Quick discussion about lessons' },
-        { value: 'text', label: 'Text Message', description: 'Brief and convenient' },
-        { value: 'whatsapp', label: 'WhatsApp', description: 'Easy messaging and media sharing' }
-      ]
+        {
+          value: 'email',
+          label: 'Email',
+          description: 'Best for detailed information',
+        },
+        {
+          value: 'phone',
+          label: 'Phone Call',
+          description: 'Quick discussion about lessons',
+        },
+        {
+          value: 'text',
+          label: 'Text Message',
+          description: 'Brief and convenient',
+        },
+        {
+          value: 'whatsapp',
+          label: 'WhatsApp',
+          description: 'Easy messaging and media sharing',
+        },
+      ],
     },
     {
       name: 'bestTimeToCall',
@@ -636,8 +840,8 @@ export const teachingFormConfig: FormConfig = {
       order: 2,
       conditional: {
         dependsOn: 'preferredContact',
-        showWhen: (value) => ['phone', 'whatsapp'].includes(value)
-      }
+        showWhen: value => ['phone', 'whatsapp'].includes(value),
+      },
     },
     // Marketing (updated for teaching context)
     {
@@ -652,8 +856,8 @@ export const teachingFormConfig: FormConfig = {
         { value: 'instagram', label: 'Instagram' },
         { value: 'referral', label: 'Friend/Student Referral' },
         { value: 'student', label: 'Current/Former Student' },
-        { value: 'other', label: 'Other' }
-      ]
+        { value: 'other', label: 'Other' },
+      ],
     },
     {
       name: 'hearAboutUsDetail',
@@ -665,22 +869,22 @@ export const teachingFormConfig: FormConfig = {
       order: 2,
       conditional: {
         dependsOn: 'hearAboutUs',
-        showWhen: (value) => ['other', 'referral', 'student'].includes(value)
-      }
-    }
-  ]
+        showWhen: value => ['other', 'referral', 'student'].includes(value),
+      },
+    },
+  ],
 }
 
 // Universal form configuration
 export const universalFormConfig: FormConfig = {
   serviceType: 'universal',
   title: 'Contact Us',
-  description: 'Get in touch and we\'ll help you find the right service',
+  description: "Get in touch and we'll help you find the right service",
   submitText: 'Send Message',
-  successMessage: 'Thank you for your message! We\'ll get back to you soon.',
+  successMessage: "Thank you for your message! We'll get back to you soon.",
   sections: [
     { name: 'contact', title: 'Your Information', order: 1 },
-    { name: 'inquiry', title: 'Your Message', order: 2 }
+    { name: 'inquiry', title: 'Your Message', order: 2 },
   ],
   fields: [
     {
@@ -693,8 +897,8 @@ export const universalFormConfig: FormConfig = {
       order: 1,
       validation: {
         minLength: 2,
-        maxLength: 100
-      }
+        maxLength: 100,
+      },
     },
     {
       name: 'email',
@@ -705,8 +909,8 @@ export const universalFormConfig: FormConfig = {
       section: 'contact',
       order: 2,
       validation: {
-        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-      }
+        pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+      },
     },
     {
       name: 'mobile',
@@ -715,7 +919,7 @@ export const universalFormConfig: FormConfig = {
       required: true,
       placeholder: 'Enter your mobile number',
       section: 'contact',
-      order: 3
+      order: 3,
     },
     {
       name: 'inquiry',
@@ -727,10 +931,10 @@ export const universalFormConfig: FormConfig = {
       order: 1,
       validation: {
         minLength: 10,
-        maxLength: 1000
-      }
-    }
-  ]
+        maxLength: 1000,
+      },
+    },
+  ],
 }
 
 // Configuration map
@@ -738,7 +942,7 @@ export const formConfigurations = {
   performance: performanceFormConfig,
   collaboration: collaborationFormConfig,
   teaching: teachingFormConfig,
-  universal: universalFormConfig
+  universal: universalFormConfig,
 } as const
 
 // Helper function to get form configuration

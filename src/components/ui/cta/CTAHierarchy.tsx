@@ -124,27 +124,29 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
 
   // Analytics handlers
   const trackPrimaryClick = () => {
-    setInteractions((prev) => ({ ...prev, primaryClicked: true }))
+    setInteractions(prev => ({ ...prev, primaryClicked: true }))
     // Analytics event would be sent here
     console.log('Primary CTA clicked', { context })
   }
 
   const trackSecondaryClick = () => {
-    setInteractions((prev) => ({ ...prev, secondaryClicked: true }))
+    setInteractions(prev => ({ ...prev, secondaryClicked: true }))
     // Analytics event would be sent here
     console.log('Secondary CTA clicked', { context })
   }
 
   const trackTertiaryClick = () => {
-    setInteractions((prev) => ({ ...prev, tertiaryClicked: true }))
+    setInteractions(prev => ({ ...prev, tertiaryClicked: true }))
     // Analytics event would be sent here
     console.log('Tertiary CTA clicked', { context })
   }
 
   // Determine CTA sizes based on hierarchy
-  const primarySize: ServiceCTAProps['size'] = layout === 'stacked' ? 'medium' : 'large'
+  const primarySize: ServiceCTAProps['size'] =
+    layout === 'stacked' ? 'medium' : 'large'
   const secondarySize: ServiceCTAProps['size'] = 'medium'
-  const tertiarySize: ServiceCTAProps['size'] = layout === 'stacked' ? 'small' : 'medium'
+  const tertiarySize: ServiceCTAProps['size'] =
+    layout === 'stacked' ? 'small' : 'medium'
 
   return (
     <motion.section

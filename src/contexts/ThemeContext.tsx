@@ -12,7 +12,7 @@ import React, {
   useState,
   ReactNode,
 } from 'react'
-import { ThemeMode, ActiveTheme, ThemeConfig, themes } from '../styles/themes'
+import { ThemeMode, ActiveTheme, ThemeConfig, themes } from '../types'
 import {
   getSystemTheme,
   saveThemeToStorage,

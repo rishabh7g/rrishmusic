@@ -7,9 +7,8 @@
  */
 
 import React, { useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion } from 'framer-motion'
 import { useTheme } from '@/hooks/useTheme'
-import type { ThemeMode } from '@/styles/themes'
 
 /**
  * Theme Toggle Props
@@ -178,7 +177,6 @@ export default function ThemeToggle({
     mode,
     isDark,
     isInitialized,
-    modeLabel,
     cycleTheme,
     transitionsEnabled,
     reducedMotion,
@@ -256,24 +254,6 @@ export default function ThemeToggle({
       </div>
     )
   }
-
-  // Icon transition animations (respects motion preferences)
-  const iconAnimations = reducedMotion
-    ? {
-        initial: { opacity: 0 },
-        animate: { opacity: 1 },
-        exit: { opacity: 0 },
-        transition: { duration: 0 },
-      }
-    : {
-        initial: { opacity: 0, rotate: -180, scale: 0.5 },
-        animate: { opacity: 1, rotate: 0, scale: 1 },
-        exit: { opacity: 0, rotate: 180, scale: 0.5 },
-        transition: {
-          duration: 0.3,
-          ease: [0.4, 0, 0.2, 1], // Custom easing for smooth feel
-        },
-      }
 
   // Button animations (respects motion preferences)
   const buttonAnimations = reducedMotion
