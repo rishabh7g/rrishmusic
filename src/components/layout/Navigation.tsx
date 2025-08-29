@@ -4,7 +4,6 @@ import { Link, useLocation, useNavigate, Location } from 'react-router-dom'
 import { NAVIGATION_ITEMS } from '@/utils/constants'
 import { useSmoothScroll, useScrollSpy } from '@/hooks/useScrollSpy'
 import { useDeviceDetection } from '@/hooks/useDeviceDetection'
-import ThemeToggle from '@/components/ui/ThemeToggle'
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing
@@ -507,14 +506,12 @@ export const Navigation: React.FC<NavigationProps> = ({
             {device.isDesktop && (
               <div className="desktop-only flex items-center space-x-2">
                 {desktopNavItems}
-                <ThemeToggle size="md" variant="ghost" className="ml-4" />
               </div>
             )}
 
             {/* Mobile Navigation Controls */}
             {!device.isDesktop && (
               <div className="flex items-center space-x-2">
-                <ThemeToggle size="sm" variant="ghost" />
                 <motion.button
                   onClick={toggleMenu}
                   className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200"
