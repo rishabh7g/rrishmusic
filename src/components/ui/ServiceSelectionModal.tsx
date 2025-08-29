@@ -15,10 +15,10 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { ServiceType } from '@/types/content'
-import { 
-  PerformanceInquiryForm, 
-  CollaborationInquiryForm, 
-  TeachingInquiryForm 
+import {
+  PerformanceInquiryForm,
+  CollaborationInquiryForm,
+  TeachingInquiryForm,
 } from '@/components/forms'
 import type { InquiryFormData, FormSubmissionHandler } from '@/types/forms'
 
