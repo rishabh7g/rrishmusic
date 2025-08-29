@@ -118,20 +118,8 @@ export function getSuggestionsByPlacement(
 export function trackSuggestionInteraction(
   interaction: SuggestionInteraction
 ): void {
-  // Analytics tracking
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'cross_service_suggestion', {
-      event_category: 'Cross-Service Discovery',
-      event_label: `${interaction.suggestionId}_${interaction.action}`,
-      service_from: interaction.context.fromService,
-      custom_map: {
-        suggestion_id: interaction.suggestionId,
-        action: interaction.action,
-        placement: interaction.context.placement,
-        timing: interaction.context.timing,
-      },
-    })
-  }
+  // Track suggestion interaction
+  console.log('Suggestion interaction:', interaction)
 
   // Console log for development
   if (process.env.NODE_ENV === 'development') {

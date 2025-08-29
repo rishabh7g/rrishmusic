@@ -369,25 +369,8 @@ class PerformanceMonitor {
    * Send metrics to analytics
    */
   private sendToAnalytics(): void {
-    // Placeholder for analytics integration
-    // This would typically send to Google Analytics, Mixpanel, etc.
-
-    if (typeof window !== 'undefined' && 'gtag' in window) {
-      // Google Analytics 4 example
-      Object.entries(this.metrics).forEach(([key, value]) => {
-        if (typeof value === 'number') {
-          ;(window as { gtag: (...args: unknown[]) => void }).gtag(
-            'event',
-            'performance_metric',
-            {
-              event_category: 'Performance',
-              event_label: key,
-              value: Math.round(value),
-            }
-          )
-        }
-      })
-    }
+    // Performance metrics collected (analytics removed)
+    console.log('Performance metrics:', this.metrics)
   }
 
   /**

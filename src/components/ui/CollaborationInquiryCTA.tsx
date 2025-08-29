@@ -9,7 +9,6 @@
  * - Size options (small, medium, large)
  * - Collaboration-specific form integration
  * - Customizable styling and content
- * - Analytics tracking for CTA interactions
  * - Accessibility compliance
  */
 
@@ -41,7 +40,6 @@ export interface CollaborationInquiryCTAProps {
   children?: React.ReactNode
   className?: string
   onClick?: () => void
-  trackingLabel?: string
 }
 
 /**
@@ -89,27 +87,10 @@ export const CollaborationInquiryCTA: React.FC<
   children,
   className = '',
   onClick,
-  trackingLabel = 'Collaboration CTA',
 }) => {
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   const handleClick = () => {
-    // Analytics tracking
-    if (
-      typeof window !== 'undefined' &&
-      (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
-    ) {
-      ;(window as Window & { gtag: (...args: unknown[]) => void }).gtag(
-        'event',
-        'click',
-        {
-          event_category: 'CTA',
-          event_label: trackingLabel,
-          value: 1,
-        }
-      )
-    }
-
     // Custom click handler
     if (onClick) {
       onClick()
@@ -121,22 +102,6 @@ export const CollaborationInquiryCTA: React.FC<
 
   const handleFormSubmit = async (data: CollaborationInquiryData) => {
     try {
-      // Analytics tracking for form submission
-      if (
-        typeof window !== 'undefined' &&
-        (window as Window & { gtag?: (...args: unknown[]) => void }).gtag
-      ) {
-        ;(window as Window & { gtag: (...args: unknown[]) => void }).gtag(
-          'event',
-          'form_submit',
-          {
-            event_category: 'Collaboration Inquiry',
-            event_label: data.projectType || 'general',
-            value: 1,
-          }
-        )
-      }
-
       // TODO: Implement actual form submission logic
       console.log('Collaboration inquiry submitted:', data)
 

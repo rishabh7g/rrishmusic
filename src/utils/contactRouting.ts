@@ -749,10 +749,7 @@ export function trackContactRouting(
     },
   }
 
-  // Send to analytics service
-  if (typeof window !== 'undefined' && window.gtag) {
-    window.gtag('event', 'smart_contact_routing', analyticsData)
-  }
+  // Track routing action
 
   // Development logging
   if (process.env.NODE_ENV === 'development') {
@@ -802,14 +799,5 @@ export function getUserJourneySummary(): {
     totalTimeSpent: Date.now() - sessionStart,
     primaryServiceInterest: primaryService as ServiceType,
     currentPath: window.location.pathname + window.location.hash,
-  }
-}
-
-/**
- * Global gtag interface for TypeScript
- */
-declare global {
-  interface Window {
-    gtag?: (command: string, action: string, parameters: AnalyticsData) => void
   }
 }

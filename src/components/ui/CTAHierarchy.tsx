@@ -8,7 +8,6 @@
  * - Primary CTA: "Book Performance" (60% visual weight, high contrast)
  * - Secondary CTAs: "Guitar Lessons" & "Collaborate" (25%/15% visual weight)
  * - Mobile-optimized with thumb-friendly spacing
- * - Analytics tracking for A/B testing and conversion optimization
  */
 
 import React, { useState } from 'react'
@@ -107,7 +106,7 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
     tertiaryClicked: false,
   })
 
-  // Track CTA interactions for analytics
+  // Track CTA interactions
   const trackInteraction = (
     cta: 'primary' | 'secondary' | 'tertiary',
     action: 'view' | 'click'
@@ -117,16 +116,6 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
 
     if (!interactions[key]) {
       setInteractions(prev => ({ ...prev, [key]: true }))
-
-      // Send analytics event
-      if (typeof window !== 'undefined' && window.gtag) {
-        window.gtag('event', 'cta_interaction', {
-          event_category: 'CTA Hierarchy',
-          event_label: `${cta}_${action}`,
-          cta_context: context,
-          cta_layout: layout,
-        })
-      }
     }
   }
 

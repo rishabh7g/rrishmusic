@@ -208,27 +208,37 @@ export function Lessons() {
                 </motion.div>
 
                 {/* Package name */}
-                <h3 className={`text-2xl font-heading font-bold mb-2 ${
-                  pkg.popular ? 'text-white' : 'text-gray-800'
-                }`}>
+                <h3
+                  className={`text-2xl font-heading font-bold mb-2 ${
+                    pkg.popular ? 'text-white' : 'text-gray-800'
+                  }`}
+                >
                   {pkg.title}
                 </h3>
 
                 {/* Sessions */}
-                <p className={`text-lg mb-4 ${
-                  pkg.popular ? 'text-white/90' : 'text-gray-700'
-                }`}>{pkg.duration}</p>
+                <p
+                  className={`text-lg mb-4 ${
+                    pkg.popular ? 'text-white/90' : 'text-gray-700'
+                  }`}
+                >
+                  {pkg.duration}
+                </p>
 
                 {/* Price */}
                 <div className="mb-6">
-                  <div className={`text-4xl font-heading font-bold ${
-                    pkg.popular ? 'text-white' : 'text-gray-800'
-                  }`}>
+                  <div
+                    className={`text-4xl font-heading font-bold ${
+                      pkg.popular ? 'text-white' : 'text-gray-800'
+                    }`}
+                  >
                     {pkg.price}
                   </div>
-                  <div className={`text-sm mt-1 ${
-                    pkg.popular ? 'text-white/80' : 'text-gray-600'
-                  }`}>
+                  <div
+                    className={`text-sm mt-1 ${
+                      pkg.popular ? 'text-white/80' : 'text-gray-600'
+                    }`}
+                  >
                     $
                     {Math.round(
                       extractPrice(pkg.price) / extractSessions(pkg.duration)
@@ -239,9 +249,11 @@ export function Lessons() {
 
                 {/* Description */}
                 {pkg.description && (
-                  <p className={`text-sm mb-6 leading-relaxed ${
-                    pkg.popular ? 'text-white/90' : 'text-gray-700'
-                  }`}>
+                  <p
+                    className={`text-sm mb-6 leading-relaxed ${
+                      pkg.popular ? 'text-white/90' : 'text-gray-700'
+                    }`}
+                  >
                     {pkg.description}
                   </p>
                 )}
@@ -265,9 +277,13 @@ export function Lessons() {
                           clipRule="evenodd"
                         />
                       </svg>
-                      <span className={`text-sm ${
-                        pkg.popular ? 'text-white/90' : 'text-gray-700'
-                      }`}>{feature}</span>
+                      <span
+                        className={`text-sm ${
+                          pkg.popular ? 'text-white/90' : 'text-gray-700'
+                        }`}
+                      >
+                        {feature}
+                      </span>
                     </li>
                   ))}
                 </ul>
