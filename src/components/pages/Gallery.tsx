@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { usePageSEO } from '@/hooks/usePageSEO'
+import instagramData from '@/data/instagram-posts.json'
 
 // Types
 interface MediaItem {
@@ -59,61 +60,72 @@ export function Gallery() {
 
   // Load media items
   useEffect(() => {
-    const loadMediaItems = async () => {
+    const loadMediaItems = () => {
       try {
         const items: MediaItem[] = []
 
-        // Load Instagram posts
-        const instagramResponse = await fetch('/src/data/instagram-posts.json')
-        if (instagramResponse.ok) {
-          const instagramData = await instagramResponse.json()
-          if (instagramData.posts) {
-            instagramData.posts.forEach((post: any, index: number) => {
-              items.push({
-                id: `instagram-${index}`,
-                type: 'instagram',
-                src: post.mediaUrl || '',
-                title: post.title || 'Instagram Post',
-                category: post.category,
-                embedCode: post.embedCode
-              })
+        // Load Instagram posts from imported data
+        if (instagramData?.posts) {
+          instagramData.posts.forEach((post: any, index: number) => {
+            items.push({
+              id: `instagram-${index}`,
+              type: 'instagram',
+              src: post.media_url || post.mediaUrl || '',
+              title: post.caption || post.title || 'Instagram Post',
+              category: post.category,
+              embedCode: post.embed_code || post.embedCode
             })
-          }
+          })
         }
 
-        // Load image files
-        const imageCategories = ['band', 'portrait']
-        for (const category of imageCategories) {
-          try {
-            const response = await fetch(`/images/instagram/${category}/`)
-            if (response.ok) {
-              // This is a simple approach - in production, you'd want a proper file listing API
-              const imageFiles = [
-                'All star band.jpg',
-                'XBand 1.jpg', 
-                'XBand 2.jpg',
-                'XBand 3.jpg',
-                'My portrait 1.jpg',
-                'My portrait 2.jpg', 
-                'My portrait 4.jpg'
-              ]
-
-              imageFiles.forEach((filename, index) => {
-                if (filename.includes(category === 'band' ? 'Band' : 'portrait')) {
-                  items.push({
-                    id: `image-${category}-${index}`,
-                    type: 'image',
-                    src: `/images/instagram/${category}/${filename}`,
-                    title: filename.replace(/\.[^/.]+$/, ''),
-                    category
-                  })
-                }
-              })
-            }
-          } catch (error) {
-            console.log(`Could not load ${category} images:`, error)
+        // Load image files from known structure
+        const imageFiles = [
+          {
+            filename: 'All star band.jpg',
+            category: 'band',
+            path: '/images/instagram/band/All star band.jpg'
+          },
+          {
+            filename: 'XBand 1.jpg',
+            category: 'band', 
+            path: '/images/instagram/band/XBand 1.jpg'
+          },
+          {
+            filename: 'XBand 2.jpg',
+            category: 'band',
+            path: '/images/instagram/band/XBand 2.jpg'
+          },
+          {
+            filename: 'XBand 3.jpg',
+            category: 'band',
+            path: '/images/instagram/band/XBand 3.jpg'
+          },
+          {
+            filename: 'My portrait 1.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/My portrait 1.jpg'
+          },
+          {
+            filename: 'My portrait 2.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/My portrait 2.jpg'
+          },
+          {
+            filename: 'My portrait 4.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/My portrait 4.jpg'
           }
-        }
+        ]
+
+        imageFiles.forEach((file, index) => {
+          items.push({
+            id: `image-${file.category}-${index}`,
+            type: 'image',
+            src: file.path,
+            title: file.filename.replace(/\.[^/.]+$/, ''),
+            category: file.category
+          })
+        })
 
         // TODO: Load video files when they're added
         // This will scan the /videos/ folder for video files
