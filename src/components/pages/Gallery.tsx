@@ -266,23 +266,6 @@ export function Gallery() {
       initial="hidden"
       animate="visible"
     >
-      {/* Header */}
-      <div className="container mx-auto px-4 pt-20 pb-8">
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.2 }}
-        >
-          <h1 className="text-4xl md:text-5xl font-heading font-bold text-white mb-4 drop-shadow-lg">
-            Gallery
-          </h1>
-          <p className="text-xl text-white/90 max-w-2xl mx-auto leading-relaxed drop-shadow">
-            Explore the musical journey through photos and videos of performances, collaborations, and behind-the-scenes moments.
-          </p>
-          <div className="w-24 h-1 bg-brand-orange-warm mx-auto mt-6 rounded-full"></div>
-        </motion.div>
-      </div>
 
       {/* Carousel Container - Fixed layout to prevent shifts */}
       <div className="container mx-auto px-4 max-w-6xl">
@@ -387,30 +370,18 @@ export function Gallery() {
         </div>
       </div>
 
-      {/* Pinterest-style Grid */}
+      {/* Media Mosaic Grid */}
       <div className="container mx-auto px-4 max-w-6xl mt-16">
-        <motion.div
-          className="text-center mb-8"
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className="text-2xl md:text-3xl font-heading font-bold text-white mb-4 drop-shadow-lg">
-            Media Mosaic
-          </h2>
-          <p className="text-lg text-white/80 drop-shadow">
-            Explore all images and videos in their natural flow - click any item to view in full size
-          </p>
-        </motion.div>
 
         {/* Masonry/Mosaic Grid - Natural aspect ratios */}
         <div className="columns-2 md:columns-3 lg:columns-4 gap-4 md:gap-6 space-y-4 md:space-y-6">
           {mediaItems.map((item, index) => (
             <motion.div
               key={item.id}
-              className="group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer break-inside-avoid mb-4 md:mb-6"
-              whileHover={{ scale: 1.02, y: -2 }}
+              className={`group relative overflow-hidden rounded-2xl bg-theme-bg-secondary shadow-lg hover:shadow-2xl transition-all duration-300 cursor-pointer break-inside-avoid mb-4 md:mb-6 ${
+                imageAspectRatios[item.id] === false ? 'transform scale-110 my-6 md:my-8' : ''
+              }`}
+              whileHover={{ scale: imageAspectRatios[item.id] === false ? 1.12 : 1.02, y: -2 }}
               whileTap={{ scale: 0.98 }}
               onClick={() => openLightbox(index)}
               initial={{ opacity: 0, y: 20 }}
@@ -451,15 +422,6 @@ export function Gallery() {
                 </div>
               </div>
 
-              {/* Title */}
-              <div className="p-3">
-                <h3 className="text-white font-medium text-sm truncate group-hover:text-brand-yellow-accent transition-colors">
-                  {item.title}
-                </h3>
-                {item.category && (
-                  <span className="text-xs text-white/60 capitalize">{item.category}</span>
-                )}
-              </div>
             </motion.div>
           ))}
         </div>
