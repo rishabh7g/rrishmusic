@@ -31,13 +31,13 @@ export {
   TeachingSuccessStories,
 } from './TeachingSections'
 
-// Performance Sections
+// Performance Sections - Updated to import from performance subfolder
 export {
   PerformanceVenues,
   PerformanceServices,
   PerformanceEquipment,
   PerformanceTestimonials,
-} from './PerformanceSections'
+} from './performance'
 
 // Collaboration Sections
 export {
