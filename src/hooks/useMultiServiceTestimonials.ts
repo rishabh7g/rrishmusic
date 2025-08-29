@@ -78,7 +78,7 @@ export function useMultiServiceTestimonials(
         }
 
         // Validate service configuration
-        if (!serviceConfig.services) {
+        if (!serviceConfig.serviceAllocation) {
           throw new Error('Invalid service configuration')
         }
 
