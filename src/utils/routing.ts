@@ -9,8 +9,8 @@
  */
 export const VALID_ROUTES = [
   '/',
-  '/performance',
-  '/collaboration',
+  '/gallery',
+  '/lessons',
   // Legacy routes that redirect
   '/home',
   '/performances',

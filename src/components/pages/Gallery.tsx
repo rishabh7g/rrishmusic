@@ -82,11 +82,11 @@ export function Gallery() {
   const calculateMosaicLayout = useCallback((items: MediaItem[]) => {
     return items.map((item, index) => {
       const { aspectRatio, isPortrait, isFeatured, priority } = item
-      
+
       // Enhanced sizing algorithm based on aspect ratio and importance
       let gridSpan = { cols: 1, rows: 1 }
       let objectFit: 'cover' | 'contain' = 'cover'
-      
+
       if (isFeatured) {
         // Featured images get premium real estate
         gridSpan = isPortrait ? { cols: 2, rows: 3 } : { cols: 3, rows: 2 }
@@ -116,7 +116,7 @@ export function Gallery() {
         gridSpan = { cols: 1, rows: 1 }
         objectFit = 'cover'
       }
-      
+
       // Add some randomization for visual interest (every 4th item gets variation)
       if (index % 4 === 0 && !isFeatured) {
         if (isPortrait && gridSpan.rows < 3) {
@@ -125,7 +125,7 @@ export function Gallery() {
           gridSpan.cols += 1
         }
       }
-      
+
       return { ...item, gridSpan, objectFit }
     })
   }, [])
@@ -353,11 +353,11 @@ export function Gallery() {
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 auto-rows-[120px] sm:auto-rows-[140px] md:auto-rows-[160px] gap-3 md:gap-4">
           {mediaItems.map((item: any, index) => {
             const { gridSpan, objectFit } = item
-            
+
             // Responsive grid classes with proper landscape prominence
             const getGridClasses = () => {
               let classes = ''
-              
+
               // Mobile (2 cols): Simplify spans
               if (gridSpan.cols >= 3) {
                 classes += 'col-span-2 '
@@ -366,7 +366,7 @@ export function Gallery() {
               } else {
                 classes += 'col-span-1 '
               }
-              
+
               // Tablet (3-4 cols): Allow more variety
               if (gridSpan.cols >= 3) {
                 classes += 'sm:col-span-3 md:col-span-3 '
@@ -375,10 +375,10 @@ export function Gallery() {
               } else {
                 classes += 'sm:col-span-1 md:col-span-1 '
               }
-              
+
               // Desktop (6-8 cols): Full flexibility
               classes += `lg:col-span-${Math.min(gridSpan.cols, 4)} xl:col-span-${gridSpan.cols} `
-              
+
               // Row spans - more generous for portraits
               if (gridSpan.rows >= 3) {
                 classes += 'row-span-3 sm:row-span-3 md:row-span-4 '
@@ -387,15 +387,15 @@ export function Gallery() {
               } else {
                 classes += 'row-span-1 sm:row-span-1 md:row-span-2 '
               }
-              
+
               return classes.trim()
             }
-            
+
             const gridClasses = getGridClasses()
-            
+
             // Special styling for featured images
-            const featuredClasses = item.isFeatured 
-              ? 'ring-4 ring-theme-primary/30 shadow-2xl scale-[1.02] z-10' 
+            const featuredClasses = item.isFeatured
+              ? 'ring-4 ring-theme-primary/30 shadow-2xl scale-[1.02] z-10'
               : ''
 
             return (
@@ -408,7 +408,11 @@ export function Gallery() {
                 initial={{ opacity: 0, y: 20, scale: 0.9 }}
                 whileInView={{ opacity: 1, y: 0, scale: 1 }}
                 viewport={{ once: true, margin: '-50px' }}
-                transition={{ duration: 0.5, delay: index * 0.08, ease: 'easeOut' }}
+                transition={{
+                  duration: 0.5,
+                  delay: index * 0.08,
+                  ease: 'easeOut',
+                }}
               >
                 {/* Enhanced image container with proper aspect ratio handling */}
                 <div className="relative w-full h-full overflow-hidden">
@@ -420,7 +424,7 @@ export function Gallery() {
                       </div>
                     </div>
                   )}
-                  
+
                   {item.type === 'video' ? (
                     <div className="relative w-full h-full bg-gradient-to-br from-blue-500/20 to-purple-600/20 flex items-center justify-center">
                       <svg
@@ -439,13 +443,15 @@ export function Gallery() {
                       src={item.src}
                       alt={item.title}
                       className={`w-full h-full transition-transform duration-500 group-hover:scale-110 ${
-                        objectFit === 'contain' ? 'object-contain p-2' : 'object-cover'
+                        objectFit === 'contain'
+                          ? 'object-contain p-2'
+                          : 'object-cover'
                       }`}
                       loading="lazy"
-                      style={{ 
+                      style={{
                         display: 'block',
                         minHeight: '100%',
-                        minWidth: '100%'
+                        minWidth: '100%',
                       }}
                     />
                   )}
@@ -458,35 +464,64 @@ export function Gallery() {
                       <h4 className="text-white font-bold text-sm md:text-base mb-1 line-clamp-1">
                         {item.name}
                       </h4>
-                      
+
                       {/* Location and category */}
                       <div className="flex items-center justify-between text-xs text-white/90">
                         {item.hasUnderscore && item.location && (
                           <div className="flex items-center">
-                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                            <svg
+                              className="w-3 h-3 mr-1"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24"
+                            >
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+                              />
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+                              />
                             </svg>
                             <span className="truncate">{item.location}</span>
                           </div>
                         )}
-                        
+
                         <div className="bg-white/20 backdrop-blur-sm px-2 py-1 rounded-full capitalize">
                           {item.category}
                         </div>
                       </div>
-                      
+
                       {/* Aspect ratio indicator */}
                       <div className="mt-2 text-xs text-white/70">
-                        {item.aspectRatio >= 1.5 ? '🖼️ Landscape' : item.aspectRatio <= 0.8 ? '📱 Portrait' : '⏹️ Square'}
+                        {item.aspectRatio >= 1.5
+                          ? '🖼️ Landscape'
+                          : item.aspectRatio <= 0.8
+                            ? '📱 Portrait'
+                            : '⏹️ Square'}
                       </div>
                     </div>
-                    
+
                     {/* Zoom icon in center */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
                       <div className="bg-white/10 backdrop-blur-md rounded-full p-4 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-                        <svg className="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                        <svg
+                          className="w-6 h-6 text-white"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
+                          <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                          />
                         </svg>
                       </div>
                     </div>
@@ -496,7 +531,7 @@ export function Gallery() {
             )
           })}
         </div>
-        
+
         {/* Layout info for debugging */}
         {process.env.NODE_ENV === 'development' && (
           <div className="mt-8 p-4 bg-gray-100 rounded-lg text-sm">
@@ -506,9 +541,13 @@ export function Gallery() {
                 <div key={item.id} className="bg-white p-2 rounded">
                   <div className="font-medium">{item.name}</div>
                   <div>Ratio: {item.aspectRatio}</div>
-                  <div>Grid: {item.gridSpan?.cols}x{item.gridSpan?.rows}</div>
+                  <div>
+                    Grid: {item.gridSpan?.cols}x{item.gridSpan?.rows}
+                  </div>
                   <div>Fit: {item.objectFit}</div>
-                  {item.isFeatured && <div className="text-yellow-600">⭐ Featured</div>}
+                  {item.isFeatured && (
+                    <div className="text-yellow-600">⭐ Featured</div>
+                  )}
                 </div>
               ))}
             </div>

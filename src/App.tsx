@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react'
-import { Routes, Route, useLocation } from 'react-router-dom'
+import { Routes, Route, useLocation, Navigate } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ErrorBoundary from './components/common/ErrorBoundary'
 import Navigation from './components/layout/Navigation'
@@ -11,8 +11,6 @@ const Home = lazy(() =>
   import('./components/pages/Home').then(module => ({ default: module.Home }))
 )
 const Teaching = lazy(() => import('./components/pages/Teaching'))
-const Performance = lazy(() => import('./components/pages/Performance'))
-const Collaboration = lazy(() => import('./components/pages/Collaboration'))
 const Gallery = lazy(() =>
   import('./components/pages/Gallery').then(module => ({
     default: module.Gallery,
@@ -130,26 +128,6 @@ function AppContent() {
                   }
                 />
                 <Route
-                  path="/performance"
-                  element={
-                    <PageWrapper>
-                      <Suspense fallback={<Spinner />}>
-                        <Performance />
-                      </Suspense>
-                    </PageWrapper>
-                  }
-                />
-                <Route
-                  path="/collaboration"
-                  element={
-                    <PageWrapper>
-                      <Suspense fallback={<Spinner />}>
-                        <Collaboration />
-                      </Suspense>
-                    </PageWrapper>
-                  }
-                />
-                <Route
                   path="/gallery"
                   element={
                     <PageWrapper>
@@ -159,6 +137,23 @@ function AppContent() {
                     </PageWrapper>
                   }
                 />
+                {/* Redirect old performance route to home */}
+                <Route
+                  path="/performance"
+                  element={<Navigate to="/" replace />}
+                />
+                {/* Redirect old collaboration route to home */}
+                <Route
+                  path="/collaboration"
+                  element={<Navigate to="/" replace />}
+                />
+                {/* Redirect teaching to lessons for consistency */}
+                <Route
+                  path="/teaching"
+                  element={<Navigate to="/lessons" replace />}
+                />
+                {/* Catch all route - redirect to home */}
+                <Route path="*" element={<Navigate to="/" replace />} />
               </Routes>
             </AnimatePresence>
           </ErrorBoundary>

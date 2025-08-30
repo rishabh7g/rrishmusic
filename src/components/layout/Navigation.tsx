@@ -17,15 +17,15 @@ type NavigationItemType = 'primary' | 'secondary' | 'tertiary'
 
 /**
  * Determines the navigation item type based on service hierarchy:
- * - Primary: Home and main service pages (Performances, Collaboration)
- * - Secondary: Teaching services (Approach, Lessons)
+ * - Primary: Home and main service pages
+ * - Secondary: Lessons-Gallery (combined teaching and gallery)
  * - Tertiary: Standard navigation (About, Contact)
  */
 const getNavigationItemType = (itemId: string): NavigationItemType => {
-  if (['home', 'performance', 'collaboration'].includes(itemId)) {
+  if (['home'].includes(itemId)) {
     return 'primary'
   }
-  if (['approach', 'lessons'].includes(itemId)) {
+  if (['lessons-gallery', 'lessons', 'gallery'].includes(itemId)) {
     return 'secondary'
   }
   return 'tertiary'
@@ -154,6 +154,12 @@ const getIsItemActive = (
   const target = getNavigationTarget(item)
 
   if (target.type === 'route') {
+    // For lessons-gallery, consider both /lessons and /gallery as active states
+    if (item.id === 'lessons-gallery') {
+      return (
+        location.pathname === '/lessons' || location.pathname === '/gallery'
+      )
+    }
     return location.pathname === target.path
   }
 

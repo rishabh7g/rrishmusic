@@ -1,5 +1,5 @@
 /**
- * Enhanced Performance Portfolio Gallery Component - Issue #49 Implementation
+ * Enhanced Portfolio Highlights Gallery Component - Issue #49 Implementation
  *
  * Features:
  * - Band vs Solo performance differentiation
@@ -293,9 +293,9 @@ const PortfolioItemCard: React.FC<{
 }
 
 /**
- * Main Performance Gallery Component
+ * Main Portfolio Highlights Component
  */
-export const PerformanceGallery: React.FC = () => {
+export const PortfolioHighlights: React.FC = () => {
   const { data: performanceData, loading } = useSectionContent('performance')
   const [activeType, setActiveType] = useState<PerformanceTypeFilter>('all')
   const [activePreviewTab, setActivePreviewTab] = useState<PreviewType>('image')
@@ -624,4 +624,4 @@ export const PerformanceGallery: React.FC = () => {
   )
 }
 
-export default PerformanceGallery
+export default PortfolioHighlights

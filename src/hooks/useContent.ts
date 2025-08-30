@@ -273,7 +273,8 @@ const defaultLessonPackages: LessonPackage[] = [
   {
     id: 'single-lesson',
     title: 'Single Lesson',
-    description: 'Perfect for trying out my teaching style or addressing specific challenges',
+    description:
+      'Perfect for trying out my teaching style or addressing specific challenges',
     duration: '1 lesson',
     price: '$80',
     features: [
@@ -363,8 +364,10 @@ export const useLessonPackages = () => {
         sessionLength: '60',
         instruments: ['Guitar', 'Electric Guitar', 'Acoustic Guitar'],
         location: 'Melbourne, Victoria, Australia',
-        cancellationPolicy: '24 hours notice required for cancellations. Less than 24 hours notice may result in full session charge.',
-        reschedulePolicy: 'Free rescheduling with 24+ hours notice. Package students get flexible rescheduling throughout their package period.',
+        cancellationPolicy:
+          '24 hours notice required for cancellations. Less than 24 hours notice may result in full session charge.',
+        reschedulePolicy:
+          'Free rescheduling with 24+ hours notice. Package students get flexible rescheduling throughout their package period.',
       },
       loading: false,
       error: null,
