@@ -100,7 +100,7 @@
       "filename": "Rrish solo 3.jpg",
       "category": "portrait",
       "path": "/images/instagram/portrait/Rrish solo 3.jpg",
-      "aspectRatio": 0.65,
+      "aspectRatio": 1.2,
       "priority": "medium"
     },
     {
@@ -114,14 +114,14 @@
       "filename": "Rrish solo 1.jpg",
       "category": "portrait",
       "path": "/images/instagram/portrait/Rrish solo 1.jpg",
-      "aspectRatio": 0.8,
+      "aspectRatio": 0.9,
       "priority": "high"
     },
     {
       "filename": "Rrish_Pop up park-Point Cook.jpg",
       "category": "portrait",
       "path": "/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg",
-      "aspectRatio": 0.9,
+      "aspectRatio": 1,
       "priority": "low"
     }
   ]
