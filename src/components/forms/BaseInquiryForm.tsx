@@ -256,8 +256,8 @@ export function BaseInquiryForm<T extends InquiryData>({
               : e.target.value
           handleFieldChange(field.name, newValue)
         },
-        className: `w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors ${
-          error ? 'border-red-500' : 'border-gray-300'
+        className: `w-full px-4 py-3 border rounded-lg bg-theme-bg theme-text focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors ${
+          error ? 'border-red-500' : 'border-theme-border'
         } ${field.className || ''}`,
         placeholder: field.placeholder,
         required: field.required,
@@ -309,15 +309,15 @@ export function BaseInquiryForm<T extends InquiryData>({
                     onChange={e =>
                       handleFieldChange(field.name, e.target.value)
                     }
-                    className="mt-1 h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300"
+                    className="mt-1 h-4 w-4 text-theme-primary focus:ring-theme-primary border-theme-border"
                     aria-describedby={error ? `${fieldId}-error` : undefined}
                   />
                   <div className="flex-1">
-                    <div className="text-sm font-medium text-gray-900">
+                    <div className="text-sm font-medium theme-text">
                       {option.label}
                     </div>
                     {option.description && (
-                      <div className="text-sm text-gray-500 mt-1">
+                      <div className="text-sm theme-text-muted mt-1">
                         {option.description}
                       </div>
                     )}
@@ -334,9 +334,9 @@ export function BaseInquiryForm<T extends InquiryData>({
               <input
                 type="checkbox"
                 {...commonProps}
-                className="h-4 w-4 text-orange-500 focus:ring-orange-500 border-gray-300 rounded"
+                className="h-4 w-4 text-theme-primary focus:ring-theme-primary border-theme-border rounded"
               />
-              <span className="text-sm text-gray-900">{field.label}</span>
+              <span className="text-sm theme-text">{field.label}</span>
             </label>
           )
           break
@@ -346,7 +346,7 @@ export function BaseInquiryForm<T extends InquiryData>({
             <input
               type="file"
               {...commonProps}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-orange-50 file:text-orange-700 hover:file:bg-orange-100"
+              className="w-full px-4 py-3 border border-theme-border rounded-lg bg-theme-bg theme-text focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-bg-secondary file:text-theme-primary hover:file:bg-theme-bg-tertiary"
               onChange={e => {
                 const files = (e.target as HTMLInputElement).files
                 handleFieldChange(field.name, files)
@@ -364,7 +364,7 @@ export function BaseInquiryForm<T extends InquiryData>({
           {field.type !== 'checkbox' && (
             <label
               htmlFor={fieldId}
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium theme-text-secondary"
             >
               {field.label}
               {field.required && <span className="text-red-500 ml-1">*</span>}
@@ -374,7 +374,7 @@ export function BaseInquiryForm<T extends InquiryData>({
           {fieldElement}
 
           {field.helpText && !error && (
-            <p id={`${fieldId}-help`} className="text-sm text-gray-500">
+            <p id={`${fieldId}-help`} className="text-sm theme-text-muted">
               {field.helpText}
             </p>
           )}
@@ -431,7 +431,7 @@ export function BaseInquiryForm<T extends InquiryData>({
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="relative bg-white rounded-xl shadow-xl p-8 w-full max-w-md text-center"
+            className="relative bg-theme-bg rounded-xl shadow-xl p-8 w-full max-w-md text-center"
           >
             <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <svg
@@ -448,11 +448,11 @@ export function BaseInquiryForm<T extends InquiryData>({
                 />
               </svg>
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Thank You!</h3>
-            <p className="text-gray-600 mb-6">{config.successMessage}</p>
+            <h3 className="text-xl font-bold theme-text mb-2">Thank You!</h3>
+            <p className="theme-text-secondary mb-6">{config.successMessage}</p>
             <button
               onClick={onClose}
-              className="w-full bg-orange-500 text-white px-6 py-3 rounded-lg hover:bg-orange-600 transition-colors font-medium"
+              className="w-full bg-theme-primary text-white px-6 py-3 rounded-lg hover:bg-theme-primary-hover transition-colors font-medium"
             >
               Close
             </button>
@@ -477,20 +477,20 @@ export function BaseInquiryForm<T extends InquiryData>({
           initial={{ opacity: 0, scale: 0.95, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           exit={{ opacity: 0, scale: 0.95, y: 20 }}
-          className="relative bg-white rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
+          className="relative bg-theme-bg rounded-xl shadow-xl w-full max-w-2xl max-h-[90vh] overflow-y-auto"
         >
           {/* Header */}
-          <div className="sticky top-0 bg-white border-b border-gray-200 px-6 py-4 rounded-t-xl">
+          <div className="sticky top-0 bg-theme-bg border-b border-theme-border px-6 py-4 rounded-t-xl">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-2xl font-bold text-gray-900">
+                <h2 className="text-2xl font-bold theme-text">
                   {config.title}
                 </h2>
-                <p className="text-gray-600 mt-1">{config.description}</p>
+                <p className="theme-text-secondary mt-1">{config.description}</p>
               </div>
               <button
                 onClick={onClose}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-2 hover:bg-theme-bg-secondary rounded-full transition-colors theme-text"
                 aria-label="Close form"
               >
                 <svg
@@ -530,12 +530,12 @@ export function BaseInquiryForm<T extends InquiryData>({
                       variants={fadeInUp}
                       className="space-y-4"
                     >
-                      <div className="border-b border-gray-200 pb-2">
-                        <h3 className="text-lg font-semibold text-gray-900">
+                      <div className="border-b border-theme-border pb-2">
+                        <h3 className="text-lg font-semibold theme-text">
                           {section.title}
                         </h3>
                         {section.description && (
-                          <p className="text-sm text-gray-600 mt-1">
+                          <p className="text-sm theme-text-secondary mt-1">
                             {section.description}
                           </p>
                         )}
@@ -550,19 +550,19 @@ export function BaseInquiryForm<T extends InquiryData>({
             </motion.div>
 
             {/* Footer */}
-            <div className="sticky bottom-0 bg-white border-t border-gray-200 pt-6 mt-8 -mx-6 px-6 pb-6">
+            <div className="sticky bottom-0 bg-theme-bg border-t border-theme-border pt-6 mt-8 -mx-6 px-6 pb-6">
               <div className="flex items-center justify-between">
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                  className="px-6 py-3 border border-theme-border rounded-lg theme-text-secondary hover:bg-theme-bg-secondary transition-colors font-medium"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={formState.isSubmitting}
-                  className="px-6 py-3 bg-orange-500 text-white rounded-lg hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium min-w-[140px]"
+                  className="px-6 py-3 bg-theme-primary text-white rounded-lg hover:bg-theme-primary-hover disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-medium min-w-[140px]"
                 >
                   {formState.isSubmitting ? (
                     <div className="flex items-center justify-center">
