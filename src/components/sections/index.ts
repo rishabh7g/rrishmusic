@@ -9,10 +9,8 @@ export { default as TestimonialsSection } from './TestimonialsSection'
 export { default as MultiServiceTestimonialsSection } from './MultiServiceTestimonialsSection'
 export { default as PricingSection } from './PricingSection'
 export { InstagramFeed } from './InstagramFeed'
-export { CollaborationHero } from './CollaborationHero'
 export { CollaborationPortfolio } from './CollaborationPortfolio'
 export { CollaborationProcess } from './CollaborationProcess'
-export { CollaborationCTA } from './CollaborationCTA'
 export { ServicesHierarchy } from './ServicesHierarchy'
 
 // Service Section Template

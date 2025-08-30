@@ -3,10 +3,8 @@ import { SEOHead } from '@/components/common/SEOHead'
 import { Lessons } from '@/components/sections/Lessons'
 import { performanceMonitor } from '@/utils/performance'
 
-// Import universal inquiry form
-import UniversalInquiryForm, {
-  UniversalInquiryData,
-} from '@/components/forms/UniversalInquiryForm'
+// Import contact form
+import { ContactForm } from '@/components/forms/ContactForm'
 
 /**
  * Props interface for Teaching page
@@ -30,13 +28,6 @@ interface TeachingPageProps {
 export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
   // Form state management
   const [isFormOpen, setIsFormOpen] = React.useState(false)
-
-  const handleFormSubmit = async (data: UniversalInquiryData) => {
-    console.log('Form submission:', data)
-    // TODO: Implement actual form submission logic
-    // For now, just simulate success
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  }
 
   useEffect(() => {
     // Mark teaching page as started for performance monitoring
@@ -252,11 +243,10 @@ export const Teaching: React.FC<TeachingPageProps> = ({ className = '' }) => {
             </div>
           </section>
 
-          {/* Universal Inquiry Form */}
-          <UniversalInquiryForm
+          {/* Contact Form */}
+          <ContactForm
             isOpen={isFormOpen}
             onClose={() => setIsFormOpen(false)}
-            onSubmit={handleFormSubmit}
           />
         </div>
       </main>

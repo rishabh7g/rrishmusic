@@ -1,11 +1,12 @@
+import React, { useState } from 'react'
 import { motion } from 'framer-motion'
 import { useLessonPackages } from '@/hooks/useContent'
 import { fadeInUp, staggerContainer, scaleIn } from '@/utils/animations'
-import { TeachingInquiryCTA } from '@/components/ui/cta'
-import type { TeachingInquiryData } from '@/components/forms/TeachingInquiryForm'
+import { ContactForm } from '@/components/forms/ContactForm'
 
 export function Lessons() {
   const { packages, packageInfo, loading, error } = useLessonPackages()
+  const [isFormOpen, setIsFormOpen] = useState(false)
 
   if (loading) {
     return (
@@ -110,22 +111,6 @@ export function Lessons() {
     }
   }
 
-  /**
-   * Map package data to form package types
-   */
-  const getFormPackageType = (
-    pkg: (typeof packages)[0]
-  ): TeachingInquiryData['packageType'] => {
-    if (pkg.id === 'beginner') {
-      return 'foundation'
-    } else if (pkg.id === 'intermediate') {
-      return 'transformation'
-    } else if (pkg.id === 'advanced') {
-      return 'transformation'
-    } else {
-      return 'single' // fallback
-    }
-  }
 
   return (
     <div className="section bg-theme-bg/30 backdrop-blur-sm transition-theme-colors relative overflow-hidden">
@@ -288,23 +273,22 @@ export function Lessons() {
                   ))}
                 </ul>
 
-                {/* Updated CTA Button - Now uses TeachingInquiryCTA */}
+                {/* Get Started Button */}
                 <motion.div
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <TeachingInquiryCTA
-                    initialPackageType={getFormPackageType(pkg)}
-                    ctaText="Get Started"
-                    variant="compact"
-                    showPricing={false}
-                    className={`w-full 
+                  <button
+                    onClick={() => setIsFormOpen(true)}
+                    className={`w-full py-4 px-6 rounded-full font-semibold shadow-lg hover:shadow-xl transition-all duration-300
                       ${
                         pkg.popular
                           ? 'bg-brand-yellow-accent text-brand-blue-primary hover:bg-white'
                           : 'bg-gray-800 text-white hover:bg-gray-700'
-                      } text-center justify-center rounded-full font-semibold shadow-lg hover:shadow-xl`}
-                  />
+                      }`}
+                  >
+                    Get Started
+                  </button>
                 </motion.div>
               </div>
             </motion.div>
@@ -394,21 +378,29 @@ export function Lessons() {
           </motion.div>
         )}
 
-        {/* Updated Final CTA - Now uses TeachingInquiryCTA */}
+        {/* Final CTA */}
         <motion.div className="text-center mt-16" variants={fadeInUp}>
           <p className="text-lg text-white/90 mb-8 max-w-2xl mx-auto drop-shadow">
             Not sure which package is right for you? Let's have a chat about
             your musical goals and find the perfect fit.
           </p>
 
-          <TeachingInquiryCTA
-            ctaText="Book Your First Lesson"
-            variant="default"
-            showPricing={true}
-            className="inline-block"
-          />
+          <motion.button
+            onClick={() => setIsFormOpen(true)}
+            className="inline-flex items-center px-8 py-4 bg-brand-yellow-accent text-brand-blue-primary font-bold text-lg rounded-full hover:bg-white transition-colors duration-300 shadow-lg hover:shadow-xl"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+          >
+            Book Your First Lesson
+            <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </motion.button>
         </motion.div>
       </motion.div>
+      
+      {/* Contact Form Modal */}
+      <ContactForm isOpen={isFormOpen} onClose={() => setIsFormOpen(false)} />
     </div>
   )
 }

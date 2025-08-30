@@ -10,9 +10,6 @@ import { Contact } from '@/components/sections/Contact'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { LazySection } from '@/components/common/LazySection'
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials'
-import PerformanceInquiryForm, {
-  PerformanceInquiryData,
-} from '@/components/forms/PerformanceInquiryForm'
 
 /**
  * Section fallback component
@@ -37,15 +34,6 @@ export function Home() {
     return getTestimonialsByService('performance')
   }, [getTestimonialsByService])
 
-  // Form state management
-  const [isFormOpen, setIsFormOpen] = React.useState(false)
-
-  const handleFormSubmit = async (data: PerformanceInquiryData) => {
-    console.log('Performance inquiry submission:', data)
-    // TODO: Implement actual form submission logic
-    // For now, just simulate success
-    await new Promise(resolve => setTimeout(resolve, 1000))
-  }
 
   return (
     <>
@@ -145,12 +133,6 @@ export function Home() {
           </ErrorBoundary>
         </div>
 
-        {/* Performance Inquiry Form Modal */}
-        <PerformanceInquiryForm
-          isOpen={isFormOpen}
-          onClose={() => setIsFormOpen(false)}
-          onSubmit={handleFormSubmit}
-        />
       </main>
     </>
   )
