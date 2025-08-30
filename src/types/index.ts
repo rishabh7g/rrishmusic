@@ -1,125 +1,88 @@
-// Core React types
-export * from './content'
-
-// Re-export commonly used React types
-export type { FC, ReactNode, ComponentProps, ErrorInfo } from 'react'
-
-// Utility types
-export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-export type RequiredFields<T, K extends keyof T> = T & Required<Pick<T, K>>
-export type StringKeys<T> = Extract<keyof T, string>
-export type NumberKeys<T> = Extract<keyof T, number>
-export type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
-}
-export type NonNullable<T> = T extends null | undefined ? never : T
-export type Awaited<T> = T extends Promise<infer U> ? U : T
-
-// API types
-export interface ApiResponse<T = unknown> {
-  data: T
-  success: boolean
-  message?: string
-  errors?: string[]
-  meta?: {
-    page?: number
-    totalPages?: number
-    totalCount?: number
-  }
-}
-
-export interface ApiError {
-  message: string
-  code?: string | number
-  details?: Record<string, unknown>
-  timestamp?: string
-  path?: string
-}
-
-// Error handling types
-export interface ErrorBoundaryState {
-  hasError: boolean
-  error?: Error
-  errorInfo?: ErrorInfo
-}
-
-export interface ErrorFallbackProps {
-  error: Error
-  resetError: () => void
-}
-
-export type ErrorHandler = (error: Error, errorInfo?: ErrorInfo) => void
-
-// Performance types
-export interface PerformanceMetric {
+// Core data types
+export interface Person {
   name: string
-  value: number
-  unit: 'ms' | 'bytes' | 'score'
-  timestamp: number
-  metadata?: Record<string, unknown>
+  role: string
+  image: string
+  bio: string
+  credentials: string[]
 }
 
-export interface WebVitals {
-  CLS: number // Cumulative Layout Shift
-  FID: number // First Input Delay
-  FCP: number // First Contentful Paint
-  LCP: number // Largest Contentful Paint
-  TTFB: number // Time to First Byte
+export interface Service {
+  id: string
+  title: string
+  description: string
+  features: string[]
+  price?: string
+  duration?: string
+  popular?: boolean
 }
 
-export interface ComponentPerformance {
-  componentName: string
-  renderTime: number
-  mountTime?: number
-  updateCount: number
-  averageRenderTime: number
-  memoryUsage?: number
+export interface Testimonial {
+  id: string
+  name: string
+  role: string
+  content: string
+  rating: number
+  image?: string
+  service?: string
 }
 
-// Form types
-export interface FormField<T = string> {
-  value: T
-  error?: string
-  touched: boolean
-  dirty: boolean
-  valid: boolean
+export interface FAQ {
+  id: string
+  question: string
+  answer: string
+  category?: string
 }
 
-export interface FormState {
-  isSubmitting: boolean
-  isValid: boolean
-  isDirty: boolean
+export interface SocialLink {
+  id: string
+  name: string
+  url: string
+  icon: string
+  color?: string
 }
 
-export interface FormValidationResult {
-  isValid: boolean
-  errors: Record<string, string>
+export interface ContactInfo {
+  email: string
+  phone?: string
+  location?: string
+  availability?: string
 }
 
-export type FormValidator<T = unknown> = (value: T) => string | undefined
-
-// Animation types
-export interface AnimationProps {
-  duration?: number
-  delay?: number
-  easing?: string
-  direction?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse'
-  fillMode?: 'none' | 'forwards' | 'backwards' | 'both'
+export interface SEOData {
+  title: string
+  description: string
+  keywords: string[]
+  ogImage?: string
+  canonicalUrl?: string
 }
 
-export interface MotionConfig {
-  initial?: object
-  animate?: object
-  exit?: object
-  transition?: object
-  whileHover?: object
-  whileTap?: object
+export interface PageContent {
+  hero: {
+    title: string
+    subtitle: string
+    description: string
+    cta: {
+      primary: string
+      secondary?: string
+    }
+    image?: string
+    video?: string
+  }
+  sections: {
+    [key: string]: any
+  }
+  seo: SEOData
 }
 
-// Theme types
+// Theme system types
 export interface ThemeColors {
   primary: string
+  primaryHover: string
+  primaryActive: string
   secondary: string
+  secondaryHover: string
+  secondaryActive: string
   accent: string
   background: string
   backgroundSecondary: string
@@ -129,6 +92,7 @@ export interface ThemeColors {
   textSecondary: string
   textMuted: string
   border: string
+  borderHover: string
   success: string
   warning: string
   error: string
@@ -152,7 +116,11 @@ export const DEFAULT_THEME_MODE: ThemeMode = 'dark'
 // Basic theme colors for light and dark modes
 export const lightThemeColors: ThemeColors = {
   primary: '#3b82f6',
+  primaryHover: '#2563eb',
+  primaryActive: '#1d4ed8',
   secondary: '#6b7280',
+  secondaryHover: '#4b5563',
+  secondaryActive: '#374151',
   accent: '#10b981',
   background: '#ffffff',
   backgroundSecondary: '#f8fafc',
@@ -162,6 +130,7 @@ export const lightThemeColors: ThemeColors = {
   textSecondary: '#6b7280',
   textMuted: '#9ca3af',
   border: '#e5e7eb',
+  borderHover: '#d1d5db',
   success: '#10b981',
   warning: '#f59e0b',
   error: '#ef4444',
@@ -170,7 +139,11 @@ export const lightThemeColors: ThemeColors = {
 
 export const darkThemeColors: ThemeColors = {
   primary: '#60a5fa',
+  primaryHover: '#3b82f6',
+  primaryActive: '#2563eb',
   secondary: '#9ca3af',
+  secondaryHover: '#d1d5db',
+  secondaryActive: '#e5e7eb',
   accent: '#34d399',
   background: '#111827',
   backgroundSecondary: '#1f2937',
@@ -180,6 +153,7 @@ export const darkThemeColors: ThemeColors = {
   textSecondary: '#d1d5db',
   textMuted: '#9ca3af',
   border: '#374151',
+  borderHover: '#4b5563',
   success: '#34d399',
   warning: '#fbbf24',
   error: '#f87171',
@@ -194,22 +168,95 @@ export const themes: Record<ActiveTheme, ThemeConfig> = {
   },
   dark: {
     colors: darkThemeColors,
-    mode: 'dark',
+    mode: 'dark', 
     name: 'Dark',
   },
 }
 
-// Transition configurations
-export const themeTransitions = {
-  duration: {
-    fast: '150ms',
-    normal: '250ms',
-    slow: '400ms',
+// Animation system types
+export interface AnimationConfig {
+  duration: number
+  easing: string
+  delay?: number
+  staggerDelay?: number
+}
+
+export interface TransitionConfig {
+  property: string
+  duration: string
+  easing: string
+  delay?: string
+}
+
+// Theme transitions for smooth color changes
+export const themeTransitions: Record<string, TransitionConfig> = {
+  colors: {
+    property: 'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+    duration: '200ms',
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
   },
-  easing: {
-    standard: 'cubic-bezier(0.4, 0, 0.2, 1)',
-    emphasized: 'cubic-bezier(0.0, 0, 0.2, 1)',
-    decelerated: 'cubic-bezier(0.0, 0, 0.2, 1)',
+  transform: {
+    property: 'transform',
+    duration: '200ms', 
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+  layout: {
+    property: 'width, height, margin, padding',
+    duration: '300ms',
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  },
+}
+
+// Enhanced easing curves
+export const easingCurves = {
+  // Standard easing
+  standard: 'cubic-bezier(0.4, 0.0, 0.2, 1)',
+  // Emphasized easing for important transitions
+  emphasized: 'cubic-bezier(0.0, 0, 0.2, 1)',
+  // Decelerated easing for entering elements
+  decelerated: 'cubic-bezier(0.0, 0, 0.2, 1)',
+  // Accelerated easing for exiting elements
+  accelerated: 'cubic-bezier(0.4, 0, 1, 1)',
+}
+
+// Animation durations
+export const animationDurations = {
+  fast: 150,
+  medium: 300,
+  slow: 500,
+  extra: 1000,
+}
+
+// Easing curves for different interaction states
+export const interactionEasing = {
+  hover: 'cubic-bezier(0.4, 0, 0.2, 1)',
+  active: 'cubic-bezier(0.4, 0, 1, 1)',
+  focus: 'cubic-bezier(0.0, 0, 0.2, 1)',
+  disabled: 'cubic-bezier(0.4, 0, 0.2, 1)',
+}
+
+// Advanced animation configurations
+export const animations = {
+  fadeIn: {
+    duration: 300,
+    easing: easingCurves.decelerated,
+  },
+  slideIn: {
+    duration: 400,
+    easing: easingCurves.emphasized,
+  },
+  scaleIn: {
+    duration: 200,
+    easing: easingCurves.standard,
+    staggerDelay: 50,
+  },
+  bounce: {
+    duration: 600,
+    easing: 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
+  },
+  smooth: {
+    duration: 250,
+    easing: easingCurves.decelerated,
   },
 }
 
@@ -219,7 +266,11 @@ export const createCSSCustomProperties = (
 ): Record<string, string> => {
   return {
     '--color-primary': colors.primary,
+    '--color-primary-hover': colors.primaryHover,
+    '--color-primary-active': colors.primaryActive,
     '--color-secondary': colors.secondary,
+    '--color-secondary-hover': colors.secondaryHover,
+    '--color-secondary-active': colors.secondaryActive,
     '--color-accent': colors.accent,
     '--color-background': colors.background,
     '--color-background-secondary': colors.backgroundSecondary,
@@ -229,6 +280,7 @@ export const createCSSCustomProperties = (
     '--color-text-secondary': colors.textSecondary,
     '--color-text-muted': colors.textMuted,
     '--color-border': colors.border,
+    '--color-border-hover': colors.borderHover,
     '--color-success': colors.success,
     '--color-warning': colors.warning,
     '--color-error': colors.error,
@@ -245,239 +297,289 @@ export interface Breakpoints {
   '2xl': number
 }
 
-// Component base types
-export interface BaseComponentProps {
-  className?: string
-  style?: React.CSSProperties
-  id?: string
-  'data-testid'?: string
-  'aria-label'?: string
-  'aria-labelledby'?: string
-  'aria-describedby'?: string
-  role?: string
+export const breakpoints: Breakpoints = {
+  xs: 475,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
+  '2xl': 1536,
 }
 
-export interface InteractiveProps extends BaseComponentProps {
-  disabled?: boolean
-  loading?: boolean
-  onClick?: (event: React.MouseEvent) => void
-  onKeyDown?: (event: React.KeyboardEvent) => void
-  tabIndex?: number
-  'aria-disabled'?: boolean
+// Responsive design utilities
+export interface MediaQueries {
+  xs: string
+  sm: string
+  md: string
+  lg: string
+  xl: string
+  '2xl': string
 }
 
-export interface LoadingProps {
-  loading?: boolean
-  loadingText?: string
-  spinnerSize?: 'sm' | 'md' | 'lg'
-  overlay?: boolean
+export const mediaQueries: MediaQueries = {
+  xs: `(min-width: ${breakpoints.xs}px)`,
+  sm: `(min-width: ${breakpoints.sm}px)`,
+  md: `(min-width: ${breakpoints.md}px)`,
+  lg: `(min-width: ${breakpoints.lg}px)`,
+  xl: `(min-width: ${breakpoints.xl}px)`,
+  '2xl': `(min-width: ${breakpoints['2xl']}px)`,
 }
 
-// SEO and Meta types
-export interface MetaTag {
-  name?: string
-  property?: string
-  content: string
+// Layout system types
+export interface GridConfig {
+  columns: number
+  gap: string
+  breakpoints: {
+    sm?: number
+    md?: number
+    lg?: number
+    xl?: number
+  }
 }
 
-export interface SEOProps {
-  title?: string
-  description?: string
-  keywords?: string[]
-  author?: string
-  canonical?: string
-  robots?: string
-  viewport?: string
-  themeColor?: string
-  manifest?: string
-  appleTouchIcon?: string
-  favicon?: string
-  metaTags?: MetaTag[]
-  openGraph?: OpenGraphData
-  twitterCard?: TwitterCardData
+export interface SpacingScale {
+  xs: string
+  sm: string
+  md: string
+  lg: string
+  xl: string
+  '2xl': string
+  '3xl': string
+  '4xl': string
 }
 
-export interface OpenGraphData {
-  title?: string
-  description?: string
-  type?: string
-  url?: string
-  image?: string
-  imageAlt?: string
-  siteName?: string
-  locale?: string
+export const spacing: SpacingScale = {
+  xs: '0.5rem',
+  sm: '1rem',
+  md: '1.5rem',
+  lg: '2rem',
+  xl: '3rem',
+  '2xl': '4rem',
+  '3xl': '6rem',
+  '4xl': '8rem',
 }
 
-export interface TwitterCardData {
-  card?: 'summary' | 'summary_large_image' | 'app' | 'player'
-  site?: string
-  creator?: string
-  title?: string
-  description?: string
-  image?: string
-  imageAlt?: string
+// Typography system
+export interface FontWeights {
+  light: number
+  normal: number
+  medium: number
+  semibold: number
+  bold: number
+}
+
+export const fontWeights: FontWeights = {
+  light: 300,
+  normal: 400,
+  medium: 500,
+  semibold: 600,
+  bold: 700,
+}
+
+export interface FontSizes {
+  xs: string
+  sm: string
+  base: string
+  lg: string
+  xl: string
+  '2xl': string
+  '3xl': string
+  '4xl': string
+  '5xl': string
+}
+
+export const fontSizes: FontSizes = {
+  xs: '0.75rem',
+  sm: '0.875rem',
+  base: '1rem',
+  lg: '1.125rem',
+  xl: '1.25rem',
+  '2xl': '1.5rem',
+  '3xl': '1.875rem',
+  '4xl': '2.25rem',
+  '5xl': '3rem',
+}
+
+// Component state types
+export type ComponentSize = 'sm' | 'md' | 'lg'
+export type ComponentVariant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'outline'
+export type ComponentState = 'default' | 'hover' | 'active' | 'disabled' | 'loading'
+
+// Form system types
+export interface FormField {
+  id: string
+  name: string
+  type: 'text' | 'email' | 'tel' | 'textarea' | 'select' | 'checkbox' | 'radio'
+  label: string
+  placeholder?: string
+  required?: boolean
+  validation?: {
+    pattern?: string
+    message?: string
+    minLength?: number
+    maxLength?: number
+  }
+  options?: { value: string; label: string }[]
+}
+
+export interface FormConfig {
+  fields: FormField[]
+  submitLabel: string
+  submitEndpoint?: string
+  successMessage?: string
+  errorMessage?: string
 }
 
 // Navigation types
-export interface RouteConfig {
-  path: string
-  component: React.ComponentType
-  exact?: boolean
-  private?: boolean
-  roles?: string[]
-  meta?: {
-    title?: string
-    description?: string
+export interface NavItem {
+  id: string
+  label: string
+  href: string
+  external?: boolean
+  children?: NavItem[]
+}
+
+export interface NavigationConfig {
+  primary: NavItem[]
+  secondary?: NavItem[]
+  social?: SocialLink[]
+}
+
+// Content management types
+export interface ContentSection {
+  id: string
+  type: 'hero' | 'about' | 'services' | 'testimonials' | 'contact' | 'gallery' | 'faq'
+  title?: string
+  content: any
+  settings?: {
+    background?: string
+    spacing?: string
+    alignment?: 'left' | 'center' | 'right'
+    columns?: number
   }
 }
 
-export interface BreadcrumbItem {
-  label: string
-  href?: string
-  current?: boolean
+// API types
+export interface APIResponse<T = any> {
+  success: boolean
+  data?: T
+  error?: string
+  message?: string
 }
 
-export interface NavigationItem {
+export interface ContactFormData {
+  name: string
+  email: string
+  message: string
+  service?: string
+  phone?: string
+  preferredTime?: string
+}
+
+// Event types
+export interface Event {
   id: string
-  label: string
-  href?: string
-  icon?: React.ComponentType<{ className?: string }>
-  badge?: string | number
-  children?: NavigationItem[]
-  external?: boolean
-  disabled?: boolean
-  roles?: string[]
+  title: string
+  description: string
+  date: string
+  time: string
+  location: string
+  type: 'performance' | 'lesson' | 'workshop' | 'collaboration'
+  ticketUrl?: string
+  featured?: boolean
 }
 
-// Event handler types
-export type EventHandler<T = HTMLElement> = (
-  event: React.SyntheticEvent<T>
-) => void
-export type ChangeHandler<T = HTMLInputElement> = (
-  event: React.ChangeEvent<T>
-) => void
-export type SubmitHandler<T = HTMLFormElement> = (
-  event: React.FormEvent<T>
-) => void
-export type KeyboardHandler<T = HTMLElement> = (
-  event: React.KeyboardEvent<T>
-) => void
-export type MouseHandler<T = HTMLElement> = (event: React.MouseEvent<T>) => void
-export type FocusHandler<T = HTMLElement> = (event: React.FocusEvent<T>) => void
-
-// Scroll and intersection observer types
-export interface ScrollSpyOptions {
-  offset?: number
-  smooth?: boolean
-  duration?: number
-  container?: string | HTMLElement
+// Portfolio types
+export interface PortfolioItem {
+  id: string
+  title: string
+  description: string
+  category: string
+  media: {
+    type: 'image' | 'video' | 'audio'
+    url: string
+    thumbnail?: string
+  }
+  tags?: string[]
+  date?: string
+  featured?: boolean
 }
 
-export interface IntersectionObserverOptions {
-  root?: Element | null
-  rootMargin?: string
-  threshold?: number | number[]
+// Error handling types
+export interface ErrorInfo {
+  message: string
+  code?: string
+  details?: any
 }
 
-export interface ScrollPosition {
-  x: number
-  y: number
-  direction: 'up' | 'down' | 'left' | 'right' | null
+export interface ErrorBoundaryState {
+  hasError: boolean
+  error?: ErrorInfo
 }
 
-// Lazy loading types
-export interface LazyLoadOptions {
-  threshold?: number
-  rootMargin?: string
-  placeholder?: string
-  errorImage?: string
+// Performance monitoring types
+export interface PerformanceMetrics {
+  loadTime: number
+  renderTime: number
+  interactionTime: number
+  memoryUsage?: number
 }
 
-export interface ImageLoadState {
-  loaded: boolean
-  error: boolean
-  src?: string
+// Analytics types
+export interface AnalyticsEvent {
+  name: string
+  category: string
+  action: string
+  label?: string
+  value?: number
+  properties?: Record<string, any>
+}
+
+// Accessibility types
+export interface A11yConfig {
+  reducedMotion?: boolean
+  highContrast?: boolean
+  screenReader?: boolean
+  keyboardNavigation?: boolean
+}
+
+// Internationalization types
+export interface LocaleConfig {
+  code: string
+  name: string
+  direction: 'ltr' | 'rtl'
+  currency?: string
+  dateFormat?: string
+}
+
+// Search types
+export interface SearchResult {
+  id: string
+  type: string
+  title: string
+  description: string
+  url: string
+  relevance: number
 }
 
 // Cache types
-export interface CacheEntry<T = unknown> {
-  data: T
-  timestamp: number
+export interface CacheConfig {
   ttl: number
-  key: string
+  maxSize: number
+  strategy: 'lru' | 'fifo' | 'lifo'
 }
 
-export interface CacheOptions {
-  ttl?: number
-  maxEntries?: number
-  strategy?: 'lru' | 'fifo' | 'ttl'
+// Component prop types
+export interface BaseComponentProps {
+  className?: string
+  children?: React.ReactNode
+  'data-testid'?: string
 }
 
-export interface CacheStats {
-  hits: number
-  misses: number
-  size: number
-  hitRate: number
+export interface InteractiveComponentProps extends BaseComponentProps {
+  disabled?: boolean
+  loading?: boolean
+  onClick?: (event: React.MouseEvent) => void
+  onFocus?: (event: React.FocusEvent) => void
+  onBlur?: (event: React.FocusEvent) => void
 }
-
-// Testing types
-export interface TestContext {
-  container: HTMLElement
-  debug: () => void
-  rerender: (ui: React.ReactElement) => void
-  unmount: () => void
-  asFragment: () => DocumentFragment
-  baseElement: HTMLElement
-  getByText: (text: string | RegExp) => HTMLElement
-  queryByText: (text: string | RegExp) => HTMLElement | null
-  findByText: (text: string | RegExp) => Promise<HTMLElement>
-  getByRole: (role: string, options?: object) => HTMLElement
-  queryByRole: (role: string, options?: object) => Element | null
-  findByRole: (role: string, options?: object) => Promise<Element>
-  render: (component: React.ReactElement) => void
-}
-
-export interface MockFunction<
-  T extends (...args: unknown[]) => unknown = (...args: unknown[]) => unknown,
-> {
-  (...args: Parameters<T>): ReturnType<T>
-  mockReturnValue: (value: ReturnType<T>) => MockFunction<T>
-  mockResolvedValue: (value: Awaited<ReturnType<T>>) => MockFunction<T>
-  mockRejectedValue: (error: Error | string | unknown) => MockFunction<T>
-  mockImplementation: (fn: T) => MockFunction<T>
-  mockClear: () => void
-  mockReset: () => void
-  mockRestore: () => void
-  mock: {
-    calls: Parameters<T>[]
-    results: Array<{ type: 'return' | 'throw'; value: ReturnType<T> | Error }>
-    instances: Array<ReturnType<T> extends object ? ReturnType<T> : unknown>
-  }
-}
-
-// Development and debugging types
-export interface DevToolsConfig {
-  enabled: boolean
-  showPerformanceMetrics: boolean
-  showRenderCount: boolean
-  showPropsChanges: boolean
-  logLevel: 'error' | 'warn' | 'info' | 'debug'
-}
-
-export interface DebugInfo {
-  componentName: string
-  props: Record<string, unknown>
-  state: Record<string, unknown>
-  renderCount: number
-  lastRenderTime: number
-  totalRenderTime: number
-}
-
-// Advanced utility types
-export type ValueOf<T> = T[keyof T]
-export type KeysOfType<T, U> = {
-  [K in keyof T]: T[K] extends U ? K : never
-}[keyof T]
-export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
-export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>
-export type RequiredBy<T, K extends keyof T> = T & Required<Pick<T, K>>
