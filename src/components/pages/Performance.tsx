@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import {
   PerformanceGallery,
   PricingSection,
@@ -18,6 +18,9 @@ import { CollaborationProcess } from '@/components/sections/CollaborationProcess
 import PerformanceInquiryForm, {
   PerformanceInquiryData,
 } from '@/components/forms/PerformanceInquiryForm'
+
+// Import collaboration data to check for portfolio items
+import collaborationData from '@/content/collaboration.json'
 
 /**
  * Section fallback component
@@ -54,12 +57,36 @@ interface PerformancePageProps {
  * - Transparent pricing information
  * - Social proof through Instagram feed
  * - Optimized for conversions and user engagement
+ * - Conditional rendering based on data availability
  */
 export const Performance: React.FC<PerformancePageProps> = ({
   className = '',
 }) => {
-  // Load testimonials with performance focus (reserved for future use)
-  useMultiServiceTestimonials()
+  // Load testimonials with performance focus
+  const { getTestimonialsByService } = useMultiServiceTestimonials()
+
+  // Get performance testimonials to check if section should be shown
+  const performanceTestimonials = useMemo(() => {
+    return getTestimonialsByService('performance')
+  }, [getTestimonialsByService])
+
+  // Check if collaboration portfolio has items (excluding specific items to be removed)
+  const collaborationPortfolioItems = useMemo(() => {
+    const allProjects = collaborationData?.portfolio?.projects || []
+    // Filter out the items mentioned in requirements that should be removed
+    const itemsToRemove = [
+      'blues fusion',
+      'collective acoustics',
+      'storytelling',
+      'corporate',
+      'even partnership',
+    ]
+
+    return allProjects.filter(project => {
+      const title = project.title?.toLowerCase() || ''
+      return !itemsToRemove.some(item => title.includes(item))
+    })
+  }, [])
 
   // Form state management
   const [isFormOpen, setIsFormOpen] = React.useState(false)
@@ -144,7 +171,7 @@ export const Performance: React.FC<PerformancePageProps> = ({
             </div>
           </section>
 
-          {/* Instagram Feed - Primary Focus */}
+          {/* Instagram Feed - Primary Focus with Follow button */}
           <section
             id="instagram-primary"
             className="py-16 bg-theme-bg transition-theme-colors"
@@ -159,7 +186,7 @@ export const Performance: React.FC<PerformancePageProps> = ({
                 <div className="container mx-auto max-w-7xl p-4">
                   <div className="text-center mb-12">
                     <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
-                      Recent Performances
+                      Behind The Scenes
                     </h2>
                     <p className="text-lg text-theme-text-secondary transition-theme-colors">
                       Live performances and behind-the-scenes moments
@@ -171,6 +198,25 @@ export const Performance: React.FC<PerformancePageProps> = ({
                     className="mb-8"
                     useEnhancedHook={true}
                   />
+
+                  {/* Follow on Instagram Button */}
+                  <div className="text-center mt-12">
+                    <a
+                      href="https://www.instagram.com/rrishmusic"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-8 py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white font-semibold rounded-full hover:from-purple-600 hover:to-pink-600 transform hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    >
+                      <svg
+                        className="w-6 h-6 mr-3"
+                        fill="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                      </svg>
+                      Follow on Instagram
+                    </a>
+                  </div>
                 </div>
               </LazySection>
             </ErrorBoundary>
@@ -215,81 +261,58 @@ export const Performance: React.FC<PerformancePageProps> = ({
             </div>
           </section>
 
-          {/* Visual Testimonials - Minimal */}
-          <section
-            id="testimonials"
-            className="py-16 bg-theme-bg-secondary transition-theme-colors"
-          >
-            <div className="container mx-auto max-w-7xl p-4">
-              <div className="text-center mb-12">
-                <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
-                  What Clients Say
-                </h2>
-              </div>
-
-              {/* Simple testimonial cards with photos */}
-              <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
-                <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-full flex items-center justify-center text-white font-bold">
-                      M
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-semibold text-theme-text transition-theme-colors">
-                        Maria S.
-                      </h4>
-                      <p className="text-sm text-theme-text-secondary transition-theme-colors">
-                        Wedding Reception
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-theme-text-secondary transition-theme-colors">
-                    "The music made our night unforgettable. Perfect
-                    atmosphere."
-                  </p>
+          {/* Conditional Testimonials Section - Only show if testimonials exist */}
+          {performanceTestimonials.length > 0 && (
+            <section
+              id="testimonials"
+              className="py-16 bg-theme-bg-secondary transition-theme-colors"
+            >
+              <div className="container mx-auto max-w-7xl p-4">
+                <div className="text-center mb-12">
+                  <h2 className="text-3xl md:text-4xl font-bold text-theme-text mb-4 transition-theme-colors">
+                    What Clients Say
+                  </h2>
                 </div>
 
-                <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-full flex items-center justify-center text-white font-bold">
-                      J
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-semibold text-theme-text transition-theme-colors">
-                        James R.
-                      </h4>
-                      <p className="text-sm text-theme-text-secondary transition-theme-colors">
-                        Corporate Event
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-theme-text-secondary transition-theme-colors">
-                    "Professional, talented, and engaging. Exceeded
-                    expectations."
-                  </p>
-                </div>
-
-                <div className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors">
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-full flex items-center justify-center text-white font-bold">
-                      A
-                    </div>
-                    <div className="ml-4">
-                      <h4 className="font-semibold text-theme-text transition-theme-colors">
-                        Alex M.
-                      </h4>
-                      <p className="text-sm text-theme-text-secondary transition-theme-colors">
-                        Private Party
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-theme-text-secondary transition-theme-colors">
-                    "Amazing performance, great energy. Highly recommend!"
-                  </p>
+                {/* Dynamic testimonial cards from actual data */}
+                <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+                  {performanceTestimonials
+                    .slice(0, 3)
+                    .map((testimonial, index) => (
+                      <div
+                        key={testimonial.id}
+                        className="bg-theme-bg rounded-xl p-6 shadow-sm transition-theme-colors"
+                      >
+                        <div className="flex items-center mb-4">
+                          <div
+                            className={`w-12 h-12 bg-gradient-to-br ${
+                              index === 0
+                                ? 'from-orange-400 to-red-500'
+                                : index === 1
+                                  ? 'from-blue-400 to-purple-500'
+                                  : 'from-green-400 to-teal-500'
+                            } rounded-full flex items-center justify-center text-white font-bold`}
+                          >
+                            {testimonial.name.charAt(0)}
+                          </div>
+                          <div className="ml-4">
+                            <h4 className="font-semibold text-theme-text transition-theme-colors">
+                              {testimonial.name}
+                            </h4>
+                            <p className="text-sm text-theme-text-secondary transition-theme-colors">
+                              {testimonial.event || testimonial.serviceSubType}
+                            </p>
+                          </div>
+                        </div>
+                        <p className="text-theme-text-secondary transition-theme-colors">
+                          "{testimonial.text}"
+                        </p>
+                      </div>
+                    ))}
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           {/* Pricing Section */}
           <section
@@ -321,42 +344,44 @@ export const Performance: React.FC<PerformancePageProps> = ({
             </div>
           </section>
 
-          {/* Collaboration Section - Integrated from Collaboration Page */}
-          <section
-            id="collaboration"
-            className="py-16 bg-theme-bg-secondary transition-theme-colors"
-          >
-            <div className="container mx-auto max-w-7xl p-4">
-              <div className="text-center mb-12">
-                <h3 className="text-3xl md:text-4xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
-                  Studio Work & Creative Collaborations
-                </h3>
-                <p className="text-lg text-theme-text-secondary max-w-3xl mx-auto transition-theme-colors">
-                  Beyond live performances, I work with artists, bands, and
-                  producers on recording projects, creative collaborations, and
-                  studio sessions.
-                </p>
-              </div>
+          {/* Conditional Collaboration Section - Only show if portfolio has items */}
+          {collaborationPortfolioItems.length > 0 && (
+            <section
+              id="collaboration"
+              className="py-16 bg-theme-bg-secondary transition-theme-colors"
+            >
+              <div className="container mx-auto max-w-7xl p-4">
+                <div className="text-center mb-12">
+                  <h3 className="text-3xl md:text-4xl font-heading font-bold text-theme-text mb-4 transition-theme-colors">
+                    Creative Portfolio
+                  </h3>
+                  <p className="text-lg text-theme-text-secondary max-w-3xl mx-auto transition-theme-colors">
+                    Studio work and creative collaborations with artists, bands,
+                    and producers on recording projects and musical
+                    partnerships.
+                  </p>
+                </div>
 
-              {/* Collaboration Portfolio */}
-              <ErrorBoundary
-                fallback={
-                  <SectionFallback sectionName="Collaboration Portfolio" />
-                }
-              >
-                <LazySection
+                {/* Collaboration Portfolio */}
+                <ErrorBoundary
                   fallback={
                     <SectionFallback sectionName="Collaboration Portfolio" />
                   }
-                  rootMargin="200px"
                 >
-                  <CollaborationPortfolio />
-                </LazySection>
-              </ErrorBoundary>
-            </div>
-          </section>
+                  <LazySection
+                    fallback={
+                      <SectionFallback sectionName="Collaboration Portfolio" />
+                    }
+                    rootMargin="200px"
+                  >
+                    <CollaborationPortfolio />
+                  </LazySection>
+                </ErrorBoundary>
+              </div>
+            </section>
+          )}
 
-          {/* Collaboration Process */}
+          {/* Collaboration Process - Always show */}
           <section
             id="collaboration-process"
             className="py-16 bg-theme-bg transition-theme-colors"

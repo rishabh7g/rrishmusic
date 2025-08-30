@@ -168,7 +168,7 @@ export const themes: Record<ActiveTheme, ThemeConfig> = {
   },
   dark: {
     colors: darkThemeColors,
-    mode: 'dark', 
+    mode: 'dark',
     name: 'Dark',
   },
 }
@@ -191,13 +191,14 @@ export interface TransitionConfig {
 // Theme transitions for smooth color changes
 export const themeTransitions: Record<string, TransitionConfig> = {
   colors: {
-    property: 'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
+    property:
+      'background-color, border-color, color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter',
     duration: '200ms',
     easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
   },
   transform: {
     property: 'transform',
-    duration: '200ms', 
+    duration: '200ms',
     easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
   },
   layout: {
@@ -402,8 +403,18 @@ export const fontSizes: FontSizes = {
 
 // Component state types
 export type ComponentSize = 'sm' | 'md' | 'lg'
-export type ComponentVariant = 'primary' | 'secondary' | 'accent' | 'ghost' | 'outline'
-export type ComponentState = 'default' | 'hover' | 'active' | 'disabled' | 'loading'
+export type ComponentVariant =
+  | 'primary'
+  | 'secondary'
+  | 'accent'
+  | 'ghost'
+  | 'outline'
+export type ComponentState =
+  | 'default'
+  | 'hover'
+  | 'active'
+  | 'disabled'
+  | 'loading'
 
 // Form system types
 export interface FormField {
@@ -448,7 +459,14 @@ export interface NavigationConfig {
 // Content management types
 export interface ContentSection {
   id: string
-  type: 'hero' | 'about' | 'services' | 'testimonials' | 'contact' | 'gallery' | 'faq'
+  type:
+    | 'hero'
+    | 'about'
+    | 'services'
+    | 'testimonials'
+    | 'contact'
+    | 'gallery'
+    | 'faq'
   title?: string
   content: any
   settings?: {

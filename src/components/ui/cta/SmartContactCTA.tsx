@@ -24,10 +24,10 @@ import {
   trackContactRouting,
   getUserJourneySummary,
 } from '@/utils/contactRouting'
-import { 
-  PerformanceInquiryForm, 
-  CollaborationInquiryForm, 
-  TeachingInquiryForm 
+import {
+  PerformanceInquiryForm,
+  CollaborationInquiryForm,
+  TeachingInquiryForm,
 } from '@/components/forms'
 import { ServiceSelectionModal } from '@/components/ui/ServiceSelectionModal'
 import type {

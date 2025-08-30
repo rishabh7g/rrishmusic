@@ -24,7 +24,7 @@ import {
   type PerformanceInquiryData,
   type TeachingInquiryData,
 } from '@/components/forms'
-import type { ServiceType } from "@/types/content"
+import type { ServiceType } from '@/types/content'
 /**
  * CTA Visual Variants
  */
