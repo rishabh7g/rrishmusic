@@ -2,7 +2,6 @@ import React from 'react'
 import { motion } from 'framer-motion'
 
 interface CTAHierarchyProps {
-  variant?: 'hero' | 'section'
   layout?: 'horizontal' | 'vertical'
   context?: 'hero' | 'services' | 'general'
   customMessages?: {
@@ -14,7 +13,6 @@ interface CTAHierarchyProps {
 }
 
 export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
-  variant = 'section',
   layout = 'horizontal',
   context = 'general',
   customMessages,
