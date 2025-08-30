@@ -70,7 +70,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
 
   return (
     <motion.section
-      className={`relative min-h-screen bg-theme-bg overflow-hidden ${className}`}
+      className={`relative min-h-[60vh] sm:min-h-screen bg-theme-bg overflow-hidden ${className}`}
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
