@@ -541,6 +541,10 @@ header {
   background-color: var(--color-primary-hover);
 }
 
+.hover\:bg-theme-primary-hover:hover {
+  background-color: var(--color-primary-hover);
+}
+
 .text-theme-primary {
   color: var(--color-primary);
 }

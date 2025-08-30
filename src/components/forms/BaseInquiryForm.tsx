@@ -256,7 +256,7 @@ export function BaseInquiryForm<T extends InquiryData>({
               : e.target.value
           handleFieldChange(field.name, newValue)
         },
-        className: `w-full px-4 py-3 border rounded-lg bg-theme-bg theme-text focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors ${
+        className: `w-full px-4 py-3 border rounded-lg bg-theme-bg theme-text placeholder:text-theme-text-muted focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors ${
           error ? 'border-red-500' : 'border-theme-border'
         } ${field.className || ''}`,
         placeholder: field.placeholder,
@@ -346,7 +346,7 @@ export function BaseInquiryForm<T extends InquiryData>({
             <input
               type="file"
               {...commonProps}
-              className="w-full px-4 py-3 border border-theme-border rounded-lg bg-theme-bg theme-text focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-bg-secondary file:text-theme-primary hover:file:bg-theme-bg-tertiary"
+              className="w-full px-4 py-3 border border-theme-border rounded-lg bg-theme-bg theme-text placeholder:text-theme-text-muted focus:ring-2 focus:ring-theme-primary focus:border-theme-primary transition-colors file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-theme-bg-secondary file:text-theme-primary hover:file:bg-theme-bg-tertiary"
               onChange={e => {
                 const files = (e.target as HTMLInputElement).files
                 handleFieldChange(field.name, files)
