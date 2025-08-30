@@ -159,6 +159,7 @@ export function Gallery() {
             category: 'band',
             path: '/images/instagram/band/XBand_Grazeland.jpg',
             aspectRatio: 1.7,
+            isFeatured: true, // make first band image featured
             priority: 'medium' as const,
           },
           {
@@ -175,20 +176,33 @@ export function Gallery() {
             aspectRatio: 2.1, // wide panoramic
             priority: 'high' as const,
           },
-          // Portrait images - vertical orientation
           {
-            filename: 'Rrish solo 1.jpg',
+            filename: 'Rrish_Rishikesh.jpg',
             category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo 1.jpg',
-            aspectRatio: 0.75, // portrait ratio
-            isFeatured: true, // make one portrait featured
-            priority: 'high' as const,
+            path: '/images/instagram/portrait/Rrish_Rishikesh.jpg',
+            aspectRatio: 0.9, // very tall portrait
+            priority: 'medium' as const,
           },
+          // Portrait images - vertical orientation
           {
             filename: 'Rrish solo 2.jpg',
             category: 'portrait',
             path: '/images/instagram/portrait/Rrish solo 2.jpg',
-            aspectRatio: 0.8,
+            aspectRatio: 1.2,
+            priority: 'medium' as const,
+          },
+          {
+            filename: 'Rrish solo.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish solo.jpg',
+            aspectRatio: 0.8, // almost square
+            priority: 'low' as const,
+          },
+          {
+            filename: 'Rrish_Lunar day night event.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish_Lunar day night event.jpg',
+            aspectRatio: 1.5,
             priority: 'medium' as const,
           },
           {
@@ -199,20 +213,6 @@ export function Gallery() {
             priority: 'medium' as const,
           },
           {
-            filename: 'Rrish solo.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo.jpg',
-            aspectRatio: 0.9, // almost square
-            priority: 'low' as const,
-          },
-          {
-            filename: 'Rrish_Lunar day night event.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Lunar day night event.jpg',
-            aspectRatio: 0.7,
-            priority: 'medium' as const,
-          },
-          {
             filename: 'Rrish_Pop up park-Point Cook 1.jpg',
             category: 'portrait',
             path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg',
@@ -220,18 +220,18 @@ export function Gallery() {
             priority: 'low' as const,
           },
           {
+            filename: 'Rrish solo 1.jpg',
+            category: 'portrait',
+            path: '/images/instagram/portrait/Rrish solo 1.jpg',
+            aspectRatio: 0.8, // portrait ratio
+            priority: 'high' as const,
+          },
+          {
             filename: 'Rrish_Pop up park-Point Cook.jpg',
             category: 'portrait',
             path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg',
-            aspectRatio: 0.75,
+            aspectRatio: 0.9,
             priority: 'low' as const,
-          },
-          {
-            filename: 'Rrish_Rishikesh.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Rishikesh.jpg',
-            aspectRatio: 0.6, // very tall portrait
-            priority: 'medium' as const,
           },
         ]
 
