@@ -152,7 +152,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
           {/* Process Steps Navigation */}
           <motion.div
             variants={fadeInUp}
-            className="flex flex-col md:flex-row justify-center items-center mb-12"
+            className="flex flex-col md:flex-row justify-center items-center mb-12 gap-4 md:gap-0"
           >
             {processSteps.map((step, index) => (
               <React.Fragment key={step.id}>
