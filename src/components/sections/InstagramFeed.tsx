@@ -60,7 +60,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = memo(
     useEnhancedHook: _useEnhancedHook = true,
     autoRefresh = false,
   }) => {
-    const { posts, loading, error, retry } = useInstagramContent({
+    const { posts = [], loading, error, retry } = useInstagramContent({
       limit,
       autoRefresh,
       refreshInterval: 30 * 60 * 1000, // 30 minutes
