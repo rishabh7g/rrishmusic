@@ -154,36 +154,34 @@ export const createMotionPreferenceListener = (
  * Creates transition custom properties with enhanced animations
  */
 const createTransitionCustomProperties = () => {
-  const { duration, easing } = themeTransitions
-
   return {
     // Enhanced durations for different use cases
-    '--transition-duration-fast': duration.fast,
-    '--transition-duration-normal': duration.normal,
-    '--transition-duration-slow': duration.slow,
+    '--transition-duration-fast': '150ms',
+    '--transition-duration-normal': '300ms',
+    '--transition-duration-slow': '500ms',
 
     // Enhanced easing curves for smooth transitions
-    '--transition-easing-standard': easing.standard,
-    '--transition-easing-emphasized': easing.emphasized,
-    '--transition-easing-decelerated': easing.decelerated,
+    '--transition-easing-standard': 'cubic-bezier(0.4, 0, 0.2, 1)',
+    '--transition-easing-emphasized': 'cubic-bezier(0.0, 0, 0.2, 1)',
+    '--transition-easing-decelerated': 'cubic-bezier(0.0, 0, 0.2, 1)',
 
     // Performance-optimized properties for theme transitions
     '--transition-theme-colors': `
-      background-color ${duration.normal} ${easing.standard},
-      border-color ${duration.normal} ${easing.standard},
-      color ${duration.normal} ${easing.standard}
+      background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 300ms cubic-bezier(0.4, 0, 0.2, 1)
     `,
     '--transition-theme-shadows': `
-      box-shadow ${duration.normal} ${easing.standard},
-      filter ${duration.normal} ${easing.standard}
+      box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      filter 300ms cubic-bezier(0.4, 0, 0.2, 1)
     `,
     '--transition-theme-all': `
-      background-color ${duration.normal} ${easing.standard},
-      border-color ${duration.normal} ${easing.standard},
-      color ${duration.normal} ${easing.standard},
-      fill ${duration.normal} ${easing.standard},
-      stroke ${duration.normal} ${easing.standard},
-      box-shadow ${duration.normal} ${easing.standard}
+      background-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      border-color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      color 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      fill 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      stroke 300ms cubic-bezier(0.4, 0, 0.2, 1),
+      box-shadow 300ms cubic-bezier(0.4, 0, 0.2, 1)
     `,
   }
 }
@@ -288,7 +286,7 @@ function applyThemeStyles(
           transitionState.isTransitioning = false
           root.classList.remove('theme-transitioning')
         },
-        parseInt(themeTransitions.duration.normal) + 50
+350
       )
     }, 16) // Next frame
   } else {
