@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
+import siteConfig from '@/content/site-config.json'
 
 interface ContactFormData {
   name: string
@@ -57,7 +58,7 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
 
     // Create structured email content
     const subject = `Contact Inquiry from ${formData.name}`
-    const body = `Hi Rrish,
+    const body = `Hi there,
 
 ${formData.message}
 
@@ -72,7 +73,7 @@ Best regards,
 ${formData.name}`
 
     // Create mailto URL
-    const mailtoUrl = `mailto:hello@rrishmusic.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
+    const mailtoUrl = `mailto:${siteConfig.branding.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
     
     // Open email client
     window.location.href = mailtoUrl

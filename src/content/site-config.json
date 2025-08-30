@@ -1,0 +1,34 @@
+{
+  "branding": {
+    "name": "RrishMusic",
+    "tagline": "Live Performances • Music Lessons • Collaborations",
+    "description": "Professional musician offering live piano performances, personalized music lessons, and collaborative projects",
+    "email": "hello@rrishmusic.com",
+    "website": "https://www.rrishmusic.com"
+  },
+  "seo": {
+    "title": "RrishMusic - Live Performances, Music Lessons & Studio Collaborations | Professional Guitarist Melbourne",
+    "description": "Professional musician offering live performances, music lessons, and studio collaborations in Melbourne. Experience blues guitar performances, learn piano and music theory, or collaborate on creative projects.",
+    "keywords": "Melbourne musician, live performances, music lessons, piano teacher, guitar lessons, blues music, studio collaboration, corporate entertainment, wedding music, music theory, improvisation"
+  },
+  "navigation": {
+    "brand": {
+      "name": "RrishMusic",
+      "ariaLabel": "RrishMusic - Home"
+    }
+  },
+  "hero": {
+    "title": "RrishMusic",
+    "subtitle": "Live Performances • Music Lessons • Collaborations",
+    "cta": {
+      "primary": {
+        "text": "Watch Performances",
+        "href": "/gallery"
+      },
+      "secondary": {
+        "text": "Start Learning", 
+        "href": "/lessons"
+      }
+    }
+  }
+}

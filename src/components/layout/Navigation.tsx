@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate, Location } from 'react-router-dom'
 import { NAVIGATION_ITEMS } from '@/utils/constants'
 import { useSmoothScroll, useScrollSpy } from '@/hooks/useScrollSpy'
 import { useDeviceDetection } from '@/hooks/useDeviceDetection'
+import siteConfig from '@/content/site-config.json'
 
 interface NavigationProps {
   // Optional activeSection override - mainly for testing
@@ -503,9 +504,9 @@ export const Navigation: React.FC<NavigationProps> = ({
             <Link
               to="/"
               className="flex items-center space-x-2 text-xl font-bold text-theme-primary hover:text-theme-primary-hover transition-colors duration-200 touch-target"
-              aria-label="Rrish Music - Home"
+              aria-label={siteConfig.navigation.brand.ariaLabel}
             >
-              <span>Rrish</span>
+              <span>{siteConfig.navigation.brand.name}</span>
             </Link>
 
             {/* Desktop Navigation */}
