@@ -28,14 +28,6 @@ export {
   TeachingSuccessStories,
 } from './TeachingSections'
 
-// Performance Sections - Updated to import from performance subfolder
-export {
-  PerformanceVenues,
-  PerformanceServices,
-  PerformanceEquipment,
-  PerformanceTestimonials,
-} from './performance'
-
 // Collaboration Sections
 export {
   CollaborationPortfolioSection,
