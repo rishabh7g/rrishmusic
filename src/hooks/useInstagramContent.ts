@@ -78,18 +78,23 @@ export const useInstagramContent = (
 
         if (!mountedRef.current) return
 
+        // Handle direct array return from service
+        const posts = Array.isArray(result) ? result : result?.posts || []
+        const fromCache = Array.isArray(result) ? false : result?.fromCache || false
+        const serviceError = Array.isArray(result) ? null : result?.error || null
+
         setState(prev => ({
           ...prev,
-          posts: result.posts,
-          fromCache: result.fromCache,
-          error: result.error || null,
+          posts,
+          fromCache,
+          error: serviceError,
           loading: false,
-          hasMore: result.posts.length >= effectiveLimit,
+          hasMore: posts.length >= effectiveLimit,
         }))
 
         // Log for debugging
-        if (result.error) {
-          console.warn('Instagram content warning:', result.error)
+        if (serviceError) {
+          console.warn('Instagram content warning:', serviceError)
         }
       } catch (error) {
         if (!mountedRef.current) return

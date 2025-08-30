@@ -260,7 +260,7 @@ const SocialStats: React.FC = () => (
  * Instagram Mini Feed Component
  */
 const InstagramMiniSocial: React.FC = () => {
-  const { posts, loading, error } = useInstagramContent({ limit: 3 })
+  const { posts = [], loading, error } = useInstagramContent({ limit: 3 })
 
   if (loading || error || posts.length === 0) {
     return null
