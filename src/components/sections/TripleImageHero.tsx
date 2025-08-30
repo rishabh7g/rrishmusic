@@ -76,10 +76,10 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
     >
       {/* Image Grid Container */}
       <div className="absolute inset-0">
-        <div className="grid grid-cols-1 md:grid-cols-4 h-full">
+        <div className="grid grid-cols-4 h-full">
           {/* Left Image - 25% */}
           <motion.div
-            className="relative md:col-span-1 h-64 md:h-full"
+            className="relative col-span-1 h-full"
             variants={imageAnimation}
           >
             <div className="relative h-full overflow-hidden group">
@@ -105,7 +105,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
 
           {/* Center Image - 50% (Prominent) */}
           <motion.div
-            className="relative md:col-span-2 h-96 md:h-full"
+            className="relative col-span-2 h-full"
             variants={imageAnimation}
           >
             <div className="relative h-full overflow-hidden group">
@@ -128,21 +128,21 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
 
               <motion.div
-                className="absolute inset-0 flex flex-col justify-center items-center text-center px-4 md:px-8"
+                className="absolute inset-0 flex flex-col justify-center items-center text-center px-2 sm:px-4 md:px-8"
                 variants={overlayAnimation}
               >
-                <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-4 drop-shadow-2xl">
+                <h1 className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-bold text-white mb-2 sm:mb-4 drop-shadow-2xl">
                   Rrish Music
                 </h1>
-                <p className="text-lg md:text-xl lg:text-2xl text-white/90 mb-8 max-w-2xl font-medium drop-shadow-lg">
+                <p className="text-xs sm:text-sm md:text-xl lg:text-2xl text-white/90 mb-4 sm:mb-8 max-w-2xl font-medium drop-shadow-lg">
                   Live Performances • Music Lessons • Collaborations
                 </p>
 
                 {/* Call-to-Action Buttons */}
-                <div className="flex flex-col sm:flex-row gap-4">
+                <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
                   <motion.a
                     href="/gallery"
-                    className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-8 py-4 rounded-full font-semibold hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -150,7 +150,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
                   </motion.a>
                   <motion.a
                     href="/lessons"
-                    className="bg-theme-primary/80 backdrop-blur-sm border border-theme-primary/50 text-white px-8 py-4 rounded-full font-semibold hover:bg-theme-primary hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl"
+                    className="bg-theme-primary/80 backdrop-blur-sm border border-theme-primary/50 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-theme-primary hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
@@ -163,7 +163,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
 
           {/* Right Image - 25% */}
           <motion.div
-            className="relative md:col-span-1 h-64 md:h-full"
+            className="relative col-span-1 h-full"
             variants={imageAnimation}
           >
             <div className="relative h-full overflow-hidden group">
@@ -189,8 +189,6 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
         </div>
       </div>
 
-      {/* Mobile-specific overlay for better text readability */}
-      <div className="absolute inset-0 bg-black/20 md:bg-transparent pointer-events-none" />
 
       {/* Scroll indicator */}
       <motion.div
