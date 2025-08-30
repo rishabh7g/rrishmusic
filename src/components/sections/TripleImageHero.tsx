@@ -92,9 +92,12 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
               <img
                 src={images.left.src}
                 alt={images.left.alt}
-                className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+                className={`w-full h-full object-cover sm:object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
                   imagesLoaded.left ? 'opacity-100' : 'opacity-0'
                 }`}
+                style={{
+                  objectPosition: 'center 25%', // Show more of the upper part on mobile
+                }}
                 loading="lazy"
                 onLoad={() => handleImageLoad('left')}
               />
@@ -118,9 +121,12 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
               <img
                 src={images.center.src}
                 alt={images.center.alt}
-                className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+                className={`w-full h-full object-cover sm:object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
                   imagesLoaded.center ? 'opacity-100' : 'opacity-0'
                 }`}
+                style={{
+                  objectPosition: 'center 20%', // Focus on the subject/person in the image
+                }}
                 loading="eager"
                 onLoad={() => handleImageLoad('center')}
               />
@@ -176,9 +182,12 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
               <img
                 src={images.right.src}
                 alt={images.right.alt}
-                className={`w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
+                className={`w-full h-full object-cover sm:object-cover transition-all duration-700 ease-out group-hover:scale-105 ${
                   imagesLoaded.right ? 'opacity-100' : 'opacity-0'
                 }`}
+                style={{
+                  objectPosition: 'center 30%', // Show more of the upper content
+                }}
                 loading="lazy"
                 onLoad={() => handleImageLoad('right')}
               />
