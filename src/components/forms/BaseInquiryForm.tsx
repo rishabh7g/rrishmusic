@@ -486,7 +486,9 @@ export function BaseInquiryForm<T extends InquiryData>({
                 <h2 className="text-2xl font-bold theme-text">
                   {config.title}
                 </h2>
-                <p className="theme-text-secondary mt-1">{config.description}</p>
+                <p className="theme-text-secondary mt-1">
+                  {config.description}
+                </p>
               </div>
               <button
                 onClick={onClose}

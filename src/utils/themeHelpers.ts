@@ -281,13 +281,10 @@ function applyThemeStyles(
       root.classList.remove('theme-no-transition')
 
       // Clear transition state after animation completes
-      setTimeout(
-        () => {
-          transitionState.isTransitioning = false
-          root.classList.remove('theme-transitioning')
-        },
-350
-      )
+      setTimeout(() => {
+        transitionState.isTransitioning = false
+        root.classList.remove('theme-transitioning')
+      }, 350)
     }, 16) // Next frame
   } else {
     // Disable transitions for initial load or reduced motion

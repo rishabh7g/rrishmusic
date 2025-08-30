@@ -121,7 +121,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
 
   return (
     <section
-      className={`collaboration-process py-20 bg-theme-bg/30 backdrop-blur-sm transition-theme-colors ${className}`}
+      className={`collaboration-process py-20 bg-theme-bg transition-theme-colors ${className}`}
     >
       <div className="container mx-auto max-w-7xl p-4">
         <motion.div
@@ -134,14 +134,14 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
           <div className="text-center mb-16">
             <motion.h2
               variants={fadeInUp}
-              className="text-3xl md:text-4xl lg:text-5xl font-bold text-white drop-shadow-lg mb-6"
+              className="text-3xl md:text-4xl lg:text-5xl font-bold text-theme-text mb-6 transition-theme-colors"
             >
               Collaboration{' '}
               <span className="text-brand-blue-primary">Process</span>
             </motion.h2>
             <motion.p
               variants={fadeInUp}
-              className="text-lg md:text-xl text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed"
+              className="text-lg md:text-xl text-theme-text-secondary max-w-3xl mx-auto leading-relaxed transition-theme-colors"
             >
               A structured yet flexible approach to creative collaboration that
               ensures your vision is understood, planned, and executed to the
@@ -161,7 +161,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                   className={`flex flex-col items-center p-6 rounded-lg transition-all duration-300 ${
                     activeStep === step.id
                       ? 'bg-brand-blue-primary text-white shadow-lg scale-105'
-                      : 'bg-gray-50 text-white drop-shadow-lg hover:bg-brand-blue-primary/10 hover:text-brand-blue-primary'
+                      : 'bg-theme-bg-secondary text-theme-text hover:bg-brand-blue-primary/10 hover:text-brand-blue-primary transition-theme-colors'
                   }`}
                 >
                   <div
@@ -200,7 +200,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3 }}
-              className="bg-gray-50 rounded-xl p-8 md:p-12"
+              className="bg-theme-bg-secondary rounded-xl p-8 md:p-12 transition-theme-colors"
             >
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
                 {/* Left Column - Description */}
@@ -210,7 +210,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                       {activeStepData.icon}
                     </div>
                     <div>
-                      <h3 className="text-2xl md:text-3xl font-bold text-white drop-shadow-lg">
+                      <h3 className="text-2xl md:text-3xl font-bold text-theme-text transition-theme-colors">
                         {activeStepData.title}
                       </h3>
                       <p className="text-lg text-brand-blue-secondary">
@@ -219,13 +219,13 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                     </div>
                   </div>
 
-                  <p className="text-lg text-white/90 drop-shadow leading-relaxed mb-8">
+                  <p className="text-lg text-theme-text-secondary leading-relaxed mb-8 transition-theme-colors">
                     {activeStepData.description}
                   </p>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div>
-                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">
+                      <h4 className="font-semibold text-theme-text mb-3 transition-theme-colors">
                         Duration
                       </h4>
                       <p className="text-brand-blue-primary font-medium">
@@ -233,10 +233,10 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                       </p>
                     </div>
                     <div>
-                      <h4 className="font-semibold text-white drop-shadow-lg mb-3">
+                      <h4 className="font-semibold text-theme-text mb-3 transition-theme-colors">
                         Key Deliverables
                       </h4>
-                      <ul className="text-white/80 drop-shadow space-y-1">
+                      <ul className="text-theme-text-secondary space-y-1 transition-theme-colors">
                         {activeStepData.deliverables.map(
                           (deliverable, index) => (
                             <li key={index} className="flex items-center">
@@ -262,14 +262,14 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
 
                 {/* Right Column - Features */}
                 <div>
-                  <h4 className="text-xl font-semibold text-white drop-shadow-lg mb-6">
+                  <h4 className="text-xl font-semibold text-theme-text mb-6 transition-theme-colors">
                     What This Includes
                   </h4>
                   <div className="space-y-4">
                     {activeStepData.features.map((feature, index) => (
                       <div
                         key={index}
-                        className="flex items-center p-4 bg-theme-bg/20 backdrop-blur-sm rounded-lg border border-white/20"
+                        className="flex items-center p-4 bg-theme-bg/50 rounded-lg border border-theme-border transition-theme-colors"
                       >
                         <svg
                           className="w-5 h-5 text-brand-blue-primary mr-3 flex-shrink-0"
@@ -282,7 +282,7 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
                             clipRule="evenodd"
                           />
                         </svg>
-                        <span className="text-white drop-shadow-lg">
+                        <span className="text-theme-text transition-theme-colors">
                           {feature}
                         </span>
                       </div>
@@ -292,21 +292,6 @@ export const CollaborationProcess: React.FC<CollaborationProcessProps> = ({
               </div>
             </motion.div>
           )}
-
-          {/* Process Benefits */}
-          <motion.div variants={fadeInUp} className="mt-16 text-center">
-            <div className="bg-brand-blue-primary/5 rounded-xl p-8">
-              <h3 className="text-2xl font-bold text-white drop-shadow-lg mb-4">
-                Why This Approach Works
-              </h3>
-              <p className="text-lg text-white/90 drop-shadow max-w-3xl mx-auto leading-relaxed">
-                This structured process ensures clear communication, aligned
-                expectations, and successful outcomes. Every collaboration is
-                unique, and this framework adapts to your specific needs while
-                maintaining professional standards and quality.
-              </p>
-            </div>
-          </motion.div>
         </motion.div>
       </div>
     </section>

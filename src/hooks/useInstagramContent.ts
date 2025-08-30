@@ -80,8 +80,12 @@ export const useInstagramContent = (
 
         // Handle direct array return from service
         const posts = Array.isArray(result) ? result : result?.posts || []
-        const fromCache = Array.isArray(result) ? false : result?.fromCache || false
-        const serviceError = Array.isArray(result) ? null : result?.error || null
+        const fromCache = Array.isArray(result)
+          ? false
+          : result?.fromCache || false
+        const serviceError = Array.isArray(result)
+          ? null
+          : result?.error || null
 
         setState(prev => ({
           ...prev,
