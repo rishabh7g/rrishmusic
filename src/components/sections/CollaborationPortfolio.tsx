@@ -308,7 +308,6 @@ const ProjectModal: React.FC<{
                       </div>
                     </div>
                   </div>
-
                   <div>
                     <h4 className="text-xl font-semibold text-neutral-charcoal mb-4">
                       Key Highlights
@@ -559,6 +558,7 @@ export const CollaborationPortfolio: React.FC<CollaborationPortfolioProps> = ({
             <InstagramFeed
               limit={6}
               showHeader={false}
+              showFollowButton={false}
               className="collaboration-instagram-feed"
             />
 

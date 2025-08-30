@@ -18,6 +18,7 @@ interface InstagramFeedProps {
   showHeader?: boolean
   useEnhancedHook?: boolean
   autoRefresh?: boolean
+  showFollowButton?: boolean
 }
 
 /**
@@ -59,6 +60,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = memo(
     showHeader = true,
     useEnhancedHook: _useEnhancedHook = true,
     autoRefresh = false,
+    showFollowButton = true,
   }) => {
     const {
       posts = [],
@@ -181,7 +183,7 @@ export const InstagramFeed: React.FC<InstagramFeedProps> = memo(
         </motion.div>
 
         {/* Footer CTA */}
-        {posts.length > 0 && (
+        {posts.length > 0 && showFollowButton && (
           <div className="text-center mt-8 pt-6 border-t border-theme-border transition-theme-colors">
             <a
               href="https://instagram.com/rrishmusic"
