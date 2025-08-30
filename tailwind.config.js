@@ -2,6 +2,29 @@
 export default {
 	darkMode: 'class', // Enable class-based dark mode
 	content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+	safelist: [
+		// Theme utility classes that might not be detected by content scanning
+		'theme-text',
+		'theme-text-secondary', 
+		'theme-text-muted',
+		'bg-theme-bg',
+		'bg-theme-bg-secondary',
+		'bg-theme-bg-tertiary',
+		'border-theme-border',
+		'border-theme-border-hover',
+		'bg-theme-primary',
+		'hover:bg-theme-primary-hover',
+		'text-theme-primary',
+		'focus:border-theme-primary',
+		'focus:ring-theme-primary',
+		'placeholder:text-theme-text-muted',
+		// Theme transition classes
+		'theme-transition',
+		'theme-transition-fast',
+		'theme-transition-colors',
+		'theme-loaded',
+		'theme-no-transition'
+	],
 	theme: {
 		extend: {
 			colors: {
