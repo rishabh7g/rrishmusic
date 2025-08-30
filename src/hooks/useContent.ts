@@ -8,7 +8,6 @@ import teachingContentRaw from '../content/teaching.json'
 import collaborationContentRaw from '../content/collaboration.json'
 import contactContent from '../content/contact.json'
 import navigationData from '../content/navigation.json'
-// import statsData from '../content/stats.json'; // Currently unused
 
 // Type definitions for better TypeScript support
 export interface HomeContent {
