@@ -14,10 +14,10 @@ import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials'
 import { CollaborationPortfolio } from '@/components/sections/CollaborationPortfolio'
 import { CollaborationProcess } from '@/components/sections/CollaborationProcess'
 
-// Import universal inquiry form
-import UniversalInquiryForm, {
-  UniversalInquiryData,
-} from '@/components/forms/UniversalInquiryForm'
+// Import performance-specific inquiry form
+import PerformanceInquiryForm, {
+  PerformanceInquiryData,
+} from '@/components/forms/PerformanceInquiryForm'
 
 /**
  * Section fallback component
@@ -64,8 +64,8 @@ export const Performance: React.FC<PerformancePageProps> = ({
   // Form state management
   const [isFormOpen, setIsFormOpen] = React.useState(false)
 
-  const handleFormSubmit = async (data: UniversalInquiryData) => {
-    console.log('Form submission:', data)
+  const handleFormSubmit = async (data: PerformanceInquiryData) => {
+    console.log('Performance inquiry submission:', data)
     // TODO: Implement actual form submission logic
     // For now, just simulate success
     await new Promise(resolve => setTimeout(resolve, 1000))
@@ -488,8 +488,8 @@ export const Performance: React.FC<PerformancePageProps> = ({
             </div>
           </section>
 
-          {/* Universal Inquiry Form */}
-          <UniversalInquiryForm
+          {/* Performance-Specific Inquiry Form */}
+          <PerformanceInquiryForm
             isOpen={isFormOpen}
             onClose={() => setIsFormOpen(false)}
             onSubmit={handleFormSubmit}
