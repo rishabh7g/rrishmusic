@@ -197,6 +197,7 @@ export const Performance: React.FC<PerformancePageProps> = ({
                     showHeader={false}
                     className="mb-8"
                     useEnhancedHook={true}
+                    showFollowButton={false}
                   />
 
                   {/* Follow on Instagram Button */}

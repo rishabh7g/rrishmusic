@@ -171,6 +171,7 @@ export function Home() {
               <InstagramFeed
                 limit={6}
                 showHeader={false}
+                showFollowButton={false}
                 className="mb-8"
                 useEnhancedHook={true}
               />
