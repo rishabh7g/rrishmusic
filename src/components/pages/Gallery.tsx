@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
+import { motion, AnimatePresence, type Variants } from 'framer-motion'
 import { usePageSEO } from '@/hooks/usePageSEO'
+import galleryData from '@/content/gallery.json'
 
 // Types
 interface MediaItem {
@@ -16,10 +17,21 @@ interface MediaItem {
   isPortrait: boolean
   isFeatured?: boolean
   priority?: 'high' | 'medium' | 'low'
+  gridSpan?: { cols: number; rows: number }
+  objectFit?: 'cover' | 'contain'
+}
+
+interface GalleryItem {
+  filename: string
+  category: string
+  path: string
+  aspectRatio: number
+  isFeatured?: boolean
+  priority: 'high' | 'medium' | 'low'
 }
 
 // Animation variants
-const containerVariants = {
+const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
     opacity: 1,
@@ -64,24 +76,21 @@ const parseImageName = (
 export function Gallery() {
   const [mediaItems, setMediaItems] = useState<MediaItem[]>([])
   const [loading, setLoading] = useState(true)
-  const [layoutCalculated, setLayoutCalculated] = useState(false)
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [lightboxIndex, setLightboxIndex] = useState(0)
 
   // SEO setup
   usePageSEO({
-    title: 'Gallery - Rrish Music',
-    description:
-      "Explore Rrish's musical journey through photos and videos showcasing performances and collaborations.",
-    keywords:
-      'gallery, photos, videos, performances, music, collaboration, band',
-    canonicalUrl: 'https://www.rrishmusic.com/gallery',
+    title: galleryData.seo.title,
+    description: galleryData.seo.description,
+    keywords: galleryData.seo.keywords,
+    url: galleryData.seo.canonicalUrl,
   })
 
   // Advanced mosaic layout calculator
   const calculateMosaicLayout = useCallback((items: MediaItem[]) => {
     return items.map((item, index) => {
-      const { aspectRatio, isPortrait, isFeatured, priority } = item
+      const { aspectRatio, isPortrait, isFeatured } = item
 
       // Enhanced sizing algorithm based on aspect ratio and importance
       let gridSpan = { cols: 1, rows: 1 }
@@ -136,104 +145,8 @@ export function Gallery() {
       try {
         const items: MediaItem[] = []
 
-        // Load image files with pre-calculated aspect ratios and enhanced metadata
-        const imageFiles = [
-          // Band images - typically landscape, get more prominence
-          {
-            filename: 'All star band_Grazeland.jpg',
-            category: 'band',
-            path: '/images/instagram/band/All star band_Grazeland.jpg',
-            aspectRatio: 1.6, // estimated landscape ratio
-            isFeatured: true, // make first band image featured
-            priority: 'high' as const,
-          },
-          {
-            filename: 'XBand_Grazeland 1.jpeg',
-            category: 'band',
-            path: '/images/instagram/band/XBand_Grazeland 1.jpeg',
-            aspectRatio: 1.5,
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'XBand_Grazeland.jpg',
-            category: 'band',
-            path: '/images/instagram/band/XBand_Grazeland.jpg',
-            aspectRatio: 1.7,
-            isFeatured: true, // make first band image featured
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'XBand_Lunar day night event.jpg',
-            category: 'band',
-            path: '/images/instagram/band/XBand_Lunar day night event.jpg',
-            aspectRatio: 1.4,
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'XBand_Pop up park-Point Cook.jpg',
-            category: 'band',
-            path: '/images/instagram/band/XBand_Pop up park-Point Cook.jpg',
-            aspectRatio: 2.1, // wide panoramic
-            priority: 'high' as const,
-          },
-          {
-            filename: 'Rrish_Rishikesh.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Rishikesh.jpg',
-            aspectRatio: 0.9, // very tall portrait
-            priority: 'medium' as const,
-          },
-          // Portrait images - vertical orientation
-          {
-            filename: 'Rrish solo 2.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo 2.jpg',
-            aspectRatio: 1.2,
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'Rrish solo.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo.jpg',
-            aspectRatio: 0.8, // almost square
-            priority: 'low' as const,
-          },
-          {
-            filename: 'Rrish_Lunar day night event.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Lunar day night event.jpg',
-            aspectRatio: 1.5,
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'Rrish solo 3.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo 3.jpg',
-            aspectRatio: 0.65, // tall portrait
-            priority: 'medium' as const,
-          },
-          {
-            filename: 'Rrish_Pop up park-Point Cook 1.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg',
-            aspectRatio: 0.8,
-            priority: 'low' as const,
-          },
-          {
-            filename: 'Rrish solo 1.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish solo 1.jpg',
-            aspectRatio: 0.8, // portrait ratio
-            priority: 'high' as const,
-          },
-          {
-            filename: 'Rrish_Pop up park-Point Cook.jpg',
-            category: 'portrait',
-            path: '/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg',
-            aspectRatio: 0.9,
-            priority: 'low' as const,
-          },
-        ]
+        // Load image files from JSON configuration
+        const imageFiles: GalleryItem[] = galleryData.mediaItems
 
         imageFiles.forEach((file, index) => {
           const itemId = `image-${file.category}-${index}`
@@ -261,7 +174,6 @@ export function Gallery() {
         // Calculate advanced mosaic layout
         const itemsWithLayout = calculateMosaicLayout(items)
         setMediaItems(itemsWithLayout)
-        setLayoutCalculated(true)
       } catch (error) {
         console.error('Failed to load media items:', error)
       } finally {
@@ -319,7 +231,7 @@ export function Gallery() {
       <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center transition-theme-colors">
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-theme-primary mx-auto mb-4"></div>
-          <p className="text-theme-text-secondary">Loading gallery...</p>
+          <p className="text-theme-text-secondary">{galleryData.ui.loadingMessage}</p>
         </div>
       </div>
     )
@@ -330,10 +242,10 @@ export function Gallery() {
       <div className="min-h-screen bg-theme-bg text-theme-text flex items-center justify-center transition-theme-colors">
         <div className="text-center max-w-md px-4">
           <p className="text-theme-text-secondary mb-4">
-            No media content available at the moment.
+            {galleryData.ui.emptyStateTitle}
           </p>
           <p className="text-sm text-theme-text-secondary">
-            Media files will appear here once they're added to the gallery.
+            {galleryData.ui.emptyStateDescription}
           </p>
         </div>
       </div>
@@ -350,8 +262,8 @@ export function Gallery() {
       {/* Enhanced Media Mosaic Grid */}
       <div className="container mx-auto px-4 max-w-7xl mt-8">
         {/* Advanced CSS Grid - Responsive with dynamic spanning */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 xl:grid-cols-8 auto-rows-[120px] sm:auto-rows-[140px] md:auto-rows-[160px] gap-3 md:gap-4">
-          {mediaItems.map((item: any, index) => {
+        <div className={`grid ${galleryData.layout.grid.mobile} ${galleryData.layout.grid.tablet} ${galleryData.layout.grid.desktop} ${galleryData.layout.grid.rowHeight} ${galleryData.layout.grid.gap}`}>
+          {mediaItems.map((item: MediaItem, index) => {
             const { gridSpan, objectFit } = item
 
             // Responsive grid classes with proper landscape prominence
@@ -420,7 +332,7 @@ export function Gallery() {
                   {item.priority === 'high' && (
                     <div className="absolute top-2 left-2 z-20">
                       <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-white text-xs px-2 py-1 rounded-full font-semibold shadow-lg">
-                        ⭐ Featured
+                        {galleryData.ui.featuredBadge}
                       </div>
                     </div>
                   )}
@@ -435,7 +347,7 @@ export function Gallery() {
                         <path d="M8 5v14l11-7z" />
                       </svg>
                       <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                        VIDEO
+                        {galleryData.ui.videoBadge}
                       </div>
                     </div>
                   ) : (
@@ -537,7 +449,7 @@ export function Gallery() {
           <div className="mt-8 p-4 bg-gray-100 rounded-lg text-sm">
             <h4 className="font-semibold mb-2">Layout Debug Info:</h4>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 text-xs">
-              {mediaItems.map((item: any) => (
+              {mediaItems.map((item: MediaItem) => (
                 <div key={item.id} className="bg-white p-2 rounded">
                   <div className="font-medium">{item.name}</div>
                   <div>Ratio: {item.aspectRatio}</div>
