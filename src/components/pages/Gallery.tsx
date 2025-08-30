@@ -88,40 +88,40 @@ export function Gallery() {
       let objectFit: 'cover' | 'contain' = 'cover'
 
       if (isFeatured) {
-        // Featured images get premium real estate
-        gridSpan = isPortrait ? { cols: 2, rows: 3 } : { cols: 3, rows: 2 }
+        // Featured images get premium real estate and no cropping
+        gridSpan = isPortrait ? { cols: 2, rows: 4 } : { cols: 4, rows: 2 }
         objectFit = 'contain'
       } else if (aspectRatio >= 2.0) {
-        // Wide landscape images (panoramic)
-        gridSpan = { cols: 3, rows: 1 }
-        objectFit = 'cover'
+        // Wide landscape images (panoramic) - no cropping to preserve composition
+        gridSpan = { cols: 4, rows: 2 }
+        objectFit = 'contain'
       } else if (aspectRatio >= 1.5) {
-        // Standard landscape images - give them more prominence
-        gridSpan = { cols: 2, rows: 2 }
-        objectFit = 'cover'
+        // Standard landscape images - twice the area of portraits, no cropping
+        gridSpan = { cols: 3, rows: 2 }
+        objectFit = 'contain'
       } else if (aspectRatio >= 1.2) {
-        // Slightly wide images
-        gridSpan = { cols: 2, rows: 1 }
-        objectFit = 'cover'
+        // Slightly wide images - still bigger than portraits
+        gridSpan = { cols: 2, rows: 2 }
+        objectFit = 'contain'
+      } else if (aspectRatio >= 1.0) {
+        // Square-ish images - moderate size
+        gridSpan = { cols: 2, rows: 2 }
+        objectFit = 'contain'
       } else if (aspectRatio <= 0.6) {
         // Tall portrait images
         gridSpan = { cols: 1, rows: 3 }
         objectFit = 'contain'
-      } else if (aspectRatio <= 0.8) {
-        // Standard portrait images
-        gridSpan = { cols: 1, rows: 2 }
-        objectFit = 'cover'
       } else {
-        // Square-ish images
-        gridSpan = { cols: 1, rows: 1 }
-        objectFit = 'cover'
+        // Standard portrait images - baseline size
+        gridSpan = { cols: 1, rows: 2 }
+        objectFit = 'contain'
       }
 
-      // Add some randomization for visual interest (every 4th item gets variation)
-      if (index % 4 === 0 && !isFeatured) {
-        if (isPortrait && gridSpan.rows < 3) {
+      // Add some randomization for visual interest (every 5th item gets variation)
+      if (index % 5 === 0 && !isFeatured) {
+        if (isPortrait && gridSpan.rows < 4) {
           gridSpan.rows += 1
-        } else if (!isPortrait && gridSpan.cols < 3) {
+        } else if (!isPortrait && gridSpan.cols < 5) {
           gridSpan.cols += 1
         }
       }
@@ -354,12 +354,14 @@ export function Gallery() {
           {mediaItems.map((item: any, index) => {
             const { gridSpan, objectFit } = item
 
-            // Responsive grid classes with proper landscape prominence
+            // Enhanced responsive grid classes for proper landscape prominence
             const getGridClasses = () => {
               let classes = ''
 
-              // Mobile (2 cols): Simplify spans
-              if (gridSpan.cols >= 3) {
+              // Mobile (2 cols): Simplify spans but maintain landscape advantage
+              if (gridSpan.cols >= 4) {
+                classes += 'col-span-2 '
+              } else if (gridSpan.cols >= 3) {
                 classes += 'col-span-2 '
               } else if (gridSpan.cols >= 2) {
                 classes += 'col-span-2 '
@@ -367,8 +369,10 @@ export function Gallery() {
                 classes += 'col-span-1 '
               }
 
-              // Tablet (3-4 cols): Allow more variety
-              if (gridSpan.cols >= 3) {
+              // Tablet (3-4 cols): Better landscape representation
+              if (gridSpan.cols >= 4) {
+                classes += 'sm:col-span-3 md:col-span-4 '
+              } else if (gridSpan.cols >= 3) {
                 classes += 'sm:col-span-3 md:col-span-3 '
               } else if (gridSpan.cols >= 2) {
                 classes += 'sm:col-span-2 md:col-span-2 '
@@ -376,11 +380,15 @@ export function Gallery() {
                 classes += 'sm:col-span-1 md:col-span-1 '
               }
 
-              // Desktop (6-8 cols): Full flexibility
-              classes += `lg:col-span-${Math.min(gridSpan.cols, 4)} xl:col-span-${gridSpan.cols} `
+              // Desktop (6-8 cols): Full flexibility with landscape prominence
+              const desktopCols = Math.min(gridSpan.cols, 6)
+              const xlCols = Math.min(gridSpan.cols, 8)
+              classes += `lg:col-span-${desktopCols} xl:col-span-${xlCols} `
 
-              // Row spans - more generous for portraits
-              if (gridSpan.rows >= 3) {
+              // Row spans - accommodate larger landscape images
+              if (gridSpan.rows >= 4) {
+                classes += 'row-span-4 sm:row-span-4 md:row-span-5 '
+              } else if (gridSpan.rows >= 3) {
                 classes += 'row-span-3 sm:row-span-3 md:row-span-4 '
               } else if (gridSpan.rows >= 2) {
                 classes += 'row-span-2 sm:row-span-2 md:row-span-3 '
@@ -442,16 +450,16 @@ export function Gallery() {
                     <img
                       src={item.src}
                       alt={item.title}
-                      className={`w-full h-full transition-transform duration-500 group-hover:scale-110 ${
+                      className={`w-full h-full transition-transform duration-500 group-hover:scale-105 ${
                         objectFit === 'contain'
-                          ? 'object-contain p-2'
+                          ? `object-contain ${item.aspectRatio > 1 ? 'p-2' : 'p-1'}`
                           : 'object-cover'
                       }`}
                       loading="lazy"
                       style={{
                         display: 'block',
-                        minHeight: '100%',
-                        minWidth: '100%',
+                        width: '100%',
+                        height: '100%',
                       }}
                     />
                   )}
