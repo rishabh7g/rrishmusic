@@ -288,8 +288,31 @@ export function Gallery() {
                 classes += 'sm:col-span-1 md:col-span-1 '
               }
 
-              // Desktop (6-8 cols): Full flexibility
-              classes += `lg:col-span-${Math.min(gridSpan.cols, 4)} xl:col-span-${gridSpan.cols} `
+              // Desktop (6-8 cols): Use static classes for Tailwind build
+              const lgCols = Math.min(gridSpan.cols, 4)
+              const xlCols = gridSpan.cols
+              
+              // LG classes (max 4 cols)
+              switch (lgCols) {
+                case 1: classes += 'lg:col-span-1 '; break;
+                case 2: classes += 'lg:col-span-2 '; break;
+                case 3: classes += 'lg:col-span-3 '; break;
+                case 4: classes += 'lg:col-span-4 '; break;
+                default: classes += 'lg:col-span-1 '; break;
+              }
+              
+              // XL classes (up to 8 cols)
+              switch (xlCols) {
+                case 1: classes += 'xl:col-span-1 '; break;
+                case 2: classes += 'xl:col-span-2 '; break;
+                case 3: classes += 'xl:col-span-3 '; break;
+                case 4: classes += 'xl:col-span-4 '; break;
+                case 5: classes += 'xl:col-span-5 '; break;
+                case 6: classes += 'xl:col-span-6 '; break;
+                case 7: classes += 'xl:col-span-7 '; break;
+                case 8: classes += 'xl:col-span-8 '; break;
+                default: classes += 'xl:col-span-1 '; break;
+              }
 
               // Row spans - more generous for portraits
               if (gridSpan.rows >= 3) {
