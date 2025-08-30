@@ -21,7 +21,7 @@ import { CollaborationHero } from '@/components/sections/CollaborationHero'
 import { CollaborationPortfolio } from '@/components/sections/CollaborationPortfolio'
 import { CollaborationProcess } from '@/components/sections/CollaborationProcess'
 import { CollaborationCTA } from '@/components/sections/CollaborationCTA'
-import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion'
+// import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion' // Component not implemented yet
 
 interface CollaborationPageProps {
   className?: string
@@ -78,38 +78,12 @@ export const Collaboration: React.FC<CollaborationPageProps> = ({
             {/* Portfolio Section - Instagram collaboration content integration */}
             <CollaborationPortfolio />
 
-            {/* Cross-Service Suggestion - Teaching Skills */}
-            <section className="py-8">
-              <div className="container mx-auto max-w-7xl p-4">
-                <CrossServiceSuggestion
-                  fromService="collaboration"
-                  pageSection="requirements"
-                  placement="inline"
-                  timing="after-engagement"
-                  minTimeOnPage={25}
-                  minScrollPercentage={40}
-                  className="mb-8"
-                />
-              </div>
-            </section>
+            {/* Cross-Service Suggestion - Teaching Skills (Component not implemented yet) */}
 
             {/* Process Section - Brief → Scope → Execution workflow */}
             <CollaborationProcess />
 
-            {/* Cross-Service Suggestion - Performance Showcase */}
-            <section className="py-8">
-              <div className="container mx-auto max-w-7xl p-4">
-                <CrossServiceSuggestion
-                  fromService="collaboration"
-                  pageSection="project-examples"
-                  placement="banner"
-                  timing="after-engagement"
-                  minTimeOnPage={40}
-                  minScrollPercentage={60}
-                  className="max-w-4xl mx-auto"
-                />
-              </div>
-            </section>
+            {/* Cross-Service Suggestion - Performance Showcase (Component not implemented yet) */}
 
             {/* CTA Section - Start Creative Project with appropriate routing */}
             <CollaborationCTA />
