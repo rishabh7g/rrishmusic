@@ -35,7 +35,7 @@
       "filename": "All star band_Grazeland.jpg",
       "category": "band",
       "path": "/images/instagram/band/All star band_Grazeland.jpg",
-      "aspectRatio": 1.6,
+      "aspectRatio": 1,
       "isFeatured": true,
       "priority": "high"
     },
@@ -43,14 +43,14 @@
       "filename": "XBand_Grazeland 1.jpeg",
       "category": "band", 
       "path": "/images/instagram/band/XBand_Grazeland 1.jpeg",
-      "aspectRatio": 1.5,
+      "aspectRatio": 0.7,
       "priority": "medium"
     },
     {
       "filename": "XBand_Grazeland.jpg",
       "category": "band",
       "path": "/images/instagram/band/XBand_Grazeland.jpg", 
-      "aspectRatio": 1.7,
+      "aspectRatio": 0.8,
       "isFeatured": true,
       "priority": "medium"
     },
@@ -58,7 +58,7 @@
       "filename": "XBand_Lunar day night event.jpg",
       "category": "band",
       "path": "/images/instagram/band/XBand_Lunar day night event.jpg",
-      "aspectRatio": 1.4,
+      "aspectRatio": 1.2,
       "priority": "medium"
     },
     {
@@ -79,7 +79,7 @@
       "filename": "Rrish solo 2.jpg",
       "category": "portrait",
       "path": "/images/instagram/portrait/Rrish solo 2.jpg",
-      "aspectRatio": 1.2,
+      "aspectRatio": 2,
       "priority": "medium"
     },
     {
