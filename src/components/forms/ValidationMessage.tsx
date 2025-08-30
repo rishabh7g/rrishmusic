@@ -447,7 +447,7 @@ export const FieldValidationWrapper: React.FC<{
 
       {/* Field description for accessibility */}
       {error?.description && (
-        <p id={descriptionId} className="text-xs text-gray-600">
+        <p id={descriptionId} className="text-xs theme-text-muted">
           {error.description}
         </p>
       )}
