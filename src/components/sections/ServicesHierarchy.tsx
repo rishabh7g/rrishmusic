@@ -33,7 +33,7 @@ export function ServicesHierarchy() {
       description:
         'Professional blues and improvisation performances across Melbourne - from intimate venues to major events. Specializing in soulful blues guitar, engaging stage presence, and memorable musical experiences. Available for pubs, clubs, private functions, weddings, corporate events, and festivals. Full band or solo acoustic setups with professional sound equipment and technical support included.',
       ctaText: 'Book Performance Now',
-      ctaLink: '/performance',
+      ctaLink: '/gallery',
       prominence: 'primary',
       icon: (
         <svg
@@ -79,7 +79,7 @@ export function ServicesHierarchy() {
       description:
         'Available for recording collaborations and creative partnerships.',
       ctaText: 'Collaborate',
-      ctaLink: '/collaboration',
+      ctaLink: '/gallery',
       prominence: 'tertiary',
       icon: (
         <svg

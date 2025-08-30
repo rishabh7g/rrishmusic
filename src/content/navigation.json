@@ -1,9 +1,7 @@
 {
   "navigationItems": [
     { "id": "home", "label": "Home", "href": "/" },
-    { "id": "performance", "label": "Performances", "href": "/performance" },
-    { "id": "lessons", "label": "Lessons", "href": "/lessons" },
-    { "id": "gallery", "label": "Gallery", "href": "/gallery" }
+    { "id": "lessons-gallery", "label": "Lessons-Gallery", "href": "/lessons" }
   ],
   "mobileMenu": {
     "hamburgerAriaLabel": "Toggle navigation menu",

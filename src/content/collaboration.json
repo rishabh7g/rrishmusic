@@ -4,7 +4,7 @@
       {
         "id": "all",
         "label": "All Projects",
-        "count": 15,
+        "count": 13,
         "description": "Complete portfolio of collaborative work"
       },
       {
@@ -12,12 +12,6 @@
         "label": "Studio Collaborations",
         "count": 6,
         "description": "Recording and production partnerships"
-      },
-      {
-        "id": "creative",
-        "label": "Creative Projects",
-        "count": 5,
-        "description": "Artistic collaborations and original work"
       },
       {
         "id": "partnerships",
@@ -53,31 +47,6 @@
         }
       },
       {
-        "id": 2,
-        "title": "Acoustic Storytelling Series",
-        "category": "creative",
-        "description": "Innovative creative project combining original acoustic compositions with spoken word narratives, creating immersive musical storytelling experiences.",
-        "image": "/api/placeholder/600/400",
-        "client": "Independent Creative Collective",
-        "year": "2024",
-        "duration": "4 months",
-        "tags": [
-          "Acoustic",
-          "Storytelling",
-          "Original Composition",
-          "Spoken Word"
-        ],
-        "details": {
-          "role": "Composer & Musical Director",
-          "outcome": "Live performance series with 8 original pieces",
-          "highlights": [
-            "Sold out performance at Melbourne Arts Centre",
-            "Featured in Melbourne Creative Magazine",
-            "Collaboration with 3 spoken word artists"
-          ]
-        }
-      },
-      {
         "id": 3,
         "title": "Corporate Event Partnership",
         "category": "partnerships",
@@ -94,26 +63,6 @@
             "95% client satisfaction rating",
             "Monthly retainer partnership established",
             "Expanded to 3 different event types"
-          ]
-        }
-      },
-      {
-        "id": 4,
-        "title": "Wedding Music Collaborations",
-        "category": "creative",
-        "description": "Collaborative approach to wedding music, working closely with couples to create personalized musical experiences for their special day.",
-        "image": "/api/placeholder/600/400",
-        "client": "Various Wedding Clients",
-        "year": "2024",
-        "duration": "Ongoing",
-        "tags": ["Wedding", "Personalized", "Acoustic", "Collaboration"],
-        "details": {
-          "role": "Wedding Music Specialist",
-          "outcome": "25+ personalized wedding ceremonies",
-          "highlights": [
-            "100% positive reviews on WedSites",
-            "Featured wedding musician for top venues",
-            "Custom song arrangements for each couple"
           ]
         }
       },
@@ -160,7 +109,7 @@
     ]
   },
   "ui": {
-    "sectionTitle": "Creative Portfolio",
+    "sectionTitle": "Collaboration Portfolio",
     "sectionSubtitle": "Explore my collaborative projects across different musical contexts and partnerships",
     "behindScenesTitle": "Behind the Scenes",
     "behindScenesDescription": "Follow the creative process through candid moments and behind-the-scenes glimpses of collaborative work in action."

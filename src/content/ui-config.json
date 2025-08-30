@@ -2,15 +2,21 @@
   "navigation": {
     "items": [
       {
-        "id": "performances",
-        "label": "Performances",
-        "path": "/performance",
-        "type": "page"
-      },
-      {
         "id": "home",
         "label": "Home",
         "path": "/",
+        "type": "page"
+      },
+      {
+        "id": "lessons-gallery",
+        "label": "Lessons-Gallery",
+        "path": "/lessons",
+        "type": "page"
+      },
+      {
+        "id": "gallery",
+        "label": "Gallery",
+        "path": "/gallery",
         "type": "page"
       },
       {
@@ -18,12 +24,6 @@
         "label": "About",
         "path": "/#about",
         "type": "section"
-      },
-      {
-        "id": "collaboration",
-        "label": "Collaboration",
-        "path": "/collaboration",
-        "type": "page"
       },
       {
         "id": "contact",

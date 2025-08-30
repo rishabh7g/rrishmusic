@@ -151,7 +151,7 @@ class ErrorBoundary extends Component<Props, State> {
       const currentPath = window.location.pathname
 
       // Check if we're on a valid route that can be refreshed safely
-      const validRoutes = ['/', '/performance', '/collaboration']
+      const validRoutes = ['/', '/', '/lessons', '/gallery']
 
       if (validRoutes.includes(currentPath)) {
         // Safe to reload current page

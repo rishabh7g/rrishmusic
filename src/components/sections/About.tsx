@@ -179,7 +179,7 @@ export function About() {
               variants={fadeInUp}
             >
               <a
-                href="/performance"
+                href="/gallery"
                 className="inline-flex items-center px-8 py-3 bg-theme-primary text-white 
                   font-semibold rounded-full hover:bg-theme-primary-hover transition-theme duration-theme-fast 
                   shadow-theme-lg hover:shadow-theme-xl transform hover:-translate-y-1"

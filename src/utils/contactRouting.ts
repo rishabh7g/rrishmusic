@@ -558,9 +558,9 @@ export function generateContactUrl(
   // Route to appropriate page based on service type
   switch (serviceType) {
     case 'performance':
-      return `/performance?${params.toString()}#contact`
+      return `/gallery?${params.toString()}#contact`
     case 'collaboration':
-      return `/collaboration?${params.toString()}#contact`
+      return `/gallery?${params.toString()}#contact`
     case 'teaching':
       return `/?${params.toString()}#contact`
     default:
