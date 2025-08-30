@@ -87,7 +87,7 @@ export function Home() {
         </ErrorBoundary>
 
         {/* 1. Behind-the-scenes section (Instagram feed) */}
-        <div className="py-16 md:py-20">
+        <div className="py-12 md:py-16">
           <ErrorBoundary fallback={<div>Error loading behind-the-scenes</div>}>
             <LazySection fallback={<SectionFallback sectionName="Behind the Scenes" />}>
               <InstagramFeed />
@@ -96,7 +96,7 @@ export function Home() {
         </div>
 
         {/* 2. Portfolio highlights section */}
-        <div className="py-16 md:py-20">
+        <div className="py-12 md:py-16">
           <ErrorBoundary fallback={<div>Error loading portfolio highlights</div>}>
             <LazySection fallback={<SectionFallback sectionName="Portfolio Highlights" />}>
               <PortfolioHighlights />
@@ -106,7 +106,7 @@ export function Home() {
 
         {/* 3. What clients say section (testimonials) */}
         {performanceTestimonials && performanceTestimonials.length > 0 && (
-          <div className="py-16 md:py-20">
+          <div className="py-12 md:py-16">
             <ErrorBoundary fallback={<div>Error loading testimonials</div>}>
               <LazySection fallback={<SectionFallback sectionName="Testimonials" />}>
                 <TestimonialsSection />
@@ -116,7 +116,7 @@ export function Home() {
         )}
 
         {/* 4. Collaboration process section */}
-        <div className="py-16 md:py-20">
+        <div className="py-12 md:py-16">
           <ErrorBoundary fallback={<div>Error loading collaboration process</div>}>
             <LazySection fallback={<SectionFallback sectionName="Collaboration Process" />}>
               <CollaborationProcess />
@@ -125,7 +125,7 @@ export function Home() {
         </div>
 
         {/* 5. Ready to work together section (contact CTA) */}
-        <div className="py-16 md:py-20">
+        <div className="py-12 md:py-16">
           <ErrorBoundary fallback={<div>Error loading contact section</div>}>
             <LazySection fallback={<SectionFallback sectionName="Contact" />}>
               <Contact />
