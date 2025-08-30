@@ -4,6 +4,10 @@ import { BrowserRouter } from 'react-router-dom'
 import './index.css'
 import App from './App.tsx'
 import { initializeRouting } from '@/utils/routing'
+import { preventFOUC } from '@/utils/themeHelpers'
+
+// Initialize theme system IMMEDIATELY to prevent FOUC and ensure CSS custom properties are set
+preventFOUC()
 
 // Initialize routing utilities for GitHub Pages SPA support
 // This handles any redirects from 404.html and sets up route validation
