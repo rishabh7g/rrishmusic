@@ -1,7 +1,8 @@
 {
   "navigationItems": [
     { "id": "home", "label": "Home", "href": "/" },
-    { "id": "lessons-gallery", "label": "Lessons-Gallery", "href": "/lessons" }
+    { "id": "lessons", "label": "Lessons", "href": "/lessons" },
+    { "id": "gallery", "label": "Gallery", "href": "/gallery" }
   ],
   "mobileMenu": {
     "hamburgerAriaLabel": "Toggle navigation menu",
