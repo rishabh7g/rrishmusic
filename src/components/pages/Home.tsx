@@ -10,6 +10,7 @@ import { Contact } from '@/components/sections/Contact'
 import ErrorBoundary from '@/components/common/ErrorBoundary'
 import { LazySection } from '@/components/common/LazySection'
 import useMultiServiceTestimonials from '@/hooks/useMultiServiceTestimonials'
+import siteConfig from '@/content/site-config.json'
 
 /**
  * Section fallback component
@@ -38,18 +39,17 @@ export function Home() {
   return (
     <>
       <SEOHead
-        title="Rrish Music - Live Performances, Music Lessons & Studio Collaborations | Professional Guitarist Melbourne"
-        description="Professional musician offering live performances, music lessons, and studio collaborations in Melbourne. Experience blues guitar performances, learn piano and music theory, or collaborate on creative projects."
-        keywords="Melbourne musician, live performances, music lessons, piano teacher, guitar lessons, blues music, studio collaboration, corporate entertainment, wedding music, music theory, improvisation"
-        canonical="https://www.rrishmusic.com"
+        title={siteConfig.seo.title}
+        description={siteConfig.seo.description}
+        keywords={siteConfig.seo.keywords}
+        canonical={siteConfig.branding.website}
         ogType="website"
         structuredData={{
           '@context': 'https://schema.org',
           '@type': ['MusicGroup', 'EducationalOrganization'],
-          name: 'Rrish Music',
-          description:
-            'Professional musician offering live performances, music lessons, and studio collaborations',
-          url: 'https://www.rrishmusic.com',
+          name: siteConfig.branding.name,
+          description: siteConfig.branding.description,
+          url: siteConfig.branding.website,
           areaServed: 'Melbourne, Australia',
           performer: {
             '@type': 'Person',

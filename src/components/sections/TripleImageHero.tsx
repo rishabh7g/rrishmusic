@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { motion } from 'framer-motion'
+import siteConfig from '@/content/site-config.json'
 
 interface TripleImageHeroProps {
   className?: string
@@ -132,29 +133,29 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
                 variants={overlayAnimation}
               >
                 <h1 className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-bold text-white mb-2 sm:mb-4 drop-shadow-2xl">
-                  Rrish Music
+                  {siteConfig.hero.title}
                 </h1>
                 <p className="text-xs sm:text-sm md:text-xl lg:text-2xl text-white/90 mb-4 sm:mb-8 max-w-2xl font-medium drop-shadow-lg">
-                  Live Performances • Music Lessons • Collaborations
+                  {siteConfig.hero.subtitle}
                 </p>
 
                 {/* Call-to-Action Buttons */}
                 <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
                   <motion.a
-                    href="/gallery"
+                    href={siteConfig.hero.cta.primary.href}
                     className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Watch Performances
+                    {siteConfig.hero.cta.primary.text}
                   </motion.a>
                   <motion.a
-                    href="/lessons"
+                    href={siteConfig.hero.cta.secondary.href}
                     className="bg-theme-primary/80 backdrop-blur-sm border border-theme-primary/50 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-theme-primary hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    Start Learning
+                    {siteConfig.hero.cta.secondary.text}
                   </motion.a>
                 </div>
               </motion.div>
@@ -209,11 +210,10 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
       {/* Accessibility: Screen reader content */}
       <div className="sr-only">
         <h1>
-          Rrish Music - Live Performances, Music Lessons, and Collaborations
+          {siteConfig.branding.name} - {siteConfig.branding.tagline}
         </h1>
         <p>
-          Professional musician offering live piano performances, personalized
-          music lessons, and collaborative projects
+          {siteConfig.branding.description}
         </p>
       </div>
     </motion.section>
