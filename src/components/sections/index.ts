@@ -1,13 +1,10 @@
 export { Hero } from './Hero'
 export { About } from './About'
-export { Approach } from './Approach'
 export { Lessons } from './Lessons'
-export { Community } from './Community'
 export { Contact } from './Contact'
 export { PortfolioHighlights } from './PortfolioHighlights'
 export { default as TestimonialsSection } from './TestimonialsSection'
 export { default as MultiServiceTestimonialsSection } from './MultiServiceTestimonialsSection'
-export { default as PricingSection } from './PricingSection'
 export { InstagramFeed } from './InstagramFeed'
 export { CollaborationPortfolio } from './CollaborationPortfolio'
 export { CollaborationProcess } from './CollaborationProcess'
@@ -35,6 +32,3 @@ export {
   CollaborationServices,
   CollaborationSuccessStories,
 } from './CollaborationSections'
-
-// Social Components
-export { default as SocialProof } from '../social/SocialProof'
