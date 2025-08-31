@@ -21,7 +21,6 @@ import { CollaborationHero } from '@/components/sections/CollaborationHero'
 import { CollaborationPortfolio } from '@/components/sections/CollaborationPortfolio'
 import { CollaborationProcess } from '@/components/sections/CollaborationProcess'
 import { CollaborationCTA } from '@/components/sections/CollaborationCTA'
-// import { CrossServiceSuggestion } from '@/components/ui/CrossServiceSuggestion' // Component not implemented yet
 
 interface CollaborationPageProps {
   className?: string
