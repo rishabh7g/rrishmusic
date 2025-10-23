@@ -204,21 +204,6 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
           )}
         </div>
       </motion.div>
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/80"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 1.2, duration: 0.6 }}
-      >
-        <motion.div
-          className="w-6 h-10 border-2 border-white/60 rounded-full flex justify-center"
-          animate={{ y: [0, 8, 0] }}
-          transition={{ repeat: Infinity, duration: 2, ease: 'easeInOut' }}
-        >
-          <div className="w-1 h-2 bg-white/60 rounded-full mt-2" />
-        </motion.div>
-      </motion.div>
 
       {/* Accessibility: Screen reader content */}
       <div className="sr-only">
