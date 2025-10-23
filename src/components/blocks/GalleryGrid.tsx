@@ -481,7 +481,6 @@ export function GalleryGrid({ mediaItems, layout, ui }: GalleryGridBlockProps) {
                     <video
                       src={computedItems[lightboxIndex].src}
                       controls
-                      autoPlay
                       className="max-w-full max-h-[90vh] rounded-lg"
                       poster={computedItems[lightboxIndex].src.replace(
                         /\.[^/.]+$/,
