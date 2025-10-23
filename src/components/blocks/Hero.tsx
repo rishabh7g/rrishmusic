@@ -156,7 +156,7 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/15 to-black/40" />
 
       <motion.div
-        className="absolute inset-0 flex flex-col justify-end items-center px-4 sm:px-8 pb-12 sm:pb-16 md:pb-24 lg:pb-32"
+        className="absolute inset-0 flex flex-col justify-end items-center px-4 sm:px-8 pb-32 sm:pb-40 md:pb-48 lg:pb-56"
         variants={overlayAnimation}
       >
         {/* Content Card - Responsive width: 80% on mobile, 40% on desktop */}
