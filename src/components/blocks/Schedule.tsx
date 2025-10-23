@@ -30,7 +30,7 @@ export function Schedule({ title, windows }: ScheduleProps) {
           </motion.h2>
 
           {/* Time windows */}
-          <div className="max-w-2xl mx-auto space-y-4">
+          <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
             {windows.map((window, index) => (
               <motion.div
                 key={index}
