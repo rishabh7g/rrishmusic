@@ -10,7 +10,6 @@ import { ThemeProvider } from './contexts/ThemeContext'
 const Home = lazy(() =>
   import('./components/pages/Home').then(module => ({ default: module.Home }))
 )
-const Teaching = lazy(() => import('./components/pages/Teaching'))
 const Gallery = lazy(() =>
   import('./components/pages/Gallery').then(module => ({
     default: module.Gallery,
@@ -118,16 +117,6 @@ function AppContent() {
                   }
                 />
                 <Route
-                  path="/lessons"
-                  element={
-                    <PageWrapper>
-                      <Suspense fallback={<Spinner />}>
-                        <Teaching />
-                      </Suspense>
-                    </PageWrapper>
-                  }
-                />
-                <Route
                   path="/gallery"
                   element={
                     <PageWrapper>
@@ -137,20 +126,16 @@ function AppContent() {
                     </PageWrapper>
                   }
                 />
-                {/* Redirect old performance route to home */}
+                {/* Redirect old routes to home */}
+                <Route path="/lessons" element={<Navigate to="/" replace />} />
+                <Route path="/teaching" element={<Navigate to="/" replace />} />
                 <Route
                   path="/performance"
                   element={<Navigate to="/" replace />}
                 />
-                {/* Redirect old collaboration route to home */}
                 <Route
                   path="/collaboration"
                   element={<Navigate to="/" replace />}
-                />
-                {/* Redirect teaching to lessons for consistency */}
-                <Route
-                  path="/teaching"
-                  element={<Navigate to="/lessons" replace />}
                 />
                 {/* Catch all route - redirect to home */}
                 <Route path="*" element={<Navigate to="/" replace />} />

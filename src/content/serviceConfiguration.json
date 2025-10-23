@@ -1,9 +1,0 @@
-{
-  "serviceAllocation": {
-    "performance": 60,
-    "teaching": 25,
-    "collaboration": 15
-  },
-  "primaryService": "performance",
-  "services": ["performance", "teaching", "collaboration"]
-}

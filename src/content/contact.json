@@ -6,7 +6,7 @@
   },
   "businessHours": {
     "timezone": "Australia/Melbourne",
-    "availability": "Monday to Friday, 9 AM - 6 PM"
+    "availability": "Saturday and Sunday, 9 AM - 6 PM"
   },
   "responseTime": {
     "email": "24-48 hours",

@@ -507,6 +507,7 @@ header {
 
 .theme-text-secondary {
   color: var(--color-text-secondary, #6b7280);
+  font-size: 1.0625rem;
 }
 
 .theme-text-muted {

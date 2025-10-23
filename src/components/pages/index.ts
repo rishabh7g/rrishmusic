@@ -1,4 +1,3 @@
-// Page component exports for the multi-service platform
+// Page component exports
 export { Home, default as HomeDefault } from './Home'
-export { Teaching, default as TeachingDefault } from './Teaching'
-export { Collaboration, default as CollaborationDefault } from './Collaboration'
+export { Gallery, default as GalleryDefault } from './Gallery'

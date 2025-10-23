@@ -1,323 +1,28 @@
 /**
- * Centralized content management with JSON data files
+ * Simplified content management for minimal site
  */
 import { useMemo } from 'react'
 
-// Import all JSON data files using the correct paths
-import teachingContentRaw from '../content/teaching.json'
-import collaborationContentRaw from '../content/collaboration.json'
 import contactContent from '../content/contact.json'
 import navigationData from '../content/navigation.json'
 
-// Type definitions for better TypeScript support
-export interface HomeContent {
-  heroSection: {
-    title: string
-    subtitle: string
-    description: string
-    primaryCTA: {
-      text: string
-      href: string
-      variant: 'primary' | 'secondary'
-    }
-    secondaryCTA: {
-      text: string
-      href: string
-      variant: 'primary' | 'secondary'
-    }
-  }
-  servicesOverview: {
-    title: string
-    subtitle: string
-    services: Array<{
-      id: string
-      title: string
-      description: string
-      icon: string
-      href: string
-      priority: 'primary' | 'secondary' | 'tertiary'
-      featured: boolean
-    }>
-  }
-  socialProof: {
-    title: string
-    testimonials: Array<{
-      id: string
-      content: string
-      author: string
-      role: string
-      image?: string
-    }>
-  }
-}
-
-export interface ServiceContent {
-  heroSection: {
-    title: string
-    subtitle: string
-    description: string
-    primaryCTA: {
-      text: string
-      href: string
-    }
-  }
-  features?: Array<{
-    id: string
-    title: string
-    description: string
-    icon: string
-  }>
-  portfolio?: Array<{
-    id: string
-    title: string
-    description: string
-    image?: string
-    tags: string[]
-  }>
-  // Allow for additional properties from JSON files
-  [key: string]: unknown
-}
-
-export interface LessonPackage {
-  id: string
-  title: string
-  description: string
-  duration: string
-  price: string
-  features: string[]
-  popular?: boolean
-}
-
-// Enhanced teaching content with heroSection
-const enhancedTeachingContent: ServiceContent = {
-  ...teachingContentRaw,
-  heroSection: {
-    title: 'Piano Teaching & Lessons',
-    subtitle: 'Personalized piano instruction',
-    description:
-      'Learn piano with experienced instruction tailored to your goals and skill level.',
-    primaryCTA: {
-      text: 'Start Learning',
-      href: '/contact?service=teaching',
-    },
-  },
-}
-
-// Enhanced collaboration content with heroSection
-const enhancedCollaborationContent: ServiceContent = {
-  ...collaborationContentRaw,
-  heroSection: {
-    title: 'Music Collaboration',
-    subtitle: 'Creative musical partnerships',
-    description:
-      'Collaborate on recording projects, performances, and creative musical endeavors.',
-    primaryCTA: {
-      text: 'Start Collaboration',
-      href: '/contact?service=collaboration',
-    },
-  },
-}
-
-// Default home content since the JSON doesn't exist
-const defaultHomeContent: HomeContent = {
-  heroSection: {
-    title: 'Live Piano Performance • Music Teaching • Collaboration',
-    subtitle: 'Professional Musician & Educator',
-    description:
-      'Bringing musical experiences to life through live performance, personalized teaching, and creative collaboration.',
-    primaryCTA: {
-      text: 'Book Performance',
-      href: '/performance',
-      variant: 'primary',
-    },
-    secondaryCTA: {
-      text: 'Learn Piano',
-      href: '/teaching',
-      variant: 'secondary',
-    },
-  },
-  servicesOverview: {
-    title: 'Musical Services',
-    subtitle: 'Comprehensive music services for all your needs',
-    services: [
-      {
-        id: 'performance',
-        title: 'Live Performance',
-        description: 'Professional piano performance for events and venues',
-        icon: '🎹',
-        href: '/performance',
-        priority: 'primary',
-        featured: true,
-      },
-      {
-        id: 'teaching',
-        title: 'Music Teaching',
-        description: 'Personalized piano lessons for all skill levels',
-        icon: '🎼',
-        href: '/teaching',
-        priority: 'secondary',
-        featured: true,
-      },
-      {
-        id: 'collaboration',
-        title: 'Collaboration',
-        description: 'Creative musical partnerships and projects',
-        icon: '🤝',
-        href: '/collaboration',
-        priority: 'tertiary',
-        featured: false,
-      },
-    ],
-  },
-  socialProof: {
-    title: 'What People Say',
-    testimonials: [
-      {
-        id: '1',
-        content: 'Exceptional musical talent and professional service',
-        author: 'Sarah Johnson',
-        role: 'Event Coordinator',
-      },
-    ],
-  },
-}
-
-// Default performance content since the JSON doesn't exist
-const defaultPerformanceContent: ServiceContent = {
-  heroSection: {
-    title: 'Live Piano Performance',
-    subtitle: 'Professional musical entertainment',
-    description: 'Elegant piano performance for weddings, events, and venues',
-    primaryCTA: {
-      text: 'Book Performance',
-      href: '/contact?service=performance',
-    },
-  },
-  features: [
-    {
-      id: '1',
-      title: 'Wedding Ceremonies',
-      description: 'Beautiful music for your special day',
-      icon: '💒',
-    },
-    {
-      id: '2',
-      title: 'Corporate Events',
-      description: 'Professional entertainment for business functions',
-      icon: '🏢',
-    },
-    {
-      id: '3',
-      title: 'Private Parties',
-      description: 'Intimate musical experiences',
-      icon: '🎉',
-    },
-  ],
-}
-
-// Default about content
-const defaultAboutContent = {
-  title: 'About Rrish',
-  subtitle: 'Passionate musician and educator',
-  description:
-    'With years of experience in performance and teaching, I bring dedication and artistry to every musical endeavor.',
-  credentials: [
-    'Professional Piano Performance',
-    'Music Education',
-    'Live Performance Experience',
-  ],
-}
-
 // Default SEO data
 const defaultSeoData = {
-  title: 'Rrish Music - Piano Performance & Teaching',
+  title: 'RrishMusic - Melbourne Musician',
   description:
-    'Professional piano performance, music teaching, and collaboration services. Book live performances, learn piano, or collaborate on musical projects.',
-  keywords:
-    'piano, music, performance, teaching, collaboration, live music, piano lessons',
+    "Explore Rrish's musical journey through photos and videos. Melbourne-based musician.",
+  keywords: 'Rrish, Melbourne musician, music, guitar, gallery',
   ogImage: '/images/rrish-profile.jpg',
 }
 
-// Default lesson packages
-const defaultLessonPackages: LessonPackage[] = [
-  {
-    id: 'beginner-package',
-    title: 'Beginner Package',
-    description: 'Perfect for those just starting their musical journey',
-    duration: '1 lesson',
-    price: '$50',
-    features: [
-      'Basic instrument handling and posture',
-      'Simple chords and fundamental techniques',
-      'Introduction to reading music',
-      'Basic practice routine development',
-    ],
-    recommended: true,
-  },
-  {
-    id: 'foundation-package',
-    title: 'Foundation Package',
-    description: 'Build solid foundations with consistent weekly lessons',
-    duration: '4 lessons',
-    price: '$200',
-    features: [
-      'Comprehensive skills assessment and goal planning',
-      'Structured curriculum tailored to your learning style',
-      'Weekly progress tracking and adjustments',
-      'Expanded practice materials and backing tracks',
-    ],
-    popular: true,
-    recommended: true,
-  },
-  {
-    id: 'single-lesson',
-    title: 'Single Lesson',
-    description:
-      'Perfect for trying out my teaching style or addressing specific challenges',
-    duration: '1 lesson',
-    price: '$80',
-    features: [
-      'Personalized assessment of your current level',
-      'Customized lesson plan based on your goals',
-      'Technique development and theory foundations',
-      'Practice materials and exercises to take home',
-    ],
-  },
-]
-
-// Default hero content that matches what Hero component expects
-const defaultHeroContent = {
-  title: 'Professional Piano Performance & Teaching',
-  subtitle: 'Live Music • Personalized Lessons • Creative Collaboration',
-  description:
-    'Experience the joy of music through live piano performance and personalized piano lessons. Perfect for events, learning, and creative projects.',
-  primaryCTA: {
-    text: 'Book Performance',
-    href: '/performance',
-    variant: 'primary' as const,
-  },
-  secondaryCTA: {
-    text: 'Start Piano Lessons',
-    href: '/teaching',
-    variant: 'secondary' as const,
-  },
-}
-
 /**
- * Main content hook - provides all content with optimal performance
+ * Main content hook - provides minimal content
  */
 export const useContent = () => {
   return useMemo(
     () => ({
-      home: defaultHomeContent,
-      hero: defaultHeroContent, // Add hero section for Hero component
-      teaching: enhancedTeachingContent,
-      performance: defaultPerformanceContent,
-      collaboration: enhancedCollaborationContent,
-      about: defaultAboutContent,
       contact: contactContent,
       menu: navigationData,
-      metadata: {},
       seo: defaultSeoData,
     }),
     []
@@ -336,7 +41,7 @@ export const useMenuContent = () => {
  * Hook for SEO content
  */
 export const useSEO = () => {
-  const generatePageTitle = (title: string) => `${title} | Rrish Music`
+  const generatePageTitle = (title: string) => `${title} | RrishMusic`
 
   return useMemo(
     () => ({
@@ -349,106 +54,7 @@ export const useSEO = () => {
   )
 }
 
-/**
- * Hook for lesson packages data - matches expected interface
- */
-export const useLessonPackages = () => {
-  return useMemo(
-    () => ({
-      packages: defaultLessonPackages,
-      packageInfo: {
-        title: 'Choose Your Learning Path',
-        description:
-          'Select the lesson package that matches your current skill level and learning goals.',
-        sessionLength: '60',
-        instruments: ['Guitar', 'Electric Guitar', 'Acoustic Guitar'],
-        location: 'Melbourne, Victoria, Australia',
-        cancellationPolicy:
-          '24 hours notice required for cancellations. Less than 24 hours notice may result in full session charge.',
-        reschedulePolicy:
-          'Free rescheduling with 24+ hours notice. Package students get flexible rescheduling throughout their package period.',
-      },
-      loading: false,
-      error: null,
-    }),
-    []
-  )
-}
-
-/**
- * Hook for stats data - provides statistics for components
- */
-export const useStats = () => {
-  return useMemo(
-    () => ({
-      aboutStats: [
-        { value: '10+', label: 'Years Playing', icon: 'calendar' },
-        { value: '45+', label: 'Students Taught', icon: 'users' },
-        { value: '150+', label: 'Performances', icon: 'music' },
-        { value: '25+', label: 'Collaborations', icon: 'heart' },
-      ],
-      communityStats: [
-        { value: '45', label: 'Active Students' },
-        { value: '92%', label: 'Completion Rate' },
-        { value: '4.9/5', label: 'Average Rating' },
-        { value: '85%', label: 'Retention Rate' },
-      ],
-      socialProof: [
-        { value: '150+', label: 'Live Performances' },
-        { value: '45+', label: 'Students' },
-        { value: '4.9/5', label: 'Rating' },
-        { value: '85%', label: 'Client Retention' },
-      ],
-      loading: false,
-      error: null,
-    }),
-    []
-  )
-}
-
-/**
- * Hook for testimonials data
- */
-export const useTestimonials = () => {
-  return useMemo(
-    () => ({
-      testimonials: [
-        {
-          id: '1',
-          content:
-            'Rrish is an exceptional piano teacher. His patience and expertise helped me progress faster than I ever expected.',
-          author: 'Sarah Johnson',
-          role: 'Piano Student',
-          rating: 5,
-          service: 'teaching',
-        },
-        {
-          id: '2',
-          content:
-            'The performance at our wedding was absolutely perfect. Rrish created such a beautiful atmosphere.',
-          author: 'Michael & Emma',
-          role: 'Wedding Couple',
-          rating: 5,
-          service: 'performance',
-        },
-        {
-          id: '3',
-          content:
-            'Working with Rrish on our music project was inspiring. His creativity and technical skills are outstanding.',
-          author: 'David Chen',
-          role: 'Collaborator',
-          rating: 5,
-          service: 'collaboration',
-        },
-      ],
-      loading: false,
-      error: null,
-    }),
-    []
-  )
-}
-
-// Enhanced section content access with expected interface
+// Enhanced section content access
 export const useSectionContent = (section: string) => {
   const content = useContent()
   return useMemo(

@@ -1,15 +1,15 @@
 {
   "branding": {
     "name": "RrishMusic",
-    "tagline": "Live Performances • Music Lessons • Collaborations",
-    "description": "Professional musician offering live piano performances, personalized music lessons, and collaborative projects",
+    "tagline": "Melbourne Musician",
+    "description": "Rrish - Musician based in Melbourne. Explore my musical journey through photos and videos.",
     "email": "hello@rrishmusic.com",
     "website": "https://www.rrishmusic.com"
   },
   "seo": {
-    "title": "RrishMusic - Live Performances, Music Lessons & Studio Collaborations | Professional Guitarist Melbourne",
-    "description": "Professional musician offering live performances, music lessons, and studio collaborations in Melbourne. Experience blues guitar performances, learn piano and music theory, or collaborate on creative projects.",
-    "keywords": "Melbourne musician, live performances, music lessons, piano teacher, guitar lessons, blues music, studio collaboration, corporate entertainment, wedding music, music theory, improvisation"
+    "title": "RrishMusic - Melbourne Musician",
+    "description": "Explore Rrish's musical journey through photos and videos. Melbourne-based musician.",
+    "keywords": "Rrish, Melbourne musician, music, guitar, gallery"
   },
   "navigation": {
     "brand": {
@@ -19,15 +19,15 @@
   },
   "hero": {
     "title": "RrishMusic",
-    "subtitle": "Live Performances • Music Lessons • Collaborations",
+    "subtitle": "Melbourne Musician",
     "cta": {
       "primary": {
-        "text": "Watch Performances",
+        "text": "View Gallery",
         "href": "/gallery"
       },
       "secondary": {
-        "text": "Start Learning", 
-        "href": "/lessons"
+        "text": "Get in Touch",
+        "href": "#contact"
       }
     }
   }

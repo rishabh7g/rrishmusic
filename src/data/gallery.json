@@ -1,0 +1,129 @@
+{
+  "blocks": [
+    {
+      "type": "GalleryGrid",
+      "props": {
+        "mediaItems": [
+          {
+            "filename": "All star band_Grazeland.jpg",
+            "category": "band",
+            "path": "/images/instagram/band/All star band_Grazeland.jpg",
+            "aspectRatio": 1,
+            "isFeatured": true,
+            "priority": "high"
+          },
+          {
+            "filename": "XBand_Grazeland 1.jpeg",
+            "category": "band",
+            "path": "/images/instagram/band/XBand_Grazeland 1.jpeg",
+            "aspectRatio": 0.7,
+            "priority": "medium"
+          },
+          {
+            "filename": "XBand_Grazeland.jpg",
+            "category": "band",
+            "path": "/images/instagram/band/XBand_Grazeland.jpg",
+            "aspectRatio": 0.8,
+            "isFeatured": true,
+            "priority": "medium"
+          },
+          {
+            "filename": "XBand_Lunar day night event.jpg",
+            "category": "band",
+            "path": "/images/instagram/band/XBand_Lunar day night event.jpg",
+            "aspectRatio": 1.2,
+            "priority": "medium"
+          },
+          {
+            "filename": "XBand_Pop up park-Point Cook.jpg",
+            "category": "band",
+            "path": "/images/instagram/band/XBand_Pop up park-Point Cook.jpg",
+            "aspectRatio": 2.1,
+            "priority": "high"
+          },
+          {
+            "filename": "Rrish_Rishikesh.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish_Rishikesh.jpg",
+            "aspectRatio": 0.9,
+            "priority": "medium"
+          },
+          {
+            "filename": "Rrish solo 2.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish solo 2.jpg",
+            "aspectRatio": 2,
+            "priority": "medium"
+          },
+          {
+            "filename": "Rrish solo.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish solo.jpg",
+            "aspectRatio": 0.8,
+            "priority": "low"
+          },
+          {
+            "filename": "Rrish_Lunar day night event.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish_Lunar day night event.jpg",
+            "aspectRatio": 1.5,
+            "priority": "medium"
+          },
+          {
+            "filename": "Rrish solo 3.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish solo 3.jpg",
+            "aspectRatio": 1.2,
+            "priority": "medium"
+          },
+          {
+            "filename": "Rrish_Pop up park-Point Cook 1.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg",
+            "aspectRatio": 0.8,
+            "priority": "low"
+          },
+          {
+            "filename": "Rrish solo 1.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish solo 1.jpg",
+            "aspectRatio": 0.9,
+            "priority": "high"
+          },
+          {
+            "filename": "Rrish_Pop up park-Point Cook.jpg",
+            "category": "portrait",
+            "path": "/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg",
+            "aspectRatio": 1,
+            "priority": "low"
+          }
+        ],
+        "layout": {
+          "grid": {
+            "mobile": "grid-cols-2",
+            "tablet": "sm:grid-cols-3 md:grid-cols-4",
+            "desktop": "lg:grid-cols-6 xl:grid-cols-8",
+            "rowHeight": "auto-rows-[120px] sm:auto-rows-[140px] md:auto-rows-[160px]",
+            "gap": "gap-3 md:gap-4"
+          },
+          "animations": {
+            "container": {
+              "hidden": { "opacity": 0 },
+              "visible": {
+                "opacity": 1,
+                "transition": { "duration": 0.6, "ease": "easeOut" }
+              }
+            }
+          }
+        },
+        "ui": {
+          "loadingMessage": "Loading gallery...",
+          "emptyStateTitle": "No media content available at the moment.",
+          "emptyStateDescription": "Media files will appear here once they're added to the gallery.",
+          "featuredBadge": "⭐ Featured",
+          "videoBadge": "VIDEO"
+        }
+      }
+    }
+  ]
+}
