@@ -1,15 +1,15 @@
 {
   "branding": {
     "name": "RrishMusic",
-    "tagline": "Live Performances • Music Lessons • Collaborations",
-    "description": "Professional musician offering live piano performances, personalized music lessons, and collaborative projects",
+    "tagline": "Music Lessons from a Professional Performer",
+    "description": "Professional musician offering personalized one-on-one music lessons. Learn guitar and music theory from an experienced performer with a passion for teaching.",
     "email": "hello@rrishmusic.com",
     "website": "https://www.rrishmusic.com"
   },
   "seo": {
-    "title": "RrishMusic - Live Performances, Music Lessons & Studio Collaborations | Professional Guitarist Melbourne",
-    "description": "Professional musician offering live performances, music lessons, and studio collaborations in Melbourne. Experience blues guitar performances, learn piano and music theory, or collaborate on creative projects.",
-    "keywords": "Melbourne musician, live performances, music lessons, piano teacher, guitar lessons, blues music, studio collaboration, corporate entertainment, wedding music, music theory, improvisation"
+    "title": "RrishMusic - Music Lessons from a Professional Performer | Guitar & Theory Instruction Melbourne",
+    "description": "Learn guitar and music theory from an experienced professional performer in Melbourne. Personalized one-on-one lessons for all skill levels, from beginners to advanced students. Online and in-person options available.",
+    "keywords": "Melbourne music teacher, guitar lessons Melbourne, music theory lessons, professional guitar instructor, one-on-one music lessons, blues guitar lessons, adult guitar lessons, online music lessons, Melbourne music education"
   },
   "navigation": {
     "brand": {
@@ -19,14 +19,14 @@
   },
   "hero": {
     "title": "RrishMusic",
-    "subtitle": "Live Performances • Music Lessons • Collaborations",
+    "subtitle": "Learn from a Professional Performer",
     "cta": {
       "primary": {
-        "text": "Watch Performances",
+        "text": "View Gallery",
         "href": "/gallery"
       },
       "secondary": {
-        "text": "Start Learning", 
+        "text": "Start Learning",
         "href": "/lessons"
       }
     }
