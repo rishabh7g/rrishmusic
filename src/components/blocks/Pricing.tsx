@@ -10,9 +10,9 @@ import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 type PricingProps = z.infer<typeof PricingSchema>
 
-export function Pricing({ displayPrice, trial, session }: PricingProps) {
+export function Pricing({ title, displayPrice, trial, session }: PricingProps) {
   return (
-    <section className="section bg-theme-bg text-theme-text">
+    <section className="section bg-theme-bg-secondary text-theme-text">
       <div className="container mx-auto max-w-4xl px-4">
         <motion.div
           className="py-16"
@@ -21,6 +21,16 @@ export function Pricing({ displayPrice, trial, session }: PricingProps) {
           viewport={{ once: true, margin: '-100px' }}
           variants={staggerContainer}
         >
+          {/* Title */}
+          {title && (
+            <motion.h2
+              className="text-3xl lg:text-4xl font-heading font-bold mb-12 text-center"
+              variants={fadeInUp}
+            >
+              {title}
+            </motion.h2>
+          )}
+
           <div className="max-w-2xl mx-auto">
             {/* Trial offer */}
             <motion.div

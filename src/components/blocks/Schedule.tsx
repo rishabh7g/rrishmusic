@@ -10,9 +10,9 @@ import { fadeInUp, staggerContainer } from '@/utils/animations'
 
 type ScheduleProps = z.infer<typeof ScheduleSchema>
 
-export function Schedule({ caption, windows }: ScheduleProps) {
+export function Schedule({ title, windows }: ScheduleProps) {
   return (
-    <section className="section bg-theme-bg-secondary text-theme-text">
+    <section className="section bg-theme-bg text-theme-text">
       <div className="container mx-auto max-w-4xl px-4">
         <motion.div
           className="py-16"
@@ -21,13 +21,13 @@ export function Schedule({ caption, windows }: ScheduleProps) {
           viewport={{ once: true, margin: '-100px' }}
           variants={staggerContainer}
         >
-          {/* Caption */}
-          <motion.p
-            className="text-center text-xl text-theme-text-secondary mb-8"
+          {/* Title */}
+          <motion.h2
+            className="text-3xl lg:text-4xl font-heading font-bold mb-12 text-center"
             variants={fadeInUp}
           >
-            {caption}
-          </motion.p>
+            {title}
+          </motion.h2>
 
           {/* Time windows */}
           <div className="max-w-2xl mx-auto space-y-4">

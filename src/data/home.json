@@ -46,6 +46,7 @@
     {
       "type": "Pricing",
       "props": {
+        "title": "Lesson Pricing",
         "displayPrice": true,
         "trial": "Free 30-minute trial for new students",
         "session": {
@@ -59,7 +60,7 @@
     {
       "type": "Schedule",
       "props": {
-        "caption": "Current availability (limited slots)",
+        "title": "Availability",
         "windows": [
           { "label": "Weekdays", "times": ["6:00–8:00 PM"] },
           { "label": "Weekends", "times": ["9:00–11:00 AM", "1:00–8:00 PM"] }
@@ -72,8 +73,11 @@
         "title": "Let's Connect",
         "blurb": "Reach out via email or message me on Instagram to book your free trial.",
         "contactLinks": [
-          { "label": "📧 Email Me", "href": "mailto:you@example.com" },
-          { "label": "📱 Message on Instagram", "href": "https://instagram.com/rrishmusic" }
+          { "label": "Email Me", "href": "mailto:you@example.com" },
+          {
+            "label": "Message on Instagram",
+            "href": "https://instagram.com/rrishmusic"
+          }
         ]
       }
     }

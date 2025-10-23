@@ -36,6 +36,7 @@ export const FeatureListSchema = z.object({
 })
 
 export const PricingSchema = z.object({
+  title: z.string().optional(),
   displayPrice: z.boolean().default(false), // toggle visibility
   trial: z.string(),
   session: z.object({
@@ -47,7 +48,7 @@ export const PricingSchema = z.object({
 })
 
 export const ScheduleSchema = z.object({
-  caption: z.string(),
+  title: z.string(),
   windows: z.array(
     z.object({
       label: z.string(), // "Weekdays", "Weekends"
