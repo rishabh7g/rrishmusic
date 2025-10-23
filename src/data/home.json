@@ -7,7 +7,7 @@
         "subhead": "Learn from a professional performer",
         "cta": {
           "label": "Book Your Free 30-Minute Trial Lesson",
-          "href": "mailto:you@example.com"
+          "href": "mailto:hello@rrishmusic.com"
         },
         "images": {
           "left": {
@@ -73,7 +73,7 @@
         "title": "Let's Connect",
         "blurb": "Reach out via email or message me on Instagram to book your free trial.",
         "contactLinks": [
-          { "label": "Email Me", "href": "mailto:you@example.com" },
+          { "label": "Email Me", "href": "mailto:hello@rrishmusic.com" },
           {
             "label": "Message on Instagram",
             "href": "https://instagram.com/rrishmusic"
