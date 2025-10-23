@@ -22,7 +22,7 @@ export class PerformanceMonitor {
    */
   public measure(name: string): number {
     if (typeof performance === 'undefined') return 0
-    
+
     try {
       performance.mark(`${name}-end`)
       performance.measure(name, `${name}-start`, `${name}-end`)
@@ -40,4 +40,5 @@ export const performanceMonitor = new PerformanceMonitor()
 
 // Export helper functions for backward compatibility
 export const markPerformance = (name: string) => performanceMonitor.mark(name)
-export const measurePerformance = (name: string) => performanceMonitor.measure(name)
+export const measurePerformance = (name: string) =>
+  performanceMonitor.measure(name)

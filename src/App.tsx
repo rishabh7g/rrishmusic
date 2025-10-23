@@ -127,14 +127,8 @@ function AppContent() {
                   }
                 />
                 {/* Redirect old routes to home */}
-                <Route
-                  path="/lessons"
-                  element={<Navigate to="/" replace />}
-                />
-                <Route
-                  path="/teaching"
-                  element={<Navigate to="/" replace />}
-                />
+                <Route path="/lessons" element={<Navigate to="/" replace />} />
+                <Route path="/teaching" element={<Navigate to="/" replace />} />
                 <Route
                   path="/performance"
                   element={<Navigate to="/" replace />}

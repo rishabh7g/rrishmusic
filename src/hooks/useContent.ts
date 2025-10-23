@@ -9,7 +9,8 @@ import navigationData from '../content/navigation.json'
 // Default SEO data
 const defaultSeoData = {
   title: 'RrishMusic - Melbourne Musician',
-  description: 'Explore Rrish\'s musical journey through photos and videos. Melbourne-based musician.',
+  description:
+    "Explore Rrish's musical journey through photos and videos. Melbourne-based musician.",
   keywords: 'Rrish, Melbourne musician, music, guitar, gallery',
   ogImage: '/images/rrish-profile.jpg',
 }

@@ -1,12 +1,17 @@
-import React, { useState } from 'react'
+/**
+ * Hero Block Component
+ * Three-image hero layout with overlaid text and CTAs
+ * Combines teaching-focused content with visual photography showcase
+ */
+
+import { useState } from 'react'
 import { motion } from 'framer-motion'
-import siteConfig from '@/content/site-config.json'
+import { z } from 'zod'
+import { HeroSchema } from '@/lib/schemas'
 
-interface TripleImageHeroProps {
-  className?: string
-}
+type HeroProps = z.infer<typeof HeroSchema>
 
-export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
+export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
   const [imagesLoaded, setImagesLoaded] = useState({
     left: false,
     center: false,
@@ -53,24 +58,9 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
     },
   }
 
-  const images = {
-    left: {
-      src: '/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg',
-      alt: 'Rrish performing at Pop Up Park in Point Cook',
-    },
-    center: {
-      src: '/images/instagram/portrait/Rrish_Lunar day night event.jpg',
-      alt: 'Rrish performing at Lunar Day Night Event',
-    },
-    right: {
-      src: '/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg',
-      alt: 'Rrish at Pop Up Park Point Cook performance',
-    },
-  }
-
   return (
     <motion.section
-      className={`relative min-h-[60vh] sm:min-h-screen bg-theme-bg overflow-hidden ${className}`}
+      className="relative min-h-[60vh] sm:min-h-screen bg-theme-bg overflow-hidden"
       variants={containerAnimation}
       initial="hidden"
       animate="visible"
@@ -96,7 +86,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
                   imagesLoaded.left ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
-                  objectPosition: 'center 25%', // Show more of the upper part on mobile
+                  objectPosition: 'center 25%',
                 }}
                 loading="lazy"
                 onLoad={() => handleImageLoad('left')}
@@ -125,7 +115,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
                   imagesLoaded.center ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
-                  objectPosition: 'center 20%', // Focus on the subject/person in the image
+                  objectPosition: 'center 20%',
                 }}
                 loading="eager"
                 onLoad={() => handleImageLoad('center')}
@@ -135,34 +125,52 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
               <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
 
               <motion.div
-                className="absolute inset-0 flex flex-col justify-center items-center text-center px-2 sm:px-4 md:px-8"
+                className="absolute inset-0 flex flex-col justify-center items-center px-4"
                 variants={overlayAnimation}
               >
-                <h1 className="text-2xl sm:text-3xl md:text-6xl lg:text-7xl font-bold text-white mb-2 sm:mb-4 drop-shadow-2xl">
-                  {siteConfig.hero.title}
-                </h1>
-                <p className="text-xs sm:text-sm md:text-xl lg:text-2xl text-white/90 mb-4 sm:mb-8 max-w-2xl font-medium drop-shadow-lg">
-                  {siteConfig.hero.subtitle}
-                </p>
+                {/* Content Card */}
+                <div className="bg-black/60 max-w-4xl w-full px-8 py-12 sm:px-12 sm:py-16 rounded-lg">
+                  {/* Headline */}
+                  <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-white mb-4 text-center">
+                    {headline}
+                  </h1>
 
-                {/* Call-to-Action Buttons */}
-                <div className="flex flex-col gap-2 sm:flex-row sm:gap-4">
-                  <motion.a
-                    href={siteConfig.hero.cta.primary.href}
-                    className="bg-white/20 backdrop-blur-sm border border-white/30 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-white/30 hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {siteConfig.hero.cta.primary.text}
-                  </motion.a>
-                  <motion.a
-                    href={siteConfig.hero.cta.secondary.href}
-                    className="bg-theme-primary/80 backdrop-blur-sm border border-theme-primary/50 text-white px-4 sm:px-8 py-2 sm:py-4 rounded-full font-semibold hover:bg-theme-primary hover:scale-105 transition-all duration-300 shadow-lg hover:shadow-xl text-xs sm:text-base"
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    {siteConfig.hero.cta.secondary.text}
-                  </motion.a>
+                  {/* Subhead */}
+                  <p className="text-base sm:text-xl md:text-2xl text-white/90 mb-8 text-center font-medium">
+                    {subhead}
+                  </p>
+
+                  {/* CTA Button */}
+                  <div className="flex justify-center mb-2 sm:mb-3">
+                    <motion.a
+                      href={cta.href}
+                      className="inline-block px-6 sm:px-8 py-3 sm:py-4 bg-brand-yellow-accent text-brand-blue-primary font-bold text-base sm:text-lg rounded-md hover:bg-white transition-colors duration-300 shadow-lg hover:shadow-xl"
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                    >
+                      {cta.label}
+                    </motion.a>
+                  </div>
+
+                  {/* Price Line */}
+                  {pricing?.show && pricing.secondary && (
+                    <p className="text-center text-base sm:text-lg text-white/90 mb-0">
+                      Then {pricing.secondary}
+                    </p>
+                  )}
+
+                  {/* Fallback for inline/badge styles */}
+                  {pricing?.show && pricing.style === 'inline' && (
+                    <p className="text-xs sm:text-sm text-white/70 text-center mt-4">
+                      {pricing.primary} • {pricing.secondary}
+                    </p>
+                  )}
+
+                  {pricing?.show && pricing.style === 'badge' && (
+                    <p className="text-xs sm:text-sm text-white/70 text-center mt-4">
+                      {pricing.primary}
+                    </p>
+                  )}
                 </div>
               </motion.div>
             </div>
@@ -186,7 +194,7 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
                   imagesLoaded.right ? 'opacity-100' : 'opacity-0'
                 }`}
                 style={{
-                  objectPosition: 'center 30%', // Show more of the upper content
+                  objectPosition: 'center 30%',
                 }}
                 loading="lazy"
                 onLoad={() => handleImageLoad('right')}
@@ -198,7 +206,6 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
           </motion.div>
         </div>
       </div>
-
       {/* Scroll indicator */}
       <motion.div
         className="absolute bottom-8 left-1/2 transform -translate-x-1/2 text-white/80"
@@ -217,13 +224,9 @@ export function TripleImageHero({ className = '' }: TripleImageHeroProps) {
 
       {/* Accessibility: Screen reader content */}
       <div className="sr-only">
-        <h1>
-          {siteConfig.branding.name} - {siteConfig.branding.tagline}
-        </h1>
-        <p>{siteConfig.branding.description}</p>
+        <h1>{headline}</h1>
+        <p>{subhead}</p>
       </div>
     </motion.section>
   )
 }
-
-export default TripleImageHero

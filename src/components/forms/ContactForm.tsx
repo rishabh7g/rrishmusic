@@ -19,7 +19,7 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
     name: '',
     email: '',
     mobile: '',
-    message: ''
+    message: '',
   })
 
   const [errors, setErrors] = useState<Partial<ContactFormData>>({})
@@ -51,7 +51,7 @@ export function ContactForm({ isOpen, onClose }: ContactFormProps) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
-    
+
     if (!validateForm()) {
       return
     }
@@ -74,39 +74,39 @@ ${formData.name}`
 
     // Create mailto URL
     const mailtoUrl = `mailto:${siteConfig.branding.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-    
+
     // Open email client
     window.location.href = mailtoUrl
-    
+
     // Close form
     onClose()
-    
+
     // Reset form
     setFormData({
       name: '',
       email: '',
       mobile: '',
-      message: ''
+      message: '',
     })
     setErrors({})
   }
 
-  const handleInputChange = (field: keyof ContactFormData) => (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
-  ) => {
-    setFormData(prev => ({
-      ...prev,
-      [field]: e.target.value
-    }))
-    
-    // Clear error when user starts typing
-    if (errors[field]) {
-      setErrors(prev => ({
+  const handleInputChange =
+    (field: keyof ContactFormData) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setFormData(prev => ({
         ...prev,
-        [field]: undefined
+        [field]: e.target.value,
       }))
+
+      // Clear error when user starts typing
+      if (errors[field]) {
+        setErrors(prev => ({
+          ...prev,
+          [field]: undefined,
+        }))
+      }
     }
-  }
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
@@ -126,7 +126,7 @@ ${formData.name}`
         >
           {/* Backdrop */}
           <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-          
+
           {/* Modal */}
           <motion.div
             className="relative w-full max-w-md bg-white rounded-3xl shadow-2xl overflow-hidden"
@@ -138,14 +138,26 @@ ${formData.name}`
             {/* Header */}
             <div className="bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white p-6 pb-8">
               <div className="flex items-center justify-between mb-2">
-                <h2 className="text-2xl font-heading font-bold">Get in Touch</h2>
+                <h2 className="text-2xl font-heading font-bold">
+                  Get in Touch
+                </h2>
                 <button
                   onClick={onClose}
                   className="w-8 h-8 flex items-center justify-center rounded-full bg-white/20 hover:bg-white/30 transition-colors"
                   aria-label="Close form"
                 >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  <svg
+                    className="w-5 h-5"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M6 18L18 6M6 6l12 12"
+                    />
                   </svg>
                 </button>
               </div>
@@ -158,7 +170,10 @@ ${formData.name}`
             <form onSubmit={handleSubmit} className="p-6 space-y-6">
               {/* Name Field */}
               <div>
-                <label htmlFor="name" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Name *
                 </label>
                 <input
@@ -178,7 +193,10 @@ ${formData.name}`
 
               {/* Email Field */}
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="email"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Email *
                 </label>
                 <input
@@ -198,7 +216,10 @@ ${formData.name}`
 
               {/* Mobile Field */}
               <div>
-                <label htmlFor="mobile" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="mobile"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Mobile Number *
                 </label>
                 <input
@@ -218,7 +239,10 @@ ${formData.name}`
 
               {/* Message Field */}
               <div>
-                <label htmlFor="message" className="block text-sm font-semibold text-gray-700 mb-2">
+                <label
+                  htmlFor="message"
+                  className="block text-sm font-semibold text-gray-700 mb-2"
+                >
                   Why do you want to contact me? *
                 </label>
                 <textarea

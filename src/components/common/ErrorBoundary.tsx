@@ -41,13 +41,14 @@ class ErrorBoundary extends Component<Props, State> {
   }
 
   public componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
-    console.error('ErrorBoundary caught an error:', error, errorInfo)
-
     // Update state with error details
     this.setState({
       error,
       errorInfo,
     })
+
+    // Enhanced console logging with detailed information
+    this.logErrorToConsole(error, errorInfo)
 
     // Call optional error handler
     if (this.props.onError) {
@@ -58,6 +59,71 @@ class ErrorBoundary extends Component<Props, State> {
     if (process.env.NODE_ENV === 'production') {
       this.logErrorToService(error, errorInfo)
     }
+  }
+
+  private logErrorToConsole(error: Error, errorInfo: ErrorInfo): void {
+    const timestamp = new Date().toISOString()
+    const separator = '━'.repeat(60)
+
+    // Group all error details together in console
+    console.group(
+      '%c❌ ERROR BOUNDARY CAUGHT AN ERROR',
+      'color: #dc2626; font-weight: bold; font-size: 14px;'
+    )
+
+    console.log(`%c${separator}`, 'color: #dc2626; font-weight: bold;')
+
+    // Error summary
+    console.log(
+      `%cError Type:%c ${error.name || 'Unknown'}`,
+      'color: #991b1b; font-weight: bold;',
+      'color: #dc2626;'
+    )
+    console.log(
+      `%cMessage:%c ${error.message || 'No message provided'}`,
+      'color: #991b1b; font-weight: bold;',
+      'color: #dc2626;'
+    )
+    console.log(
+      `%cTimestamp:%c ${timestamp}`,
+      'color: #991b1b; font-weight: bold;',
+      'color: #7f1d1d;'
+    )
+    console.log(
+      `%cURL:%c ${window.location.href}`,
+      'color: #991b1b; font-weight: bold;',
+      'color: #7f1d1d;'
+    )
+
+    console.log(`%c${separator}`, 'color: #dc2626; font-weight: bold;')
+
+    // Stack trace
+    if (error.stack) {
+      console.log('%cStack Trace:', 'color: #991b1b; font-weight: bold;')
+      console.log(
+        `%c${error.stack}`,
+        'color: #dc2626; font-family: monospace; white-space: pre-wrap;'
+      )
+    }
+
+    // Component stack
+    if (errorInfo.componentStack) {
+      console.log(`%c${separator}`, 'color: #dc2626; font-weight: bold;')
+      console.log(
+        '%cComponent Stack (Where error occurred):',
+        'color: #991b1b; font-weight: bold;'
+      )
+      console.log(
+        `%c${errorInfo.componentStack}`,
+        'color: #7f1d1d; font-family: monospace; white-space: pre-wrap;'
+      )
+    }
+
+    console.log(`%c${separator}`, 'color: #dc2626; font-weight: bold;')
+    console.log('%cℹ️ Retry Count:', 'color: #1e40af; font-weight: bold;')
+    console.log(`${this.state.retryCount} attempt(s)`)
+
+    console.groupEnd()
   }
 
   public componentDidUpdate(prevProps: Props): void {

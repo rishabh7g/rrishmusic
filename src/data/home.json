@@ -1,0 +1,129 @@
+{
+  "blocks": [
+    {
+      "type": "Hero",
+      "props": {
+        "headline": "Private lessons in Drums, Keyboard, or Guitar",
+        "subhead": "Learn from a professional performer",
+        "cta": {
+          "label": "Book Your Free 30-Minute Trial Lesson",
+          "href": "mailto:you@example.com"
+        },
+        "images": {
+          "left": {
+            "src": "/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg",
+            "alt": "Rrish performing at Pop Up Park in Point Cook"
+          },
+          "center": {
+            "src": "/images/instagram/portrait/Rrish_Lunar day night event.jpg",
+            "alt": "Rrish performing at Lunar Day Night Event"
+          },
+          "right": {
+            "src": "/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg",
+            "alt": "Rrish at Pop Up Park Point Cook performance"
+          }
+        },
+        "pricing": {
+          "show": true,
+          "style": "panel",
+          "primary": "",
+          "secondary": "$30 per 30-minute session"
+        }
+      }
+    },
+    {
+      "type": "FeatureList",
+      "props": {
+        "title": "How lessons work",
+        "items": [
+          "Start with core music theory in plain language",
+          "Add focused instrument technique and exercises",
+          "Learn one complete song end-to-end",
+          "Record a monthly take to track real progress"
+        ]
+      }
+    },
+    {
+      "type": "InstrumentsGrid",
+      "props": {
+        "items": [
+          {
+            "id": "drums",
+            "title": "Drums",
+            "blurb": "Time, grooves, and fills"
+          },
+          {
+            "id": "keyboard",
+            "title": "Keyboard",
+            "blurb": "Harmony and melody"
+          },
+          {
+            "id": "guitar",
+            "title": "Guitar",
+            "blurb": "Chords, rhythm, and songs"
+          }
+        ]
+      }
+    },
+    {
+      "type": "Pricing",
+      "props": {
+        "displayPrice": true,
+        "trial": "Free 30-minute trial for new students",
+        "session": {
+          "amountAud": 30,
+          "durationMins": 30,
+          "label": "A$30 per 30-minute one-to-one session",
+          "notes": "Pay per session"
+        }
+      }
+    },
+    {
+      "type": "Schedule",
+      "props": {
+        "caption": "Current availability (limited slots)",
+        "windows": [
+          { "label": "Weekdays", "times": ["6:00–8:00 PM"] },
+          { "label": "Weekends", "times": ["9:00–11:00 AM", "1:00–8:00 PM"] }
+        ]
+      }
+    },
+    {
+      "type": "ContactSection",
+      "props": {
+        "title": "Contact me",
+        "blurb": "Use the form or email to book your free trial and share your goals.",
+        "form": {
+          "submitLabel": "Send message",
+          "fields": [
+            { "name": "name", "label": "Your name", "type": "text" },
+            { "name": "email", "label": "Email", "type": "email" },
+            { "name": "phone", "label": "Phone", "type": "tel" },
+            {
+              "name": "instrument",
+              "label": "Instrument",
+              "type": "select",
+              "options": ["Drums", "Keyboard", "Guitar"]
+            },
+            {
+              "name": "window",
+              "label": "Preferred time window",
+              "type": "select",
+              "options": [
+                "Weekdays 6:00–8:00 PM",
+                "Weekends 9:00–11:00 AM",
+                "Weekends 1:00–8:00 PM"
+              ]
+            },
+            {
+              "name": "message",
+              "label": "Tell me about your goals",
+              "type": "textarea"
+            }
+          ]
+        },
+        "altLinks": [{ "label": "Email me", "href": "mailto:you@example.com" }]
+      }
+    }
+  ]
+}

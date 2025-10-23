@@ -1,9 +1,21 @@
-import React, { useState } from 'react'
+/**
+ * Contact Block Component
+ * Contact section with form modal trigger
+ * Accepts props from JSON schema validation
+ */
+
+import { useState } from 'react'
 import { motion } from 'framer-motion'
 import { fadeInUp, staggerContainer } from '@/utils/animations'
 import { ContactForm } from '@/components/forms/ContactForm'
+import type { ContactBlockProps } from '@/lib/schemas'
 
-export function Contact() {
+export function Contact({
+  title,
+  description,
+  buttonText,
+  id,
+}: ContactBlockProps) {
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   const handleOpenForm = () => {
@@ -17,7 +29,7 @@ export function Contact() {
   return (
     <>
       <div
-        id="contact"
+        id={id}
         className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white overflow-hidden"
       >
         <div className="container mx-auto max-w-4xl px-4">
@@ -32,15 +44,14 @@ export function Contact() {
               className="text-4xl lg:text-5xl font-heading font-bold mb-6"
               variants={fadeInUp}
             >
-              Get in Touch
+              {title}
             </motion.h2>
 
             <motion.p
               className="text-xl text-white/80 max-w-2xl mx-auto mb-12"
               variants={fadeInUp}
             >
-              Ready to start your musical journey? Let's connect and discuss how
-              I can help you achieve your goals.
+              {description}
             </motion.p>
 
             <motion.div variants={fadeInUp}>
@@ -50,7 +61,7 @@ export function Contact() {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                Contact Me
+                {buttonText}
                 <svg
                   className="w-6 h-6 ml-2"
                   fill="none"

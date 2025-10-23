@@ -46,7 +46,9 @@ export const CTAHierarchy: React.FC<CTAHierarchyProps> = ({
   const isHorizontal = layout === 'horizontal'
 
   return (
-    <div className={`cta-hierarchy ${isHorizontal ? 'flex flex-row gap-4' : 'flex flex-col gap-3'} ${className}`}>
+    <div
+      className={`cta-hierarchy ${isHorizontal ? 'flex flex-row gap-4' : 'flex flex-col gap-3'} ${className}`}
+    >
       {/* Primary CTA */}
       <motion.a
         href="/contact"
