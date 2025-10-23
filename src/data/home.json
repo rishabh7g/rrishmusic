@@ -11,15 +11,15 @@
         },
         "images": {
           "left": {
-            "src": "/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg",
+            "src": "/images/webp/Rrish_Pop up park-Point Cook 1.webp",
             "alt": "Rrish performing at Pop Up Park in Point Cook"
           },
           "center": {
-            "src": "/images/instagram/portrait/Rrish_Lunar day night event.jpg",
+            "src": "/images/webp/Rrish_Lunar day night event.webp",
             "alt": "Rrish performing at Lunar Day Night Event"
           },
           "right": {
-            "src": "/images/instagram/portrait/Rrish_Pop up park-Point Cook.jpg",
+            "src": "/images/webp/Rrish_Pop up park-Point Cook.webp",
             "alt": "Rrish at Pop Up Park Point Cook performance"
           }
         },
