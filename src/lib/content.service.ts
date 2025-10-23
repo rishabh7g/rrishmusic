@@ -3,7 +3,6 @@
  * Loads JSON page data, validates with Zod, and resolves blocks to React components
  */
 
-import homeData from '@/data/home.json'
 import galleryData from '@/data/gallery.json'
 import { PageSchema, type Block } from '@/lib/schemas'
 import { registry, type RegistryKey } from '@/lib/registry'
@@ -21,22 +20,8 @@ export interface ResolvedBlock {
  * Transform block props for normalization and enhancement
  * Examples: normalize tel: links, derive embed URLs, add defaults
  */
-function transformBlockProps(type: string, props: any): any {
-  // Add any transformation logic here
-  // For example, ensure mailto links are properly formatted
-  if (type === 'Hero' && props.cta?.href) {
-    // Already formatted in JSON, no transformation needed
-  }
-
-  if (type === 'ContactSection' && props.altLinks) {
-    // Ensure mailto links are properly formatted
-    props.altLinks = props.altLinks.map((link: any) => ({
-      ...link,
-      href: link.href.startsWith('mailto:') ? link.href : link.href,
-    }))
-  }
-
-  // Add more transformations as needed
+function transformBlockProps(_type: string, props: any): any {
+  // Props are already properly formatted in JSON, no transformation needed currently
   return props
 }
 

@@ -91,38 +91,12 @@
     {
       "type": "ContactSection",
       "props": {
-        "title": "Contact me",
-        "blurb": "Use the form or email to book your free trial and share your goals.",
-        "form": {
-          "submitLabel": "Send message",
-          "fields": [
-            { "name": "name", "label": "Your name", "type": "text" },
-            { "name": "email", "label": "Email", "type": "email" },
-            { "name": "phone", "label": "Phone", "type": "tel" },
-            {
-              "name": "instrument",
-              "label": "Instrument",
-              "type": "select",
-              "options": ["Drums", "Keyboard", "Guitar"]
-            },
-            {
-              "name": "window",
-              "label": "Preferred time window",
-              "type": "select",
-              "options": [
-                "Weekdays 6:00–8:00 PM",
-                "Weekends 9:00–11:00 AM",
-                "Weekends 1:00–8:00 PM"
-              ]
-            },
-            {
-              "name": "message",
-              "label": "Tell me about your goals",
-              "type": "textarea"
-            }
-          ]
-        },
-        "altLinks": [{ "label": "Email me", "href": "mailto:you@example.com" }]
+        "title": "Let's Connect",
+        "blurb": "Reach out via email or message me on Instagram to book your free trial.",
+        "contactLinks": [
+          { "label": "📧 Email Me", "href": "mailto:you@example.com" },
+          { "label": "📱 Message on Instagram", "href": "https://instagram.com/rrishmusic" }
+        ]
       }
     }
   ]

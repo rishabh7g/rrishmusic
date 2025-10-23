@@ -71,21 +71,7 @@ export const ScheduleSchema = z.object({
 export const ContactSectionSchema = z.object({
   title: z.string(),
   blurb: z.string().optional(),
-  form: z.object({
-    submitLabel: z.string(),
-    fields: z
-      .array(
-        z.object({
-          name: z.string(), // "name", "email", etc.
-          label: z.string(),
-          type: z.enum(['text', 'email', 'tel', 'select', 'textarea']),
-          required: z.boolean().default(true),
-          options: z.array(z.string()).optional(),
-        })
-      )
-      .min(1),
-  }),
-  altLinks: z.array(CTA).optional(),
+  contactLinks: z.array(CTA).min(1),
 })
 
 // ============================================================================
