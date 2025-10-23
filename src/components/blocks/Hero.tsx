@@ -40,7 +40,6 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
       scale: 1,
       transition: {
         duration: 0.6,
-        ease: [0.4, 0, 0.2, 1],
       },
     },
   }
@@ -53,7 +52,6 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
       transition: {
         duration: 0.6,
         delay: 0.4,
-        ease: [0.4, 0, 0.2, 1],
       },
     },
   }
