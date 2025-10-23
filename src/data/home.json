@@ -52,8 +52,7 @@
         "session": {
           "amountAud": 30,
           "durationMins": 30,
-          "label": "A$30 per 30-minute one-to-one session",
-          "notes": "Pay per session"
+          "label": "A$30 per 30-minute one-to-one session"
         }
       }
     },
