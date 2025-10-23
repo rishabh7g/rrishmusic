@@ -52,7 +52,7 @@
         "session": {
           "amountAud": 30,
           "durationMins": 30,
-          "label": "A$30 per 30-minutes private lesson"
+          "label": "$30 per 30-minutes session"
         }
       }
     },
