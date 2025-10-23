@@ -42,13 +42,13 @@ export function Home() {
           educator: {
             '@type': 'Person',
             name: 'Rrish',
-            jobTitle: 'Music Teacher & Professional Performer',
+            jobTitle: 'Music Teacher',
           },
           offers: {
             '@type': 'Offer',
-            name: 'Music Lessons',
+            name: 'Guitar Lessons & Music Theory',
             description:
-              'Personalized one-on-one guitar and music theory instruction from a professional performer',
+              'Personalized one-on-one guitar and music theory instruction for all skill levels',
             category: 'Music Education',
           },
         }}

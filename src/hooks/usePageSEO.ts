@@ -20,9 +20,9 @@ export function usePageSEO(props: SEOHeadProps = {}): {
   seoData: Required<SEOHeadProps>
 } {
   const {
-    title = 'Rrish Music - Live Piano Performance | Music Teaching | Collaboration',
-    description = 'Professional piano performance, music teaching, and collaboration services. Book live performances, learn piano, or collaborate on musical projects.',
-    keywords = 'piano, music, performance, teaching, collaboration, live music, piano lessons, music lessons',
+    title = 'RrishMusic - Guitar Lessons & Music Theory | Melbourne Music Teacher',
+    description = 'Learn guitar and music theory in Melbourne with personalized one-on-one lessons. Expert instruction for all skill levels, from beginners to advanced students.',
+    keywords = 'guitar lessons, music theory, Melbourne music teacher, guitar instructor, one-on-one lessons, blues guitar, adult guitar lessons',
     image = '/images/rrish-profile.jpg',
     url = 'https://www.rrishmusic.com',
     type = 'website' as const,

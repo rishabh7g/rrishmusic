@@ -1,8 +1,8 @@
 {
   "seo": {
     "title": "Gallery - Rrish Music",
-    "description": "Explore Rrish's musical journey through photos and videos showcasing performances and collaborations.",
-    "keywords": "gallery, photos, videos, performances, music, collaboration, band",
+    "description": "Explore Rrish's musical journey through photos and videos from live music sessions and teaching moments.",
+    "keywords": "gallery, photos, videos, music, guitar, teaching, Melbourne musician",
     "canonicalUrl": "https://www.rrishmusic.com/gallery"
   },
   "ui": {
@@ -15,7 +15,7 @@
   "layout": {
     "grid": {
       "mobile": "grid-cols-2",
-      "tablet": "sm:grid-cols-3 md:grid-cols-4", 
+      "tablet": "sm:grid-cols-3 md:grid-cols-4",
       "desktop": "lg:grid-cols-6 xl:grid-cols-8",
       "rowHeight": "auto-rows-[120px] sm:auto-rows-[140px] md:auto-rows-[160px]",
       "gap": "gap-3 md:gap-4"
@@ -41,7 +41,7 @@
     },
     {
       "filename": "XBand_Grazeland 1.jpeg",
-      "category": "band", 
+      "category": "band",
       "path": "/images/instagram/band/XBand_Grazeland 1.jpeg",
       "aspectRatio": 0.7,
       "priority": "medium"
@@ -49,7 +49,7 @@
     {
       "filename": "XBand_Grazeland.jpg",
       "category": "band",
-      "path": "/images/instagram/band/XBand_Grazeland.jpg", 
+      "path": "/images/instagram/band/XBand_Grazeland.jpg",
       "aspectRatio": 0.8,
       "isFeatured": true,
       "priority": "medium"
@@ -91,7 +91,7 @@
     },
     {
       "filename": "Rrish_Lunar day night event.jpg",
-      "category": "portrait", 
+      "category": "portrait",
       "path": "/images/instagram/portrait/Rrish_Lunar day night event.jpg",
       "aspectRatio": 1.5,
       "priority": "medium"

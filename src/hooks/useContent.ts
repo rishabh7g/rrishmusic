@@ -91,10 +91,10 @@ export interface LessonPackage {
 const enhancedTeachingContent: ServiceContent = {
   ...teachingContentRaw,
   heroSection: {
-    title: 'Guitar Teaching & Lessons',
-    subtitle: 'Personalized guitar instruction from a professional performer',
+    title: 'Guitar Lessons & Music Theory',
+    subtitle: 'Personalized instruction for all skill levels',
     description:
-      'Learn guitar and music theory with experienced instruction tailored to your goals and skill level.',
+      'Learn guitar and music theory with expert instruction tailored to your goals and skill level.',
     primaryCTA: {
       text: 'Start Learning',
       href: '/contact?service=teaching',
@@ -105,10 +105,10 @@ const enhancedTeachingContent: ServiceContent = {
 // Default home content
 const defaultHomeContent: HomeContent = {
   heroSection: {
-    title: 'Music Lessons from a Professional Performer',
-    subtitle: 'Professional Musician & Educator',
+    title: 'Guitar Lessons & Music Theory',
+    subtitle: 'Melbourne Music Teacher',
     description:
-      'Learn guitar and music theory from an experienced performer with personalized one-on-one lessons.',
+      'Learn guitar and music theory with personalized one-on-one lessons in Melbourne. Expert instruction for all skill levels.',
     primaryCTA: {
       text: 'View Gallery',
       href: '/gallery',
@@ -116,7 +116,7 @@ const defaultHomeContent: HomeContent = {
     },
     secondaryCTA: {
       text: 'Start Learning',
-      href: '/lessons',
+      href: '#lessons',
       variant: 'secondary',
     },
   },
@@ -129,7 +129,7 @@ const defaultHomeContent: HomeContent = {
         title: 'Guitar Lessons',
         description: 'One-on-one guitar instruction for all skill levels',
         icon: '🎸',
-        href: '/lessons',
+        href: '#lessons',
         priority: 'primary',
         featured: true,
       },
@@ -152,23 +152,23 @@ const defaultHomeContent: HomeContent = {
 // Default about content
 const defaultAboutContent = {
   title: 'About Rrish',
-  subtitle: 'Professional performer and dedicated educator',
+  subtitle: 'Dedicated music educator',
   description:
-    'With years of experience as a professional guitarist and music educator, I bring real-world performance insights to every lesson.',
+    'With years of experience as a guitarist and music educator, I bring passion and expertise to every lesson.',
   credentials: [
-    'Professional Guitar Performance',
-    'Music Education Specialist',
+    'Experienced Guitar Instructor',
+    'Music Theory Specialist',
     'Blues & Contemporary Guitar Expert',
   ],
 }
 
 // Default SEO data
 const defaultSeoData = {
-  title: 'Rrish Music - Guitar Lessons from a Professional Performer',
+  title: 'RrishMusic - Guitar Lessons & Music Theory | Melbourne',
   description:
-    'Learn guitar and music theory from an experienced professional performer in Melbourne. Personalized one-on-one lessons for all skill levels.',
+    'Learn guitar and music theory in Melbourne with personalized one-on-one lessons. Expert instruction for all skill levels.',
   keywords:
-    'guitar lessons, music teacher, Melbourne guitar instructor, professional guitar lessons, music theory, blues guitar',
+    'guitar lessons, music teacher, Melbourne guitar instructor, music theory, blues guitar, adult guitar lessons',
   ogImage: '/images/rrish-profile.jpg',
 }
 
@@ -222,9 +222,9 @@ const defaultLessonPackages: LessonPackage[] = [
 // Default hero content that matches what Hero component expects
 const defaultHeroContent = {
   title: 'RrishMusic',
-  subtitle: 'Learn from a Professional Performer',
+  subtitle: 'Guitar Lessons • Music Theory',
   description:
-    'Personalized one-on-one guitar lessons from an experienced professional musician. Learn guitar and music theory with real-world performance insights.',
+    'Personalized one-on-one guitar lessons in Melbourne. Learn guitar and music theory with expert instruction tailored to your goals.',
   primaryCTA: {
     text: 'View Gallery',
     href: '/gallery',
@@ -232,7 +232,7 @@ const defaultHeroContent = {
   },
   secondaryCTA: {
     text: 'Start Learning',
-    href: '/lessons',
+    href: '#lessons',
     variant: 'secondary' as const,
   },
 }
@@ -314,9 +314,9 @@ export const useStats = () => {
   return useMemo(
     () => ({
       aboutStats: [
-        { value: '10+', label: 'Years Playing', icon: 'calendar' },
+        { value: '10+', label: 'Years Teaching', icon: 'calendar' },
         { value: '45+', label: 'Students Taught', icon: 'users' },
-        { value: '150+', label: 'Performances', icon: 'music' },
+        { value: '500+', label: 'Lessons Given', icon: 'music' },
       ],
       communityStats: [
         { value: '45', label: 'Active Students' },

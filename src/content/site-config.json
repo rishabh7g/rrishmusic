@@ -1,15 +1,15 @@
 {
   "branding": {
     "name": "RrishMusic",
-    "tagline": "Music Lessons from a Professional Performer",
-    "description": "Professional musician offering personalized one-on-one music lessons. Learn guitar and music theory from an experienced performer with a passion for teaching.",
+    "tagline": "Guitar Lessons • Music Theory • Melbourne",
+    "description": "Personalized one-on-one guitar lessons in Melbourne. Learn guitar and music theory with an experienced music educator passionate about teaching.",
     "email": "hello@rrishmusic.com",
     "website": "https://www.rrishmusic.com"
   },
   "seo": {
-    "title": "RrishMusic - Music Lessons from a Professional Performer | Guitar & Theory Instruction Melbourne",
-    "description": "Learn guitar and music theory from an experienced professional performer in Melbourne. Personalized one-on-one lessons for all skill levels, from beginners to advanced students. Online and in-person options available.",
-    "keywords": "Melbourne music teacher, guitar lessons Melbourne, music theory lessons, professional guitar instructor, one-on-one music lessons, blues guitar lessons, adult guitar lessons, online music lessons, Melbourne music education"
+    "title": "RrishMusic - Guitar Lessons & Music Theory | Melbourne Music Teacher",
+    "description": "Learn guitar and music theory in Melbourne with personalized one-on-one lessons. Expert instruction for all skill levels, from beginners to advanced students. Online and in-person options available.",
+    "keywords": "Melbourne guitar lessons, music teacher Melbourne, guitar instructor, music theory lessons, one-on-one guitar lessons, blues guitar, adult guitar lessons, online guitar lessons, Melbourne music education"
   },
   "navigation": {
     "brand": {
@@ -19,7 +19,7 @@
   },
   "hero": {
     "title": "RrishMusic",
-    "subtitle": "Learn from a Professional Performer",
+    "subtitle": "Guitar Lessons • Music Theory",
     "cta": {
       "primary": {
         "text": "View Gallery",
