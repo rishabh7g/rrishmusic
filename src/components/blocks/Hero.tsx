@@ -153,7 +153,7 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
       </div>
 
       {/* Text Overlay - Spans all three images with responsive widths */}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/15 to-black/40" />
 
       <motion.div
         className="absolute inset-0 flex flex-col justify-center items-center px-4 sm:px-8"
