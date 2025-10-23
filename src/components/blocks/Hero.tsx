@@ -127,7 +127,7 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
                 variants={overlayAnimation}
               >
                 {/* Content Card */}
-                <div className="bg-black/60 max-w-5xl w-full px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
+                <div className="bg-black/60 w-[85%] px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
                   {/* Headline */}
                   <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 text-center">
                     {headline}
