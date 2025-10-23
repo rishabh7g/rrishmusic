@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Link, useLocation, useNavigate, Location } from 'react-router-dom'
+import { FaHome, FaImages } from 'react-icons/fa'
 import { NAVIGATION_ITEMS } from '@/utils/constants'
 import { useSmoothScroll, useScrollSpy } from '@/hooks/useScrollSpy'
 import { useDeviceDetection } from '@/hooks/useDeviceDetection'
@@ -226,24 +227,9 @@ const NavigationItem = React.memo<{
   const renderIcon = (id: string) => {
     switch (id) {
       case 'home':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 13h1v7a2 2 0 002 2h12a2 2 0 002-2v-7h1a1 1 0 00.707-1.707l-7-7zM9 13h6v8H9v-8z" />
-          </svg>
-        )
+        return <FaHome className="w-6 h-6" />
       case 'gallery':
-        return (
-          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M4 5a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" />
-            <circle cx="8.5" cy="9.5" r="1.5" fill="white" />
-            <path
-              d="M21 15a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10z"
-              stroke="white"
-              strokeWidth="2"
-              fill="none"
-            />
-          </svg>
-        )
+        return <FaImages className="w-6 h-6" />
       default:
         return null
     }
@@ -587,28 +573,20 @@ export const Navigation: React.FC<NavigationProps> = ({
                   </svg>
                 </motion.button>
 
-                {/* Gallery Icon Button */}
+                {/* Gallery Text Button */}
                 <motion.button
                   onClick={() =>
                     handleNavClick(
                       NAVIGATION_ITEMS.find(item => item.id === 'gallery')!
                     )
                   }
-                  className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200"
+                  className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200 font-semibold"
                   aria-label="Gallery"
                   whileTap={{ scale: 0.95 }}
                   disabled={isAnimating}
                   title="Gallery"
                 >
-                  <svg
-                    className="w-6 h-6"
-                    fill="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4v2h12v-2z" />
-                    <circle cx="8" cy="9" r="1.5" fill="white" />
-                    <path d="M4 15h12v-2l-3-3-2 2-3-4-4 4v3z" fill="white" />
-                  </svg>
+                  Gallery
                 </motion.button>
               </div>
             )}
