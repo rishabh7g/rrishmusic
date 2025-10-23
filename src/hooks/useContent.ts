@@ -5,7 +5,6 @@ import { useMemo } from 'react'
 
 // Import all JSON data files using the correct paths
 import teachingContentRaw from '../content/teaching.json'
-import collaborationContentRaw from '../content/collaboration.json'
 import contactContent from '../content/contact.json'
 import navigationData from '../content/navigation.json'
 
@@ -92,10 +91,10 @@ export interface LessonPackage {
 const enhancedTeachingContent: ServiceContent = {
   ...teachingContentRaw,
   heroSection: {
-    title: 'Piano Teaching & Lessons',
-    subtitle: 'Personalized piano instruction',
+    title: 'Guitar Teaching & Lessons',
+    subtitle: 'Personalized guitar instruction from a professional performer',
     description:
-      'Learn piano with experienced instruction tailored to your goals and skill level.',
+      'Learn guitar and music theory with experienced instruction tailored to your goals and skill level.',
     primaryCTA: {
       text: 'Start Learning',
       href: '/contact?service=teaching',
@@ -103,138 +102,73 @@ const enhancedTeachingContent: ServiceContent = {
   },
 }
 
-// Enhanced collaboration content with heroSection
-const enhancedCollaborationContent: ServiceContent = {
-  ...collaborationContentRaw,
-  heroSection: {
-    title: 'Music Collaboration',
-    subtitle: 'Creative musical partnerships',
-    description:
-      'Collaborate on recording projects, performances, and creative musical endeavors.',
-    primaryCTA: {
-      text: 'Start Collaboration',
-      href: '/contact?service=collaboration',
-    },
-  },
-}
-
-// Default home content since the JSON doesn't exist
+// Default home content
 const defaultHomeContent: HomeContent = {
   heroSection: {
-    title: 'Live Piano Performance • Music Teaching • Collaboration',
+    title: 'Music Lessons from a Professional Performer',
     subtitle: 'Professional Musician & Educator',
     description:
-      'Bringing musical experiences to life through live performance, personalized teaching, and creative collaboration.',
+      'Learn guitar and music theory from an experienced performer with personalized one-on-one lessons.',
     primaryCTA: {
-      text: 'Book Performance',
-      href: '/performance',
+      text: 'View Gallery',
+      href: '/gallery',
       variant: 'primary',
     },
     secondaryCTA: {
-      text: 'Learn Piano',
-      href: '/teaching',
+      text: 'Start Learning',
+      href: '/lessons',
       variant: 'secondary',
     },
   },
   servicesOverview: {
-    title: 'Musical Services',
-    subtitle: 'Comprehensive music services for all your needs',
+    title: 'Music Education',
+    subtitle: 'Personalized instruction for all skill levels',
     services: [
       {
-        id: 'performance',
-        title: 'Live Performance',
-        description: 'Professional piano performance for events and venues',
-        icon: '🎹',
-        href: '/performance',
+        id: 'teaching',
+        title: 'Guitar Lessons',
+        description: 'One-on-one guitar instruction for all skill levels',
+        icon: '🎸',
+        href: '/lessons',
         priority: 'primary',
         featured: true,
-      },
-      {
-        id: 'teaching',
-        title: 'Music Teaching',
-        description: 'Personalized piano lessons for all skill levels',
-        icon: '🎼',
-        href: '/teaching',
-        priority: 'secondary',
-        featured: true,
-      },
-      {
-        id: 'collaboration',
-        title: 'Collaboration',
-        description: 'Creative musical partnerships and projects',
-        icon: '🤝',
-        href: '/collaboration',
-        priority: 'tertiary',
-        featured: false,
       },
     ],
   },
   socialProof: {
-    title: 'What People Say',
+    title: 'What Students Say',
     testimonials: [
       {
         id: '1',
-        content: 'Exceptional musical talent and professional service',
-        author: 'Sarah Johnson',
-        role: 'Event Coordinator',
+        content: 'Exceptional teacher with patience and expertise',
+        author: 'Alex M.',
+        role: 'Guitar Student',
       },
     ],
   },
 }
 
-// Default performance content since the JSON doesn't exist
-const defaultPerformanceContent: ServiceContent = {
-  heroSection: {
-    title: 'Live Piano Performance',
-    subtitle: 'Professional musical entertainment',
-    description: 'Elegant piano performance for weddings, events, and venues',
-    primaryCTA: {
-      text: 'Book Performance',
-      href: '/contact?service=performance',
-    },
-  },
-  features: [
-    {
-      id: '1',
-      title: 'Wedding Ceremonies',
-      description: 'Beautiful music for your special day',
-      icon: '💒',
-    },
-    {
-      id: '2',
-      title: 'Corporate Events',
-      description: 'Professional entertainment for business functions',
-      icon: '🏢',
-    },
-    {
-      id: '3',
-      title: 'Private Parties',
-      description: 'Intimate musical experiences',
-      icon: '🎉',
-    },
-  ],
-}
 
 // Default about content
 const defaultAboutContent = {
   title: 'About Rrish',
-  subtitle: 'Passionate musician and educator',
+  subtitle: 'Professional performer and dedicated educator',
   description:
-    'With years of experience in performance and teaching, I bring dedication and artistry to every musical endeavor.',
+    'With years of experience as a professional guitarist and music educator, I bring real-world performance insights to every lesson.',
   credentials: [
-    'Professional Piano Performance',
-    'Music Education',
-    'Live Performance Experience',
+    'Professional Guitar Performance',
+    'Music Education Specialist',
+    'Blues & Contemporary Guitar Expert',
   ],
 }
 
 // Default SEO data
 const defaultSeoData = {
-  title: 'Rrish Music - Piano Performance & Teaching',
+  title: 'Rrish Music - Guitar Lessons from a Professional Performer',
   description:
-    'Professional piano performance, music teaching, and collaboration services. Book live performances, learn piano, or collaborate on musical projects.',
+    'Learn guitar and music theory from an experienced professional performer in Melbourne. Personalized one-on-one lessons for all skill levels.',
   keywords:
-    'piano, music, performance, teaching, collaboration, live music, piano lessons',
+    'guitar lessons, music teacher, Melbourne guitar instructor, professional guitar lessons, music theory, blues guitar',
   ogImage: '/images/rrish-profile.jpg',
 }
 
@@ -287,18 +221,18 @@ const defaultLessonPackages: LessonPackage[] = [
 
 // Default hero content that matches what Hero component expects
 const defaultHeroContent = {
-  title: 'Professional Piano Performance & Teaching',
-  subtitle: 'Live Music • Personalized Lessons • Creative Collaboration',
+  title: 'RrishMusic',
+  subtitle: 'Learn from a Professional Performer',
   description:
-    'Experience the joy of music through live piano performance and personalized piano lessons. Perfect for events, learning, and creative projects.',
+    'Personalized one-on-one guitar lessons from an experienced professional musician. Learn guitar and music theory with real-world performance insights.',
   primaryCTA: {
-    text: 'Book Performance',
-    href: '/performance',
+    text: 'View Gallery',
+    href: '/gallery',
     variant: 'primary' as const,
   },
   secondaryCTA: {
-    text: 'Start Piano Lessons',
-    href: '/teaching',
+    text: 'Start Learning',
+    href: '/lessons',
     variant: 'secondary' as const,
   },
 }
@@ -312,8 +246,6 @@ export const useContent = () => {
       home: defaultHomeContent,
       hero: defaultHeroContent, // Add hero section for Hero component
       teaching: enhancedTeachingContent,
-      performance: defaultPerformanceContent,
-      collaboration: enhancedCollaborationContent,
       about: defaultAboutContent,
       contact: contactContent,
       menu: navigationData,
@@ -385,7 +317,6 @@ export const useStats = () => {
         { value: '10+', label: 'Years Playing', icon: 'calendar' },
         { value: '45+', label: 'Students Taught', icon: 'users' },
         { value: '150+', label: 'Performances', icon: 'music' },
-        { value: '25+', label: 'Collaborations', icon: 'heart' },
       ],
       communityStats: [
         { value: '45', label: 'Active Students' },
@@ -394,10 +325,9 @@ export const useStats = () => {
         { value: '85%', label: 'Retention Rate' },
       ],
       socialProof: [
-        { value: '150+', label: 'Live Performances' },
         { value: '45+', label: 'Students' },
         { value: '4.9/5', label: 'Rating' },
-        { value: '85%', label: 'Client Retention' },
+        { value: '85%', label: 'Student Retention' },
       ],
       loading: false,
       error: null,
@@ -416,29 +346,29 @@ export const useTestimonials = () => {
         {
           id: '1',
           content:
-            'Rrish is an exceptional piano teacher. His patience and expertise helped me progress faster than I ever expected.',
-          author: 'Sarah Johnson',
-          role: 'Piano Student',
+            'Rrish is an exceptional guitar teacher. His patience and expertise helped me progress faster than I ever expected.',
+          author: 'Alex M.',
+          role: 'Guitar Student',
           rating: 5,
           service: 'teaching',
         },
         {
           id: '2',
           content:
-            'The performance at our wedding was absolutely perfect. Rrish created such a beautiful atmosphere.',
-          author: 'Michael & Emma',
-          role: 'Wedding Couple',
+            'As an adult learner, I was nervous about starting guitar lessons. Rrish made me feel comfortable from day one and tailored the lessons perfectly to my pace.',
+          author: 'Jenny S.',
+          role: 'Adult Learner',
           rating: 5,
-          service: 'performance',
+          service: 'teaching',
         },
         {
           id: '3',
           content:
-            'Working with Rrish on our music project was inspiring. His creativity and technical skills are outstanding.',
-          author: 'David Chen',
-          role: 'Collaborator',
+            'Rrish helped me understand blues improvisation. His patient approach and clear explanations made learning enjoyable and effective.',
+          author: 'Blake F.',
+          role: 'Blues Guitar Student',
           rating: 5,
-          service: 'collaboration',
+          service: 'teaching',
         },
       ],
       loading: false,
