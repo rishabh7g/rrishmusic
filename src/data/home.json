@@ -67,18 +67,6 @@
       }
     },
     {
-      "type": "FeatureList",
-      "props": {
-        "title": "Explore My Performance Work",
-        "items": [
-          "Live performances at venues and events",
-          "Studio recordings and music production",
-          "Behind-the-scenes moments and rehearsals",
-          "Visit the gallery to see more of my work"
-        ]
-      }
-    },
-    {
       "type": "ContactSection",
       "props": {
         "title": "Let's Connect",
