@@ -32,10 +32,13 @@ export function Pricing({ title, displayPrice, trial, session }: PricingProps) {
           )}
 
           <div className="max-w-2xl mx-auto text-center">
-            {/* Session pricing - normal text */}
+            {/* Session pricing - with subtle background */}
             {displayPrice && (
-              <motion.div variants={fadeInUp}>
-                <p className="text-3xl font-heading font-bold mb-6">
+              <motion.div
+                className="bg-theme-bg p-8 rounded-2xl shadow-md mb-6"
+                variants={fadeInUp}
+              >
+                <p className="text-3xl font-heading font-bold">
                   {session.label ||
                     `A$${session.amountAud} per ${session.durationMins}-minute session`}
                 </p>
