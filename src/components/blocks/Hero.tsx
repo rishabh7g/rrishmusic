@@ -159,8 +159,8 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
         className="absolute inset-0 flex flex-col justify-end items-center px-4 sm:px-8 pb-32 sm:pb-40 md:pb-48 lg:pb-56"
         variants={overlayAnimation}
       >
-        {/* Content Card - Responsive width: 80% on mobile, 40% on desktop */}
-        <div className="bg-black/60 w-[80%] sm:w-[40%] px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
+        {/* Content Card - Responsive width: 95% on mobile, 40% on desktop */}
+        <div className="bg-black/60 w-[95%] sm:w-[40%] px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
           {/* Headline */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 text-center">
             {headline}
