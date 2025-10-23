@@ -223,37 +223,83 @@ const NavigationItem = React.memo<{
 
   const target = getNavigationTarget(item)
 
+  const renderIcon = (id: string) => {
+    switch (id) {
+      case 'home':
+        return (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 13h1v7a2 2 0 002 2h12a2 2 0 002-2v-7h1a1 1 0 00.707-1.707l-7-7zM9 13h6v8H9v-8z" />
+          </svg>
+        )
+      case 'gallery':
+        return (
+          <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M4 5a2 2 0 012-2h12a2 2 0 012 2v12a2 2 0 01-2 2H6a2 2 0 01-2-2V5z" />
+            <circle cx="8.5" cy="9.5" r="1.5" fill="white" />
+            <path
+              d="M21 15a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h14a2 2 0 012 2v10z"
+              stroke="white"
+              strokeWidth="2"
+              fill="none"
+            />
+          </svg>
+        )
+      default:
+        return null
+    }
+  }
+
   const content = (
     <>
       {isMobile ? (
         <div className="flex items-center justify-between w-full">
-          <span className="font-semibold">{item.label}</span>
-          {isActive ? (
-            <motion.div
-              initial={{ scale: 0, rotate: -90 }}
-              animate={{ scale: 1, rotate: 0 }}
-              className={getActiveIndicatorStyles(itemType, true)}
-              transition={{ type: 'spring', bounce: 0.4, duration: 0.4 }}
-            />
+          {['home', 'gallery'].includes(item.id) ? (
+            <>
+              {renderIcon(item.id)}
+              {isActive && (
+                <motion.div
+                  initial={{ scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  className={getActiveIndicatorStyles(itemType, true)}
+                  transition={{ type: 'spring', bounce: 0.4, duration: 0.4 }}
+                />
+              )}
+            </>
           ) : (
-            <svg
-              className="w-5 h-5 opacity-60 transition-transform duration-200"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M9 5l7 7-7 7"
-              />
-            </svg>
+            <>
+              <span className="font-semibold">{item.label}</span>
+              {isActive ? (
+                <motion.div
+                  initial={{ scale: 0, rotate: -90 }}
+                  animate={{ scale: 1, rotate: 0 }}
+                  className={getActiveIndicatorStyles(itemType, true)}
+                  transition={{ type: 'spring', bounce: 0.4, duration: 0.4 }}
+                />
+              ) : (
+                <svg
+                  className="w-5 h-5 opacity-60 transition-transform duration-200"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 5l7 7-7 7"
+                  />
+                </svg>
+              )}
+            </>
           )}
         </div>
       ) : (
         <>
-          <span>{item.label}</span>
+          {item.id === 'home' ? (
+            <div className="flex items-center gap-2">{renderIcon('home')}</div>
+          ) : (
+            <span>{item.label}</span>
+          )}
           {isActive && (
             <motion.div
               layoutId="activeIndicator"
@@ -516,78 +562,58 @@ export const Navigation: React.FC<NavigationProps> = ({
               </div>
             )}
 
-            {/* Mobile Navigation Controls */}
+            {/* Mobile Navigation Controls - Icon Navigation */}
             {!device.isDesktop && (
-              <div className="flex items-center space-x-2">
+              <div className="flex items-center space-x-3">
+                {/* Home Icon Button */}
                 <motion.button
-                  onClick={toggleMenu}
+                  onClick={() =>
+                    handleNavClick(
+                      NAVIGATION_ITEMS.find(item => item.id === 'home')!
+                    )
+                  }
                   className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200"
-                  aria-expanded={isMenuOpen}
-                  aria-controls="mobile-menu"
-                  aria-label="Toggle navigation menu"
+                  aria-label="Home"
                   whileTap={{ scale: 0.95 }}
                   disabled={isAnimating}
+                  title="Home"
                 >
-                  <motion.div
-                    animate={isMenuOpen ? { rotate: 180 } : { rotate: 0 }}
-                    transition={{ duration: 0.2 }}
+                  <svg
                     className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    {isMenuOpen ? (
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M6 18L18 6M6 6l12 12"
-                        />
-                      </svg>
-                    ) : (
-                      <svg
-                        className="w-6 h-6"
-                        fill="none"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M4 6h16M4 12h16M4 18h16"
-                        />
-                      </svg>
-                    )}
-                  </motion.div>
+                    <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7A1 1 0 003 13h1v7a2 2 0 002 2h12a2 2 0 002-2v-7h1a1 1 0 00.707-1.707l-7-7zM9 13h6v8H9v-8z" />
+                  </svg>
+                </motion.button>
+
+                {/* Gallery Icon Button */}
+                <motion.button
+                  onClick={() =>
+                    handleNavClick(
+                      NAVIGATION_ITEMS.find(item => item.id === 'gallery')!
+                    )
+                  }
+                  className="mobile-only touch-target-comfortable relative z-50 text-theme-text hover:text-theme-primary transition-colors duration-200"
+                  aria-label="Gallery"
+                  whileTap={{ scale: 0.95 }}
+                  disabled={isAnimating}
+                  title="Gallery"
+                >
+                  <svg
+                    className="w-6 h-6"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4v2h12v-2z" />
+                    <circle cx="8" cy="9" r="1.5" fill="white" />
+                    <path d="M4 15h12v-2l-3-3-2 2-3-4-4 4v3z" fill="white" />
+                  </svg>
                 </motion.button>
               </div>
             )}
           </div>
         </div>
-
-        {/* Mobile Menu */}
-        {!device.isDesktop && (
-          <AnimatePresence>
-            {isMenuOpen && (
-              <motion.div
-                id="mobile-menu"
-                variants={menuVariants}
-                initial="hidden"
-                animate="visible"
-                exit="hidden"
-                className="nav-mobile-menu open bg-theme-bg/98 backdrop-blur-optimized border-t border-theme-border shadow-lg transition-colors duration-200"
-              >
-                <div className="container mx-auto max-w-7xl p-4 py-6 space-y-2">
-                  {mobileNavItems}
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-        )}
       </nav>
     </>
   )
