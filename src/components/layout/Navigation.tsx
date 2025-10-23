@@ -239,7 +239,7 @@ const NavigationItem = React.memo<{
     <>
       {isMobile ? (
         <div className="flex items-center justify-between w-full">
-          {['home', 'gallery'].includes(item.id) ? (
+          {item.id === 'home' ? (
             <>
               {renderIcon(item.id)}
               {isActive && (
