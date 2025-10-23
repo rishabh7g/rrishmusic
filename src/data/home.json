@@ -46,13 +46,13 @@
     {
       "type": "Pricing",
       "props": {
-        "title": "Lesson Pricing",
+        "title": "Pricing",
         "displayPrice": true,
         "trial": "First session free",
         "session": {
           "amountAud": 30,
           "durationMins": 30,
-          "label": "A$30 per 30-minute one-to-one session"
+          "label": "A$30/30min private lesson"
         }
       }
     },
