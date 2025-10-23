@@ -16,7 +16,7 @@ export function Contact() {
 
   return (
     <>
-      <div className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white overflow-hidden">
+      <div id="contact" className="section bg-gradient-to-r from-brand-blue-primary to-brand-blue-secondary text-white overflow-hidden">
         <div className="container mx-auto max-w-4xl px-4">
           <motion.div
             className="text-center py-20"
