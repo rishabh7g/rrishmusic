@@ -48,7 +48,7 @@
       "props": {
         "title": "Lesson Pricing",
         "displayPrice": true,
-        "trial": "Free 30-minute trial for new students",
+        "trial": "First session free.",
         "session": {
           "amountAud": 30,
           "durationMins": 30,

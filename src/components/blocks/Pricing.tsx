@@ -31,25 +31,19 @@ export function Pricing({ title, displayPrice, trial, session }: PricingProps) {
             </motion.h2>
           )}
 
-          <div className="max-w-2xl mx-auto">
-            {/* Session pricing - prominent yellow box */}
+          <div className="max-w-2xl mx-auto text-center">
+            {/* Session pricing - normal text */}
             {displayPrice && (
-              <motion.div
-                className="bg-brand-yellow-accent text-brand-blue-primary p-8 rounded-2xl shadow-lg mb-6"
-                variants={fadeInUp}
-              >
-                <div className="text-center">
-                  {/* Price label */}
-                  <p className="text-3xl font-heading font-bold">
-                    {session.label ||
-                      `A$${session.amountAud} per ${session.durationMins}-minute session`}
-                  </p>
-                </div>
+              <motion.div variants={fadeInUp}>
+                <p className="text-3xl font-heading font-bold mb-6">
+                  {session.label ||
+                    `A$${session.amountAud} per ${session.durationMins}-minute session`}
+                </p>
               </motion.div>
             )}
 
             {/* Trial offer - supporting text below */}
-            <motion.div className="text-center" variants={fadeInUp}>
+            <motion.div variants={fadeInUp}>
               <p className="text-lg text-theme-text-secondary">{trial}</p>
               {session.notes && (
                 <p className="text-theme-text-secondary mt-2">
