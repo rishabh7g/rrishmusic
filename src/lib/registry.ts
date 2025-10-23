@@ -5,7 +5,6 @@
 
 import { Hero } from '@/components/blocks/Hero'
 import { FeatureList } from '@/components/blocks/FeatureList'
-import { InstrumentsGrid } from '@/components/blocks/InstrumentsGrid'
 import { Pricing } from '@/components/blocks/Pricing'
 import { Schedule } from '@/components/blocks/Schedule'
 import { ContactSection } from '@/components/blocks/ContactSection'
@@ -18,7 +17,6 @@ import { GalleryGrid } from '@/components/blocks/GalleryGrid'
 export const registry = {
   Hero,
   FeatureList,
-  InstrumentsGrid,
   Pricing,
   Schedule,
   ContactSection,

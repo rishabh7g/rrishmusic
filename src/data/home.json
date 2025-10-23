@@ -44,28 +44,6 @@
       }
     },
     {
-      "type": "InstrumentsGrid",
-      "props": {
-        "items": [
-          {
-            "id": "drums",
-            "title": "Drums",
-            "blurb": "Time, grooves, and fills"
-          },
-          {
-            "id": "keyboard",
-            "title": "Keyboard",
-            "blurb": "Harmony and melody"
-          },
-          {
-            "id": "guitar",
-            "title": "Guitar",
-            "blurb": "Chords, rhythm, and songs"
-          }
-        ]
-      }
-    },
-    {
       "type": "Pricing",
       "props": {
         "displayPrice": true,

@@ -35,18 +35,6 @@ export const FeatureListSchema = z.object({
   items: z.array(z.string().min(1)),
 })
 
-export const InstrumentsGridSchema = z.object({
-  items: z
-    .array(
-      z.object({
-        id: z.enum(['drums', 'keyboard', 'guitar']),
-        title: z.string(),
-        blurb: z.string(),
-      })
-    )
-    .min(1),
-})
-
 export const PricingSchema = z.object({
   displayPrice: z.boolean().default(false), // toggle visibility
   trial: z.string(),
@@ -138,10 +126,6 @@ export type GalleryGridBlockProps = z.infer<typeof GalleryGridBlockPropsSchema>
 export const BlockSchema = z.discriminatedUnion('type', [
   z.object({ type: z.literal('Hero'), props: HeroSchema }),
   z.object({ type: z.literal('FeatureList'), props: FeatureListSchema }),
-  z.object({
-    type: z.literal('InstrumentsGrid'),
-    props: InstrumentsGridSchema,
-  }),
   z.object({ type: z.literal('Pricing'), props: PricingSchema }),
   z.object({ type: z.literal('Schedule'), props: ScheduleSchema }),
   z.object({ type: z.literal('ContactSection'), props: ContactSectionSchema }),
