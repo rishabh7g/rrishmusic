@@ -31,7 +31,7 @@ export function Home() {
         description={siteConfig.seo.description}
         keywords={siteConfig.seo.keywords}
         canonical={siteConfig.branding.website}
-        ogType="website"
+        type="website"
         structuredData={{
           '@context': 'https://schema.org',
           '@type': 'EducationalOrganization',
