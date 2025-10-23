@@ -118,59 +118,6 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
                 loading="eager"
                 onLoad={() => handleImageLoad('center')}
               />
-
-              {/* Text Overlay on Center Image - Desktop Only */}
-              <div className="hidden sm:block absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
-
-              <motion.div
-                className="hidden sm:flex absolute inset-0 flex-col justify-center items-center px-4"
-                variants={overlayAnimation}
-              >
-                {/* Content Card */}
-                <div className="bg-black/60 w-[40%] px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
-                  {/* Headline */}
-                  <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 text-center">
-                    {headline}
-                  </h1>
-
-                  {/* Subhead */}
-                  <p className="text-sm sm:text-base md:text-lg lg:text-xl text-white/90 mb-6 sm:mb-8 text-center font-medium">
-                    {subhead}
-                  </p>
-
-                  {/* CTA Button */}
-                  <div className="flex justify-center mb-2 sm:mb-3">
-                    <motion.a
-                      href={cta.href}
-                      className="inline-block px-4 sm:px-6 md:px-8 py-2 sm:py-3 md:py-4 bg-brand-yellow-accent text-brand-blue-primary font-bold text-sm sm:text-base md:text-lg rounded-md hover:bg-white transition-colors duration-300 shadow-lg hover:shadow-xl"
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                    >
-                      {cta.label}
-                    </motion.a>
-                  </div>
-
-                  {/* Price Line */}
-                  {pricing?.show && pricing.secondary && (
-                    <p className="text-center text-sm sm:text-base md:text-lg text-white/90 mb-0">
-                      Then {pricing.secondary}
-                    </p>
-                  )}
-
-                  {/* Fallback for inline/badge styles */}
-                  {pricing?.show && pricing.style === 'inline' && (
-                    <p className="text-xs sm:text-sm text-white/70 text-center mt-4">
-                      {pricing.primary} • {pricing.secondary}
-                    </p>
-                  )}
-
-                  {pricing?.show && pricing.style === 'badge' && (
-                    <p className="text-xs sm:text-sm text-white/70 text-center mt-4">
-                      {pricing.primary}
-                    </p>
-                  )}
-                </div>
-              </motion.div>
             </div>
           </motion.div>
 
@@ -205,15 +152,15 @@ export function Hero({ headline, subhead, cta, pricing, images }: HeroProps) {
         </div>
       </div>
 
-      {/* Mobile Text Overlay - On top of all three images */}
-      <div className="sm:hidden absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/60" />
+      {/* Text Overlay - Spans all three images with responsive widths */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/15 to-black/40" />
 
       <motion.div
-        className="sm:hidden absolute inset-0 flex flex-col justify-center items-center px-4"
+        className="absolute inset-0 flex flex-col justify-end items-center px-4 sm:px-8 pb-32 sm:pb-40 md:pb-48 lg:pb-56"
         variants={overlayAnimation}
       >
-        {/* Content Card */}
-        <div className="bg-black/60 w-[80%] px-4 py-8 rounded-lg">
+        {/* Content Card - Responsive width: 80% on mobile, 40% on desktop */}
+        <div className="bg-black/60 w-[80%] sm:w-[40%] px-4 py-8 sm:px-8 sm:py-12 md:px-12 md:py-16 rounded-lg">
           {/* Headline */}
           <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-3 sm:mb-4 text-center">
             {headline}
