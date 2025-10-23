@@ -60,15 +60,15 @@
           {
             "filename": "XBand Grazeland performance.jpg",
             "category": "portrait",
-            "path": "/images/instagram/portrait/XBand Grazeland performance.jpg",
-            "aspectRatio": 0.9,
+            "path": "/images/instagram/band/XBand Grazeland performance.jpg",
+            "aspectRatio": 1,
             "priority": "medium"
           },
           {
             "filename": "All Star Grazeland performance.jpg",
             "category": "portrait",
-            "path": "/images/instagram/portrait/All Star Grazeland performance.jpg",
-            "aspectRatio": 2,
+            "path": "/images/instagram/band/All Star Grazeland performance.jpg",
+            "aspectRatio": 1,
             "priority": "medium"
           },
           {
