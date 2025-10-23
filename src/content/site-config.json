@@ -27,7 +27,7 @@
       },
       "secondary": {
         "text": "Start Learning",
-        "href": "/lessons"
+        "href": "#lessons"
       }
     }
   }
