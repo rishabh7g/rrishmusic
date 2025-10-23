@@ -72,24 +72,10 @@
             "priority": "medium"
           },
           {
-            "filename": "Rrish solo.jpg",
-            "category": "portrait",
-            "path": "/images/instagram/portrait/Rrish solo.jpg",
-            "aspectRatio": 0.8,
-            "priority": "low"
-          },
-          {
             "filename": "Rrish_Lunar day night event.jpg",
             "category": "portrait",
             "path": "/images/instagram/portrait/Rrish_Lunar day night event.jpg",
             "aspectRatio": 1.5,
-            "priority": "medium"
-          },
-          {
-            "filename": "Rrish solo 3.jpg",
-            "category": "portrait",
-            "path": "/images/instagram/portrait/Rrish solo 3.jpg",
-            "aspectRatio": 1.2,
             "priority": "medium"
           },
           {
@@ -98,13 +84,6 @@
             "path": "/images/instagram/portrait/Rrish_Pop up park-Point Cook 1.jpg",
             "aspectRatio": 0.8,
             "priority": "low"
-          },
-          {
-            "filename": "Rrish solo 1.jpg",
-            "category": "portrait",
-            "path": "/images/instagram/portrait/Rrish solo 1.jpg",
-            "aspectRatio": 0.9,
-            "priority": "high"
           },
           {
             "filename": "Rrish_Pop up park-Point Cook.jpg",
